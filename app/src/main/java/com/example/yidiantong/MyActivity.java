@@ -1,21 +1,22 @@
-package com.example.yidiantong.fragment;
+package com.example.yidiantong;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.example.yidiantong.MyActivity;
-import com.example.yidiantong.R;
 import com.example.yidiantong.View.PswDialog;
 
-public class MineFragment extends Fragment implements View.OnClickListener {
+public class MyActivity extends AppCompatActivity implements View.OnClickListener {
 
     private LinearLayout f_ll_info;
     private LinearLayout f_ll_us;
@@ -29,28 +30,22 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     private Button fbtn_cancel;
     private Button fbtn_confirm;
 
-    public static MineFragment newInstance(){
-        MineFragment fragment = new MineFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_my);
 
-        //获取视图View
-        View view = inflater.inflate(R.layout.fragment_mine, container, false);
+        f_ll_info = findViewById(R.id.f_ll_info);
+        f_ll_us = findViewById(R.id.f_ll_us);
+        f_ll_update = findViewById(R.id.f_ll_update);
+        f_ll_psw = findViewById(R.id.f_ll_psw);
+        f_ll_center = findViewById(R.id.f_ll_center);
 
-        f_ll_info = view.findViewById(R.id.f_ll_info);
-        f_ll_us = view.findViewById(R.id.f_ll_us);
-        f_ll_update = view.findViewById(R.id.f_ll_update);
-        f_ll_psw = view.findViewById(R.id.f_ll_psw);
-        f_ll_center = view.findViewById(R.id.f_ll_center);
-        fbtn_exit = view.findViewById(R.id.fbtn_exit);
-        fbtn_cancel = view.findViewById(R.id.fbtn_cancel);
-        fbtn_confirm = view.findViewById(R.id.fbtn_confirm);
+        fbtn_exit = findViewById(R.id.fbtn_exit);
+
+
+        fbtn_cancel = findViewById(R.id.fbtn_cancel);
+        fbtn_confirm = findViewById(R.id.fbtn_confirm);
 
         // 设置点击事件
         f_ll_info.setOnClickListener(this);
@@ -58,9 +53,9 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         f_ll_update.setOnClickListener(this);
         f_ll_psw.setOnClickListener(this);
         f_ll_center.setOnClickListener(this);
+
         fbtn_exit.setOnClickListener(this);
 
-        return view;
     }
 
     @Override
@@ -77,20 +72,20 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.f_ll_psw:
                 // 修改密码弹窗
-                PswDialog builder = new PswDialog(getActivity());
+                PswDialog builder = new PswDialog(MyActivity.this);
 
                 builder.setCancel("cancel",new PswDialog.IOnCancelListener(){
 
                     @Override
                     public void onCancel(PswDialog dialog) {
-                        Toast.makeText(getActivity(),"已取消", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MyActivity.this,"已取消", Toast.LENGTH_SHORT).show();
                     }
                 });
                 builder.setConfirm("confirm",new PswDialog.IOnConfirmListener(){
 
                     @Override
                     public void onConfirm(PswDialog dialog) {
-                        Toast.makeText(getActivity(),"修改成功", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MyActivity.this,"修改成功", Toast.LENGTH_SHORT).show();
                     }
                 });
                 builder.show();
