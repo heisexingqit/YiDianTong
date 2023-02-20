@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/search_select_bg"
+        android:divider="@drawable/divider"
+        android:orientation="vertical"
+        android:showDividers="middle">
+        <!--分割线显示要设置showDividers和divider两个属性才行-->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/tv_onclick"
+            android:clickable="true"
+            android:padding="10dp"
+            android:text="全部"
+            android:textColor="#1E2D47" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/tv_onclick"
+            android:clickable="true"
+            android:padding="10dp"
+            android:text="作业"
+            android:textColor="#1E2D47" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/tv_onclick"
+            android:clickable="true"
+            android:padding="10dp"
+            android:text="导学案"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/tv_onclick"
+            android:clickable="true"
+            android:padding="10dp"
+            android:text="微课"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/tv_onclick"
+            android:clickable="true"
+            android:padding="10dp"
+            android:text="通知"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/tv_onclick"
+            android:clickable="true"
+            android:padding="10dp"
+            android:text="公告"
+            android:textColor="@color/black" />
+    </LinearLayout>
+</LinearLayout>

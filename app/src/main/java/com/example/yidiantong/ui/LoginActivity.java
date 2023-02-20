@@ -1,4 +1,4 @@
-package com.example.yidiantong;
+package com.example.yidiantong.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import com.example.yidiantong.R;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, View.OnFocusChangeListener {
 
@@ -66,9 +68,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (is_pw_show == 0) {
                     //切换eye图片
                     if(is_pw_focus == 1){
-                        iv_eye.setImageDrawable(getDrawable(R.drawable.eye_open_focus));
+                        iv_eye.setImageResource(R.drawable.eye_open_focus);
                     }else{
-                        iv_eye.setImageDrawable(getDrawable(R.drawable.eye_open));
+                        iv_eye.setImageResource(R.drawable.eye_open);
                     }
 
                     //获取光标位置
@@ -81,9 +83,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 } else {
                     //切换eye图片
                     if(is_pw_focus == 1){
-                        iv_eye.setImageDrawable(getDrawable(R.drawable.eye_close_focus));
+                        iv_eye.setImageResource(R.drawable.eye_close_focus);
                     }else{
-                        iv_eye.setImageDrawable(getDrawable(R.drawable.eye_close));
+                        iv_eye.setImageResource(R.drawable.eye_close);
                     }
                     //获取光标位置
                     pos = et_pw.getSelectionStart();
@@ -104,30 +106,30 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (b) {
                     //获取焦点：1.修改输入框的颜色，2.修改左侧icon的颜色
                     ll_account.setBackground(getDrawable(R.drawable.edit_text_border_focus));
-                    iv_account.setImageDrawable(getDrawable(R.drawable.account_icon_focus));
+                    iv_account.setImageResource(R.drawable.account_icon_focus);
                 } else {
                     ll_account.setBackground(getDrawable(R.drawable.edit_text_border_unfocus));
-                    iv_account.setImageDrawable(getDrawable(R.drawable.account_icon_unfocus));
+                    iv_account.setImageResource(R.drawable.account_icon_unfocus);
                 }
                 break;
             case R.id.et_pw:
                 if (b) {
                     if(is_pw_show == 1){
-                        iv_eye.setImageDrawable(getDrawable(R.drawable.eye_open_focus));
+                        iv_eye.setImageResource(R.drawable.eye_open_focus);
                     }else{
-                        iv_eye.setImageDrawable(getDrawable(R.drawable.eye_close_focus));
+                        iv_eye.setImageResource(R.drawable.eye_close_focus);
                     }
                     ll_pw.setBackground(getDrawable(R.drawable.edit_text_border_focus));
-                    iv_pw.setImageDrawable(getDrawable(R.drawable.password_icon_focus));
+                    iv_pw.setImageResource(R.drawable.password_icon_focus);
                     is_pw_focus = 1;
                 } else {
                     if(is_pw_show == 1){
-                        iv_eye.setImageDrawable(getDrawable(R.drawable.eye_open));
+                        iv_eye.setImageResource(R.drawable.eye_open);
                     }else{
-                        iv_eye.setImageDrawable(getDrawable(R.drawable.eye_close));
+                        iv_eye.setImageResource(R.drawable.eye_close);
                     }
                     ll_pw.setBackground(getDrawable(R.drawable.edit_text_border_unfocus));
-                    iv_pw.setImageDrawable(getDrawable(R.drawable.password_icon_unfocus));
+                    iv_pw.setImageResource(R.drawable.password_icon_unfocus);
                     is_pw_focus = 0;
                 }
                 break;
