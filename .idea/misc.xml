@@ -3,17 +3,30 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/drawable/edit_text_border.xml" value="0.2035" />
-        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/drawable/edit_text_border_focus.xml" value="0.2035" />
-        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/drawable/edit_text_border_unfocus.xml" value="0.2035" />
-        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
-        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/drawable/login_btn_bg.xml" value="0.2035" />
-        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/activity_login.xml" value="0.19157608695652173" />
-        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2035" />
-        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1" />
+        <entry key="..\:/nineone/Android Project/YiDianTong/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2115" />
+        <entry key="..\:/nineone/Android Project/YiDianTong/app/src/main/res/drawable/edit_text_border.xml" value="0.2115" />
+        <entry key="..\:/nineone/Android Project/YiDianTong/app/src/main/res/drawable/edit_text_border_focus.xml" value="0.2115" />
+        <entry key="..\:/nineone/Android Project/YiDianTong/app/src/main/res/drawable/edit_text_border_unfocus.xml" value="0.2115" />
+        <entry key="..\:/nineone/Android Project/YiDianTong/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2115" />
+        <entry key="..\:/nineone/Android Project/YiDianTong/app/src/main/res/drawable/login_btn_bg.xml" value="0.2115" />
+        <entry key="..\:/nineone/Android Project/YiDianTong/app/src/main/res/drawable/my_btn_selector.xml" value="0.1" />
+        <entry key="..\:/nineone/Android Project/YiDianTong/app/src/main/res/drawable/my_cancel_focus.xml" value="0.1" />
+        <entry key="..\:/nineone/Android Project/YiDianTong/app/src/main/res/drawable/my_cancel_unfocus.xml" value="0.1" />
+        <entry key="..\:/nineone/Android Project/YiDianTong/app/src/main/res/drawable/my_confirm_focus.xml" value="0.1" />
+        <entry key="..\:/nineone/Android Project/YiDianTong/app/src/main/res/drawable/my_confirm_unfocus.xml" value="0.1" />
+        <entry key="..\:/nineone/Android Project/YiDianTong/app/src/main/res/drawable/my_item_focus.xml" value="0.1" />
+        <entry key="..\:/nineone/Android Project/YiDianTong/app/src/main/res/drawable/my_item_selector.xml" value="0.1" />
+        <entry key="..\:/nineone/Android Project/YiDianTong/app/src/main/res/drawable/shape_line.xml" value="0.2515625" />
+        <entry key="..\:/nineone/Android Project/YiDianTong/app/src/main/res/drawable/shape_line_gray.xml" value="0.1" />
+        <entry key="..\:/nineone/Android Project/YiDianTong/app/src/main/res/drawable/shape_line_jianbian.xml" value="0.1" />
+        <entry key="..\:/nineone/Android Project/YiDianTong/app/src/main/res/layout/activity_login.xml" value="0.3333333333333333" />
+        <entry key="..\:/nineone/Android Project/YiDianTong/app/src/main/res/layout/activity_my.xml" value="0.22" />
+        <entry key="..\:/nineone/Android Project/YiDianTong/app/src/main/res/layout/my_update_psw.xml" value="0.2859375" />
+        <entry key="..\:/nineone/Android Project/YiDianTong/app/src/main/res/layout/shape_line.xml" value="0.23697916666666666" />
       </map>
     </option>
   </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>

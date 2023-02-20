@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">一点通</string>
+    <string name="f_user_info">账号信息</string>
+    <string name="f_about_us">关于我们</string>
+    <string name="f_detect_update">检测更新</string>
+    <string name="f_update_psw">修改密码</string>
+    <string name="f_elective_center">选科中心</string>
+    <string name="f_exit">退出当前账号</string>
+    <string name="f_old_psw">原密码</string>
+    <string name="f_new_psw1">新密码</string>
+    <string name="f_new_psw2">确认密码</string>
+    <string name="f_hint_old">请输入原密码</string>
+    <string name="f_hint_new1">请输入新密码</string>
+    <string name="f_hint_new2">请确认新密码</string>
+    <string name="f_cancel">取 消</string>
+    <string name="f_confirm">确认修改</string>
 </resources>
