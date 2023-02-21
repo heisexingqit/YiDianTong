@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TestDanXuanActivity">
+
+
+    <LinearLayout
+        android:id="@+id/f_ll_danxuan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp">
+
+        <TextView
+            android:id="@+id/ftv_danxuan_tihao"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:text="1/5题"
+            android:textSize="17sp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/f_danxuan"
+            android:textColor="@color/black"
+            android:textSize="17sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/f_ll_danxuan_timu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/f_ll_danxuan"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp">
+        <TextView
+            android:id="@+id/ftv_danxuan_timu"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:text="单选"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/f_ll_danxuan_btn"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/f_ll_danxuan_timu"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+
+        <ImageView
+            android:id="@+id/fiv_danxuan_left"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:background="@color/white"
+            app:srcCompat="@drawable/dx_icon_left"
+            android:scaleType="fitStart"/>
+
+        <ImageView
+            android:id="@+id/fiv_danxuan_right"
+            android:layout_width="42dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:background="@color/white"
+            android:scaleType="fitEnd"
+            app:srcCompat="@drawable/dx_icon_right" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@drawable/shape_line_gray"
+        app:layout_constraintBottom_toTopOf="@+id/f_rg_button"
+        android:layout_marginBottom="5dp"/>
+
+    <RadioGroup
+        android:id="@+id/f_rg_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginBottom="10dp">
+
+        <RadioButton
+            android:id="@+id/frb_dx_a"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/bx_btn_a_selector"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp" />
+
+        <RadioButton
+            android:id="@+id/frb_dx_b"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/bx_btn_b_selector"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"/>
+
+        <RadioButton
+            android:id="@+id/frb_dx_c"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/bx_btn_c_selector"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"/>
+
+        <RadioButton
+            android:id="@+id/frb_dx_d"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/bx_btn_d_selector"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"/>
+
+    </RadioGroup>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
