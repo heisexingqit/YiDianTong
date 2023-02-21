@@ -90,7 +90,9 @@ public class MineFragment extends Fragment implements View.OnClickListener {
 
                     @Override
                     public void onConfirm(PswDialog dialog) {
-                        Toast.makeText(getActivity(),"修改成功", Toast.LENGTH_SHORT).show();
+                        String old_pw = dialog.old_pw;
+                        String new_pw = dialog.new_pw;
+                        Toast.makeText(getActivity(),"修改成功:原密码："+old_pw+" 新密码："+new_pw, Toast.LENGTH_SHORT).show();
                     }
                 });
                 builder.show();

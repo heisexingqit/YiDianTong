@@ -17,9 +17,9 @@ import com.example.yidiantong.R;
 
 public class PswDialog extends Dialog implements View.OnClickListener {
 
-
-
-    private int is_pw_show = 0;//0表示隐藏，1表示显示
+    private int is_old_show = 0;//0表示隐藏，1表示显示
+    private int is_new1_show = 0;//0表示隐藏，1表示显示
+    private int is_new2_show = 0;//0表示隐藏，1表示显示
     private int is_pw_focus = 0;//0表示没有聚焦，1表示聚焦
     private Button fbtn_cancel;
     private Button fbtn_confirm;
@@ -27,6 +27,21 @@ public class PswDialog extends Dialog implements View.OnClickListener {
     private String cancel,confirm;
     private IOnCancelListener cancelListener;
     private IOnConfirmListener confirmListener;
+
+    //第一个输入框
+    private ImageView fiv_old_eye;
+    private EditText fet_old_psw;
+
+    //第二个输入框
+    private ImageView fiv_new1_eye;
+    private EditText fet_new1_psw;
+
+    //第二个输入框
+    private ImageView fiv_new2_eye;
+    private EditText fet_new2_psw;
+
+    public String old_pw;
+    public String new_pw;
 
     public void setCancel(String cancel,IOnCancelListener cancelListener) {
         this.cancel = cancel;
@@ -50,12 +65,23 @@ public class PswDialog extends Dialog implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_update_psw);
 
-
         fbtn_cancel = findViewById(R.id.fbtn_cancel);
         fbtn_confirm = findViewById(R.id.fbtn_confirm);
 
         fbtn_cancel.setOnClickListener(this);
         fbtn_confirm.setOnClickListener(this);
+
+        //获取组件
+        fiv_old_eye = findViewById(R.id.fiv_old_eye);
+        fiv_new1_eye = findViewById(R.id.fiv_new1_eye);
+        fiv_new2_eye = findViewById(R.id.fiv_new2_eye);
+        fet_old_psw = findViewById(R.id.fet_old_psw);
+        fet_new1_psw = findViewById(R.id.fet_new1_psw);
+        fet_new2_psw = findViewById(R.id.fet_new2_psw);
+        //给eye设置监听事件
+        fiv_old_eye.setOnClickListener(this);
+        fiv_new1_eye.setOnClickListener(this);
+        fiv_new2_eye.setOnClickListener(this);
 
     }
 
@@ -70,13 +96,67 @@ public class PswDialog extends Dialog implements View.OnClickListener {
                 break;
             case R.id.fbtn_confirm:
                 if(confirmListener!=null){
+                    old_pw = fet_old_psw.getText().toString();
+                    new_pw =  fet_new1_psw.getText().toString();
                     confirmListener.onConfirm(this);
                 }
                 dismiss();
                 break;
-
+            case R.id.fiv_old_eye:
+                if(is_old_show == 0){
+                    showPw(fiv_old_eye, fet_old_psw);
+                    is_old_show = 1;
+                }else{
+                    hidePw(fiv_old_eye, fet_old_psw);
+                    is_old_show = 0;
+                }
+                break;
+            case R.id.fiv_new1_eye:
+                if(is_new1_show == 0){
+                    showPw(fiv_new1_eye, fet_new1_psw);
+                    is_new1_show = 1;
+                }else{
+                    hidePw(fiv_new1_eye, fet_new1_psw);
+                    is_new1_show = 0;
+                }
+                break;
+            case R.id.fiv_new2_eye:
+                if(is_new2_show == 0){
+                    showPw(fiv_new2_eye, fet_new2_psw);
+                    is_new2_show = 1;
+                }else{
+                    hidePw(fiv_new2_eye, fet_new2_psw);
+                    is_new2_show = 0;
+                }
+                break;
         }
     }
+
+    //et = 输入框，iv = eye图标 隐藏密码方法
+    private void hidePw(ImageView iv, EditText et) {
+        //在显示和隐藏输入框数据时，光标回归0，因此需要记录光标当前位置
+        int pos = 0;
+        iv.setImageResource(R.drawable.eye_close);
+        //获取光标位置
+        pos = et.getSelectionStart();
+        et.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        //恢复光标位置
+        et.setSelection(pos);
+    }
+
+    //et = 输入框，iv = eye图标 显示密码方法
+    private void showPw(ImageView iv, EditText et) {
+        //在显示和隐藏输入框数据时，光标回归0，因此需要记录光标当前位置
+        int pos = 0;
+        //切换eye图标为open
+        iv.setImageResource(R.drawable.eye_open);
+        //获取光标位置
+        pos = et.getSelectionStart();
+        et.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+        //恢复光标位置
+        et.setSelection(pos);
+    }
+
 
     public interface IOnCancelListener{
         void onCancel(PswDialog dialog);
