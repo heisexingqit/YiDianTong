@@ -10,18 +10,20 @@
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingBottom="10dp">
-
+        <!--抽屉图片-->
         <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/iv_drawer_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/drawer" />
 
+        <!--分隔线-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@drawable/divider_deep" />
 
+        <!--选择面板-->
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="250dp">
@@ -36,8 +38,10 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal"
-                    android:padding="2dp"
-                    android:paddingStart="25dp">
+                    android:paddingStart="25dp"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="2dp"
+                    android:paddingBottom="2dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -92,8 +96,10 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal"
-                    android:padding="2dp"
-                    android:paddingStart="25dp">
+                    android:paddingStart="25dp"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="2dp"
+                    android:paddingBottom="2dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -148,8 +154,10 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal"
-                    android:padding="2dp"
-                    android:paddingStart="25dp">
+                    android:paddingStart="25dp"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="2dp"
+                    android:paddingBottom="2dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -204,8 +212,10 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal"
-                    android:padding="2dp"
-                    android:paddingStart="25dp">
+                    android:paddingStart="25dp"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="2dp"
+                    android:paddingBottom="2dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -260,8 +270,10 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal"
-                    android:padding="2dp"
-                    android:paddingStart="25dp">
+                    android:paddingStart="25dp"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="2dp"
+                    android:paddingBottom="2dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -316,8 +328,10 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal"
-                    android:padding="2dp"
-                    android:paddingStart="25dp">
+                    android:paddingStart="25dp"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="2dp"
+                    android:paddingBottom="2dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -372,8 +386,10 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal"
-                    android:padding="2dp"
-                    android:paddingStart="25dp">
+                    android:paddingStart="25dp"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="2dp"
+                    android:paddingBottom="2dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -428,8 +444,10 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal"
-                    android:padding="2dp"
-                    android:paddingStart="25dp">
+                    android:paddingStart="25dp"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="2dp"
+                    android:paddingBottom="2dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -484,8 +502,10 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal"
-                    android:padding="2dp"
-                    android:paddingStart="25dp">
+                    android:paddingStart="25dp"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="2dp"
+                    android:paddingBottom="2dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -540,8 +560,10 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal"
-                    android:padding="2dp"
-                    android:paddingStart="25dp">
+                    android:paddingStart="25dp"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="2dp"
+                    android:paddingBottom="2dp">
 
                     <TextView
                         android:layout_width="wrap_content"

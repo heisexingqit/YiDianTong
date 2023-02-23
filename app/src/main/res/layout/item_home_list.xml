@@ -5,9 +5,9 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingLeft="10dp"
-    android:paddingBottom="10dp"
+    android:paddingTop="5dp"
     android:paddingRight="10dp"
-    android:paddingTop="5dp">
+    android:paddingBottom="10dp">
 
     <!--上大块-->
     <LinearLayout
@@ -43,8 +43,8 @@
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:gravity="bottom"
                         android:layout_height="match_parent"
+                        android:gravity="bottom"
                         android:text="作业"
                         android:textColor="@color/black"
                         android:textSize="17sp"
@@ -61,9 +61,9 @@
                 </LinearLayout>
 
                 <TextView
-                    android:gravity="bottom"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="bottom"
                     android:text="测试拍照布置作业"
                     android:textColor="@color/black"
                     android:textSize="17sp"

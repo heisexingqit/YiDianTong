@@ -19,17 +19,19 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
 
+        <!--作业-->
         <activity
             android:name=".ui.HomeworkPagerActivity"
             android:exported="true">
-
-
         </activity>
+
+        <!--主页-->
         <activity
             android:name=".ui.MainPagerActivity"
             android:exported="true">
-
         </activity>
+
+        <!--登录-->
         <activity
             android:name=".ui.LoginActivity"
             android:exported="true">
@@ -39,9 +41,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:exported="true" />
+
     </application>
 
 </manifest>

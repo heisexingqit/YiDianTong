@@ -17,8 +17,9 @@
             android:layout_height="wrap_content"
             android:background="@drawable/search_select_item_bg"
             android:clickable="true"
+            android:focusable="true"
             android:padding="10dp"
-            android:text="全部"
+            android:text="@string/all"
             android:textColor="#1E2D47" />
 
 
@@ -27,8 +28,9 @@
             android:layout_height="wrap_content"
             android:background="@drawable/search_select_item_bg"
             android:clickable="true"
+            android:focusable="true"
             android:padding="10dp"
-            android:text="作业"
+            android:text="@string/homework"
             android:textColor="#1E2D47" />
 
         <TextView
@@ -36,8 +38,9 @@
             android:layout_height="wrap_content"
             android:background="@drawable/search_select_item_bg"
             android:clickable="true"
+            android:focusable="true"
             android:padding="10dp"
-            android:text="导学案"
+            android:text="@string/guide_plan"
             android:textColor="@color/black" />
 
         <TextView
@@ -45,8 +48,9 @@
             android:layout_height="wrap_content"
             android:background="@drawable/search_select_item_bg"
             android:clickable="true"
+            android:focusable="true"
             android:padding="10dp"
-            android:text="微课"
+            android:text="@string/micro_class"
             android:textColor="@color/black" />
 
         <TextView
@@ -54,8 +58,9 @@
             android:layout_height="wrap_content"
             android:background="@drawable/search_select_item_bg"
             android:clickable="true"
+            android:focusable="true"
             android:padding="10dp"
-            android:text="通知"
+            android:text="@string/notice"
             android:textColor="@color/black" />
 
         <TextView
@@ -63,8 +68,9 @@
             android:layout_height="wrap_content"
             android:background="@drawable/search_select_item_bg"
             android:clickable="true"
+            android:focusable="true"
             android:padding="10dp"
-            android:text="公告"
+            android:text="@string/announcement"
             android:textColor="@color/black" />
     </LinearLayout>
 </LinearLayout>

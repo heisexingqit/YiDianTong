@@ -73,6 +73,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         //输入框聚焦处理
         et_account.setOnFocusChangeListener(this);
         et_pw.setOnFocusChangeListener(this);
+
+        //输入优化，点击外侧LL即获取焦点
+        ll_account.setOnClickListener(this);
+        ll_pw.setOnClickListener(this);
         // 组件样式 结束-----------------------------------------------------
 
         //发送请求验证
@@ -122,6 +126,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 password = et_pw.getText().toString();
                 login();
                 break;
+            //case R.id.ll_account:
+            //    ll_account.requestFocus();
+            //    break;
+            //case R.id.ll_pw:
+            //    ll_pw.requestFocus();
+            //    break;
         }
     }
 

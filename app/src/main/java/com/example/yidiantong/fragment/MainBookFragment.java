@@ -11,10 +11,10 @@ import android.view.ViewGroup;
 import com.example.yidiantong.R;
 
 
-public class CourseFragment extends Fragment {
+public class MainBookFragment extends Fragment {
 
-    public static CourseFragment newInstance(){
-        CourseFragment fragment = new CourseFragment();
+    public static MainBookFragment newInstance(){
+        MainBookFragment fragment = new MainBookFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -23,6 +23,6 @@ public class CourseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_course, container, false);
+        return inflater.inflate(R.layout.fragment_mian_book, container, false);
     }
 }

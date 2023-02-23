@@ -5,11 +5,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.example.yidiantong.fragment.BookFragment;
-import com.example.yidiantong.fragment.CourseFragment;
-import com.example.yidiantong.fragment.HomeFragment;
-import com.example.yidiantong.fragment.MineFragment;
-import com.example.yidiantong.fragment.StudyFragment;
+import com.example.yidiantong.fragment.MainBookFragment;
+import com.example.yidiantong.fragment.MainCourseFragment;
+import com.example.yidiantong.fragment.MainHomeFragment;
+import com.example.yidiantong.fragment.MainMyFragment;
+import com.example.yidiantong.fragment.MainStudyFragment;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
 
@@ -22,15 +22,15 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if(position == 0){
-            return HomeFragment.newInstance();
+            return MainHomeFragment.newInstance();
         }else if(position == 1){
-            return StudyFragment.newInstance();
+            return MainStudyFragment.newInstance();
         }else if(position == 2){
-            return CourseFragment.newInstance();
+            return MainCourseFragment.newInstance();
         }else if(position == 3){
-            return BookFragment.newInstance();
+            return MainBookFragment.newInstance();
         }else if(position == 4){
-            return MineFragment.newInstance();
+            return MainMyFragment.newInstance();
         }else{
             return null;
         }

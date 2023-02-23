@@ -7,14 +7,14 @@
     android:orientation="vertical"
     tools:context=".ui.MainPagerActivity">
 
-    <!--中部 使用ViewPager + Fragment-->
+    <!--中部 使用NoScrollViewPager + Fragment-->
     <com.example.yidiantong.View.NoScrollViewPager
         android:id="@+id/vp_main"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <!--底部由LinearLayout组成-->
-    <include layout="@layout/bar_bottom_navigation"/>
+    <!--底部引用布局-->
+    <include layout="@layout/bar_bottom_navigation" />
 
 </LinearLayout>

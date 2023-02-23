@@ -6,7 +6,7 @@
     tools:context=".fragment.HomeworkSingleFragment">
 
     <!--翻页按钮-->
-    <include layout="@layout/pageing_homework"/>
+    <include layout="@layout/pageing_homework" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -55,9 +55,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/drawer"
             android:clickable="true"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:src="@drawable/drawer" />
 
         <LinearLayout
             android:layout_width="match_parent"

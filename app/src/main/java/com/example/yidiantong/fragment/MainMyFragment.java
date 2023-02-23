@@ -11,11 +11,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.example.yidiantong.MyActivity;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.PswDialog;
 
-public class MineFragment extends Fragment implements View.OnClickListener {
+public class MainMyFragment extends Fragment implements View.OnClickListener {
 
     private LinearLayout f_ll_info;
     private LinearLayout f_ll_us;
@@ -29,8 +28,8 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     private Button fbtn_cancel;
     private Button fbtn_confirm;
 
-    public static MineFragment newInstance(){
-        MineFragment fragment = new MineFragment();
+    public static MainMyFragment newInstance(){
+        MainMyFragment fragment = new MainMyFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -41,7 +40,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
 
         //获取视图View
-        View view = inflater.inflate(R.layout.fragment_mine, container, false);
+        View view = inflater.inflate(R.layout.fragment_main_my, container, false);
 
         f_ll_info = view.findViewById(R.id.f_ll_info);
         f_ll_us = view.findViewById(R.id.f_ll_us);

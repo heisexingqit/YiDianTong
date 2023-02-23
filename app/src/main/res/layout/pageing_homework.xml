@@ -9,10 +9,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:clickable="true"
         android:layout_marginStart="10dp"
-        android:src="@drawable/left_circle"
-        android:focusable="true" />
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/left_circle" />
 
     <com.example.yidiantong.View.ClickableImageView
         android:id="@+id/iv_page_next"
@@ -20,8 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:clickable="true"
         android:layout_marginEnd="10dp"
-        android:src="@drawable/right_circle"
-        android:focusable="true" />
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/right_circle" />
 </RelativeLayout>

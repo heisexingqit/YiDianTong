@@ -6,16 +6,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.example.yidiantong.fragment.BookFragment;
-import com.example.yidiantong.fragment.CourseFragment;
-import com.example.yidiantong.fragment.HomeFragment;
 import com.example.yidiantong.fragment.HomeworkClozeFragment;
 import com.example.yidiantong.fragment.HomeworkMultipleFragment;
 import com.example.yidiantong.fragment.HomeworkReadingFragment;
 import com.example.yidiantong.fragment.HomeworkSingleFragment;
 import com.example.yidiantong.fragment.HomeworkTranslationFragment;
-import com.example.yidiantong.fragment.MineFragment;
-import com.example.yidiantong.fragment.StudyFragment;
 
 public class HomeworkPagerAdapter extends FragmentPagerAdapter {
 

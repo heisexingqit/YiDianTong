@@ -8,6 +8,7 @@
     android:orientation="vertical"
     tools:context=".ui.HomeworkPagerActivity">
 
+    <!--顶部标题栏-->
     <include layout="@layout/bar_top_homework_title" />
 
     <!--分隔线-->

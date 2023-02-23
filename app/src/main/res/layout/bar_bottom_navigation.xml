@@ -5,6 +5,7 @@
     android:layout_gravity="bottom"
     android:background="#FEFEFE">
 
+    <!--首页-->
     <LinearLayout
         android:id="@+id/ll_bottom_home"
         android:layout_width="0dp"
@@ -12,24 +13,24 @@
         android:layout_weight="1"
         android:gravity="bottom|center"
         android:orientation="vertical">
-
+        <!--图标-->
         <ImageView
             android:id="@+id/iv_bottom_home"
             android:layout_width="22dp"
             android:layout_height="27dp"
             android:adjustViewBounds="true"
             android:src="@drawable/bottom_tab_home_focus" />
-
+        <!--图标-->
         <TextView
             android:id="@+id/tv_bottom_home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="首页"
+            android:text="@string/home"
             android:textColor="@color/main_bg"
             android:textSize="10sp" />
     </LinearLayout>
-
+    <!--学习-->
     <LinearLayout
         android:id="@+id/ll_bottom_study"
         android:layout_width="0dp"
@@ -50,11 +51,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="学习"
+            android:text="@string/study"
             android:textColor="@color/tabbar_text"
             android:textSize="10sp" />
     </LinearLayout>
-
+    <!--线上课程-->
     <LinearLayout
         android:id="@+id/ll_bottom_course"
         android:layout_width="0dp"
@@ -75,11 +76,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="线上课程"
+            android:text="@string/online_course"
             android:textColor="@color/tabbar_text"
             android:textSize="10sp" />
     </LinearLayout>
-
+    <!--错题本-->
     <LinearLayout
         android:id="@+id/ll_bottom_book"
         android:layout_width="0dp"
@@ -100,11 +101,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="错题本"
+            android:text="@string/error_book"
             android:textColor="@color/tabbar_text"
             android:textSize="10sp" />
     </LinearLayout>
-
+    <!--我的-->
     <LinearLayout
         android:id="@+id/ll_bottom_mine"
         android:layout_width="0dp"
@@ -125,7 +126,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="我的"
+            android:text="@string/my"
             android:textColor="@color/tabbar_text"
             android:textSize="10sp" />
     </LinearLayout>

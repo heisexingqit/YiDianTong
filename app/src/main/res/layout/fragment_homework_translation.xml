@@ -15,6 +15,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <!--顶部题目-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,10 +34,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
-                android:text="翻译题"
+                android:text="@string/translation"
                 android:textSize="13sp" />
         </LinearLayout>
 
+        <!--题目主体-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -52,17 +54,20 @@
                 android:textSize="13sp" />
         </LinearLayout>
 
+        <!--分隔线-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/black" />
 
+        <!--答题区-->
         <LinearLayout
             android:id="@+id/ll_context"
             android:layout_width="match_parent"
             android:layout_height="180dp"
             android:orientation="vertical">
 
+            <!--答案显示板-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -76,27 +81,30 @@
 
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/iv_top"
-                        android:clickable="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="15dp"
                         android:adjustViewBounds="true"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:src="@drawable/up_icon" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="删除"
+                        android:text="@string/delete"
                         android:textColor="#b8885f" />
 
                 </LinearLayout>
             </LinearLayout>
 
+            <!--分隔线-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/black" />
 
+            <!--答案输入区-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="58dp"
@@ -116,9 +124,10 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="10dp"
+                        android:layout_marginEnd="7dp"
                         android:layout_weight="1"
                         android:background="@null"
-                        android:hint="请输入答案"
+                        android:hint="@string/answer_hint"
                         android:textSize="15sp" />
 
                     <TextView
@@ -128,7 +137,7 @@
                         android:background="@drawable/shape_translation_tv_bg"
                         android:gravity="center"
                         android:padding="8dp"
-                        android:text="保存"
+                        android:text="@string/save"
                         android:textColor="@color/white"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -152,11 +161,8 @@
                     android:padding="11dp"
                     android:scaleType="fitCenter"
                     android:src="@drawable/photo" />
+
             </LinearLayout>
-
         </LinearLayout>
-
-
     </LinearLayout>
-
 </RelativeLayout>

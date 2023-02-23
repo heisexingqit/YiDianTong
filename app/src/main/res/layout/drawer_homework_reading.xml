@@ -27,8 +27,10 @@
             android:layout_height="40dp"
             android:layout_marginTop="10dp"
             android:orientation="horizontal"
-            android:padding="2dp"
-            android:paddingStart="25dp">
+            android:paddingStart="25dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="2dp"
+            android:paddingBottom="2dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -83,8 +85,10 @@
             android:layout_height="40dp"
             android:layout_marginTop="10dp"
             android:orientation="horizontal"
-            android:padding="2dp"
-            android:paddingStart="25dp">
+            android:paddingStart="25dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="2dp"
+            android:paddingBottom="2dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -139,8 +143,10 @@
             android:layout_height="40dp"
             android:layout_marginTop="10dp"
             android:orientation="horizontal"
-            android:padding="2dp"
-            android:paddingStart="25dp">
+            android:paddingStart="25dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="2dp"
+            android:paddingBottom="2dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -195,8 +201,10 @@
             android:layout_height="40dp"
             android:layout_marginTop="10dp"
             android:orientation="horizontal"
-            android:padding="2dp"
-            android:paddingStart="25dp">
+            android:paddingStart="25dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="2dp"
+            android:paddingBottom="2dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -251,8 +259,10 @@
             android:layout_height="40dp"
             android:layout_marginTop="10dp"
             android:orientation="horizontal"
-            android:padding="2dp"
-            android:paddingStart="25dp">
+            android:paddingStart="25dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="2dp"
+            android:paddingBottom="2dp">
 
             <TextView
                 android:layout_width="wrap_content"

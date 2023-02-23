@@ -8,18 +8,18 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:layout_marginTop="30dp"
+        android:gravity="center"
         android:text="@string/f_old_psw"
         android:textSize="17sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
     <LinearLayout
         android:id="@+id/fll_old_psw"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="30dp"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="30dp"
         android:background="@drawable/login_et_border_unfocus"
         android:gravity="center">
@@ -59,18 +59,18 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:layout_marginTop="15dp"
+        android:gravity="center"
         android:text="@string/f_new_psw1"
         android:textSize="17sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
     <LinearLayout
         android:id="@+id/fll_new1_psw"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="30dp"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="30dp"
         android:background="@drawable/login_et_border_unfocus"
         android:gravity="center">
@@ -110,18 +110,18 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:layout_marginTop="15dp"
+        android:gravity="center"
         android:text="@string/f_new_psw2"
         android:textSize="17sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
     <LinearLayout
         android:id="@+id/fll_new2_psw"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="30dp"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="30dp"
         android:background="@drawable/login_et_border_unfocus"
         android:gravity="center">
@@ -160,37 +160,37 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="20dp"
         android:layout_marginLeft="30dp"
+        android:layout_marginTop="20dp"
         android:layout_marginRight="30dp"
-        android:layout_marginBottom="20dp">
+        android:layout_marginBottom="20dp"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/fbtn_cancel"
             android:layout_width="0dp"
             android:layout_height="60dp"
-            android:layout_weight="1"
             android:layout_marginLeft="3dp"
             android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/my_cancel_unfocus"
             android:text="@string/f_cancel"
-            android:textSize="18sp"
-            android:textStyle="bold"
             android:textColor="@color/white"
-            android:background="@drawable/my_cancel_unfocus" />
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/fbtn_confirm"
             android:layout_width="0dp"
             android:layout_height="60dp"
-            android:layout_weight="1"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/my_confirm_unfocus"
             android:text="@string/f_confirm"
-            android:textSize="18sp"
-            android:textStyle="bold"
             android:textColor="@color/white"
-            android:background="@drawable/my_confirm_unfocus" />
+            android:textSize="18sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
 </LinearLayout>

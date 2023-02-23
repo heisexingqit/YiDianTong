@@ -5,10 +5,11 @@
     android:layout_height="match_parent"
     android:background="#ffffff"
     android:fitsSystemWindows="true"
-    tools:context=".ui.LoginActivity"
     android:focusable="true"
-    android:focusableInTouchMode="true">
+    android:focusableInTouchMode="true"
+    tools:context=".ui.LoginActivity">
 
+    <!--主体区域-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,17 +19,20 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
+        <!--LOGO-->
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/logo" />
 
+        <!--核心 =》输入+按钮 区-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="50dp"
             android:orientation="vertical">
 
+            <!--用户名输入栏-->
             <LinearLayout
                 android:id="@+id/ll_account"
                 android:layout_width="match_parent"
@@ -60,6 +64,7 @@
 
             </LinearLayout>
 
+            <!--密码输入栏-->
             <LinearLayout
                 android:id="@+id/ll_pw"
                 android:layout_width="match_parent"
@@ -101,7 +106,7 @@
 
             </LinearLayout>
 
-
+            <!--登录按钮-->
             <Button
                 android:id="@+id/btn_login"
                 android:layout_width="match_parent"
@@ -116,6 +121,7 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!--底部区域-->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

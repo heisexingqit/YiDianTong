@@ -5,13 +5,13 @@
     android:layout_height="match_parent"
     tools:context=".fragment.HomeworkSingleFragment">
 
-    <include layout="@layout/pageing_homework"/>
+    <include layout="@layout/pageing_homework" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:textSize="30sp"
-        android:text="多选" />
+        android:text="多选"
+        android:textSize="30sp" />
 
 </RelativeLayout>

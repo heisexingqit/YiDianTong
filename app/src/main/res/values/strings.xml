@@ -24,8 +24,33 @@
     <string name="login_pw_hint">请输入密码</string>
     <string name="login">登录</string>
     <string name="login_account_hint">请输入用户名</string>
-
-
+    <string name="home">首页</string>
+    <string name="study">学习</string>
+    <string name="online_course">线上课程</string>
+    <string name="error_book">错题本</string>
+    <string name="my">我的</string>
+    <string name="plan_homework">学案/作业</string>
+    <string name="search">搜索</string>
+    <string name="yuwen">语文</string>
+    <string name="yingyu">英语</string>
+    <string name="shuxue">数学</string>
+    <string name="other">其他</string>
+    <string name="shengwu">生物</string>
+    <string name="huaxue">化学</string>
+    <string name="wuli">物理</string>
+    <string name="cloze">完型填空题</string>
+    <string name="translation">翻译题</string>
+    <string name="delete">删除</string>
+    <string name="answer_hint">请输入答案</string>
+    <string name="save">保存</string>
+    <string name="ip_hint">请输入IP地址</string>
+    <string name="connect">连接</string>
+    <string name="all">全部</string>
+    <string name="homework">作业</string>
+    <string name="guide_plan">导学案</string>
+    <string name="micro_class">微课</string>
+    <string name="notice">通知</string>
+    <string name="announcement">公告</string>
     <!--wen-->
 
 </resources>

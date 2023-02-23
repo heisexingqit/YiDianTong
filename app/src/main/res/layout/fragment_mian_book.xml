@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFF2F2F2"
-    tools:context=".fragment.BookFragment">
+    tools:context=".fragment.MainBookFragment">
 
     <GridLayout
         android:layout_width="match_parent"
@@ -20,7 +20,7 @@
             android:layout_margin="10dp"
             android:background="@drawable/book_item_bg"
             android:gravity="center_vertical"
-            android:paddingLeft="5dp"
+            android:paddingStart="5dp"
             android:paddingTop="20dp"
             android:paddingBottom="20dp">
 
@@ -32,27 +32,27 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
+                android:layout_marginStart="30dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
                     android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="语文"
+                        android:text="@string/yuwen"
                         android:textSize="17sp" />
 
                     <ImageView
                         android:layout_width="11dp"
                         android:layout_height="11dp"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="3dp"
+                        android:layout_marginStart="3dp"
                         android:src="@drawable/red_ball" />
                 </LinearLayout>
 
@@ -74,7 +74,7 @@
             android:layout_marginBottom="10dp"
             android:background="@drawable/book_item_bg"
             android:gravity="center_vertical"
-            android:paddingLeft="5dp"
+            android:paddingStart="5dp"
             android:paddingTop="20dp"
             android:paddingBottom="20dp">
 
@@ -86,27 +86,27 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
+                android:layout_marginStart="30dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
                     android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="数学"
+                        android:text="@string/shuxue"
                         android:textSize="17sp" />
 
                     <ImageView
                         android:layout_width="11dp"
                         android:layout_height="11dp"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="3dp"
+                        android:layout_marginStart="3dp"
                         android:src="@drawable/red_ball" />
                 </LinearLayout>
 
@@ -128,7 +128,7 @@
             android:layout_marginBottom="10dp"
             android:background="@drawable/book_item_bg"
             android:gravity="center_vertical"
-            android:paddingLeft="5dp"
+            android:paddingStart="5dp"
             android:paddingTop="20dp"
             android:paddingBottom="20dp">
 
@@ -140,27 +140,27 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
+                android:layout_marginStart="30dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
                     android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="英语"
+                        android:text="@string/yingyu"
                         android:textSize="17sp" />
 
                     <ImageView
                         android:layout_width="11dp"
                         android:layout_height="11dp"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="3dp"
+                        android:layout_marginStart="3dp"
                         android:src="@drawable/red_ball" />
                 </LinearLayout>
 
@@ -182,7 +182,7 @@
             android:layout_marginBottom="10dp"
             android:background="@drawable/book_item_bg"
             android:gravity="center_vertical"
-            android:paddingLeft="5dp"
+            android:paddingStart="5dp"
             android:paddingTop="20dp"
             android:paddingBottom="20dp">
 
@@ -194,27 +194,27 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
+                android:layout_marginStart="30dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
                     android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="物理"
+                        android:text="@string/wuli"
                         android:textSize="17sp" />
 
                     <ImageView
                         android:layout_width="11dp"
                         android:layout_height="11dp"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="3dp"
+                        android:layout_marginStart="3dp"
                         android:src="@drawable/red_ball" />
                 </LinearLayout>
 
@@ -236,7 +236,7 @@
             android:layout_marginBottom="10dp"
             android:background="@drawable/book_item_bg"
             android:gravity="center_vertical"
-            android:paddingLeft="5dp"
+            android:paddingStart="5dp"
             android:paddingTop="20dp"
             android:paddingBottom="20dp">
 
@@ -248,27 +248,27 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
+                android:layout_marginStart="30dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
                     android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="化学"
+                        android:text="@string/huaxue"
                         android:textSize="17sp" />
 
                     <ImageView
                         android:layout_width="11dp"
                         android:layout_height="11dp"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="3dp"
+                        android:layout_marginStart="3dp"
                         android:src="@drawable/red_ball" />
                 </LinearLayout>
 
@@ -281,7 +281,6 @@
         </LinearLayout>
 
         <LinearLayout
-
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_columnWeight="1"
@@ -291,7 +290,7 @@
             android:layout_marginBottom="10dp"
             android:background="@drawable/book_item_bg"
             android:gravity="center_vertical"
-            android:paddingLeft="5dp"
+            android:paddingStart="5dp"
             android:paddingTop="20dp"
             android:paddingBottom="20dp">
 
@@ -303,27 +302,27 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
+                android:layout_marginStart="30dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
                     android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="生物"
+                        android:text="@string/shengwu"
                         android:textSize="17sp" />
 
                     <ImageView
                         android:layout_width="11dp"
                         android:layout_height="11dp"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="3dp"
+                        android:layout_marginStart="3dp"
                         android:src="@drawable/red_ball" />
                 </LinearLayout>
 
@@ -345,7 +344,7 @@
             android:layout_marginBottom="10dp"
             android:background="@drawable/book_item_bg"
             android:gravity="center_vertical"
-            android:paddingLeft="5dp"
+            android:paddingStart="5dp"
             android:paddingTop="20dp"
             android:paddingBottom="20dp">
 
@@ -357,27 +356,27 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
+                android:layout_marginStart="30dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
                     android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="其他"
+                        android:text="@string/other"
                         android:textSize="17sp" />
 
                     <ImageView
                         android:layout_width="11dp"
                         android:layout_height="11dp"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="3dp"
+                        android:layout_marginStart="3dp"
                         android:src="@drawable/red_ball" />
                 </LinearLayout>
 
