@@ -9,9 +9,14 @@
     <color name="white">#FFFFFFFF</color>
 
 
+    <!--wen-->
     <color name="main_bg">#FF6CC1E0</color>
+    <color name="main_bg_btn_press">#FF4e9ac0</color>
     <color name="tabbar_text">#FF828282</color>
     <color name="tv_onclick_bg">#FFDEE2EB</color>
+    <color name="tv_title_unpress">#def1f9</color>
+    <color name="old_status_bar_bg">#757575</color>
+    <!--wen-->
 
     <color name="f_orange">#FE7144</color>
     <color name="f_touming">#00000000</color>

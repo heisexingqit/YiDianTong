@@ -3,18 +3,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".ui.MainPagerActivity">
+    tools:context=".ui.HomeworkPagerActivity">
 
-    <!--中部 使用ViewPager + Fragment-->
-    <com.example.yidiantong.View.NoScrollViewPager
-        android:id="@+id/vp_main"
+    <include layout="@layout/bar_top_homework_title" />
+
+    <!--分隔线-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/divider_deep" />
+
+    <!--可滑动ViewPager-->
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/vp_homework"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="1" />
-
-    <!--底部由LinearLayout组成-->
-    <include layout="@layout/bar_bottom_navigation"/>
-
 </LinearLayout>

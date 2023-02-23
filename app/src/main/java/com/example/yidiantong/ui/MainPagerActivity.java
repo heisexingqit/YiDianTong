@@ -1,7 +1,6 @@
 package com.example.yidiantong.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
@@ -11,9 +10,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.yidiantong.NoScrollViewPager;
+import com.example.yidiantong.View.NoScrollViewPager;
 import com.example.yidiantong.R;
-import com.example.yidiantong.adapter.StudyPagerAdapter;
+import com.example.yidiantong.adapter.MainPagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,7 @@ public class MainPagerActivity extends AppCompatActivity implements View.OnClick
     private int[] iv_bottom_tab_unfocus = {R.drawable.bottom_tab_home_unfocus, R.drawable.bottom_tab_study_unfocus, R.drawable.bottom_tab_course_unfocus, R.drawable.bottom_tab_book_unfocus, R.drawable.bottom_tab_mine_unfocus};
     private List<ImageView> iv_bottom_tab = new ArrayList<>();
     private List<TextView> tv_bottom_tab = new ArrayList<>();
-    private NoScrollViewPager vp_study;
+    private NoScrollViewPager vp_main;
 
 
     @Override
@@ -71,10 +70,10 @@ public class MainPagerActivity extends AppCompatActivity implements View.OnClick
         tv_bottom_tab.add(tv_bottom_mine);
         //样式代码 结束------------------------------------------------------------
 
-        vp_study = findViewById(R.id.vp_study);
-        StudyPagerAdapter adapter = new StudyPagerAdapter(getSupportFragmentManager());
-        vp_study.setAdapter(adapter);
-        vp_study.setCurrentItem(0);
+        vp_main = findViewById(R.id.vp_main);
+        MainPagerAdapter adapter = new MainPagerAdapter(getSupportFragmentManager());
+        vp_main.setAdapter(adapter);
+        vp_main.setCurrentItem(0);
 
     }
 
@@ -84,31 +83,31 @@ public class MainPagerActivity extends AppCompatActivity implements View.OnClick
             case R.id.ll_bottom_home:
                 if(id_bottom_onclick != 0){
                     SwitchTabById(0);
-                    vp_study.setCurrentItem(0, false);
+                    vp_main.setCurrentItem(0, false);
                 }
                 break;
             case R.id.ll_bottom_study:
                 if(id_bottom_onclick != 1){
                     SwitchTabById(1);
-                    vp_study.setCurrentItem(1, false);
+                    vp_main.setCurrentItem(1, false);
                 }
                 break;
             case R.id.ll_bottom_course:
                 if(id_bottom_onclick != 2){
                     SwitchTabById(2);
-                    vp_study.setCurrentItem(2, false);
+                    vp_main.setCurrentItem(2, false);
                 }
                 break;
             case R.id.ll_bottom_book:
                 if(id_bottom_onclick != 3){
                     SwitchTabById(3);
-                    vp_study.setCurrentItem(3, false);
+                    vp_main.setCurrentItem(3, false);
                 }
                 break;
             case R.id.ll_bottom_mine:
                 if(id_bottom_onclick != 4){
                     SwitchTabById(4);
-                    vp_study.setCurrentItem(4, false);
+                    vp_main.setCurrentItem(4, false);
                 }
                 break;
         }

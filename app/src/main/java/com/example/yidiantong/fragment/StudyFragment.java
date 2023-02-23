@@ -1,5 +1,6 @@
 package com.example.yidiantong.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.HomeRecyclerAdapter;
+import com.example.yidiantong.ui.HomeworkPagerActivity;
 
 public class StudyFragment extends Fragment {
 
@@ -35,7 +37,12 @@ public class StudyFragment extends Fragment {
         RecyclerView rv_home = view.findViewById(R.id.rv_home);
 
         //设置RecyclerViewAdapter
-        HomeRecyclerAdapter adapter = new HomeRecyclerAdapter(getContext(), 1);
+        HomeRecyclerAdapter adapter = new HomeRecyclerAdapter(getContext(), 1, new HomeRecyclerAdapter.MyListener() {
+            @Override
+            public void onClick(int pos) {
+                startActivity(new Intent(getActivity(), HomeworkPagerActivity.class));
+            }
+        });
 
         //RecyclerView两步必要配置
         rv_home.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));

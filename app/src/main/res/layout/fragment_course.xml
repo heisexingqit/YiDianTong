@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="80dp"
-            android:background="@drawable/edit_text_border_unfocus"
+            android:background="@drawable/login_et_border_unfocus"
             android:gravity="center"
             android:padding="10dp">
 
@@ -61,7 +61,7 @@
             android:layout_marginLeft="40dp"
             android:layout_marginTop="20dp"
             android:layout_marginRight="40dp"
-            android:background="@drawable/login_btn_bg"
+            android:background="@drawable/login_btn"
             android:text="连接"
             android:textColor="@color/white"
             android:textSize="17sp" />

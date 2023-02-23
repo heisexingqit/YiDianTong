@@ -1,5 +1,6 @@
 package com.example.yidiantong.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -21,6 +22,7 @@ import android.widget.PopupWindow;
 
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.HomeRecyclerAdapter;
+import com.example.yidiantong.ui.HomeworkPagerActivity;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
@@ -49,7 +51,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         rv_home.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 
         //设置RecyclerViewAdapter
-        HomeRecyclerAdapter adapter = new HomeRecyclerAdapter(getContext(), 0);
+        HomeRecyclerAdapter adapter = new HomeRecyclerAdapter(getContext(), 0, new HomeRecyclerAdapter.MyListener() {
+            @Override
+            public void onClick(int pos) {
+                startActivity(new Intent(getActivity(), HomeworkPagerActivity.class));
+            }
+        });
         rv_home.setAdapter(adapter);
 
         //弹出搜索栏菜单

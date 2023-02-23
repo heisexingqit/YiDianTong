@@ -19,4 +19,13 @@
     <string name="f_cancel">取 消</string>
     <string name="f_confirm">确认修改</string>
 
+    <!--wen-->
+    <string name="content">目录</string>
+    <string name="login_pw_hint">请输入密码</string>
+    <string name="login">登录</string>
+    <string name="login_account_hint">请输入用户名</string>
+
+
+    <!--wen-->
+
 </resources>
