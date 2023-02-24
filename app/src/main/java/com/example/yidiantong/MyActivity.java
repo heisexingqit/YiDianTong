@@ -85,6 +85,7 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
 
                     @Override
                     public void onConfirm(PswDialog dialog) {
+
                         Toast.makeText(MyActivity.this,"修改成功", Toast.LENGTH_SHORT).show();
                     }
                 });

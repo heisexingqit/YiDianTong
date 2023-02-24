@@ -1,39 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
     android:fitsSystemWindows="true"
-    tools:context=".LoginActivity">
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context=".ui.LoginActivity">
+
+    <!--主体区域-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="100dp"
+        android:gravity="center_horizontal"
         android:orientation="vertical">
 
+        <!--LOGO-->
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:src="@drawable/logo" />
 
+        <!--核心 =》输入+按钮 区-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="60dp"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
+            android:layout_margin="50dp"
             android:orientation="vertical">
 
+            <!--用户名输入栏-->
             <LinearLayout
                 android:id="@+id/ll_account"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/edit_text_border_unfocus"
+                android:background="@drawable/login_et_border_unfocus"
                 android:gravity="center"
                 android:padding="10dp">
 
@@ -52,19 +56,21 @@
                     android:layout_weight="1"
                     android:height="40dp"
                     android:background="@null"
-                    android:hint="请输入用户名"
+                    android:hint="@string/login_account_hint"
                     android:singleLine="true"
                     android:textColor="@color/black"
+                    android:textColorHint="#8F9BB3"
                     android:textSize="17sp" />
 
             </LinearLayout>
 
+            <!--密码输入栏-->
             <LinearLayout
                 android:id="@+id/ll_pw"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/edit_text_border_unfocus"
+                android:background="@drawable/login_et_border_unfocus"
                 android:gravity="center"
                 android:padding="10dp">
 
@@ -83,10 +89,11 @@
                     android:layout_weight="1"
                     android:height="40dp"
                     android:background="@null"
-                    android:hint="请输入密码"
+                    android:hint="@string/login_pw_hint"
                     android:inputType="textPassword"
                     android:singleLine="true"
                     android:textColor="@color/black"
+                    android:textColorHint="#8F9BB3"
                     android:textSize="17sp" />
 
                 <ImageView
@@ -99,20 +106,22 @@
 
             </LinearLayout>
 
-
+            <!--登录按钮-->
             <Button
+                android:id="@+id/btn_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="40dp"
                 android:layout_marginTop="25dp"
                 android:layout_marginRight="40dp"
-                android:background="@drawable/login_btn_bg"
-                android:text="登录"
+                android:background="@drawable/login_btn"
+                android:text="@string/login"
                 android:textColor="@color/white"
                 android:textSize="17sp" />
         </LinearLayout>
     </LinearLayout>
 
+    <!--底部区域-->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
