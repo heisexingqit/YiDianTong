@@ -1,7 +1,9 @@
 package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
@@ -17,16 +19,16 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.R;
+import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Iterator;
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, View.OnFocusChangeListener {
@@ -36,15 +38,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private int is_pw_focus = 0;//0表示没有聚焦，1表示聚焦
     private ImageView iv_eye;
     private EditText et_pw;
-    private ImageView iv_account;
+    private ImageView iv_username;
     private ImageView iv_pw;
-    private LinearLayout ll_account;
+    private LinearLayout ll_username;
     private LinearLayout ll_pw;
-    private EditText et_account;
+    private EditText et_username;
 
-    private String account;
+    private String username;
     private String password;
     private RequestQueue queue;
+
+    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,13 +60,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
         //获取控件
-        iv_account = findViewById(R.id.iv_account);
+        iv_username = findViewById(R.id.iv_username);
         iv_pw = findViewById(R.id.iv_pw);
-        ll_account = findViewById(R.id.ll_account);
+        ll_username = findViewById(R.id.ll_username);
         ll_pw = findViewById(R.id.ll_pw);
         iv_eye = findViewById(R.id.iv_eye);
         et_pw = findViewById(R.id.et_pw);
-        et_account = findViewById(R.id.et_account);
+        et_username = findViewById(R.id.et_username);
         Button btn_login = findViewById(R.id.btn_login);
         btn_login.setOnClickListener(this);
 
@@ -71,16 +75,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         iv_eye.setOnClickListener(this);
 
         //输入框聚焦处理
-        et_account.setOnFocusChangeListener(this);
+        et_username.setOnFocusChangeListener(this);
         et_pw.setOnFocusChangeListener(this);
 
         //输入优化，点击外侧LL即获取焦点
-        ll_account.setOnClickListener(this);
+        ll_username.setOnClickListener(this);
         ll_pw.setOnClickListener(this);
         // 组件样式 结束-----------------------------------------------------
 
         //发送请求验证
         queue = Volley.newRequestQueue(LoginActivity.this);
+
+        //记住密码
+        preferences = getSharedPreferences("config", Context.MODE_PRIVATE);
+        String user = preferences.getString("username", null);
+        String pw = preferences.getString("password", null);
+        if(user != null){
+            et_username.setText(user);
+        }
+        if(pw != null){
+            et_pw.setText(pw);
+        }
+
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -122,30 +138,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
                 break;
             case R.id.btn_login:
-                account = et_account.getText().toString();
+                username = et_username.getText().toString();
                 password = et_pw.getText().toString();
                 login();
                 break;
-            //case R.id.ll_account:
-            //    ll_account.requestFocus();
-            //    break;
-            //case R.id.ll_pw:
-            //    ll_pw.requestFocus();
-            //    break;
+            case R.id.ll_username:
+                ll_username.requestFocus();
+                break;
+            case R.id.ll_pw:
+                ll_pw.requestFocus();
+                break;
         }
     }
 
+    @SuppressLint({"UseCompatLoadingForDrawables", "NonConstantResourceId"})
     @Override
     public void onFocusChange(View view, boolean b) {
         switch (view.getId()) {
-            case R.id.et_account:
+            case R.id.et_username:
                 if (b) {
                     //获取焦点：1.修改输入框的颜色，2.修改左侧icon的颜色
-                    ll_account.setBackground(getDrawable(R.drawable.login_et_border_focus));
-                    iv_account.setImageResource(R.drawable.account_icon_focus);
+                    ll_username.setBackground(getDrawable(R.drawable.login_et_border_focus));
+                    iv_username.setImageResource(R.drawable.username_icon_focus);
                 } else {
-                    ll_account.setBackground(getDrawable(R.drawable.login_et_border_unfocus));
-                    iv_account.setImageResource(R.drawable.account_icon_unfocus);
+                    ll_username.setBackground(getDrawable(R.drawable.login_et_border_unfocus));
+                    iv_username.setImageResource(R.drawable.username_icon_unfocus);
                 }
                 break;
             case R.id.et_pw:
@@ -214,27 +231,47 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     //请求数据后台验证-Volley框架
     private void login() {
         queue = Volley.newRequestQueue(LoginActivity.this);
-        String url = "http://www.cn901.net:8111/AppServer/ajax/userManage_login.do?" + "userName=" + account + "&passWord=" + password;
-        StringRequest request = new StringRequest(url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject json = JsonUtil.getJsonObjectFromString(response);
-                    Toast.makeText(LoginActivity.this, json.getString("message"), Toast.LENGTH_SHORT).show();
-                    Boolean success = json.getBoolean("success");
-                    if(success){
-                        //登录成功跳转
-                        startActivity(new Intent(LoginActivity.this, MainPagerActivity.class));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+        String url = Constant.API + Constant.LOGIN + "?userName=" + username + "&passWord=" + password;
+        StringRequest request = new StringRequest(url, response -> {
+            try {
+                JSONObject json = JsonUtil.getJsonObjectFromString(response);
+                Toast.makeText(LoginActivity.this, json.getString("message"), Toast.LENGTH_SHORT).show();
+                Boolean success = json.getBoolean("success");
+                JSONObject obj = json.getJSONObject("data");
+                //拿到第一个key值
+                String userType = obj.keys().next();
+
+                if(userType.equals("STUDENT")){
+                    //学生
+
+                }else if(userType.equals("COMMON_TEACHER")){
+                    //普通教师
+
+                }else if(userType.equals("ADMIN_TEACHER")){
+                    //管理员教师
+
                 }
+                if(success){
+                    //记住密码
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString("username", username);
+                    editor.putString("password", password);
+                    editor.commit();
+
+                    Intent intent = new Intent(this, MainPagerActivity.class);
+                    intent.putExtra("username", username);
+                    //两个一起用
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    //登录成功跳转
+                    startActivity(intent);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, "onErrorResponse: Volley请求失败：" + error);
-            }
+        }, error -> {
+            Log.d(TAG, "onErrorResponse: Volley请求失败：" + error);
+            Toast.makeText(this, "登录失败", Toast.LENGTH_SHORT).show();
         });
         queue.add(request);
     }

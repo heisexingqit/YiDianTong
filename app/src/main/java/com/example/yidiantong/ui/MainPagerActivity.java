@@ -5,10 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.yidiantong.View.NoScrollViewPager;
 import com.example.yidiantong.R;
@@ -19,7 +21,7 @@ import java.util.List;
 
 public class MainPagerActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String TAG = "StudyListMainActivity";
+    private static final String TAG = "MainPagerActivity";
     private LinearLayout ll_bottom_home;
     private int id_bottom_onclick = 0; //标定选择的
     private int[] iv_bottom_tab_focus = {R.drawable.bottom_tab_home_focus, R.drawable.bottom_tab_study_focus, R.drawable.bottom_tab_course_focus, R.drawable.bottom_tab_book_focus, R.drawable.bottom_tab_mine_focus};
@@ -28,6 +30,8 @@ public class MainPagerActivity extends AppCompatActivity implements View.OnClick
     private List<TextView> tv_bottom_tab = new ArrayList<>();
     private NoScrollViewPager vp_main;
 
+    //返回拦截
+    private long firstTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +78,6 @@ public class MainPagerActivity extends AppCompatActivity implements View.OnClick
         MainPagerAdapter adapter = new MainPagerAdapter(getSupportFragmentManager());
         vp_main.setAdapter(adapter);
         vp_main.setCurrentItem(0);
-
     }
 
     @Override
@@ -117,7 +120,7 @@ public class MainPagerActivity extends AppCompatActivity implements View.OnClick
     private void SwitchTabById(int id) {
         //撤销上个焦点
         iv_bottom_tab.get(id_bottom_onclick).setImageResource(iv_bottom_tab_unfocus[id_bottom_onclick]);
-        tv_bottom_tab.get(id_bottom_onclick).setTextColor(getResources().getColor(R.color.tabbar_text));
+        tv_bottom_tab.get(id_bottom_onclick).setTextColor(getResources().getColor(R.color.tabbar_text_unselect));
 
         //获取这个焦点
         iv_bottom_tab.get(id).setImageResource(iv_bottom_tab_focus[id]);
@@ -125,5 +128,15 @@ public class MainPagerActivity extends AppCompatActivity implements View.OnClick
         id_bottom_onclick = id;
     }
 
+    @Override
+    public void onBackPressed() {
+        long secondTime = System.currentTimeMillis();
+        if (secondTime - firstTime > 2000) {
+            Toast.makeText(MainPagerActivity.this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+            firstTime = secondTime;
+        } else {
+            finish();
+        }
+    }
 
 }

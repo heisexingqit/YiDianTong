@@ -34,7 +34,7 @@
 
             <!--用户名输入栏-->
             <LinearLayout
-                android:id="@+id/ll_account"
+                android:id="@+id/ll_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/login_et_border_unfocus"
@@ -42,15 +42,15 @@
                 android:padding="10dp">
 
                 <ImageView
-                    android:id="@+id/iv_account"
+                    android:id="@+id/iv_username"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:src="@drawable/account_icon_unfocus" />
+                    android:src="@drawable/username_icon_unfocus" />
 
                 <EditText
-                    android:id="@+id/et_account"
+                    android:id="@+id/et_username"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

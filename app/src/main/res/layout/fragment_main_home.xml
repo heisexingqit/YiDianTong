@@ -9,6 +9,7 @@
     <include layout="@layout/bar_top_search" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

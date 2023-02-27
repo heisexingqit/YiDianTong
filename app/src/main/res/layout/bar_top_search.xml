@@ -6,14 +6,15 @@
     <!-- 顶栏  -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="55dp"
         android:background="#FF67C5CB"
         android:focusable="true"
         android:focusableInTouchMode="true">
         <!--左部-->
         <com.example.yidiantong.View.ClickableImageView
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
+            android:layout_width="58dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:adjustViewBounds="true"
             android:clickable="true"
             android:focusable="true"
@@ -25,10 +26,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="5dp"
+            android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="#EFEFF4">
 
@@ -70,13 +68,15 @@
         <!--右部-->
         <ImageView
             android:id="@+id/iv_search_select"
-            android:layout_width="60dp"
-            android:layout_height="50dp"
+            android:layout_width="58dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="2dp"
             android:adjustViewBounds="true"
             android:clickable="true"
             android:focusable="true"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
             android:src="@drawable/search_select" />
 
     </LinearLayout>

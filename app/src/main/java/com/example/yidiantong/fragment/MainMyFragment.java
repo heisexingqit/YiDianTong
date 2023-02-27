@@ -1,5 +1,6 @@
 package com.example.yidiantong.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -13,6 +14,8 @@ import android.widget.Toast;
 
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.PswDialog;
+import com.example.yidiantong.ui.LoginActivity;
+import com.example.yidiantong.ui.MainPagerActivity;
 
 public class MainMyFragment extends Fragment implements View.OnClickListener {
 
@@ -100,7 +103,12 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
 
                 break;
             case R.id.fbtn_exit:
-
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                //两个一起用
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                //登录成功跳转
+                startActivity(intent);
                 break;
 
             case R.id.fiv_old_eye:

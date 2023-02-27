@@ -51,6 +51,7 @@
     <string name="micro_class">微课</string>
     <string name="notice">通知</string>
     <string name="announcement">公告</string>
+    <string name="live_news">直播课消息</string>
     <!--wen-->
 
 </resources>

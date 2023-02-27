@@ -7,7 +7,8 @@
     android:paddingLeft="10dp"
     android:paddingTop="5dp"
     android:paddingRight="10dp"
-    android:paddingBottom="10dp">
+    android:paddingBottom="10dp"
+    android:background="@color/white">
 
     <!--上大块-->
     <LinearLayout
@@ -30,18 +31,21 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_width="100dp"
+                    android:id="@+id/ll_width"
+                    android:layout_width="wrap_content"
                     android:layout_height="28dp"
                     android:gravity="bottom"
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:id="@+id/iv_icon"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:adjustViewBounds="true"
                         android:src="@drawable/homework_icon" />
 
                     <TextView
+                        android:id="@+id/tv_type"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="bottom"
@@ -50,19 +54,20 @@
                         android:textSize="17sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="NEW"
-                        android:textColor="#FF0000"
-                        android:textSize="12sp"
-                        android:textStyle="italic"
-                        android:typeface="serif" />
+                    <ImageView
+                        android:id="@+id/iv_top_icon"
+                        android:layout_gravity="top"
+                        android:adjustViewBounds="true"
+                        android:layout_width="26dp"
+                        android:layout_height="19dp"
+                        android:src="@drawable/new_icon"/>
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/tv_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
                     android:gravity="bottom"
                     android:text="测试拍照布置作业"
                     android:textColor="@color/black"
@@ -72,6 +77,8 @@
 
             <!--下小块，仅组件-->
             <TextView
+                android:layout_marginTop="3dp"
+                android:id="@+id/tv_second_line"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="高中数学    截止时间：2022.08"
@@ -84,7 +91,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tv_live"
+                android:id="@+id/tv_is_live"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#FF6666"
@@ -96,6 +103,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tv_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="2022.08"
@@ -104,10 +112,10 @@
     </LinearLayout>
     <!--下大块-->
     <TextView
+        android:id="@+id/tv_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="初中数学(人教版2013)/七年级上册/有理数/正数和复数/"
         android:textSize="14sp" />
-
 
 </LinearLayout>
