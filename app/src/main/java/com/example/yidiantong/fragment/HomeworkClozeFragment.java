@@ -56,7 +56,7 @@ public class HomeworkClozeFragment extends Fragment implements View.OnClickListe
         TextView tv_question_number = view.findViewById(R.id.tv_question_number);
 
         //顶部题号染色
-        SpannableString spannableString = StringUtil.getStringWithColor("5/5题", "#6CC1E0", 0, 1);
+        SpannableString spannableString = StringUtil.getStringWithColor("6/6题", "#6CC1E0", 0, 1);
         tv_question_number.setText(spannableString);
 
         ImageView iv_pager_last = view.findViewById(R.id.iv_page_last);

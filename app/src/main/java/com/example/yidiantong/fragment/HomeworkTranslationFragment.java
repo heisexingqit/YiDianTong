@@ -47,7 +47,7 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
         View view = inflater.inflate(R.layout.fragment_homework_translation, container, false);
         TextView tv_question_number = view.findViewById(R.id.tv_question_number);
 
-        SpannableString spannableString = StringUtil.getStringWithColor("3/5题", "#6CC1E0", 0, 1);
+        SpannableString spannableString = StringUtil.getStringWithColor("4/6题", "#6CC1E0", 0, 1);
         tv_question_number.setText(spannableString);
 
         ImageView iv_pager_last = view.findViewById(R.id.iv_page_last);

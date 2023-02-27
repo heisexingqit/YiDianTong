@@ -18,6 +18,10 @@
     <string name="f_hint_new2">请确认新密码</string>
     <string name="f_cancel">取 消</string>
     <string name="f_confirm">确认修改</string>
+    <string name="f_danxuan">单项选择题</string>
+    <string name="f_panduan">判断题</string>
+    <string name="f_duoxuan">多项选择题</string>
+
 
     <!--wen-->
     <string name="content">目录</string>
@@ -54,4 +58,5 @@
     <string name="live_news">直播课消息</string>
     <!--wen-->
 
+    >>>>>>> ef11ef10f72b45bb468723992d0ed5fa80f07719
 </resources>

@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.yidiantong.fragment.HomeworkClozeFragment;
+import com.example.yidiantong.fragment.HomeworkJudgeFragment;
 import com.example.yidiantong.fragment.HomeworkMultipleFragment;
 import com.example.yidiantong.fragment.HomeworkReadingFragment;
 import com.example.yidiantong.fragment.HomeworkSingleFragment;
@@ -26,10 +27,12 @@ public class HomeworkPagerAdapter extends FragmentPagerAdapter {
         }else if(position == 1){
             return HomeworkMultipleFragment.newInstance();
         }else if(position == 2){
-            return HomeworkTranslationFragment.newInstance();
+            return HomeworkJudgeFragment.newInstance();
         }else if(position == 3){
-            return HomeworkReadingFragment.newInstance();
+            return HomeworkTranslationFragment.newInstance();
         }else if(position == 4){
+            return HomeworkReadingFragment.newInstance();
+        }else if(position == 5){
             return HomeworkClozeFragment.newInstance();
         }else{
             return null;
@@ -38,6 +41,6 @@ public class HomeworkPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 5;
+        return 6;
     }
 }

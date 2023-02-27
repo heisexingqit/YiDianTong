@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -30,7 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:text="@string/f_duoxuan"
+                android:text="@string/f_panduan"
                 android:textSize="13sp" />
         </LinearLayout>
 
@@ -45,7 +44,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="多选题"
+                android:text="判断题"
                 android:textSize="13sp" />
         </LinearLayout>
 
@@ -73,44 +72,25 @@
 
 
                 <com.example.yidiantong.View.ClickableImageView
-                    android:id="@+id/iv_a"
+                    android:id="@+id/iv_r"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:adjustViewBounds="true"
                     android:clickable="true"
                     android:focusable="true"
-                    android:src="@drawable/a_unselect" />
+                    android:src="@drawable/right_unselect" />
 
                 <com.example.yidiantong.View.ClickableImageView
-                    android:id="@+id/iv_b"
+                    android:id="@+id/iv_e"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:adjustViewBounds="true"
                     android:clickable="true"
                     android:focusable="true"
-                    android:src="@drawable/b_unselect" />
+                    android:src="@drawable/error_unselect" />
 
-                <com.example.yidiantong.View.ClickableImageView
-                    android:id="@+id/iv_c"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:adjustViewBounds="true"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:src="@drawable/c_unselect" />
-
-                <com.example.yidiantong.View.ClickableImageView
-                    android:id="@+id/iv_d"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:adjustViewBounds="true"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:src="@drawable/d_unselect" />
             </LinearLayout>
 
         </RelativeLayout>

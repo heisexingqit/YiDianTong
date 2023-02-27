@@ -41,7 +41,6 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         //获取视图View
         View view = inflater.inflate(R.layout.fragment_main_my, container, false);
 
@@ -111,9 +110,6 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                 startActivity(intent);
                 break;
 
-            case R.id.fiv_old_eye:
-
-                break;
         }
     }
 }
