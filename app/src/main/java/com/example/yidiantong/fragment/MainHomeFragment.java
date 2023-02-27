@@ -95,7 +95,6 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
         //获取登录传递的参数
         username =  getActivity().getIntent().getStringExtra("username");
 
-
         //设置RecyclerViewAdapter
         adapter = new HomeRecyclerAdapter(getContext(), itemList);
         adapter.setmItemClickListener((v, pos) -> startActivity(new Intent(getActivity(), HomeworkPagerActivity.class)));
@@ -143,7 +142,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
     }
 
 
-    @Override/**/
+    @Override
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.iv_search_select:
