@@ -24,7 +24,7 @@ import com.example.yidiantong.util.StringUtil;
 
 public class HomeworkClozeFragment extends Fragment implements View.OnClickListener {
 
-    private static final String TAG = "HomeworkReadingFragment";
+    private static final String TAG = "HomeworkClozeFragment";
     int[] answer = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
     int[] unselectIcons = {R.drawable.a_unselect, R.drawable.b_unselect, R.drawable.c_unselect, R.drawable.d_unselect};
     int[] selectIcons = {R.drawable.a_select, R.drawable.b_select, R.drawable.c_select, R.drawable.d_select};
@@ -52,7 +52,7 @@ public class HomeworkClozeFragment extends Fragment implements View.OnClickListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_homework_reading, container, false);
+        View view = inflater.inflate(R.layout.fragment_homework_cloze, container, false);
         TextView tv_question_number = view.findViewById(R.id.tv_question_number);
 
         //顶部题号染色
@@ -221,9 +221,8 @@ public class HomeworkClozeFragment extends Fragment implements View.OnClickListe
 
         showRadioBtnDrawer();
         window = new PopupWindow(view, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, false);
+
         window.showAtLocation(getActivity().getWindow().getDecorView(), Gravity.BOTTOM, 0, 0);
-
-
     }
 
     //关闭抽屉
@@ -247,7 +246,6 @@ public class HomeworkClozeFragment extends Fragment implements View.OnClickListe
 
     //底部题号染色
     private void drawQustionId() {
-
         SpannableString spannableString = StringUtil.getStringWithColor((questionId + 1) + "/10题", "#6CC1E0", 0, 1);
         tv_question_id.setText(spannableString);
     }

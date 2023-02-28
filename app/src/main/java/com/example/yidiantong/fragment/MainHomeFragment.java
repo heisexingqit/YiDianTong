@@ -18,12 +18,16 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.ThemedSpinnerAdapter;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -49,12 +53,19 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 public class MainHomeFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "MainHomeFragment";
     private ImageView iv_search_select;
+    private View contentView = null;
+    private View loadingView = null;
+    private SwipeRefreshLayout swipeRf;
+    private PopupWindow window;
+    private RecyclerView rv_home;
+    private RelativeLayout rl_loading;
 
     //获得实例，并绑定参数
     public static MainHomeFragment newInstance(){
@@ -72,7 +83,12 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
     //列表数据
     private List<HomeItemEntity> itemList = new ArrayList<>();
     HomeRecyclerAdapter adapter;
-    private int isRefresh = 0;
+
+    //搜索
+    private EditText et_search;
+    private String searchStr = "";
+
+
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
@@ -81,7 +97,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_main_home, container, false);
 
         //获取组件
-        RecyclerView rv_home = view.findViewById(R.id.rv_home);
+        rv_home = view.findViewById(R.id.rv_home);
 
         //RecyclerView两步必要配置
         rv_home.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
@@ -105,16 +121,14 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
         iv_search_select.setOnClickListener(this);
 
         //下拉刷新
-        SwipeRefreshLayout swipeRf = view.findViewById(R.id.swipeRf);
+        swipeRf = view.findViewById(R.id.swipeRf);
         swipeRf.setOnRefreshListener(()->{
             swipeRf.setRefreshing(true);
-            currentPage = 1;
-            isRefresh = 1;
-            loadItems_Net();
+            refreshList();
             swipeRf.setRefreshing(false);
         });
 
-        //下拉加载
+        //上拉加载
         rv_home.setOnScrollListener(new RecyclerView.OnScrollListener() {
             //记录当前可见的底部item序号
             int lastVisibleItem;
@@ -136,23 +150,101 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
             }
         });
 
+        //加载页
+        rl_loading = view.findViewById(R.id.rl_loading);
+
         //请求数据放后面
-        loadItems_Net();
+        //loadItems_Net();
+
+        //搜索信息
+        view.findViewById(R.id.tv_search).setOnClickListener(this);
+        et_search = view.findViewById(R.id.et_search);
+
         return view;
     }
+    //刷新列表
+    private void refreshList() {
+        currentPage = 1;
+        adapter.isRefresh = 1;
+        adapter.isDown = 0;
+        loadItems_Net();
+        rv_home.scrollToPosition(0);
+    }
 
-
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.iv_search_select:
-                View contentView = LayoutInflater.from(getActivity()).inflate(R.layout.menu_search_select, null, false);
-
-                PopupWindow window = new PopupWindow(contentView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
-                window.setTouchable(true);
+                if(contentView == null){
+                    contentView = LayoutInflater.from(getActivity()).inflate(R.layout.menu_search_select, null, false);
+                    //绑定点击事件
+                    contentView.findViewById(R.id.tv_all).setOnClickListener(this);
+                    contentView.findViewById(R.id.tv_1).setOnClickListener(this);
+                    contentView.findViewById(R.id.tv_2).setOnClickListener(this);
+                    contentView.findViewById(R.id.tv_3).setOnClickListener(this);
+                    contentView.findViewById(R.id.tv_4).setOnClickListener(this);
+                    contentView.findViewById(R.id.tv_7).setOnClickListener(this);
+                    window = new PopupWindow(contentView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
+                    window.setTouchable(true);
+                }
                 window.showAsDropDown(iv_search_select, -150, 0);
                 break;
+            case R.id.tv_all:
+                if(!type.equals("all")){
+                    type = "all";
+                    refreshList();
+                }
+                window.dismiss();
+                break;
+            case R.id.tv_1:
+                if(!type.equals("1")) {
+                    type = "1";
+                    refreshList();
+                }
+                window.dismiss();
+                break;
+            case R.id.tv_2:
+                if(!type.equals("2")) {
+                    type = "2";
+                    refreshList();
+                }
+                window.dismiss();
+                break;
+            case R.id.tv_3:
+                if(!type.equals("3")) {
+                    type = "3";
+                    refreshList();
+                }
+                window.dismiss();
+                break;
+            case R.id.tv_4:
+                if(!type.equals("4")) {
+                    type = "4";
+                    refreshList();
+                }
+                window.dismiss();
+                break;
+            case R.id.tv_7:
+                if(!type.equals("7")) {
+                    type = "7";
+                    refreshList();
+                }
+                window.dismiss();
+                break;
+            case R.id.tv_search:
+                if(!searchStr.equals(et_search.getText().toString())){
+                    searchStr = et_search.getText().toString();
+                    refreshList();
+                }
+                break;
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: 111");
     }
 
     private Handler handler = new Handler(Looper.getMainLooper()) {
@@ -161,13 +253,8 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
         public void handleMessage(Message message) {
             super.handleMessage(message);
             if (message.what == 100) {
-                if(isRefresh == 1){
-                    itemList = (List<HomeItemEntity>) message.obj;
-                    isRefresh = 0;
-                }else{
-                    itemList.addAll((List<HomeItemEntity>) message.obj);
-                }
-                adapter.notifyDataSetChanged();
+                adapter.loadData((List<HomeItemEntity>) message.obj);
+                rl_loading.setVisibility(View.GONE);
                 currentPage += 1;
             }
         }
@@ -175,7 +262,10 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
 
     //加载消息条目，包括刷新和加载，通过upDown标识两种状态
     private void loadItems_Net() {
-        String mRequestUrl = Constant.API + Constant.NEW_ITEM + "?currentPage=" + currentPage + "&userId=" + username + "&resourceType=" + type;
+        if(adapter.isRefresh == 1){
+            rl_loading.setVisibility(View.VISIBLE);
+        }
+        String mRequestUrl = Constant.API + Constant.NEW_ITEM + "?currentPage=" + currentPage + "&userId=" + username + "&resourceType=" + type + "&searchStr=" + searchStr;
         StringRequest request = new StringRequest(mRequestUrl, response -> {
 
             try {
@@ -184,7 +274,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                 String itemString = json.getString("data");
 
                 Gson gson = new Gson();
-                //使用Gson框架转换电影列表
+                //使用Goson框架转换Json字符串为列表
                 List<HomeItemEntity> moreList = gson.fromJson(itemString, new TypeToken<List<HomeItemEntity>>() {}.getType());
 
                 //封装消息，传递给主线程
@@ -202,14 +292,29 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                 e.printStackTrace();
             }
 
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(MainHomeFragment.this.getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
-                adapter.fail();
-            }
+        }, error -> {
+            Toast.makeText(MainHomeFragment.this.getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
+            adapter.fail();
         });
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         queue.add(request);
+    }
+
+    //慢加载
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            if (isResumed()){
+                refreshList();
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getUserVisibleHint()){
+            refreshList();
+        }
     }
 }

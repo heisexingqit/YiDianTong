@@ -206,9 +206,8 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
 
         showRadioBtnDrawer();
         window = new PopupWindow(view, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, false);
+
         window.showAtLocation(getActivity().getWindow().getDecorView(), Gravity.BOTTOM, 0, 0);
-
-
     }
 
     //关闭抽屉

@@ -77,12 +77,12 @@
 
             <!--下小块，仅组件-->
             <TextView
-                android:layout_marginTop="3dp"
                 android:id="@+id/tv_second_line"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
                 android:text="高中数学    截止时间：2022.08"
-                android:textSize="14sp" />
+                android:textSize="15sp" />
         </LinearLayout>
         <!--右中块-->
         <LinearLayout

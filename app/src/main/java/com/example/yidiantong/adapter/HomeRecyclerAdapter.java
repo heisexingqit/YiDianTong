@@ -32,7 +32,9 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private MyItemClickListener mItemClickListener;
 
     //item类型，数据
-    private final List<HomeItemEntity> itemList;
+    private List<HomeItemEntity> itemList;
+
+    public int isRefresh = 0;
 
     //是否到底
     public int isDown = 0;
@@ -94,6 +96,19 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public int getItemCount() {
         return itemList.size() + 1;
+    }
+
+
+    public void loadData(List<HomeItemEntity> moreList) {
+        if (this.isRefresh == 1) {
+            this.itemList.clear();
+            this.itemList = moreList;
+            this.isRefresh = 0;
+        } else {
+            this.itemList.addAll(moreList);
+        }
+        this.notifyDataSetChanged();
+
     }
 
     //ItemHolder类
@@ -163,7 +178,12 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             //设置时间
             tv_date.setText(item.getTime());
             //设置第二行
-            tv_second_line.setText(item.getCourseName()+item.getTimeStop());
+            String second_line = item.getCourseName()+item.getTimeStop();
+            if(second_line.length() > 27){
+                second_line = second_line.substring(0,27) + "...";
+            }
+            tv_second_line.setText(second_line);
+
             //默认隐藏直播标志
             tv_is_live.setVisibility(View.INVISIBLE);
             //学习内容状态
@@ -191,9 +211,7 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     break;
             }
 
-
             //ViewGroup.LayoutParams params_pen = iv_top_icon.getLayoutParams();
-
 
             //0：直播课，1：作业，未批改，2：作业，已批改，3：导学案，未看，4：导学案，已看
             /*switch (type[pos]){
@@ -301,10 +319,10 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         public void update() {
             if (isDown == 0) {
                 pbViewLoadTip.setVisibility(View.VISIBLE);
-                tvViewLoadTip.setText("加载更多..");
+                tvViewLoadTip.setText("正在加载更多数据...");
             } else if (isDown == 1) {
                 pbViewLoadTip.setVisibility(View.GONE);
-                tvViewLoadTip.setText("到底了");
+                tvViewLoadTip.setText("没有更多数据了");
             } else {
                 pbViewLoadTip.setVisibility(View.GONE);
                 tvViewLoadTip.setText("");
@@ -313,7 +331,7 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         public void fail() {
             pbViewLoadTip.setVisibility(View.GONE);
-            tvViewLoadTip.setText("加载失败");
+            tvViewLoadTip.setText("数据加载失败");
         }
     }
 

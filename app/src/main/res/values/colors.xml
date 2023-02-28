@@ -12,6 +12,7 @@
     <!--wen-->
     <color name="main_bg">#FF6CC1E0</color>
     <color name="main_bg_btn_press">#FF4e9ac0</color>
+    <color name="main_blue">#59b9e0</color>
     <color name="tabbar_text_unselect">#FF828282</color>
     <color name="search_select_item_press">#FFDEE2EB</color>
     <color name="old_status_bar_bg">#757575</color>

@@ -57,27 +57,5 @@
             android:padding="10dp"
             android:text="@string/micro_class"
             android:textColor="@color/gray_text" />
-
-        <TextView
-            android:id="@+id/tv_3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/search_select_item_bg"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="10dp"
-            android:text="@string/notice"
-            android:textColor="@color/gray_text" />
-
-        <TextView
-            android:id="@+id/tv_4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/search_select_item_bg"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="10dp"
-            android:text="@string/announcement"
-            android:textColor="@color/gray_text" />
     </LinearLayout>
 </LinearLayout>

@@ -49,6 +49,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private RequestQueue queue;
 
     private SharedPreferences preferences;
+    private LinearLayout ll_loading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +97,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if(pw != null){
             et_pw.setText(pw);
         }
+
+        //加载页
+        ll_loading = findViewById(R.id.ll_loading);
+        ll_loading.setVisibility(View.GONE);
 
     }
 
@@ -230,26 +235,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     //请求数据后台验证-Volley框架
     private void login() {
+        ll_loading.setVisibility(View.VISIBLE);
         queue = Volley.newRequestQueue(LoginActivity.this);
         String url = Constant.API + Constant.LOGIN + "?userName=" + username + "&passWord=" + password;
         StringRequest request = new StringRequest(url, response -> {
             try {
                 JSONObject json = JsonUtil.getJsonObjectFromString(response);
                 Toast.makeText(LoginActivity.this, json.getString("message"), Toast.LENGTH_SHORT).show();
-                Boolean success = json.getBoolean("success");
+                boolean success = json.getBoolean("success");
                 JSONObject obj = json.getJSONObject("data");
                 //拿到第一个key值
                 String userType = obj.keys().next();
 
-                if(userType.equals("STUDENT")){
-                    //学生
+                switch (userType) {
+                    case "STUDENT":
+                        //学生
 
-                }else if(userType.equals("COMMON_TEACHER")){
-                    //普通教师
+                        break;
+                    case "COMMON_TEACHER":
+                        //普通教师
 
-                }else if(userType.equals("ADMIN_TEACHER")){
-                    //管理员教师
+                        break;
+                    case "ADMIN_TEACHER":
+                        //管理员教师
 
+                        break;
                 }
                 if(success){
                     //记住密码
