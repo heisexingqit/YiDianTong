@@ -101,7 +101,15 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
 
         //设置RecyclerViewAdapter
         adapter = new HomeRecyclerAdapter(getContext(), itemList);
-        adapter.setmItemClickListener((v, pos) -> startActivity(new Intent(getActivity(), HomeworkPagerActivity.class)));
+        adapter.setmItemClickListener((v, pos) -> {
+            switch (adapter.itemList.get(pos).getType()){
+                case "作业":
+                    Intent intent = new Intent(getActivity(), HomeworkPagerActivity.class);
+                    intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
+                    startActivity(intent);
+                    break;
+            }
+        });
         rv_study.setAdapter(adapter);
 
         //弹出搜索栏菜单

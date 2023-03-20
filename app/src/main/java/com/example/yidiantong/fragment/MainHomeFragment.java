@@ -112,6 +112,8 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
 
         //设置RecyclerViewAdapter
         adapter = new HomeRecyclerAdapter(getContext(), new ArrayList<>());
+
+        //设置item点击事件
         adapter.setmItemClickListener((v, pos) -> {
             switch (adapter.itemList.get(pos).getType()){
                 case "作业":
@@ -120,8 +122,6 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                     startActivity(intent);
                 break;
             }
-
-
         });
         rv_home.setAdapter(adapter);
 

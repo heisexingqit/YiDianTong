@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
@@ -65,6 +67,8 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
         HomeworkPagerAdapter adapter = new HomeworkPagerAdapter(getSupportFragmentManager());
         pagerCount = adapter.getCount();
         vp_study.setAdapter(adapter);
+
+        //滑动监听器
         vp_study.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -90,8 +94,9 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
 
         //获取Intent参数
         learnPlanId = getIntent().getStringExtra("learnPlanId");
-    }
 
+        loadItems_Net();
+    }
 
     @Override
     public void pageLast() {
@@ -136,10 +141,23 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
         }
     }
 
-    //加载消息条目，包括刷新和加载，通过upDown标识两种状态
+
+    private Handler handler = new Handler(Looper.getMainLooper()) {
+        @SuppressLint("NotifyDataSetChanged")
+        @Override
+        public void handleMessage(Message message) {
+            super.handleMessage(message);
+            if (message.what == 100) {
+
+            }
+        }
+    };
+
+    //加载作业条目，进行ViewPager渲染
     private void loadItems_Net() {
 
         String mRequestUrl = Constant.API + Constant.HOMEWORK_ITEM + "?learnPlanId=" + learnPlanId;
+
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtil.getJsonObjectFromString(response);
@@ -148,19 +166,19 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
 
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
-                List<HomeworkEntity> moreList = gson.fromJson(itemString, new TypeToken<List<HomeworkEntity>>() {}.getType());
-                Log.d(TAG, "loadItems_Net: " + moreList);
-                ////封装消息，传递给主线程
-                //Message message = Message.obtain();
-                //
-                //message.obj = moreList;
-                //// 发送消息给主线程
-                //if(moreList.size() < 12){
-                //    adapter.isDown = 1;
-                //}
-                ////标识线程
-                //message.what = 100;
-                //handler.sendMessage(message);
+                List<HomeworkEntity> itemList = gson.fromJson(itemString, new TypeToken<List<HomeworkEntity>>() {}.getType());
+                Log.d(TAG, "loadItems_Net: " + itemList);
+                //封装消息，传递给主线程
+                Message message = Message.obtain();
+
+                message.obj = itemList;
+                // 发送消息给主线程
+//                if(moreList.size() < 12){
+//                    adapter.isDown = 1;
+//                }
+                //标识线程
+                message.what = 100;
+                handler.sendMessage(message);
             }catch (JSONException e) {
                 e.printStackTrace();
             }

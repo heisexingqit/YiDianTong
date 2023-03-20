@@ -1,6 +1,8 @@
 package com.example.yidiantong.bean;
 
-public class HomeworkEntity {
+import java.io.Serializable;
+
+public class HomeworkEntity implements Serializable {
     private String questionContent;
     private String questionTypeName;
     private String questionChoiceList;

@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
+import com.example.yidiantong.bean.HomeworkEntity;
 import com.example.yidiantong.util.PageingInterface;
 import com.example.yidiantong.util.StringUtil;
 
@@ -28,9 +29,14 @@ public class HomeworkSingleFragment extends Fragment implements View.OnClickList
     int[] answer = {-1, -1, -1, -1, -1};
     int questionId = 0;
 
-    public static HomeworkSingleFragment newInstance() {
+
+    public static HomeworkSingleFragment newInstance(HomeworkEntity homeworkEntity, int position, int size) {
+
         HomeworkSingleFragment fragment = new HomeworkSingleFragment();
         Bundle args = new Bundle();
+        args.putSerializable("homeworkEntity", homeworkEntity);
+        args.putInt("position", position);
+        args.putInt("size", size);
         fragment.setArguments(args);
         return fragment;
     }
@@ -48,7 +54,11 @@ public class HomeworkSingleFragment extends Fragment implements View.OnClickList
         View view = inflater.inflate(R.layout.fragment_homework_single, container, false);
         TextView tv_question_number = view.findViewById(R.id.tv_question_number);
 
+        //取出携带参数
+
+
         //顶部题号染色
+
         SpannableString spannableString = StringUtil.getStringWithColor("1/6题", "#6CC1E0", 0, 1);
         tv_question_number.setText(spannableString);
 

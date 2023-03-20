@@ -8,6 +8,6 @@ public class Constant {
     //获取最新信息
     public static final String NEW_ITEM = "/AppServer/ajax/studentApp_getStudentPlan.do";
     //获取作业题信息
-    public static final String HOMEWORK_ITEM = "/AppServer/ajax/studentApp_getJobDetails.do?";
+    public static final String HOMEWORK_ITEM = "/AppServer/ajax/studentApp_getJobDetails.do";
 
 }
