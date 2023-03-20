@@ -241,12 +241,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         StringRequest request = new StringRequest(url, response -> {
             try {
                 JSONObject json = JsonUtil.getJsonObjectFromString(response);
+                // 及时解除loading效果
+                ll_loading.setVisibility(View.GONE);
                 Toast.makeText(LoginActivity.this, json.getString("message"), Toast.LENGTH_SHORT).show();
                 boolean success = json.getBoolean("success");
                 JSONObject obj = json.getJSONObject("data");
                 //拿到第一个key值
                 String userType = obj.keys().next();
-
                 switch (userType) {
                     case "STUDENT":
                         //学生
@@ -280,9 +281,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 e.printStackTrace();
             }
         }, error -> {
+            // 及时解除loading效果
+            ll_loading.setVisibility(View.GONE);
             Log.d(TAG, "onErrorResponse: Volley请求失败：" + error);
             Toast.makeText(this, "登录失败", Toast.LENGTH_SHORT).show();
         });
+
         queue.add(request);
     }
 }

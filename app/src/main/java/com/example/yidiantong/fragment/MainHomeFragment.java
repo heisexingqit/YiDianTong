@@ -61,7 +61,6 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "MainHomeFragment";
     private ImageView iv_search_select;
     private View contentView = null;
-    private View loadingView = null;
     private SwipeRefreshLayout swipeRf;
     private PopupWindow window;
     private RecyclerView rv_home;
@@ -80,8 +79,8 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
     private String username;
     private String type = "all";
 
-    //列表数据
-    private List<HomeItemEntity> itemList = new ArrayList<>();
+    //列表数据 =》 统一整合到了RecyclerAdapter中，设置为public变量，内部维护
+    //private List<HomeItemEntity> itemList = new ArrayList<>();
     HomeRecyclerAdapter adapter;
 
     //搜索
@@ -112,8 +111,18 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
         username =  getActivity().getIntent().getStringExtra("username");
 
         //设置RecyclerViewAdapter
-        adapter = new HomeRecyclerAdapter(getContext(), itemList);
-        adapter.setmItemClickListener((v, pos) -> startActivity(new Intent(getActivity(), HomeworkPagerActivity.class)));
+        adapter = new HomeRecyclerAdapter(getContext(), new ArrayList<>());
+        adapter.setmItemClickListener((v, pos) -> {
+            switch (adapter.itemList.get(pos).getType()){
+                case "作业":
+                    Intent intent = new Intent(getActivity(), HomeworkPagerActivity.class);
+                    intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
+                    startActivity(intent);
+                break;
+            }
+
+
+        });
         rv_home.setAdapter(adapter);
 
         //弹出搜索栏菜单
@@ -137,7 +146,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
 
-                if(newState == recyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 >= adapter.getItemCount() && adapter.isDown == 0){
+                if(newState == RecyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 >= adapter.getItemCount() && adapter.isDown == 0){
                     loadItems_Net();
                 }
             }
@@ -146,6 +155,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
+                assert lm != null;
                 lastVisibleItem = lm.findLastVisibleItemPosition();
             }
         });
@@ -153,7 +163,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
         //加载页
         rl_loading = view.findViewById(R.id.rl_loading);
 
-        //请求数据放后面
+        //慢加载，请求数据放后面
         //loadItems_Net();
 
         //搜索信息
@@ -171,7 +181,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
         rv_home.scrollToPosition(0);
     }
 
-    @SuppressLint("NonConstantResourceId")
+    @SuppressLint({"NonConstantResourceId", "InflateParams"})
     @Override
     public void onClick(View view) {
         switch (view.getId()){

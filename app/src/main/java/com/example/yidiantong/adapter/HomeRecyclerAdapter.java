@@ -32,7 +32,7 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private MyItemClickListener mItemClickListener;
 
     //item类型，数据
-    private List<HomeItemEntity> itemList;
+    public List<HomeItemEntity> itemList;
 
     public int isRefresh = 0;
 
@@ -70,10 +70,9 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((ItemViewHolder)holder).update(position);
 
             //绑定事件
-            if(itemList.get(position).getType().equals("作业")){
-                //点击事件
-                holder.itemView.setOnClickListener(v-> mItemClickListener.onItemClick(holder.itemView, position));
-            }
+
+            //item点击事件
+            holder.itemView.setOnClickListener(v-> mItemClickListener.onItemClick(holder.itemView, position));
         }else{
             ((FootViewHolder) holder).update();
         }
@@ -108,7 +107,6 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             this.itemList.addAll(moreList);
         }
         this.notifyDataSetChanged();
-
     }
 
     //ItemHolder类

@@ -8,7 +8,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Message;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,10 +19,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.adapter.HomeworkPagerAdapter;
+import com.example.yidiantong.bean.HomeItemEntity;
+import com.example.yidiantong.bean.HomeworkEntity;
+import com.example.yidiantong.fragment.MainHomeFragment;
+import com.example.yidiantong.util.Constant;
+import com.example.yidiantong.util.JsonUtil;
 import com.example.yidiantong.util.PageingInterface;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +48,9 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
     private ViewPager vp_study;
     private int currentItem = 0;
     private int pagerCount;
+
+    //接口参数
+    private String learnPlanId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +89,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
         });
 
         //获取Intent参数
-        //int userId = getIntent().getIntExtra("userId", -1);
-        //Log.d(TAG, "onCreate: " + userId);
+        learnPlanId = getIntent().getStringExtra("learnPlanId");
     }
 
 
@@ -117,5 +134,41 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
             currentItem += 1;
             vp_study.setCurrentItem(currentItem);
         }
+    }
+
+    //加载消息条目，包括刷新和加载，通过upDown标识两种状态
+    private void loadItems_Net() {
+
+        String mRequestUrl = Constant.API + Constant.HOMEWORK_ITEM + "?learnPlanId=" + learnPlanId;
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtil.getJsonObjectFromString(response);
+
+                String itemString = json.getString("data");
+
+                Gson gson = new Gson();
+                //使用Goson框架转换Json字符串为列表
+                List<HomeworkEntity> moreList = gson.fromJson(itemString, new TypeToken<List<HomeworkEntity>>() {}.getType());
+                Log.d(TAG, "loadItems_Net: " + moreList);
+                ////封装消息，传递给主线程
+                //Message message = Message.obtain();
+                //
+                //message.obj = moreList;
+                //// 发送消息给主线程
+                //if(moreList.size() < 12){
+                //    adapter.isDown = 1;
+                //}
+                ////标识线程
+                //message.what = 100;
+                //handler.sendMessage(message);
+            }catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }, error -> {
+            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+        });
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(request);
     }
 }
