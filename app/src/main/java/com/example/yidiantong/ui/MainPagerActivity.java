@@ -38,11 +38,6 @@ public class MainPagerActivity extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_pager);
 
-        //设置状态栏颜色
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        }
-
         // 样式代码 开始------------------------------------------------------------
         //获取组件
         findViewById(R.id.ll_bottom_home).setOnClickListener(this);

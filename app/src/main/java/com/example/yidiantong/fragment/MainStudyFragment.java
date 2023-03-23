@@ -1,6 +1,7 @@
 package com.example.yidiantong.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -15,10 +16,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,8 +29,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.R;
@@ -36,7 +36,7 @@ import com.example.yidiantong.adapter.HomeRecyclerAdapter;
 import com.example.yidiantong.bean.HomeItemEntity;
 import com.example.yidiantong.ui.HomeworkPagerActivity;
 import com.example.yidiantong.util.Constant;
-import com.example.yidiantong.util.JsonUtil;
+import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.MyItemDecoration;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -156,6 +156,29 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
         view.findViewById(R.id.tv_search).setOnClickListener(this);
         et_search = view.findViewById(R.id.et_search);
 
+        //搜索栏优化-小键盘回车搜索
+        view.findViewById(R.id.tv_search).setOnClickListener(this);
+        et_search = view.findViewById(R.id.et_search);
+        et_search.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
+                    //先隐藏键盘
+                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(getActivity().getCurrentFocus()
+                                    .getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+                    //其次再做相应操作
+                    if (!searchStr.equals(et_search.getText().toString())) {
+                        //做相应的操作
+                        searchStr = et_search.getText().toString();
+                        refreshList();
+                    }
+                }
+                return false;
+            }
+        });
+
         return view;
     }
 
@@ -246,7 +269,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
 
             try {
-                JSONObject json = JsonUtil.getJsonObjectFromString(response);
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
                 String itemString = json.getString("data");
 

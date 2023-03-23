@@ -15,6 +15,7 @@
         android:layout_weight="1" />
 
     <!--底部引用布局-->
-    <include layout="@layout/bar_bottom_navigation" />
+    <include
+        layout="@layout/bar_bottom_navigation" />
 
 </LinearLayout>

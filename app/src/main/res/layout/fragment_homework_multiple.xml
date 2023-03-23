@@ -5,8 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".fragment.HomeworkSingleFragment">
 
-    <include layout="@layout/pageing_homework" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -27,6 +25,7 @@
                 android:textSize="13sp" />
 
             <TextView
+                android:id="@+id/tv_question_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
@@ -42,11 +41,11 @@
             android:layout_marginEnd="10dp"
             android:layout_weight="1">
 
-            <TextView
+            <WebView
+                android:id="@+id/wv_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="多选题"
-                android:textSize="13sp" />
+                android:scrollbars="none" />
         </LinearLayout>
 
 
@@ -80,7 +79,7 @@
                     android:adjustViewBounds="true"
                     android:clickable="true"
                     android:focusable="true"
-                    android:src="@drawable/a_unselect" />
+                    android:src="@drawable/a_unselect2" />
 
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_b"
@@ -90,7 +89,7 @@
                     android:adjustViewBounds="true"
                     android:clickable="true"
                     android:focusable="true"
-                    android:src="@drawable/b_unselect" />
+                    android:src="@drawable/b_unselect2" />
 
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_c"
@@ -100,7 +99,7 @@
                     android:adjustViewBounds="true"
                     android:clickable="true"
                     android:focusable="true"
-                    android:src="@drawable/c_unselect" />
+                    android:src="@drawable/c_unselect2" />
 
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_d"
@@ -110,10 +109,10 @@
                     android:adjustViewBounds="true"
                     android:clickable="true"
                     android:focusable="true"
-                    android:src="@drawable/d_unselect" />
+                    android:src="@drawable/d_unselect2" />
             </LinearLayout>
 
         </RelativeLayout>
     </LinearLayout>
-
+    <include layout="@layout/pageing_homework" />
 </RelativeLayout>

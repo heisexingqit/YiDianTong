@@ -58,11 +58,11 @@
             android:layout_marginEnd="10dp"
             android:layout_weight="1">
 
-            <TextView
+            <WebView
+                android:id="@+id/wv_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="完型填空"
-                android:textSize="13sp" />
+                android:scrollbars="none" />
         </LinearLayout>
 
         <com.example.yidiantong.View.ClickableImageView

@@ -1,9 +1,6 @@
 package com.example.yidiantong.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.yidiantong.R;
 import com.example.yidiantong.bean.HomeItemEntity;
-import com.example.yidiantong.ui.HomeworkPagerActivity;
-import com.example.yidiantong.util.Utils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -117,7 +111,8 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private final TextView tv_bottom;
         private final TextView tv_is_live;
         private final TextView tv_title;
-        private final ImageView iv_top_icon;
+        private final ImageView iv_top_icon1;
+        private final ImageView iv_top_icon2;
         private final TextView tv_second_line;
         private final TextView tv_date;
         private final LinearLayout ll_width;
@@ -130,7 +125,8 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             tv_bottom = itemView.findViewById(R.id.tv_bottom);
             tv_is_live = itemView.findViewById(R.id.tv_is_live);
             tv_title = itemView.findViewById(R.id.tv_title);
-            iv_top_icon = itemView.findViewById(R.id.iv_top_icon);
+            iv_top_icon1 = itemView.findViewById(R.id.iv_top_icon1);
+            iv_top_icon2 = itemView.findViewById(R.id.iv_top_icon2);
             tv_second_line = itemView.findViewById(R.id.tv_second_line);
             tv_date = itemView.findViewById(R.id.tv_date);
             ll_width = itemView.findViewById(R.id.ll_width);
@@ -177,9 +173,6 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             tv_date.setText(item.getTime());
             //设置第二行
             String second_line = item.getCourseName()+item.getTimeStop();
-            if(second_line.length() > 27){
-                second_line = second_line.substring(0,27) + "...";
-            }
             tv_second_line.setText(second_line);
 
             //默认隐藏直播标志
@@ -190,22 +183,25 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 case 5:
                     //未读
                     //新的
-                    iv_top_icon.setVisibility(View.VISIBLE);
-                    iv_top_icon.setImageResource(R.drawable.new_icon);
+                    iv_top_icon2.setVisibility(View.GONE);
+                    iv_top_icon1.setVisibility(View.VISIBLE);
+                    iv_top_icon1.setImageResource(R.drawable.new_icon);
                     break;
                 case 2:
                     //已批改
-                    iv_top_icon.setVisibility(View.VISIBLE);
-                    iv_top_icon.setImageResource(R.drawable.red_pencil);
+                    iv_top_icon1.setVisibility(View.GONE);
+                    iv_top_icon2.setVisibility(View.VISIBLE);
+                    iv_top_icon2.setImageResource(R.drawable.red_pencil);
                     break;
                 case 3:
                     //未批改
-                    iv_top_icon.setVisibility(View.VISIBLE);
-                    iv_top_icon.setImageResource(R.drawable.green_pencil);
+                    iv_top_icon1.setVisibility(View.GONE);
+                    iv_top_icon2.setVisibility(View.VISIBLE);
+                    iv_top_icon2.setImageResource(R.drawable.green_pencil);
                     break;
                 case 4:
                     //已读
-                    iv_top_icon.setVisibility(View.INVISIBLE);
+                    iv_top_icon2.setVisibility(View.INVISIBLE);
                     break;
             }
 

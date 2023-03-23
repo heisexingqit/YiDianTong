@@ -20,7 +20,7 @@ import androidx.fragment.app.Fragment;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.util.PageingInterface;
-import com.example.yidiantong.util.StringUtil;
+import com.example.yidiantong.util.StringUtils;
 
 public class HomeworkClozeFragment extends Fragment implements View.OnClickListener {
 
@@ -42,6 +42,7 @@ public class HomeworkClozeFragment extends Fragment implements View.OnClickListe
         return fragment;
     }
 
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -52,11 +53,11 @@ public class HomeworkClozeFragment extends Fragment implements View.OnClickListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_homework_cloze, container, false);
+                View view = inflater.inflate(R.layout.fragment_homework_cloze, container, false);
         TextView tv_question_number = view.findViewById(R.id.tv_question_number);
 
         //顶部题号染色
-        SpannableString spannableString = StringUtil.getStringWithColor("6/6题", "#6CC1E0", 0, 1);
+        SpannableString spannableString = StringUtils.getStringWithColor("6/6题", "#6CC1E0", 0, 1);
         tv_question_number.setText(spannableString);
 
         ImageView iv_pager_last = view.findViewById(R.id.iv_page_last);
@@ -246,7 +247,7 @@ public class HomeworkClozeFragment extends Fragment implements View.OnClickListe
 
     //底部题号染色
     private void drawQustionId() {
-        SpannableString spannableString = StringUtil.getStringWithColor((questionId + 1) + "/10题", "#6CC1E0", 0, 1);
+        SpannableString spannableString = StringUtils.getStringWithColor((questionId + 1) + "/10题", "#6CC1E0", 0, 1);
         tv_question_id.setText(spannableString);
     }
 

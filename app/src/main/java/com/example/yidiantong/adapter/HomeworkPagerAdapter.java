@@ -1,6 +1,8 @@
 package com.example.yidiantong.adapter;
 
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -19,6 +21,8 @@ import java.util.List;
 
 public class HomeworkPagerAdapter extends FragmentPagerAdapter {
 
+    private static final String TAG = "HomeworkPagerAdapter";
+
     private List<HomeworkEntity> itemList = new ArrayList<>();
 
     public HomeworkPagerAdapter(@NonNull FragmentManager fm) {
@@ -27,21 +31,27 @@ public class HomeworkPagerAdapter extends FragmentPagerAdapter {
 
     public void update(List<HomeworkEntity> itemList){
         this.itemList = itemList;
+        this.notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public Fragment getItem(int position) {
         Fragment fragment = null;
-        switch (itemList.get(position).getQuestionTypeName()){
-            case "单项选择题": fragment = HomeworkSingleFragment.newInstance(itemList.get(position), position, itemList.size()) ;
-            break;
-
-            default: ;
+        String questionTypeName = itemList.get(position).getQuestionTypeName();
+        switch (questionTypeName){
+            case "单项选择题":
+                fragment = HomeworkSingleFragment.newInstance(itemList.get(position), position, itemList.size());
+                break;
+            case "多项选择题":
+                fragment = HomeworkMultipleFragment.newInstance(itemList.get(position), position, itemList.size());
+                break;
+            default:
+                fragment = HomeworkTranslationFragment.newInstance(itemList.get(position), position, itemList.size());
+                Log.d(TAG, "getItem: " + questionTypeName);
+                break;
         }
         return fragment;
-
-
 
 //        if(position == 0){
 //            return HomeworkSingleFragment.newInstance();

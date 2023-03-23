@@ -4,8 +4,12 @@
     package="com.example.yidiantong">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -14,25 +18,26 @@
         android:roundIcon="@mipmap/ic_launcher_round_ydt"
         android:supportsRtl="true"
         android:theme="@style/Theme.YiDianTong"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <!-- 测试 -->
+        <activity
+            android:name=".TestActivity"
+            android:exported="true"/>
+
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
-
-        <!--作业-->
+        <!-- 作业 -->
         <activity
             android:name=".ui.HomeworkPagerActivity"
-            android:exported="true">
-        </activity>
-
-        <!--主页-->
+            android:exported="true"/>
+        <!-- 主页 -->
         <activity
             android:name=".ui.MainPagerActivity"
-            android:exported="true">
-
-        </activity>
-
-        <!--登录-->
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan"/>
+        <!-- 登录 -->
         <activity
             android:name=".ui.LoginActivity"
             android:exported="true">
@@ -43,6 +48,16 @@
             </intent-filter>
         </activity>
 
+        <!-- 内容提供者_相机 -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.yidiantong.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

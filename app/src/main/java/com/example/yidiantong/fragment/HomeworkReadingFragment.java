@@ -21,7 +21,7 @@ import android.widget.Toast;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.util.PageingInterface;
-import com.example.yidiantong.util.StringUtil;
+import com.example.yidiantong.util.StringUtils;
 
 
 public class HomeworkReadingFragment extends Fragment implements View.OnClickListener {
@@ -62,7 +62,7 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
         TextView tv_question_number = view.findViewById(R.id.tv_question_number);
 
         //顶部题号染色
-        SpannableString spannableString = StringUtil.getStringWithColor("5/6题", "#6CC1E0", 0, 1);
+        SpannableString spannableString = StringUtils.getStringWithColor("5/6题", "#6CC1E0", 0, 1);
         tv_question_number.setText(spannableString);
 
         ImageView iv_pager_last = view.findViewById(R.id.iv_page_last);
@@ -232,7 +232,7 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
     //底部题号染色
     private void drawQustionId() {
 
-        SpannableString spannableString = StringUtil.getStringWithColor((questionId + 1) + "/5题", "#6CC1E0", 0, 1);
+        SpannableString spannableString = StringUtils.getStringWithColor((questionId + 1) + "/5题", "#6CC1E0", 0, 1);
         tv_question_id.setText(spannableString);
     }
 

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -23,12 +22,10 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.R;
 import com.example.yidiantong.util.Constant;
-import com.example.yidiantong.util.JsonUtil;
+import com.example.yidiantong.util.JsonUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Iterator;
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, View.OnFocusChangeListener {
@@ -56,10 +53,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        //设置状态栏颜色
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        }
         //获取控件
         iv_username = findViewById(R.id.iv_username);
         iv_pw = findViewById(R.id.iv_pw);
@@ -240,7 +233,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String url = Constant.API + Constant.LOGIN + "?userName=" + username + "&passWord=" + password;
         StringRequest request = new StringRequest(url, response -> {
             try {
-                JSONObject json = JsonUtil.getJsonObjectFromString(response);
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 // 及时解除loading效果
                 ll_loading.setVisibility(View.GONE);
                 Toast.makeText(LoginActivity.this, json.getString("message"), Toast.LENGTH_SHORT).show();

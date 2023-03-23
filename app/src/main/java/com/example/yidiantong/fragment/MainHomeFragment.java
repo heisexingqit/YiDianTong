@@ -3,7 +3,6 @@ package com.example.yidiantong.fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Movie;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,42 +17,36 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
-import android.widget.ThemedSpinnerAdapter;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.HomeRecyclerAdapter;
 import com.example.yidiantong.bean.HomeItemEntity;
 import com.example.yidiantong.ui.HomeworkPagerActivity;
-import com.example.yidiantong.ui.LoginActivity;
 import com.example.yidiantong.util.Constant;
-import com.example.yidiantong.util.JsonUtil;
+import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.MyItemDecoration;
-import com.example.yidiantong.util.Utils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 public class MainHomeFragment extends Fragment implements View.OnClickListener {
@@ -119,6 +112,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                 case "作业":
                     Intent intent = new Intent(getActivity(), HomeworkPagerActivity.class);
                     intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
+                    intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
                     startActivity(intent);
                 break;
             }
@@ -166,9 +160,28 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
         //慢加载，请求数据放后面
         //loadItems_Net();
 
-        //搜索信息
+        //搜索栏优化-小键盘回车搜索
         view.findViewById(R.id.tv_search).setOnClickListener(this);
         et_search = view.findViewById(R.id.et_search);
+        et_search.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
+                    //先隐藏键盘
+                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(getActivity().getCurrentFocus()
+                                    .getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+                    //其次再做相应操作
+                    if (!searchStr.equals(et_search.getText().toString())) {
+                        //做相应的操作
+                        searchStr = et_search.getText().toString();
+                        refreshList();
+                    }
+                }
+                return false;
+            }
+        });
 
         return view;
     }
@@ -251,12 +264,6 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart: 111");
-    }
-
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @SuppressLint("NotifyDataSetChanged")
         @Override
@@ -279,7 +286,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
         StringRequest request = new StringRequest(mRequestUrl, response -> {
 
             try {
-                JSONObject json = JsonUtil.getJsonObjectFromString(response);
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
                 String itemString = json.getString("data");
 
