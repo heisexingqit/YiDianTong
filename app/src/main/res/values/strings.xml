@@ -21,6 +21,8 @@
     <string name="f_danxuan">单项选择题</string>
     <string name="f_panduan">判断题</string>
     <string name="f_duoxuan">多项选择题</string>
+    <string name="f_paizhao">拍 照</string>
+    <string name="f_xiangce">从相册中选择</string>
 
 
     <!--wen-->
