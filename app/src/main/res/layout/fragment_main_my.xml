@@ -4,8 +4,7 @@
     xmlns:round="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MyActivity">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/f_ll"
@@ -32,16 +31,15 @@
             android:layout_marginRight="15dp"
             android:background="@drawable/shape_line_jianbian" />
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/fiv_my"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_marginTop="30dp"
             android:layout_marginBottom="30dp"
-            android:gravity="center"
-            app:srcCompat="@mipmap/ic_launcher"
-            round:roundHeight="50dp"
-            round:roundWidth="50dp" />
+            android:layout_gravity="center"
+            android:src="@drawable/image"
+            app:shapeAppearanceOverlay="@style/circleImageStyle" />
 
     </LinearLayout>
 

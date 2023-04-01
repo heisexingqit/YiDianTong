@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="130dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#FFF">
+
+    <TextView
+        android:id="@+id/ftv_take_pic"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:text="@string/f_paizhao"
+        android:textColor="@color/black"
+        android:background="@drawable/my_item_selector"/>
+
+    <View
+        android:layout_width="130dp"
+        android:layout_height="0.5dp"
+        android:background="#EEEEEE"
+        />
+
+    <TextView
+        android:id="@+id/ftv_open_album"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:text="@string/f_xiangce"
+        android:textColor="@color/black"
+        android:background="@drawable/my_item_selector"/>
+
+    <View
+        android:layout_width="130dp"
+        android:layout_height="0.5dp"
+        android:background="#EEEEEE" />
+
+    <TextView
+        android:id="@+id/ftv_cancel"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:text="@string/f_cancel"
+        android:textColor="@color/black"
+        android:background="@drawable/my_item_selector"/>
+
+</LinearLayout>
