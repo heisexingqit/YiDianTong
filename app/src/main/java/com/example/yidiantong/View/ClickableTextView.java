@@ -1,9 +1,7 @@
 package com.example.yidiantong.View;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
-
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,9 +27,9 @@ public class ClickableTextView extends AppCompatTextView {
     }
 
     private void updateView(boolean pressed) {
-        if(pressed){
+        if (pressed) {
             this.setAlpha(0.2f);
-        }else{
+        } else {
             this.setAlpha(1.0f);
         }
     }

@@ -1,19 +1,17 @@
 package com.example.yidiantong.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.yidiantong.View.NoScrollViewPager;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.yidiantong.R;
+import com.example.yidiantong.View.NoScrollViewPager;
 import com.example.yidiantong.adapter.MainPagerAdapter;
 
 import java.util.ArrayList;
@@ -21,7 +19,6 @@ import java.util.List;
 
 public class MainPagerActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String TAG = "MainPagerActivity";
     private LinearLayout ll_bottom_home;
     private int id_bottom_onclick = 0; //标定选择的
     private int[] iv_bottom_tab_focus = {R.drawable.bottom_tab_home_focus, R.drawable.bottom_tab_study_focus, R.drawable.bottom_tab_course_focus, R.drawable.bottom_tab_book_focus, R.drawable.bottom_tab_mine_focus};
@@ -77,33 +74,33 @@ public class MainPagerActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.ll_bottom_home:
-                if(id_bottom_onclick != 0){
+                if (id_bottom_onclick != 0) {
                     SwitchTabById(0);
                     vp_main.setCurrentItem(0, false);
                 }
                 break;
             case R.id.ll_bottom_study:
-                if(id_bottom_onclick != 1){
+                if (id_bottom_onclick != 1) {
                     SwitchTabById(1);
                     vp_main.setCurrentItem(1, false);
                 }
                 break;
             case R.id.ll_bottom_course:
-                if(id_bottom_onclick != 2){
+                if (id_bottom_onclick != 2) {
                     SwitchTabById(2);
                     vp_main.setCurrentItem(2, false);
                 }
                 break;
             case R.id.ll_bottom_book:
-                if(id_bottom_onclick != 3){
+                if (id_bottom_onclick != 3) {
                     SwitchTabById(3);
                     vp_main.setCurrentItem(3, false);
                 }
                 break;
             case R.id.ll_bottom_mine:
-                if(id_bottom_onclick != 4){
+                if (id_bottom_onclick != 4) {
                     SwitchTabById(4);
                     vp_main.setCurrentItem(4, false);
                 }

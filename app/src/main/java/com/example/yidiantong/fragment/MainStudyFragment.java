@@ -4,15 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -27,6 +18,14 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
@@ -58,7 +57,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
     private RelativeLayout rl_loading;
 
     //获得实例，并绑定参数
-    public static MainStudyFragment newInstance(){
+    public static MainStudyFragment newInstance() {
         MainStudyFragment fragment = new MainStudyFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -97,12 +96,12 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
         rv_study.addItemDecoration(divider);
 
         //获取登录传递的参数
-        username =  getActivity().getIntent().getStringExtra("username");
+        username = getActivity().getIntent().getStringExtra("username");
 
         //设置RecyclerViewAdapter
         adapter = new HomeRecyclerAdapter(getContext(), itemList);
         adapter.setmItemClickListener((v, pos) -> {
-            switch (adapter.itemList.get(pos).getType()){
+            switch (adapter.itemList.get(pos).getType()) {
                 case "作业":
                     Intent intent = new Intent(getActivity(), HomeworkPagerActivity.class);
                     intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
@@ -118,7 +117,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
 
         //下拉刷新
         swipeRf = view.findViewById(R.id.swipeRf);
-        swipeRf.setOnRefreshListener(()->{
+        swipeRf.setOnRefreshListener(() -> {
             swipeRf.setRefreshing(true);
             refreshList();
             swipeRf.setRefreshing(false);
@@ -133,7 +132,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
 
-                if(newState == recyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 >= adapter.getItemCount() && adapter.isDown == 0){
+                if (newState == recyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 >= adapter.getItemCount() && adapter.isDown == 0) {
                     loadItems_Net();
                 }
             }
@@ -193,9 +192,9 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.iv_search_select:
-                if(contentView == null){
+                if (contentView == null) {
                     contentView = LayoutInflater.from(getActivity()).inflate(R.layout.menu_search_select2, null, false);
                     //绑定点击事件
                     contentView.findViewById(R.id.tv_all).setOnClickListener(this);
@@ -208,14 +207,14 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
                 window.showAsDropDown(iv_search_select, -150, 0);
                 break;
             case R.id.tv_all:
-                if(!type.equals("9")){
+                if (!type.equals("9")) {
                     type = "9";
                     refreshList();
                 }
                 window.dismiss();
                 break;
             case R.id.tv_1:
-                if(!type.equals("1")){
+                if (!type.equals("1")) {
                     type = "1";
                     refreshList();
                 }
@@ -223,7 +222,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
                 window.dismiss();
                 break;
             case R.id.tv_2:
-                if(!type.equals("2")){
+                if (!type.equals("2")) {
                     type = "2";
                     refreshList();
                 }
@@ -231,7 +230,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
                 window.dismiss();
                 break;
             case R.id.tv_7:
-                if(!type.equals("7")){
+                if (!type.equals("7")) {
                     type = "7";
                     refreshList();
                 }
@@ -239,7 +238,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
                 window.dismiss();
                 break;
             case R.id.tv_search:
-                if(!searchStr.equals(et_search.getText().toString())){
+                if (!searchStr.equals(et_search.getText().toString())) {
                     searchStr = et_search.getText().toString();
                     refreshList();
                 }
@@ -262,7 +261,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
 
     //加载消息条目，包括刷新和加载，通过upDown标识两种状态
     private void loadItems_Net() {
-        if(adapter.isRefresh == 1){
+        if (adapter.isRefresh == 1) {
             rl_loading.setVisibility(View.VISIBLE);
         }
         String mRequestUrl = Constant.API + Constant.NEW_ITEM + "?currentPage=" + currentPage + "&userId=" + username + "&resourceType=" + type + "&searchStr=" + searchStr;
@@ -275,20 +274,21 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
 
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
-                List<HomeItemEntity> moreList = gson.fromJson(itemString, new TypeToken<List<HomeItemEntity>>() {}.getType());
+                List<HomeItemEntity> moreList = gson.fromJson(itemString, new TypeToken<List<HomeItemEntity>>() {
+                }.getType());
 
                 //封装消息，传递给主线程
                 Message message = Message.obtain();
 
                 message.obj = moreList;
                 // 发送消息给主线程
-                if(moreList.size() < 12){
+                if (moreList.size() < 12) {
                     adapter.isDown = 1;
                 }
                 //标识线程
                 message.what = 100;
                 handler.sendMessage(message);
-            }catch (JSONException e) {
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
 
@@ -304,7 +304,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if (isResumed()){
+            if (isResumed()) {
                 refreshList();
             }
         }
@@ -313,7 +313,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onResume() {
         super.onResume();
-        if (getUserVisibleHint()){
+        if (getUserVisibleHint()) {
             refreshList();
         }
     }

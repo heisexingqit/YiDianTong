@@ -2,9 +2,6 @@ package com.example.yidiantong.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +9,11 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.PswDialog;
 import com.example.yidiantong.ui.LoginActivity;
-import com.example.yidiantong.ui.MainPagerActivity;
 
 public class MainMyFragment extends Fragment implements View.OnClickListener {
 
@@ -31,7 +29,7 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
     private Button fbtn_cancel;
     private Button fbtn_confirm;
 
-    public static MainMyFragment newInstance(){
+    public static MainMyFragment newInstance() {
         MainMyFragment fragment = new MainMyFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -80,20 +78,20 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                 // 修改密码弹窗
                 PswDialog builder = new PswDialog(getActivity());
 
-                builder.setCancel("cancel",new PswDialog.IOnCancelListener(){
+                builder.setCancel("cancel", new PswDialog.IOnCancelListener() {
 
                     @Override
                     public void onCancel(PswDialog dialog) {
-                        Toast.makeText(getActivity(),"已取消", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "已取消", Toast.LENGTH_SHORT).show();
                     }
                 });
-                builder.setConfirm("confirm",new PswDialog.IOnConfirmListener(){
+                builder.setConfirm("confirm", new PswDialog.IOnConfirmListener() {
 
                     @Override
                     public void onConfirm(PswDialog dialog) {
                         String old_pw = dialog.old_pw;
                         String new_pw = dialog.new_pw;
-                        Toast.makeText(getActivity(),"修改成功:原密码："+old_pw+" 新密码："+new_pw, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "修改成功:原密码：" + old_pw + " 新密码：" + new_pw, Toast.LENGTH_SHORT).show();
                     }
                 });
                 builder.show();

@@ -18,6 +18,10 @@
     <color name="old_status_bar_bg">#757575</color>
     <color name="gray_text">#424960</color>
     <color name="light_gray">#EAEAEA</color>
+    <color name="blue_btn">#2196f3</color>
+    <color name="blue_btn_press">#1f8de5</color>
+    <color name="transparent">#00000000</color>
+
     <!--wen-->
 
     <color name="f_orange">#FE7144</color>

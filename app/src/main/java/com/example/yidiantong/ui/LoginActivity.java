@@ -29,7 +29,6 @@ import org.json.JSONObject;
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, View.OnFocusChangeListener {
-    private static final String TAG = "LoginActivity";
 
     private int is_pw_show = 0;//0表示隐藏，1表示显示
     private int is_pw_focus = 0;//0表示没有聚焦，1表示聚焦
@@ -84,10 +83,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         preferences = getSharedPreferences("config", Context.MODE_PRIVATE);
         String user = preferences.getString("username", null);
         String pw = preferences.getString("password", null);
-        if(user != null){
+        if (user != null) {
             et_username.setText(user);
         }
-        if(pw != null){
+        if (pw != null) {
             et_pw.setText(pw);
         }
 
@@ -215,7 +214,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     //                httpURLConnection.disconnect();
     //                try {
     //                    String backLogJsonStr = buffer.toString();
-    //                    Log.d(TAG, "run: " + backLogJsonStr);
     //                } catch (Exception e) {
     //                    e.printStackTrace();
     //                }
@@ -239,12 +237,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 Toast.makeText(LoginActivity.this, json.getString("message"), Toast.LENGTH_SHORT).show();
                 boolean success = json.getBoolean("success");
                 JSONObject obj = json.getJSONObject("data");
+
                 //拿到第一个key值
                 String userType = obj.keys().next();
                 switch (userType) {
                     case "STUDENT":
                         //学生
-
+                        Log.d("wen", "userId: " + obj.getJSONObject(userType).getString("userId"));
                         break;
                     case "COMMON_TEACHER":
                         //普通教师
@@ -255,7 +254,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                         break;
                 }
-                if(success){
+                if (success) {
                     //记住密码
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putString("username", username);
@@ -276,7 +275,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }, error -> {
             // 及时解除loading效果
             ll_loading.setVisibility(View.GONE);
-            Log.d(TAG, "onErrorResponse: Volley请求失败：" + error);
             Toast.makeText(this, "登录失败", Toast.LENGTH_SHORT).show();
         });
 

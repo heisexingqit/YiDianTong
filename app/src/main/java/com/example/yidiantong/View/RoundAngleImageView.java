@@ -13,7 +13,6 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.widget.ImageView;
 
 import com.example.yidiantong.R;
 
@@ -46,20 +45,20 @@ public class RoundAngleImageView extends androidx.appcompat.widget.AppCompatImag
 
     private void init(Context context, AttributeSet attrs) {
         this.context = context;
-        if(attrs != null) {
+        if (attrs != null) {
             //Point1
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RoundAngleImageView);
-            roundWidth= a.getDimensionPixelSize(R.styleable.RoundAngleImageView_roundWidth, roundWidth);
-            roundHeight= a.getDimensionPixelSize(R.styleable.RoundAngleImageView_roundHeight, roundHeight);
-            rightUpCorner = a.getBoolean(R.styleable.RoundAngleImageView_rightUpCorner,true);
-            rightDownCorner = a.getBoolean(R.styleable.RoundAngleImageView_rightDownCorner,true);
-            leftUpCorner = a.getBoolean(R.styleable.RoundAngleImageView_leftUpCorner,true);
-            leftDownCorner = a.getBoolean(R.styleable.RoundAngleImageView_leftDownCorner,true);
-        }else {
+            roundWidth = a.getDimensionPixelSize(R.styleable.RoundAngleImageView_roundWidth, roundWidth);
+            roundHeight = a.getDimensionPixelSize(R.styleable.RoundAngleImageView_roundHeight, roundHeight);
+            rightUpCorner = a.getBoolean(R.styleable.RoundAngleImageView_rightUpCorner, true);
+            rightDownCorner = a.getBoolean(R.styleable.RoundAngleImageView_rightDownCorner, true);
+            leftUpCorner = a.getBoolean(R.styleable.RoundAngleImageView_leftUpCorner, true);
+            leftDownCorner = a.getBoolean(R.styleable.RoundAngleImageView_leftDownCorner, true);
+        } else {
             //Point2
             float density = context.getResources().getDisplayMetrics().density;
-            roundWidth = (int) (roundWidth*density);
-            roundHeight = (int) (roundHeight*density);
+            roundWidth = (int) (roundWidth * density);
+            roundHeight = (int) (roundHeight * density);
         }
 
         paint = new Paint();
@@ -81,17 +80,17 @@ public class RoundAngleImageView extends androidx.appcompat.widget.AppCompatImag
             Canvas canvas2 = new Canvas(bitmap);
             //Point5
             super.draw(canvas2);
-            if(leftUpCorner){
+            if (leftUpCorner) {
                 //Point6
                 drawLiftUp(canvas2);
             }
-            if(leftDownCorner){
+            if (leftDownCorner) {
                 drawLiftDown(canvas2);
             }
-            if(rightUpCorner){
+            if (rightUpCorner) {
                 drawRightUp(canvas2);
             }
-            if(rightDownCorner){
+            if (rightDownCorner) {
                 drawRightDown(canvas2);
             }
             //Point7
@@ -120,13 +119,13 @@ public class RoundAngleImageView extends androidx.appcompat.widget.AppCompatImag
 
     private void drawLiftDown(Canvas canvas) {
         Path path = new Path();
-        path.moveTo(0, getHeight()-roundHeight);
+        path.moveTo(0, getHeight() - roundHeight);
         path.lineTo(0, getHeight());
         path.lineTo(roundWidth, getHeight());
         path.arcTo(new RectF(
                         0,
-                        getHeight()-roundHeight*2,
-                        0+roundWidth*2,
+                        getHeight() - roundHeight * 2,
+                        0 + roundWidth * 2,
                         getHeight()),
                 90,
                 90);
@@ -136,12 +135,12 @@ public class RoundAngleImageView extends androidx.appcompat.widget.AppCompatImag
 
     private void drawRightDown(Canvas canvas) {
         Path path = new Path();
-        path.moveTo(getWidth()-roundWidth, getHeight());
+        path.moveTo(getWidth() - roundWidth, getHeight());
         path.lineTo(getWidth(), getHeight());
-        path.lineTo(getWidth(), getHeight()-roundHeight);
+        path.lineTo(getWidth(), getHeight() - roundHeight);
         path.arcTo(new RectF(
-                getWidth()-roundWidth*2,
-                getHeight()-roundHeight*2,
+                getWidth() - roundWidth * 2,
+                getHeight() - roundHeight * 2,
                 getWidth(),
                 getHeight()), 0, 90);
         path.close();
@@ -152,12 +151,12 @@ public class RoundAngleImageView extends androidx.appcompat.widget.AppCompatImag
         Path path = new Path();
         path.moveTo(getWidth(), roundHeight);
         path.lineTo(getWidth(), 0);
-        path.lineTo(getWidth()-roundWidth, 0);
+        path.lineTo(getWidth() - roundWidth, 0);
         path.arcTo(new RectF(
-                        getWidth()-roundWidth*2,
+                        getWidth() - roundWidth * 2,
                         0,
                         getWidth(),
-                        0+roundHeight*2),
+                        0 + roundHeight * 2),
                 -90,
                 90);
         path.close();

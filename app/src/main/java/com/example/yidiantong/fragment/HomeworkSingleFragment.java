@@ -2,11 +2,8 @@ package com.example.yidiantong.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.text.SpannableString;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,32 +11,40 @@ import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.HomeworkEntity;
+import com.example.yidiantong.bean.StuAnswerEntity;
 import com.example.yidiantong.util.PageingInterface;
 import com.example.yidiantong.util.StringUtils;
+import com.example.yidiantong.util.TransmitInterface;
 
 public class HomeworkSingleFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "HomeworkSingleFragment";
 
     private PageingInterface pageing;
+    private TransmitInterface transmit;
 
     int[] unselectIcons = {R.drawable.a_unselect, R.drawable.b_unselect, R.drawable.c_unselect, R.drawable.d_unselect};
     int[] selectIcons = {R.drawable.a_select, R.drawable.b_select, R.drawable.c_select, R.drawable.d_select};
 
     ClickableImageView[] iv_answer = new ClickableImageView[5];
-    int[] answer = {-1, -1, -1, -1, -1};
-    int questionId = 0;
+    int answer = -1;
 
+    //接口需要
+    private HomeworkEntity homeworkEntity;
+    private StuAnswerEntity stuAnswerEntity;
 
-    public static HomeworkSingleFragment newInstance(HomeworkEntity homeworkEntity, int position, int size) {
-
+    public static HomeworkSingleFragment newInstance(HomeworkEntity homeworkEntity, int position, int size, StuAnswerEntity stuAnswerEntity) {
         HomeworkSingleFragment fragment = new HomeworkSingleFragment();
         Bundle args = new Bundle();
         args.putSerializable("homeworkEntity", homeworkEntity);
         args.putInt("position", position);
         args.putInt("size", size);
+        args.putSerializable("stuAnswerEntity", stuAnswerEntity);
         fragment.setArguments(args);
         return fragment;
     }
@@ -49,6 +54,7 @@ public class HomeworkSingleFragment extends Fragment implements View.OnClickList
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         pageing = (PageingInterface) context;
+        transmit = (TransmitInterface) context;
     }
 
     @Override
@@ -59,8 +65,14 @@ public class HomeworkSingleFragment extends Fragment implements View.OnClickList
         Bundle arg = getArguments();
         int position = arg.getInt("position") + 1;
         int size = arg.getInt("size");
-        HomeworkEntity homeworkEntity = (HomeworkEntity)arg.getSerializable("homeworkEntity");
+        homeworkEntity = (HomeworkEntity) arg.getSerializable("homeworkEntity");
+        stuAnswerEntity = (StuAnswerEntity) arg.getSerializable("stuAnswerEntity");
+        Log.d(TAG, "peng: " + homeworkEntity.toString());
 
+        //同步答案
+        if (stuAnswerEntity.getStuAnswer().length() > 0) {
+            answer = stuAnswerEntity.getStuAnswer().charAt(0) - 'A';
+        }
         //获取view
         View view = inflater.inflate(R.layout.fragment_homework_single, container, false);
         TextView tv_question_number = view.findViewById(R.id.tv_question_number);
@@ -103,6 +115,8 @@ public class HomeworkSingleFragment extends Fragment implements View.OnClickList
         iv_c.setOnClickListener(this);
         iv_d.setOnClickListener(this);
 
+        //初始化按钮
+        showRadioBtn();
         return view;
     }
 
@@ -116,35 +130,38 @@ public class HomeworkSingleFragment extends Fragment implements View.OnClickList
                 pageing.pageNext();
                 break;
             case R.id.iv_a:
-                answer[questionId] = 0;
+                answer = 0;
                 showRadioBtn();
+//                uploadAnswer();
                 break;
             case R.id.iv_b:
-                answer[questionId] = 1;
+                answer = 1;
                 showRadioBtn();
+//                uploadAnswer();
                 break;
             case R.id.iv_c:
-                answer[questionId] = 2;
+                answer = 2;
                 showRadioBtn();
+//                uploadAnswer();
                 break;
             case R.id.iv_d:
-                answer[questionId] = 3;
+                answer = 3;
                 showRadioBtn();
+//                uploadAnswer();
                 break;
         }
     }
 
     //展示底部按钮
     private void showRadioBtn() {
+        //同步答案给Activity
+        transmit.setStuAnswer(stuAnswerEntity.getOrder(), String.valueOf((char) (answer + 'A')));
         for (int i = 0; i < 4; ++i) {
-            if (answer[questionId] != i) {
+            if (answer != i) {
                 iv_answer[i].setImageResource(unselectIcons[i]);
             } else {
                 iv_answer[i].setImageResource(selectIcons[i]);
             }
         }
     }
-
-
-
 }

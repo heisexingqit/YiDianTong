@@ -2,16 +2,15 @@ package com.example.yidiantong.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
@@ -71,7 +70,7 @@ public class HomeworkJudgeFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.iv_page_last:
                 pageing.pageLast();
                 break;
@@ -90,11 +89,11 @@ public class HomeworkJudgeFragment extends Fragment implements View.OnClickListe
     }
 
     //展示底部按钮
-    private void showRadioBtn(){
-        for(int i = 0; i < 2; ++i){
-            if(answer[questionId] != i){
+    private void showRadioBtn() {
+        for (int i = 0; i < 2; ++i) {
+            if (answer[questionId] != i) {
                 iv_answer[i].setImageResource(unselectIcons[i]);
-            }else{
+            } else {
                 iv_answer[i].setImageResource(selectIcons[i]);
             }
         }

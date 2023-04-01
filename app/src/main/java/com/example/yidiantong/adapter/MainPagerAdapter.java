@@ -21,17 +21,17 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        if(position == 0){
+        if (position == 0) {
             return MainHomeFragment.newInstance();
-        }else if(position == 1){
+        } else if (position == 1) {
             return MainStudyFragment.newInstance();
-        }else if(position == 2){
+        } else if (position == 2) {
             return MainCourseFragment.newInstance();
-        }else if(position == 3){
+        } else if (position == 3) {
             return MainBookFragment.newInstance();
-        }else if(position == 4){
+        } else if (position == 4) {
             return MainMyFragment.newInstance();
-        }else{
+        } else {
             return null;
         }
     }

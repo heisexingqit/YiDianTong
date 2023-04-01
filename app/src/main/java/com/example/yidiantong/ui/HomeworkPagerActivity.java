@@ -3,29 +3,30 @@ package com.example.yidiantong.ui;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -36,10 +37,12 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.HomeworkPagerAdapter;
 import com.example.yidiantong.adapter.MyArrayAdapter;
 import com.example.yidiantong.bean.HomeworkEntity;
+import com.example.yidiantong.bean.StuAnswerEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.FixedSpeedScroller;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.PageingInterface;
+import com.example.yidiantong.util.TransmitInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -48,14 +51,11 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class HomeworkPagerActivity extends AppCompatActivity implements PageingInterface, View.OnClickListener {
+public class HomeworkPagerActivity extends AppCompatActivity implements PageingInterface, View.OnClickListener, TransmitInterface {
     private static final String TAG = "HomeworkPagerActivity";
 
-    private List<ImageView> iv_bottom_tab = new ArrayList<>();
-    private List<TextView> tv_bottom_tab = new ArrayList<>();
     private ViewPager vp_homework;
     private int currentItem = 0;
     private int pageCount = 0;
@@ -64,20 +64,41 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
     private String learnPlanId;
     private HomeworkPagerAdapter adapter;
 
+    //questionId
+    private String[] questionIds;
+    //题目类型
+    private String[] question_types_array;
+
     //顶栏目录
     private View contentView = null;
     private PopupWindow window;
     private TextView tv_content;
-    private List<String> question_types =  new ArrayList<>();
+    private final List<String> question_types = new ArrayList<>();
+    MyArrayAdapter myArrayAdapter = new MyArrayAdapter(this, question_types);
+    private String username;
 
+    String[] stuAnswer;
+    private String title;
+
+    private ActivityResultLauncher<Intent> mResultLauncher;
+    private Boolean isNew;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homework_pager);
 
+        //获取Intent参数
+        learnPlanId = getIntent().getStringExtra("learnPlanId");
+        TextView tv_title = findViewById(R.id.tv_title);
+        title = getIntent().getStringExtra("title");
+        tv_title.setText(title);
+        username = getIntent().getStringExtra("username");
+        isNew = getIntent().getBooleanExtra("isNew", true);
+
+        //ViewPager适配器设置
         vp_homework = findViewById(R.id.vp_homework);
-        adapter = new HomeworkPagerAdapter(getSupportFragmentManager());
+        adapter = new HomeworkPagerAdapter(getSupportFragmentManager(), learnPlanId, username);
         vp_homework.setAdapter(adapter);
 
         //滑动监听器
@@ -104,10 +125,6 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
             this.finish();
         });
 
-        //获取Intent参数
-        learnPlanId = getIntent().getStringExtra("learnPlanId");
-        TextView tv_title = findViewById(R.id.tv_title);
-        tv_title.setText(getIntent().getStringExtra("title"));
 
         loadItems_Net();
 
@@ -127,6 +144,27 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
         tv_content = findViewById(R.id.tv_content);
         tv_content.setOnClickListener(this);
 
+        //顶栏眼睛
+        findViewById(R.id.iv_eye).setOnClickListener(this);
+
+        //提交页面回调
+        mResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == HomeworkPagerActivity.RESULT_OK) {
+                    Intent intent = result.getData();
+                    int index = intent.getIntExtra("currentItem", 0);
+                    if (index == -1) {
+                        Toast.makeText(HomeworkPagerActivity.this, "提交成功！", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        currentItem = index;
+                        vp_homework.setCurrentItem(currentItem);
+                    }
+
+                }
+            }
+        });
     }
 
     @Override
@@ -156,10 +194,9 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
             builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    Toast.makeText(HomeworkPagerActivity.this, "提交成功！", Toast.LENGTH_SHORT).show();
+                    jumpToSubmitPage();
                 }
             });
-            AlertDialog dialog = builder.create();
             builder.setNegativeButton("取消", null);
             //禁止返回和外部点击
             builder.setCancelable(false);
@@ -171,24 +208,57 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
         }
     }
 
-    private Handler handler = new Handler(Looper.getMainLooper()) {
+    //跳转至提交作业页面
+    private void jumpToSubmitPage() {
+        Intent intent = new Intent(HomeworkPagerActivity.this, HomeworkSubmitActivity.class);
+        intent.putExtra("title", title);
+        intent.putExtra("stuAnswer", stuAnswer);
+        intent.putExtra("learnPlanId", learnPlanId);
+        intent.putExtra("username", username);
+        intent.putExtra("questionIds", questionIds);
+        intent.putExtra("isNew", isNew);
+        intent.putExtra("questionTypes", question_types_array);
+        mResultLauncher.launch(intent);
+    }
+
+    private final Handler handler = new Handler(Looper.getMainLooper()) {
         @RequiresApi(api = Build.VERSION_CODES.N)
         @SuppressLint("NotifyDataSetChanged")
         @Override
         public void handleMessage(Message message) {
             super.handleMessage(message);
             if (message.what == 100) {
-                List<HomeworkEntity> list = (List<HomeworkEntity>)message.obj;
-                adapter.update(list);
+                List<HomeworkEntity> list = (List<HomeworkEntity>) message.obj;
+                adapter.updateQ(list);
                 pageCount = adapter.getCount();
-                for(int i = 0; i < list.size(); ++i){
-                    question_types.add((i+1) + ". " + list.get(i).getQuestionTypeName());
+                myArrayAdapter.notifyDataSetChanged();
+
+                questionIds = new String[list.size()];
+                question_types_array = new String[list.size()];
+                for (int i = 0; i < list.size(); ++i) {
+                    //顶部目录菜单
+                    question_types.add((i + 1) + ". " + list.get(i).getQuestionTypeName());
+                    //题面类型
+                    question_types_array[i] = list.get(i).getQuestionTypeName();
+                    //题目ID
+                    questionIds[i] = list.get(i).getQuestionId();
                 }
+
+
+            } else if (message.what == 101) {
+                //加载学生答题情况
+                List<StuAnswerEntity> list2 = (List<StuAnswerEntity>) message.obj;
+                stuAnswer = new String[list2.size()];
+                adapter.updateA(list2);
+                for (int i = 0; i < list2.size(); ++i) {
+                    stuAnswer[i] = list2.get(i).getStuAnswer();
+                }
+
             }
         }
     };
 
-    //加载作业条目，进行ViewPager渲染
+    //加载作业条目，进行ViewPager渲染；同时加载学生答题情况
     private void loadItems_Net() {
 
         String mRequestUrl = Constant.API + Constant.HOMEWORK_ITEM + "?learnPlanId=" + learnPlanId;
@@ -199,7 +269,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
                 String itemString = json.getString("data");
 
                 Gson gson = new Gson();
-                //使用Goson框架转换Json字符串为列表
+                //使用Gson框架转换Json字符串为列表
                 List<HomeworkEntity> itemList = gson.fromJson(itemString, new TypeToken<List<HomeworkEntity>>() {
                 }.getType());
                 //封装消息，传递给主线程
@@ -207,9 +277,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
 
                 message.obj = itemList;
                 // 发送消息给主线程
-//                if(moreList.size() < 12){
-//                    adapter.isDown = 1;
-//                }
+
                 //标识线程
                 message.what = 100;
                 handler.sendMessage(message);
@@ -221,6 +289,36 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
             Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
         });
         RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(request);
+
+        //学生答题情况
+        mRequestUrl = Constant.API + Constant.ANSWER_ITEM + "?paperId=" + learnPlanId + "&userName=" + username;
+        request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+
+                String itemString = json.getString("data");
+
+                Gson gson = new Gson();
+                //使用Gson框架转换Json字符串为列表
+                List<StuAnswerEntity> itemList = gson.fromJson(itemString, new TypeToken<List<StuAnswerEntity>>() {
+                }.getType());
+
+                //封装消息，传递给主线程
+                Message message = Message.obtain();
+
+                message.obj = itemList;
+                // 发送消息给主线程
+                //标识线程
+                message.what = 101;
+                handler.sendMessage(message);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }, error -> {
+            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+        });
         queue.add(request);
     }
 
@@ -244,15 +342,16 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
-            //目录切换页
+        switch (view.getId()) {
+            //目录切换作业题面
             case R.id.tv_content:
-                if(contentView == null){
+                if (contentView == null) {
                     contentView = LayoutInflater.from(this).inflate(R.layout.menu_homework, null, false);
 
                     ListView lv_homework = contentView.findViewById(R.id.lv_homework);
-                    MyArrayAdapter adapter = new MyArrayAdapter(this, question_types);
-                    lv_homework.setAdapter(adapter);
+
+//                    ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, question_types);
+                    lv_homework.setAdapter(myArrayAdapter);
                     lv_homework.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -267,6 +366,14 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
                 }
                 window.showAsDropDown(tv_content, -220, 5);
                 break;
+            case R.id.iv_eye:
+                jumpToSubmitPage();
         }
+    }
+
+    //pos是接口的order属性（1...n）因此要
+    @Override
+    public void setStuAnswer(int pos, String stuStr) {
+        stuAnswer[pos - 1] = stuStr;
     }
 }

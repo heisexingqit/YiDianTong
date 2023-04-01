@@ -57,6 +57,7 @@
     <string name="announcement">公告</string>
     <string name="live_news">直播课消息</string>
     <string name="loading">正在加载...</string>
+    <string name="homework_submit">交作业</string>
     <!--wen-->
 
 </resources>

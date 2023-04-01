@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.yidiantong.bean.HomeworkEntity;
+import com.example.yidiantong.bean.StuAnswerEntity;
 import com.example.yidiantong.fragment.HomeworkClozeFragment;
 import com.example.yidiantong.fragment.HomeworkJudgeFragment;
 import com.example.yidiantong.fragment.HomeworkMultipleFragment;
@@ -21,17 +22,34 @@ import java.util.List;
 
 public class HomeworkPagerAdapter extends FragmentPagerAdapter {
 
-    private static final String TAG = "HomeworkPagerAdapter";
+    private List<HomeworkEntity> itemList = new ArrayList<>();//题面列表
+    private List<StuAnswerEntity> itemList2 = new ArrayList<>();//答题情况列表
 
-    private List<HomeworkEntity> itemList = new ArrayList<>();
+    private int countReady = 0;
 
-    public HomeworkPagerAdapter(@NonNull FragmentManager fm) {
+    //传递信息
+    private String learnPlanId, username;
+
+    public HomeworkPagerAdapter(@NonNull FragmentManager fm, String learnPlanId, String username) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        this.learnPlanId = learnPlanId;
+        this.username = username;
     }
 
-    public void update(List<HomeworkEntity> itemList){
+    public void updateQ(List<HomeworkEntity> itemList){
         this.itemList = itemList;
-        this.notifyDataSetChanged();
+        countReady += 1;
+        if(countReady >= 2){
+            this.notifyDataSetChanged();
+        }
+    }
+
+    public void updateA(List<StuAnswerEntity> itemList) {
+        this.itemList2 = itemList;
+        countReady += 1;
+        if(countReady >= 2){
+            this.notifyDataSetChanged();
+        }
     }
 
     @NonNull
@@ -41,14 +59,14 @@ public class HomeworkPagerAdapter extends FragmentPagerAdapter {
         String questionTypeName = itemList.get(position).getQuestionTypeName();
         switch (questionTypeName){
             case "单项选择题":
-                fragment = HomeworkSingleFragment.newInstance(itemList.get(position), position, itemList.size());
+                fragment = HomeworkSingleFragment.newInstance(itemList.get(position), position, itemList.size(), learnPlanId, username, itemList2.get(position));
                 break;
             case "多项选择题":
-                fragment = HomeworkMultipleFragment.newInstance(itemList.get(position), position, itemList.size());
+                fragment = HomeworkMultipleFragment.newInstance(itemList.get(position), position, itemList.size(), learnPlanId, username, itemList2.get(position));
                 break;
             default:
-                fragment = HomeworkTranslationFragment.newInstance(itemList.get(position), position, itemList.size());
-                Log.d(TAG, "getItem: " + questionTypeName);
+                fragment = HomeworkTranslationFragment.newInstance(itemList.get(position), position, itemList.size(), learnPlanId, username, itemList2.get(position));
+                Log.d("wen", "未知题型: " + questionTypeName);
                 break;
         }
         return fragment;
@@ -74,4 +92,5 @@ public class HomeworkPagerAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return itemList.size();
     }
+
 }

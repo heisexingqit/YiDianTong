@@ -3,10 +3,6 @@ package com.example.yidiantong.fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.text.SpannableString;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -17,6 +13,9 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
@@ -102,15 +101,15 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
     @Override
     public void onClick(View view) {
 
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.iv_page_last:
-                if(window != null){
+                if (window != null) {
                     closeDrawer();
                 }
                 pageing.pageLast();
                 break;
             case R.id.iv_page_next:
-                if(window != null){
+                if (window != null) {
                     closeDrawer();
                 }
                 pageing.pageNext();
@@ -132,18 +131,18 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
                 showRadioBtn();
                 break;
             case R.id.iv_quesiton_last:
-                if(questionId == 0){
+                if (questionId == 0) {
                     Toast.makeText(getActivity(), "已经是第一道小题", Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
                     questionId -= 1;
                     drawQustionId();
                     showRadioBtn();
                 }
                 break;
             case R.id.iv_quesiton_next:
-                if(questionId == 4){
+                if (questionId == 4) {
                     Toast.makeText(getActivity(), "已经是最后一道小题", Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
                     questionId += 1;
                     drawQustionId();
                     showRadioBtn();
@@ -197,10 +196,10 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
             showRadioBtnDrawer();
         };
 
-        for(int i = 0; i < 5; ++i){
-            for(int j = 0; j < 4; ++j){
+        for (int i = 0; i < 5; ++i) {
+            for (int j = 0; j < 4; ++j) {
                 iv_answer_drawer[i][j].setOnClickListener(myListener);
-                iv_answer_drawer[i][j].setTag(i +String.valueOf(j));
+                iv_answer_drawer[i][j].setTag(i + String.valueOf(j));
             }
         }
 
@@ -218,11 +217,11 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
 
     //展示抽屉按钮
     private void showRadioBtnDrawer() {
-        for(int i = 0; i < 5; ++i){
-            for(int j = 0; j < 4; ++j){
-                if(answer[i] != j){
+        for (int i = 0; i < 5; ++i) {
+            for (int j = 0; j < 4; ++j) {
+                if (answer[i] != j) {
                     iv_answer_drawer[i][j].setImageResource(unselectIcons[j]);
-                }else{
+                } else {
                     iv_answer_drawer[i][j].setImageResource(selectIcons[j]);
                 }
             }
@@ -237,11 +236,11 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
     }
 
     //展示底部按钮
-    private void showRadioBtn(){
-        for(int i = 0; i < 4; ++i){
-            if(answer[questionId] != i){
+    private void showRadioBtn() {
+        for (int i = 0; i < 4; ++i) {
+            if (answer[questionId] != i) {
                 iv_answer[i].setImageResource(unselectIcons[i]);
-            }else{
+            } else {
                 iv_answer[i].setImageResource(selectIcons[i]);
             }
         }

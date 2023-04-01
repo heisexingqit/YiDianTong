@@ -89,6 +89,7 @@
                         android:src="@drawable/up_icon" />
 
                     <TextView
+                        android:id="@+id/tv_erase"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/delete"
@@ -96,20 +97,21 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/ll_answer"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1">
 
-<!--                    <WebView-->
-<!--                        android:id="@+id/wv_answer"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:scrollbars="none"/>-->
-                                    <ImageView
-                                        android:layout_gravity="left|top"
-                                        android:id="@+id/iv_content"
-                                        android:layout_width="100dp"
-                                        android:layout_height="70dp"/>
+                    <com.example.yidiantong.View.ClickableWebView
+                        android:id="@+id/wv_answer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="none"/>
+<!--                    <ImageView-->
+<!--                        android:layout_gravity="left|top"-->
+<!--                        android:id="@+id/iv_content"-->
+<!--                        android:layout_width="100dp"-->
+<!--                        android:layout_height="70dp"/>-->
                 </LinearLayout>
             </LinearLayout>
 

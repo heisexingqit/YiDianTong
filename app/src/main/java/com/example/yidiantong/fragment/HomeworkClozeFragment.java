@@ -53,7 +53,7 @@ public class HomeworkClozeFragment extends Fragment implements View.OnClickListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-                View view = inflater.inflate(R.layout.fragment_homework_cloze, container, false);
+        View view = inflater.inflate(R.layout.fragment_homework_cloze, container, false);
         TextView tv_question_number = view.findViewById(R.id.tv_question_number);
 
         //顶部题号染色
