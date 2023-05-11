@@ -1,6 +1,7 @@
 package com.example.yidiantong.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,23 +20,27 @@ import java.util.List;
 
 public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String TAG = "HomeRecyclerAdapter";
-    private final Context context;
-    //打气筒
+    // 打气筒
     private final LayoutInflater layoutInflater;
 
     private MyItemClickListener mItemClickListener;
 
-    //item类型，数据
+    // item类型，数据
     public List<HomeItemEntity> itemList;
 
+    // 是否刷新
     public int isRefresh = 0;
 
-    //是否到底
+    // 是否到底
     public int isDown = 0;
-    private FootViewHolder fvh;
+
+    // 加载失败
+    public boolean fail = false;
+
+    // 假0判断
+    private int count = 0;
 
     public HomeRecyclerAdapter(Context context, List<HomeItemEntity> itemList) {
-        this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
         this.itemList = itemList;
     }
@@ -52,8 +57,7 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return new ItemViewHolder(v);
         } else {
             View v = layoutInflater.inflate(R.layout.foot_load_tips, parent, false);
-            fvh = new FootViewHolder(v);
-            return fvh;
+            return new FootViewHolder(v);
         }
     }
 
@@ -62,9 +66,7 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         //绑定数据
         if (getItemViewType(position) == 0) {
             ((ItemViewHolder) holder).update(position);
-
             //绑定事件
-
             //item点击事件
             holder.itemView.setOnClickListener(v -> mItemClickListener.onItemClick(holder.itemView, position));
         } else {
@@ -82,7 +84,8 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public void fail() {
-        fvh.fail();
+        fail = true;
+        this.notifyDataSetChanged();
     }
 
 
@@ -93,12 +96,31 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
     public void loadData(List<HomeItemEntity> moreList) {
+        fail = false;
         if (this.isRefresh == 1) {
+            count = 0;
             this.itemList.clear();
             this.itemList = moreList;
             this.isRefresh = 0;
+            if(moreList.size() == 0){
+                isDown = 1;
+            }
         } else {
             this.itemList.addAll(moreList);
+            if(moreList.size() == 12){
+              isDown = 0;
+              count = 0;
+            } else if(moreList.size() == 0){
+                isDown = 0;
+                count ++;
+            }else {
+                isDown = 1;
+                count = 0;
+            }
+
+            if(count > 3){
+                isDown = 1;
+            }
         }
         this.notifyDataSetChanged();
     }
@@ -115,7 +137,6 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private final ImageView iv_top_icon2;
         private final TextView tv_second_line;
         private final TextView tv_date;
-        private final LinearLayout ll_width;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -129,7 +150,6 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             iv_top_icon2 = itemView.findViewById(R.id.iv_top_icon2);
             tv_second_line = itemView.findViewById(R.id.tv_second_line);
             tv_date = itemView.findViewById(R.id.tv_date);
-            ll_width = itemView.findViewById(R.id.ll_width);
         }
 
         //数据更新放在这里(频繁调用，不能放一次性操作，例如绑定点击事件)
@@ -229,11 +249,10 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 pbViewLoadTip.setVisibility(View.GONE);
                 tvViewLoadTip.setText("");
             }
-        }
-
-        public void fail() {
-            pbViewLoadTip.setVisibility(View.GONE);
-            tvViewLoadTip.setText("数据加载失败");
+            if(fail){
+                pbViewLoadTip.setVisibility(View.GONE);
+                tvViewLoadTip.setText("数据加载失败");
+            }
         }
     }
 

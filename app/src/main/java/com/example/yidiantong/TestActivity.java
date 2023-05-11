@@ -1,161 +1,247 @@
 
 package com.example.yidiantong;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
-
-import android.annotation.SuppressLint;
+import android.Manifest;
+import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
-import android.webkit.ConsoleMessage;
-import android.webkit.JavascriptInterface;
-import android.webkit.JsResult;
-import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.AdapterView;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.PopupWindow;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ImageView;
 
-import com.example.yidiantong.adapter.ImagePagerAdapter;
-import com.example.yidiantong.adapter.MyArrayAdapter;
-import com.example.yidiantong.bean.HomeItemEntity;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.example.yidiantong.View.DrawEditorDialog;
+import com.example.yidiantong.View.EraserEditorDialog;
+import com.example.yidiantong.View.TextEditorDialog;
+import com.xuexiang.xui.widget.popupwindow.popup.XUIBasePopup;
 
-public class TestActivity extends AppCompatActivity {
+import ja.burhanrashid52.photoeditor.OnPhotoEditorListener;
+import ja.burhanrashid52.photoeditor.PhotoEditor;
+import ja.burhanrashid52.photoeditor.PhotoEditorView;
+import ja.burhanrashid52.photoeditor.ViewType;
 
-    private WebView lvvv;
 
-    private View contentView = null;
-    public PopupWindow window;
+public class TestActivity extends AppCompatActivity implements View.OnClickListener {
 
-    @SuppressLint("SetJavaScriptEnabled")
+    private ImageView iv_show;
+    private Button btn_upload;
+
+    private ActivityResultLauncher<Intent> mResultLauncher;
+
+    private Uri picUri;
+
+    // 权限组
+    // 读写存储卡权限
+    private static final String[] PERMISSIONS_STORAGE = new String[]{
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
+    // 标识码（与权限对应）
+    private static final int REQUEST_CODE_STORAGE = 1;
+    private PhotoEditor mPhotoEditor;
+    private DrawEditorDialog drawDialog;
+    private TextEditorDialog textDialog;
+    private EraserEditorDialog eraserDialog;
+
+    private int textColor = Color.WHITE;
+    private View root_view;
+    private boolean isChange = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
-//        lvvv = findViewById(R.id.lvvv);
-////        lvvv.getSettings().setSupportZoom(true);
-//        lvvv.getSettings().setBuiltInZoomControls(true);
-//        lvvv.getSettings().setDisplayZoomControls(false);
-//        WebSettings webSettings = lvvv.getSettings();
-//        webSettings.setJavaScriptEnabled(true);
-//        lvvv.loadData("<!DOCTYPE html>\n" +
-//                "<html>\n" +
-//                "\n" +
-//                "<head>\n" +
-//                "</head>\n" +
-//                "\n" +
-//                "<body>\n" +
-//                "    <img width=\"200px\" onclick=\"a(this)\" src=\"https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png\" />" +
-//                "    <script>\n" +
-//                "        function a(x) {\n" +
-//                "            test.mytoast(x.src)\n" +
-//                "        }\n" +
-//                "    </script>\n" +
-//                "</body>\n" +
-//                "\n" +
-//                "</html>", "text/html", "utf-8");
-//
-//        lvvv.addJavascriptInterface(new AndroidtoJs(), "test");
+
+        PhotoEditorView pev_content = findViewById(R.id.pev_content);
+        pev_content.getSource().setImageResource(R.drawable.camera);
+
+        mPhotoEditor = new PhotoEditor.Builder(this, pev_content)
+                .setPinchTextScalable(true)
+                .build();
+        mPhotoEditor.setBrushDrawingMode(true);
+        mPhotoEditor.setBrushColor(Color.RED);
+
+        // 取消
+        findViewById(R.id.civ_cancel).setOnClickListener(this);
+
+        // 保存
+        findViewById(R.id.civ_save).setOnClickListener(this);
+
+        // 笔刷
+        findViewById(R.id.ll_draw).setOnClickListener(this);
+
+        // 文字
+        findViewById(R.id.ll_text).setOnClickListener(this);
+
+        // 橡皮
+        findViewById(R.id.ll_erase).setOnClickListener(this);
+
+        // 清空
+        findViewById(R.id.ll_clean).setOnClickListener(this);
+
+        // 撤销
+        findViewById(R.id.civ_undo).setOnClickListener(this);
+
+        // 反撤销
+        findViewById(R.id.civ_redo).setOnClickListener(this);
+
+
+
+        /**
+         * 画笔对话框 初始化
+         */
+        drawDialog = new DrawEditorDialog(this);
+        drawDialog.getWindow().setGravity(Gravity.BOTTOM);
+        // 监听选项进行设置
+        drawDialog.setMyInterface(new DrawEditorDialog.MyInterface() {
+            @Override
+            public void changeBrush(int progress) {
+                mPhotoEditor.setBrushSize(progress);
+            }
+
+            @Override
+            public void changeColor(int colorInt) {
+                mPhotoEditor.setBrushColor(colorInt);
+                drawDialog.dismiss();
+            }
+
+        });
+
+        // 尺寸设置
+        Window window = drawDialog.getWindow();
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawableResource(android.R.color.black);
+        /**
+         * 文本对话框 初始化
+         */
+        textDialog = new TextEditorDialog(this);
+        textDialog.getWindow().setGravity(Gravity.BOTTOM);
+        textDialog.setMyInterface(new TextEditorDialog.MyInterface() {
+            @Override
+            public void submit(String text) {
+                if(isChange){
+                    mPhotoEditor.editText(root_view, text, textColor);
+                }else{
+                    if(text.length() != 0){
+                        mPhotoEditor.addText(text, textColor);
+                    }
+                }
+                textDialog.dismiss();
+            }
+
+            @Override
+            public void changeColor(int color) {
+                textColor = color;
+            }
+        });
+
+        window = textDialog.getWindow();
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        window.setBackgroundDrawableResource(android.R.color.black);
+
+
+        /**
+         * 文本修改
+         */
+        mPhotoEditor.setOnPhotoEditorListener(new OnPhotoEditorListener() {
+
+            @Override
+            public void onEditTextChangeListener(View rootView, String text, int colorCode) {
+                root_view = rootView;
+                isChange = true;
+                textDialog.changeText(text, colorCode);
+                textDialog.show();
+            }
+
+            @Override
+            public void onAddViewListener(ViewType viewType, int numberOfAddedViews) {
+
+            }
+
+            @Override
+            public void onRemoveViewListener(ViewType viewType, int numberOfAddedViews) {
+
+            }
+
+            @Override
+            public void onStartViewChangeListener(ViewType viewType) {
+
+            }
+
+            @Override
+            public void onStopViewChangeListener(ViewType viewType) {
+
+            }
+
+            @Override
+            public void onTouchSourceImage(MotionEvent event) {
+
+            }
+        });
+
+        /**
+         * 橡皮
+         */
+        eraserDialog = new EraserEditorDialog(this);
+        eraserDialog.getWindow().setGravity(Gravity.BOTTOM);
+        // 监听选项进行设置
+        eraserDialog.setMyInterface(new EraserEditorDialog.MyInterface() {
+            @Override
+            public void changeBrush(int progress) {
+                mPhotoEditor.setBrushSize(progress);
+            }
+        });
+
+        // 尺寸设置
+        window = eraserDialog.getWindow();
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawableResource(android.R.color.black);
     }
 
-    private Handler handler = new Handler(Looper.getMainLooper()) {
-        @SuppressLint("NotifyDataSetChanged")
-        @Override
-        public void handleMessage(Message message) {
-            super.handleMessage(message);
-            if (message.what == 100) {
-                if (contentView == null) {
-                    // 大图核心
-                    contentView = LayoutInflater.from(TestActivity.this).inflate(R.layout.picture_menu, null, false);
-                    ViewPager vp = contentView.findViewById(R.id.vp_picture);
-                    List<Integer> picList = new ArrayList<>(Arrays.asList(R.drawable.camera,R.drawable.photo));
-//                    ImagePagerAdapter imagePagerAdapter = new ImagePagerAdapter(TestActivity.this, picList);
-//                    vp.setAdapter(imagePagerAdapter);
-                    // 顶部标签
-                    TextView tv = contentView.findViewById(R.id.tv_picNum);
-                    tv.setText("1/" + picList.size());
-                    vp.addOnPageChangeListener(new ViewPager.OnPageChangeListener(){
 
-                        @Override
-                        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
 
-                        }
+            case R.id.ll_draw:
+                drawDialog.show();
+                mPhotoEditor.setBrushDrawingMode(true);
+                mPhotoEditor.setBrushSize(drawDialog.getProgress());
+                break;
+            case R.id.ll_text:
+                isChange = false;
+                textDialog.show();
+                break;
+            case R.id.ll_erase:
+                eraserDialog.show();
+                mPhotoEditor.setBrushSize(eraserDialog.getProgress());
+                mPhotoEditor.brushEraser();
+                break;
 
-                        @Override
-                        public void onPageSelected(int position) {
-                            tv.setText(position + 1 + "/" + picList.size());
-                        }
-
-                        @Override
-                        public void onPageScrollStateChanged(int state) {
-
-                        }
-                    });
-                    contentView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Toast.makeText(TestActivity.this, "TETSTST", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-//                    WebView webView = contentView.findViewById(R.id.wv);
-//                    webView.getSettings().setBuiltInZoomControls(true);
-//                    webView.getSettings().setDisplayZoomControls(false);
-//                    Log.d("wen", "handleMessage: " + message.obj);
-//                    webView.loadData("<img width=\"100%\" onclick=\"a(this)\" src=\"" + message.obj + "\" />", "text/html", "utf-8");
-
-                    window = new PopupWindow(contentView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
-                    window.setTouchable(true);
-//                    imagePagerAdapter.setClickListener(new ImagePagerAdapter.MyItemClickListener() {
-//                        @Override
-//                        public void onItemClick() {
-//                            window.dismiss();
-//                        }
-//                    });
-                }
-                window.showAtLocation(TestActivity.this.getWindow().getDecorView(), Gravity.CENTER, 0, 0);
-//                WindowManager.LayoutParams lp = TestActivity.this.getWindow().getAttributes();
-//                lp.alpha = 0.5f; //0.0-1.0
-//                TestActivity.this.getWindow().setAttributes(lp);
-//                window.setOnDismissListener(new PopupWindow.OnDismissListener() {
-//                    @Override
-//                    public void onDismiss() {
-////                        lp.alpha = 1.0f; //0.0-1.0
-////                        TestActivity.this.getWindow().setAttributes(lp);
-//                    }
-//                });
-            }
-        }
-    };
-
-    public class AndroidtoJs  {
-
-        // 定义JS需要调用的方法
-        // 被JS调用的方法必须加入@JavascriptInterface注解
-        @JavascriptInterface
-        public void mytoast(String msg) {
-            Message message = Message.obtain();
-            message.obj = msg;
-            message.what = 100;
-            handler.sendMessage(message);
+            case R.id.ll_clean:
+                mPhotoEditor.clearAllViews();
+                break;
+            case R.id.civ_undo:
+                mPhotoEditor.undo();
+                break;
+            case R.id.civ_redo:
+                mPhotoEditor.redo();
+                break;
+            case R.id.civ_cancel:
+                // 取消
+                break;
+            case R.id.civ_save:
+                // 保存
+                break;
         }
     }
 }

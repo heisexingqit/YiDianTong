@@ -61,6 +61,7 @@
                     android:singleLine="true"
                     android:textColor="@color/black"
                     android:textColorHint="#8F9BB3"
+                    android:textCursorDrawable="@drawable/login_text_cursor"
                     android:textSize="17sp" />
 
             </LinearLayout>
@@ -95,6 +96,7 @@
                     android:singleLine="true"
                     android:textColor="@color/black"
                     android:textColorHint="#8F9BB3"
+                    android:textCursorDrawable="@drawable/login_text_cursor"
                     android:textSize="17sp" />
 
                 <ImageView
@@ -127,8 +129,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
         <ProgressBar
             android:layout_width="40dp"

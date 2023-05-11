@@ -3,11 +3,15 @@ package com.example.yidiantong.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.SpannableString;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +22,7 @@ import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.HomeworkEntity;
 import com.example.yidiantong.bean.StuAnswerEntity;
 import com.example.yidiantong.util.PageingInterface;
+import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
 import com.example.yidiantong.util.TransmitInterface;
 
@@ -82,6 +87,24 @@ public class HomeworkMultipleFragment extends Fragment implements View.OnClickLi
         //获取view
         View view = inflater.inflate(R.layout.fragment_homework_multiple, container, false);
         TextView tv_question_number = view.findViewById(R.id.tv_question_number);
+
+        /**
+         * 多机适配：底栏高度
+         */
+        WindowManager windowManager = getActivity().getWindowManager();
+        DisplayMetrics metrics = new DisplayMetrics();
+        windowManager.getDefaultDisplay().getMetrics(metrics);
+        int screenWidth = metrics.widthPixels;
+        int screenHeight = metrics.heightPixels;
+        // 长宽像素比
+        float deviceAspectRatio = (float) screenHeight / screenWidth;
+        // 获取底部布局
+        RelativeLayout block = view.findViewById(R.id.rl_bottom_block);
+        if(deviceAspectRatio > 2.0){
+            ViewGroup.LayoutParams params = block.getLayoutParams();
+            params.height = PxUtils.dip2px(getActivity(), 80);
+            block.setLayoutParams(params);
+        }
 
         //题面显示
         WebView wv_content = view.findViewById(R.id.wv_content);

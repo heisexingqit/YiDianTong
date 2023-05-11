@@ -1,6 +1,5 @@
 package com.example.yidiantong.Manager;
 
-import static com.xuexiang.xutil.app.ActivityUtils.startActivity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,12 +15,12 @@ public class DialogManager {
                 myContext, "提示", str, "去设置",
                 (dialog, which) -> {
                     //引导用户到设置中去进行设置
-                    Intent intent = new Intent();
-                    intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
-                    intent.setData(Uri.fromParts("package", myContext.getPackageName(), null));
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    dialog.dismiss();
+//                    Intent intent = new Intent();
+//                    intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+//                    intent.setData(Uri.fromParts("package", myContext.getPackageName(), null));
+//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    myContext.startActivity(intent);
+//                    dialog.dismiss();
                 },
                 "取消",
                 (dialog, which) -> {

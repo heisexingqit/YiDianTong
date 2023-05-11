@@ -14,4 +14,9 @@ public class JsonUtils {
         str = str.substring(1, str.length() - 1);
         return new JSONObject(str);
     }
+
+    public static String clearString(String str){
+        //去除转义字符
+        return StringEscapeUtils.unescapeJava(str);
+    }
 }

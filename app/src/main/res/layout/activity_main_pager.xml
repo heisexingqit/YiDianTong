@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -8,14 +9,19 @@
     tools:context=".ui.MainPagerActivity">
 
     <!--中部 使用NoScrollViewPager + Fragment-->
-    <com.example.yidiantong.View.NoScrollViewPager
-        android:id="@+id/vp_main"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+<!--    <com.example.yidiantong.View.NoScrollViewPager-->
+<!--        android:id="@+id/vp_main"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_weight="1" />-->
+        <FrameLayout
+            android:id="@+id/vp_main"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
 
     <!--底部引用布局-->
     <include
         layout="@layout/bar_bottom_navigation" />
-
 </LinearLayout>

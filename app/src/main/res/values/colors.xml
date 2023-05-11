@@ -12,6 +12,7 @@
     <!--wen-->
     <color name="main_bg">#FF6CC1E0</color>
     <color name="main_bg_btn_press">#FF4e9ac0</color>
+    <color name="main_bg_title">#59b8e0</color>
     <color name="main_blue">#59b9e0</color>
     <color name="tabbar_text_unselect">#FF828282</color>
     <color name="search_select_item_press">#FFDEE2EB</color>
@@ -21,7 +22,31 @@
     <color name="blue_btn">#2196f3</color>
     <color name="blue_btn_press">#1f8de5</color>
     <color name="transparent">#00000000</color>
-
+    <color name="half_transparent">#99c1c1c1</color>
+    <color name="progress_bar_color">#FFFFFFFF</color>
+    <color name="loading_bg_gray">#FFf2f2f2</color>
+    <color name="photo_editor_white">#FFF0F0F0</color>
+    <color name="photo_editor_black">#FF222222</color>
+    <color name="red">#FFFF0000</color>
+    <color name="green">#FF00FF00</color>
+    <color name="blue">#FF0000FF</color>
+    <color name="draw_color1">#0062ff</color>
+    <color name="draw_color2">#b25d37</color>
+    <color name="draw_color3">#008d64</color>
+    <color name="draw_color4">#fe8913</color>
+    <color name="draw_color5">#fc2139</color>
+    <color name="draw_color6">#000000</color>
+    <color name="draw_color7">#ff4f2d</color>
+    <color name="draw_color8">#6ecbe7</color>
+    <color name="draw_color9">#815fa1</color>
+    <color name="draw_color10">#fcfdfc</color>
+    <color name="draw_color11">#f9dc63</color>
+    <color name="draw_color12">#c2d277</color>
+    <color name="t_top_search">#4dc7f8</color>
+    <color name="t_report_bg">#eceeed</color>
+    <color name="green_pencil">#038103</color>
+    <color name="red_pencil">#e32212</color>
+    <color name="light_gray2">#c0c0c0</color>
     <!--wen-->
 
     <color name="f_orange">#FE7144</color>

@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
@@ -27,9 +28,14 @@ import com.example.yidiantong.util.JsonUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, View.OnFocusChangeListener {
 
+    private static final String TAG = "LoginActivity";
     private int is_pw_show = 0;//0表示隐藏，1表示显示
     private int is_pw_focus = 0;//0表示没有聚焦，1表示聚焦
     private ImageView iv_eye;
@@ -42,7 +48,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private String username;
     private String password;
-    private RequestQueue queue;
 
     private SharedPreferences preferences;
     private LinearLayout ll_loading;
@@ -75,9 +80,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         ll_username.setOnClickListener(this);
         ll_pw.setOnClickListener(this);
         // 组件样式 结束-----------------------------------------------------
-
-        //发送请求验证
-        queue = Volley.newRequestQueue(LoginActivity.this);
 
         //记住密码
         preferences = getSharedPreferences("config", Context.MODE_PRIVATE);
@@ -227,7 +229,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     //请求数据后台验证-Volley框架
     private void login() {
         ll_loading.setVisibility(View.VISIBLE);
-        queue = Volley.newRequestQueue(LoginActivity.this);
         String url = Constant.API + Constant.LOGIN + "?userName=" + username + "&passWord=" + password;
         StringRequest request = new StringRequest(url, response -> {
             try {
@@ -236,24 +237,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 ll_loading.setVisibility(View.GONE);
                 Toast.makeText(LoginActivity.this, json.getString("message"), Toast.LENGTH_SHORT).show();
                 boolean success = json.getBoolean("success");
-                JSONObject obj = json.getJSONObject("data");
 
-                //拿到第一个key值
-                String userType = obj.keys().next();
-                switch (userType) {
-                    case "STUDENT":
-                        //学生
-                        Log.d("wen", "userId: " + obj.getJSONObject(userType).getString("userId"));
-                        break;
-                    case "COMMON_TEACHER":
-                        //普通教师
-
-                        break;
-                    case "ADMIN_TEACHER":
-                        //管理员教师
-
-                        break;
-                }
                 if (success) {
                     //记住密码
                     SharedPreferences.Editor editor = preferences.edit();
@@ -261,23 +245,62 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     editor.putString("password", password);
                     editor.commit();
 
-                    Intent intent = new Intent(this, MainPagerActivity.class);
+                    /**
+                     * 分角色登录
+                     */
+                    Intent intent = null;
+                    JSONObject obj = json.getJSONObject("data");
+
+
+                    // 将未知key转为list
+                    List<String> keysList = new ArrayList<>();
+                    Iterator<String> keys = obj.keys();
+                    for(Iterator<String> it = keys; keys.hasNext();){
+                        keysList.add(it.next());
+                    }
+                    String typeName = null;
+                    if(keysList.contains("STUDENT")){
+                        typeName = "STUDENT";
+                        intent = new Intent(this, MainPagerActivity.class);
+                    }else if(keysList.contains("COMMON_TEACHER")){
+                        typeName = "COMMON_TEACHER";
+                        intent = new Intent(this, TMainPagerActivity.class);
+                    }else if(keysList.contains("ADMIN_TEACHER")){
+                        typeName = "ADMIN_TEACHER";
+                        intent = new Intent(this, TMainPagerActivity.class);
+                    }
+                    JSONObject userInfo = obj.getJSONObject(typeName);
+//                    String token = obj.getString("token");
+//                    intent.putExtra("token", token);
+
+                    // 全局变量
+                    MyApplication.username = username;
+                    MyApplication.userId = userInfo.getString("userId");
+                    MyApplication.cnName = userInfo.getString("name");
+                    MyApplication.token = obj.getString("token");
+                    Log.d("wen", "login: " + MyApplication.token);
+
+                    Log.d("wen", "login: userId: " + MyApplication.userId);
+                    intent.putExtra("userId", MyApplication.userId);
+                    intent.putExtra("realName", MyApplication.cnName);
                     intent.putExtra("username", username);
+                    intent.putExtra("picUrl", userInfo.getString("userPhoto"));
+
                     //两个一起用
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     //登录成功跳转
                     startActivity(intent);
+
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.d("wen", "login: " + e);
             }
         }, error -> {
             // 及时解除loading效果
             ll_loading.setVisibility(View.GONE);
             Toast.makeText(this, "登录失败", Toast.LENGTH_SHORT).show();
         });
-
-        queue.add(request);
+        MyApplication.addRequest(request, TAG);
     }
 }

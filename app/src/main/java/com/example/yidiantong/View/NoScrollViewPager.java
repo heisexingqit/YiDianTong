@@ -29,4 +29,5 @@ public class NoScrollViewPager extends ViewPager {
         // Never allow swiping to switch between pages
         return false;
     }
+
 }

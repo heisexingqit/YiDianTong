@@ -1,7 +1,7 @@
 package com.example.yidiantong.fragment;
 
-import android.Manifest;
-import android.app.Activity;
+import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -9,16 +9,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
-
-
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
@@ -31,21 +21,45 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.PswDialog;
 import com.example.yidiantong.View.TouxiangDialog;
 import com.example.yidiantong.ui.LoginActivity;
-import com.example.yidiantong.util.PermissionUtil;
+import com.example.yidiantong.util.JsonUtils;
+import com.example.yidiantong.util.StringUtils;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.yanzhenjie.permission.Action;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.Rationale;
+import com.yanzhenjie.permission.RequestExecutor;
+import com.yanzhenjie.permission.runtime.Permission;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 public class MainMyFragment extends Fragment implements View.OnClickListener {
+    private static final String TAG = "MainMyFragment";
 
     private LinearLayout f_ll_info;
     private LinearLayout f_ll_us;
@@ -64,21 +78,15 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
     private ActivityResultLauncher<Intent> mResultLauncher;
     private ActivityResultLauncher<Intent> mResultLauncher2;
     private ActivityResultLauncher<Intent> mResultLauncherCrop;
-    private ActivityResultLauncher<Intent> mResultLauncherCrop2;
     private Uri picUri, imageUri, cropUri;
 
-    //权限组
-    private static final String[] PERMISSIONS_STORAGE = new String[]{
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-    };
-    private static final String[] PERMISSIONS_CAMERA = new String[]{
-            Manifest.permission.CAMERA
-    };
-    //标识码
+    // 权限组（AndPermission自带）
+
+    // 标识码（与权限对应）
     private static final int REQUEST_CODE_STORAGE = 1;
     private static final int REQUEST_CODE_CAMERA = 2;
 
+    // 创建实例（空参数）
     public static MainMyFragment newInstance() {
         MainMyFragment fragment = new MainMyFragment();
         Bundle args = new Bundle();
@@ -89,9 +97,10 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //获取视图View
+        // 获取根视图 view
         View view = inflater.inflate(R.layout.fragment_main_my, container, false);
 
+        // 获取view中的组件
         f_ll_info = view.findViewById(R.id.f_ll_info);
         f_ll_us = view.findViewById(R.id.f_ll_us);
         f_ll_update = view.findViewById(R.id.f_ll_update);
@@ -104,7 +113,6 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         // 点击头像
         fiv_my = view.findViewById(R.id.fiv_my);
 
-
         // 设置点击事件
         f_ll_info.setOnClickListener(this);
         f_ll_us.setOnClickListener(this);
@@ -114,60 +122,79 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         fbtn_exit.setOnClickListener(this);
         fiv_my.setOnClickListener(this);
 
-
-
-        //注册Gallery回调组件
+        // 注册Gallery回调组件
         mResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
                 if (result.getResultCode() == getActivity().RESULT_OK) {
                     Intent intent = result.getData();
-                    //Uri和path相似，都是定位路径，属于一步到位方式 =》 如果是path 则 Uri.parse(path)
-                    picUri = intent.getData();
-                    if (picUri != null) {
-                        startPhotoZoom(picUri);
+                    // 获取到真实的Uri
+                    Uri uri = intent.getData();
+                    if (uri != null) {
+                        /**
+                         * 这里做了统一化操作：创建一个output.jpg文件，并将uri写入新文件，并将picUri赋给新文件（与拍照逻辑相似）
+                         * 一是为了简化方法；
+                         * 二是因为适配问题，有些手机应用不能返回数据，只能与拍照类似的调用方式才行；
+                         * 三是因为获取本地图片只能返回uri，而不像拍照那样可以选择写入，因此需要手动。
+                         */
+                        File Image = new File(getActivity().getExternalCacheDir(), "output_image.jpg");
+                        if (Image.exists()) {
+                            Image.delete();
+                        }
+                        try {
+                            Image.createNewFile();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        // 兼容方式获取文件Uri
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            picUri = FileProvider.getUriForFile(getActivity(),
+                                    "com.example.yidiantong.fileprovider", Image);
+                        } else {
+                            picUri = Uri.fromFile(Image);
+                        }
+
+                        // uri写入文件Image
+                        FileOutputStream outputStream = null;
+                        FileInputStream inputStream = null;
+                        try {
+                            outputStream = new FileOutputStream(Image);
+                            inputStream = (FileInputStream) getActivity().getContentResolver().openInputStream(uri);
+
+                            byte[] buffer = new byte[1024];
+                            int length;
+                            while ((length = inputStream.read(buffer)) > 0) {
+                                outputStream.write(buffer, 0, length);
+                            }
+                            inputStream.close();
+                            outputStream.close();
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        /**
+                         * 统一化操作结束++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                         */
+
+                        Crop(picUri); // 裁剪图片
                     }
                 }
             }
         });
 
-        //注册相册Crop裁剪组件
+        /**
+         * 注册通用裁切回调：与通用裁切方法对应。
+         */
         mResultLauncherCrop = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == getActivity().RESULT_OK) {
-                            Intent intent = result.getData();
-                            Bitmap bitmap1 = intent.getExtras().getParcelable("data");
-                            if (bitmap1 != null) {
-                                fiv_my.setImageBitmap(bitmap1);
-                                Log.d("ning", "onActivityResult: " + picUri.toString());
-                                Toast.makeText(getActivity(), "保存成功！", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-                });
-
-                //注册Camera回调组件
-                mResultLauncher2 = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == getActivity().RESULT_OK) {
-                            Crop(imageUri); // 裁剪图片
-                        }
-                    }
-                });
-
-        //注册相机Crop裁剪组件
-        mResultLauncherCrop2 = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
                 if (result.getResultCode() == getActivity().RESULT_OK) {
                     try {
-                        Log.e("imageUri111", String.valueOf(cropUri));
-                        //  decodeStream()可以将output_image.jpg解析成Bitmap对象。
+                        // decodeStream()可以将output_image.jpg解析成Bitmap对象。
                         Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(cropUri));
                         fiv_my.setImageBitmap(bitmap);
-                        Toast.makeText(getActivity(), "保存成功！", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "修改成功！", Toast.LENGTH_SHORT).show();
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -175,6 +202,29 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
             }
         });
 
+        // 注册Camera回调组件
+        mResultLauncher2 = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == getActivity().RESULT_OK) {
+                    Crop(imageUri); // 裁剪图片
+                }
+            }
+        });
+
+
+        /**
+         * 真实用户数据设置
+         */
+        TextView tv_username = view.findViewById(R.id.tv_username);
+        String username = getActivity().getIntent().getStringExtra("username");
+
+        String realName = getActivity().getIntent().getStringExtra("realName");
+        tv_username.setText(realName + "(" + username + ")");
+
+        // 获取图片
+        String picUrl = JsonUtils.clearString(getActivity().getIntent().getStringExtra("picUrl"));
+        ImageLoader.getInstance().displayImage(picUrl, fiv_my, MyApplication.getLoaderOptions());
         return view;
     }
 
@@ -191,7 +241,7 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
 
                 break;
             case R.id.f_ll_psw:
-                // 修改密码弹窗
+                // 修改密码弹窗创建和设置
                 PswDialog builder = new PswDialog(getActivity());
                 builder.setCancel("cancel", new PswDialog.IOnCancelListener() {
                     @Override
@@ -208,11 +258,13 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                         Toast.makeText(getActivity(), "修改成功:原密码：" + old_pw + " 新密码：" + new_pw, Toast.LENGTH_SHORT).show();
                     }
                 });
+                // 修改密码弹窗弹出
                 builder.show();
                 break;
             case R.id.f_ll_center:
                 break;
             case R.id.fbtn_exit:
+                // 退出登录
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                 //两个一起用
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -221,56 +273,51 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                 startActivity(intent);
                 break;
             case R.id.fiv_my:
+                // 修改头像
                 openDialog();
                 break;
         }
     }
 
+    // 创建修改头像Dialog
     private void openDialog() {
         final TouxiangDialog touxiangDialog = new TouxiangDialog(getActivity());
         Window dialogWindow = touxiangDialog.getWindow();
         WindowManager.LayoutParams p_lp = dialogWindow.getAttributes();
-        int notificationBar  = Resources.getSystem().getDimensionPixelSize(
+        int notificationBar = Resources.getSystem().getDimensionPixelSize(
                 Resources.getSystem().getIdentifier("status_bar_height", "dimen", "android"));
-        int[] location = new int[2] ;
-        //fiv_my.getLocationInWindow(location); //获取在当前窗体内的绝对坐标
-        fiv_my.getLocationOnScreen(location);//获取在整个屏幕内的绝对坐标
+        int[] location = new int[2];
+
+        fiv_my.getLocationOnScreen(location); //获取在整个屏幕内的绝对坐标
         Log.e("location", String.valueOf(location[1]));
         dialogWindow.setGravity(Gravity.TOP);
-        p_lp.x=0; //对 dialog 设置 x 轴坐标
-        p_lp.y=location [1] + fiv_my.getHeight() - notificationBar;
-        p_lp.alpha=1f;//dialog透明度
+        p_lp.x = 0; //对 dialog 设置 x 轴坐标
+        p_lp.y = location[1] + fiv_my.getHeight() - notificationBar;
+        p_lp.alpha = 1f; //dialog透明度
         dialogWindow.setAttributes(p_lp);
         touxiangDialog.setCanceledOnTouchOutside(true);
         touxiangDialog.show();
         touxiangDialog.setClickListener(new TouxiangDialog.ClickListenerInterface() {
-            // 相机
+            // 相机选项
             @Override
             public void doGetCamera() {
-                //启动相机程序
+                // 启动相机程序
                 /*
-                 * 第零步，先申请权限
-                 * */
-                if (PermissionUtil.checkPermissionForFragment(getActivity(), PERMISSIONS_CAMERA, REQUEST_CODE_CAMERA)) {
-                    openCamera();
-                }
+                 第零步，先申请权限
+                 */
+                permissionOpenCamera();
                 touxiangDialog.dismiss();
             }
 
-            // 图库
+            // 图库选项
             @Override
             public void doGetPic() {
-                if (PermissionUtil.checkPermissionForFragment(getActivity(), PERMISSIONS_STORAGE, REQUEST_CODE_STORAGE)) {
-                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                    //选择图片文件类型
-                    intent.setType("image/*");
-                    //跳转
-                    mResultLauncher.launch(intent);
-                }
+                // 打开本地存储
+                permissionOpenGallery();
                 touxiangDialog.dismiss();
             }
 
-            // 取消
+            // 取消选项
             @Override
             public void doCancel() {
                 touxiangDialog.dismiss();
@@ -278,49 +325,47 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         });
     }
 
-    //在用户进行授权后，处理请求结果
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
+    /**
+     * 第三方权限申请包AndPermission: 自带权限组名，可直接在Fragment中回调
+     * 申请拍照权限
+     */
+    private void permissionOpenCamera() {
+        // 权限请求
+        AndPermission.with(this)
+                .runtime()
+                .permission(Permission.Group.CAMERA)
+                .onGranted(new Action<List<String>>() {
+                    // 获得权限后
+                    @Override
+                    public void onAction(List<String> data) {
+                        openCamera();
+                    }
+                }).onDenied(new Action<List<String>>() {
+                    @Override
+                    public void onAction(List<String> data) {
+                        // 判断是否点了永远拒绝，不再提示
+                        if (AndPermission.hasAlwaysDeniedPermission(getActivity(), data)) {
+                            new AlertDialog.Builder(getActivity())
+                                    .setTitle("权限被禁用")
+                                    .setMessage("拍照权限被禁用，请到APP设置页面手动开启！")
+                                    .setPositiveButton("跳转", (dialog, which) -> {
+                                        AndPermission.with(MainMyFragment.this)
+                                                .runtime()
+                                                .setting()
+                                                .start(REQUEST_CODE_CAMERA);
+                                    })
+                                    .setNegativeButton("取消", (dialog, which) -> {
 
-            case REQUEST_CODE_STORAGE:
-                if (PermissionUtil.checkGrant(grantResults)) {
-                    //跳转到相册,这里的目的地址写得很泛。
-                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                    //选择图片文件类型
-                    intent.setType("image/*");
-                    //跳转
-                    mResultLauncher.launch(intent);
-                } else {
-                    jumpToSettings();
-                }
-                break;
-            case REQUEST_CODE_CAMERA:
-                if (PermissionUtil.checkGrant(grantResults)) {
-                    openCamera();
-                } else {
-                    jumpToSettings();
-                }
-                break;
-            default:
-                break;
-        }
+                                    })
+                                    .show();
+                        }
+                    }
+                })
+                .rationale(rCamera)
+                .start();
     }
 
-
-    //请求失败跳转设置
-    private void jumpToSettings() {
-        Intent intent = new Intent();
-        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        //必须要setData不然会闪退
-        intent.setData(Uri.fromParts("package", getActivity().getPackageName(), null));
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
-
-
-    private void openCamera(){
+    private void openCamera() {
         /*
         第一步
         创建File对象，用于存储拍照后的照片，并将它存放在手机SD卡的应用关联缓存目录下。
@@ -354,28 +399,56 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         mResultLauncher2.launch(intent2);
     }
 
-    // 图片剪切
-    private void startPhotoZoom(Uri uri) {
+    /**
+     * 第三方权限申请包AndPermission: 自带权限组名，可直接在Fragment中回调
+     * 申请读写文件权限
+     */
+    private void permissionOpenGallery() {
+        // 权限请求
+        AndPermission.with(this)
+                .runtime()
+                .permission(Permission.Group.STORAGE)
+                .onGranted(new Action<List<String>>() {
+                    // 获取权限后
+                    @Override
+                    public void onAction(List<String> data) {
 
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setDataAndType(uri, "image/*");
-        // crop为true是设置在开启的intent中设置显示的view可以剪裁
-        intent.putExtra("crop", "true");
+                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                        // 选择图片文件类型
+                        intent.setType("image/*");
+                        // 跳转到本地存储
+                        mResultLauncher.launch(intent);
+                    }
+                }).onDenied(new Action<List<String>>() {
+                    @Override
+                    public void onAction(List<String> data) {
+                        // 判断是否点了永远拒绝，不再提示
+                        if (AndPermission.hasAlwaysDeniedPermission(getActivity(), data)) {
+                            new AlertDialog.Builder(getActivity())
+                                    .setTitle("权限被禁用")
+                                    .setMessage("读写文件权限被禁用，请到APP设置页面手动开启！")
+                                    .setPositiveButton("跳转", (dialog, which) -> {
+                                        AndPermission.with(MainMyFragment.this)
+                                                .runtime()
+                                                .setting()
+                                                .start(REQUEST_CODE_STORAGE);
+                                    })
+                                    .setNegativeButton("取消", (dialog, which) -> {
 
-        // aspectX aspectY 是宽高的比例
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-
-        // outputX,outputY 是剪裁图片的宽高
-        intent.putExtra("outputX", 300);
-        intent.putExtra("outputY", 300);
-        intent.putExtra("return-data", true);
-        intent.putExtra("noFaceDetection", true);
-        mResultLauncherCrop.launch(intent);
-
+                                    })
+                                    .show();
+                        }
+                    }
+                })
+                .rationale(rGallery)
+                .start();
     }
 
-    // 图片剪切
+    /**
+     * 通用裁切方法。传输、读取文件、裁切、写入文件,最终以cropUri形式显示
+     *
+     * @param uri 裁切前的图片Uri（pic：相册；image：照片）
+     */
     private void Crop(Uri uri) {
 
         File Image = new File(getActivity().getExternalCacheDir(), "output_temp.jpg");
@@ -388,13 +461,24 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
             e.printStackTrace();
         }
 
-        cropUri = Uri.fromFile(Image);
+        // 兼容方式获取文件Uri
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            cropUri = FileProvider.getUriForFile(getActivity(),
+                    "com.example.yidiantong.fileprovider", Image);
+        } else {
+            cropUri = Uri.fromFile(Image);
+        }
 
         Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        // 读写权限：要裁切需要先读取（读），后写入（写）
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         intent.setDataAndType(uri, "image/*");
         // crop为true是设置在开启的intent中设置显示的view可以剪裁
         intent.putExtra("crop", "true");
+
+        // <关键>两步：目标URI转换为剪贴板数据 并设置给Intent
+        ClipData clipData = ClipData.newUri(getActivity().getContentResolver(), "A photo", cropUri);
+        intent.setClipData(clipData);
 
         // aspectX aspectY 是宽高的比例
         intent.putExtra("aspectX", 1);
@@ -403,14 +487,83 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         // outputX,outputY 是剪裁图片的宽高
         intent.putExtra("outputX", 300);
         intent.putExtra("outputY", 300);
+
+        // 设置输出文件位置和格式
         intent.putExtra("return-data", false);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, cropUri);
-        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG);
         intent.putExtra("noFaceDetection", true);
 
-        mResultLauncherCrop2.launch(intent);
+        mResultLauncherCrop.launch(intent);
     }
 
+
+    /**
+     * 第三方权限申请包-自定义权限提示，出现在首次拒绝后。拍照申请
+     */
+    private Rationale rCamera = new Rationale() {
+        @Override
+        public void showRationale(Context context, Object data, RequestExecutor executor) {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("提示")
+                    .setMessage("开启拍照权限才能拍照上传！")
+                    .setPositiveButton("知道了", (dialog, which) -> {
+                        executor.execute();
+                    })
+                    .setNegativeButton("拒绝", (dialog, which) -> {
+                        executor.cancel();
+                    })
+                    .show();
+
+        }
+    };
+
+    /**
+     * 第三方权限申请包-自定义权限提示，出现在首次拒绝后。读写文件申请
+     */
+    private Rationale rGallery = new Rationale() {
+        @Override
+        public void showRationale(Context context, Object data, RequestExecutor executor) {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("提示")
+                    .setMessage("开启读写文件权限才能上传图片！")
+                    .setPositiveButton("知道了", (dialog, which) -> {
+                        executor.execute();
+                    })
+                    .setNegativeButton("拒绝", (dialog, which) -> {
+                        executor.cancel();
+                    })
+                    .show();
+        }
+    };
+
+    /**
+     * 处理最后从Setting返回后的提示
+     * @param requestCode 权限码
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        switch (requestCode) {
+            case REQUEST_CODE_STORAGE:
+                if (AndPermission.hasPermissions(this, Permission.Group.STORAGE)) {
+                    // 有对应的权限
+                    Toast.makeText(getActivity(), "读写文件权限已获取！", Toast.LENGTH_SHORT).show();
+                } else {
+                    // 没有对应的权限
+                    Toast.makeText(getActivity(), "读写文件权限未获取！", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case REQUEST_CODE_CAMERA:
+                if (AndPermission.hasPermissions(this, Permission.Group.CAMERA)) {
+                    // 有对应的权限
+                    Toast.makeText(getActivity(), "拍照权限已获取！", Toast.LENGTH_SHORT).show();
+                } else {
+                    // 没有对应的权限
+                    Toast.makeText(getActivity(), "拍照权限未获取！", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
 }
 
 

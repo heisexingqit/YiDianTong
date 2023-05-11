@@ -1,57 +1,40 @@
 package com.example.yidiantong.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
+import com.github.chrisbanes.photoview.PhotoView;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 public class ImagePagerAdapter extends PagerAdapter {
+    private static final String TAG = "ImagePagerAdapter";
 
     private List<String> urlList;
 
-    private List<View> viewList = new ArrayList<>();
+    private Context mContent;
 
     //点击事件
     private MyItemClickListener clickListener;
 
     public ImagePagerAdapter(Context mContent, List<String> urlList) {
         this.urlList = urlList;
-
-        for (int i = 0; i < urlList.size(); ++i) {
-            View v = LayoutInflater.from(mContent).inflate(R.layout.item_show_web, null, false);
-            WebView wv = v.findViewById(R.id.wv_content);
-            wv.loadData("<head>\n" +
-                    "    <style>\n" +
-                    "        * {\n" +
-                    "            padding: 0px;\n" +
-                    "            margin: 0px;\n" +
-                    "        }" +
-                    "    </style>" +
-                    "    </head>" +
-                    "<img onclick=\"bigimage(this)\" src=\"" + urlList.get(i) + "\" style=\"width:100%;\"/>", "text/html", "utf-8");
-            wv.setFocusable(false);
-            wv.setClickable(false);
-            LinearLayout ll = v.findViewById(R.id.ll_content);
-            ll.setPadding(0, 0, 0, 0);
-
-            ll.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    clickListener.onItemClick();
-                }
-            });
-            viewList.add(v);
-        }
+        this.mContent = mContent;
     }
 
     public void setClickListener(MyItemClickListener clickListener) {
@@ -61,13 +44,33 @@ public class ImagePagerAdapter extends PagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
-        container.addView(viewList.get(position));
-        return viewList.get(position);
+
+        View v = LayoutInflater.from(mContent).inflate(R.layout.item_show_photo, null, false);
+
+        PhotoView pv_content = v.findViewById(R.id.pv_content);
+        /**
+         * ImageLoader 请求图片并缓存
+         */
+        ImageLoader.getInstance().displayImage(urlList.get(position), pv_content, MyApplication.getLoaderOptions());
+
+        // 注：XUI版PhotoView无法设置点击事件
+        pv_content.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clickListener.onItemClick();
+                Log.d(TAG, "onClick: ");
+            }
+        });
+
+
+        container.addView(v);
+
+        return v;
     }
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-        container.removeView(viewList.get(position));
+        container.removeView((View) object);
     }
 
     @Override
@@ -79,6 +82,16 @@ public class ImagePagerAdapter extends PagerAdapter {
     @Override
     public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
         return view == object;
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
+
+    public void updateData(List<String> list) {
+        urlList = list;
+        notifyDataSetChanged();
     }
 
     //点击dismiss

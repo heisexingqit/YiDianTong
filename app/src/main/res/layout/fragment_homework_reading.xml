@@ -5,9 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".fragment.HomeworkSingleFragment">
 
-    <!--翻页按钮-->
-    <include layout="@layout/pageing_homework" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,7 +13,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
@@ -24,15 +21,16 @@
                 android:id="@+id/tv_question_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="13sp" />
+                android:text="m/n"
+                android:textSize="14sp" />
 
             <TextView
+                android:id="@+id/tv_question_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:text="阅读理解题"
-                android:textSize="13sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -65,12 +63,11 @@
             android:background="@color/black" />
 
         <RelativeLayout
+            android:id="@+id/rl_bottom_block"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="55dp"
             android:paddingStart="10dp"
-            android:paddingTop="7dp"
-            android:paddingEnd="10dp"
-            android:paddingBottom="6dp">
+            android:paddingEnd="10dp">
 
             <com.example.yidiantong.View.ClickableImageView
                 android:id="@+id/iv_quesiton_last"
@@ -78,14 +75,12 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:clickable="true"
-                android:focusable="true"
                 android:src="@drawable/left_solid" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
                 android:layout_marginStart="55dp"
                 android:layout_marginEnd="45dp">
 
@@ -101,41 +96,33 @@
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_a"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="37dp"
                     android:layout_weight="1"
                     android:adjustViewBounds="true"
-                    android:clickable="true"
-                    android:focusable="true"
                     android:src="@drawable/a_unselect" />
 
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_b"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="37dp"
                     android:layout_weight="1"
                     android:adjustViewBounds="true"
-                    android:clickable="true"
-                    android:focusable="true"
                     android:src="@drawable/b_unselect" />
 
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_c"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="37dp"
                     android:layout_weight="1"
                     android:adjustViewBounds="true"
-                    android:clickable="true"
-                    android:focusable="true"
                     android:src="@drawable/c_unselect" />
 
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_d"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="37dp"
                     android:layout_weight="1"
                     android:adjustViewBounds="true"
-                    android:clickable="true"
-                    android:focusable="true"
                     android:src="@drawable/d_unselect" />
             </LinearLayout>
 
@@ -145,9 +132,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:clickable="true"
-                android:focusable="true"
                 android:src="@drawable/right_solid" />
         </RelativeLayout>
     </LinearLayout>
+
+    <!--翻页按钮-->
+    <include layout="@layout/pageing_homework" />
 </RelativeLayout>

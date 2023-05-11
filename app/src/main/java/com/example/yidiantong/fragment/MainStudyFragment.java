@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,10 +31,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.HomeRecyclerAdapter;
 import com.example.yidiantong.bean.HomeItemEntity;
 import com.example.yidiantong.ui.HomeworkPagerActivity;
+import com.example.yidiantong.ui.HomeworkPagerFinishActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.MyItemDecoration;
@@ -46,6 +49,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class MainStudyFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "MainStudyFragment";
@@ -55,6 +59,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
     private PopupWindow window;
     private RecyclerView rv_study;
     private RelativeLayout rl_loading;
+    private MyItemDecoration divider;
 
     //获得实例，并绑定参数
     public static MainStudyFragment newInstance() {
@@ -79,6 +84,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main_study, container, false);
@@ -91,24 +97,48 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
         rv_study.setItemAnimator(new DefaultItemAnimator());
 
         //添加间隔线
-        MyItemDecoration divider = new MyItemDecoration(getActivity(), DividerItemDecoration.VERTICAL, false);
-        divider.setDrawable(getActivity().getResources().getDrawable(R.drawable.divider_deep));
+        if (divider == null) {
+            divider = new MyItemDecoration(getActivity(), DividerItemDecoration.VERTICAL, false);
+            divider.setDrawable(getActivity().getResources().getDrawable(R.drawable.divider_deep));
+        }
         rv_study.addItemDecoration(divider);
 
         //获取登录传递的参数
-        username = getActivity().getIntent().getStringExtra("username");
+        if(username == null){
+            username = getActivity().getIntent().getStringExtra("username");
+        }
+
+        //加载页
+        rl_loading = view.findViewById(R.id.rl_loading);
 
         //设置RecyclerViewAdapter
-        adapter = new HomeRecyclerAdapter(getContext(), itemList);
-        adapter.setmItemClickListener((v, pos) -> {
-            switch (adapter.itemList.get(pos).getType()) {
-                case "作业":
-                    Intent intent = new Intent(getActivity(), HomeworkPagerActivity.class);
-                    intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
-                    startActivity(intent);
-                    break;
-            }
-        });
+        if(adapter == null) {
+            adapter = new HomeRecyclerAdapter(getContext(), itemList);
+
+            //设置item点击事件
+            adapter.setmItemClickListener((v, pos) -> {
+                switch (adapter.itemList.get(pos).getType()) {
+                    case "作业":
+                        Intent intent;
+                        if(adapter.itemList.get(pos).getStatus() != 2){
+                            // 未批改的
+                            intent = new Intent(getActivity(), HomeworkPagerActivity.class);
+                        }else{
+                            intent = new Intent(getActivity(), HomeworkPagerFinishActivity.class);
+                        }
+
+                        intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
+                        intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
+                        intent.putExtra("username", username);
+                        intent.putExtra("isNew", adapter.itemList.get(pos).getStatus() == 1 || adapter.itemList.get(pos).getStatus() == 5);
+                        startActivity(intent);
+                        break;
+                }
+            });
+        }else{
+            rl_loading.setVisibility(View.GONE);
+        }
+
         rv_study.setAdapter(adapter);
 
         //弹出搜索栏菜单
@@ -145,15 +175,10 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
             }
         });
 
-        //加载页
-        rl_loading = view.findViewById(R.id.rl_loading);
-
         //请求数据放后面
-        //loadItems_Net();
-
-        //搜索信息
-        view.findViewById(R.id.tv_search).setOnClickListener(this);
-        et_search = view.findViewById(R.id.et_search);
+        if(adapter.itemList.size() == 0){
+            loadItems_Net();
+        }
 
         //搜索栏优化-小键盘回车搜索
         view.findViewById(R.id.tv_search).setOnClickListener(this);
@@ -252,9 +277,20 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
         public void handleMessage(Message message) {
             super.handleMessage(message);
             if (message.what == 100) {
-                adapter.loadData((List<HomeItemEntity>) message.obj);
+                adapter.fail = false;
+                // 拿到的数据，可能为0，真0和假0（申请过快）
+                List<HomeItemEntity> moreList = (List<HomeItemEntity>) message.obj;
+                // 无论什么情况，都是打开进度条遮蔽的
                 rl_loading.setVisibility(View.GONE);
-                currentPage += 1;
+                adapter.loadData(moreList);
+                // 如果是非0，好办，就加载一下就完事了
+                if (moreList.size() > 0) {
+                    // 只有非0才翻页，0不算
+                    currentPage += 1;
+                }
+                /**
+                 * 假0判断移至adapter中，根据refresh一起判断
+                 */
             }
         }
     };
@@ -264,7 +300,10 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
         if (adapter.isRefresh == 1) {
             rl_loading.setVisibility(View.VISIBLE);
         }
+
         String mRequestUrl = Constant.API + Constant.NEW_ITEM + "?currentPage=" + currentPage + "&userId=" + username + "&resourceType=" + type + "&searchStr=" + searchStr;
+
+        Log.d("wen", "study2: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
 
             try {
@@ -273,48 +312,37 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
                 String itemString = json.getString("data");
 
                 Gson gson = new Gson();
-                //使用Goson框架转换Json字符串为列表
+
+                // 使用Goson框架转换Json字符串为列表
                 List<HomeItemEntity> moreList = gson.fromJson(itemString, new TypeToken<List<HomeItemEntity>>() {
                 }.getType());
 
-                //封装消息，传递给主线程
+                // 封装消息，传递给主线程
                 Message message = Message.obtain();
 
+                // 携带数据
                 message.obj = moreList;
+
                 // 发送消息给主线程
-                if (moreList.size() < 12) {
+                Log.d("wen", "一个请求数量（12为界限）：" + moreList.size());
+                if (moreList.size() < 12 && moreList.size() > 0) {
                     adapter.isDown = 1;
                 }
+
                 //标识线程
                 message.what = 100;
                 handler.sendMessage(message);
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
         }, error -> {
-            Toast.makeText(MainStudyFragment.this.getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());
+            rl_loading.setVisibility(View.GONE);
             adapter.fail();
         });
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
-        queue.add(request);
-    }
 
-    //慢加载
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            if (isResumed()) {
-                refreshList();
-            }
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (getUserVisibleHint()) {
-            refreshList();
-        }
+        MyApplication.addRequest(request, TAG);
     }
 }
