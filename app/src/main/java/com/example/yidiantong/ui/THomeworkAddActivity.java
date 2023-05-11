@@ -498,6 +498,7 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
                     lastJiaocai = tv_name;
                 }
                 tv_jiaocai.setText(jiaocai);
+
             });
             fl_jiaocai.addView(view);
         });
