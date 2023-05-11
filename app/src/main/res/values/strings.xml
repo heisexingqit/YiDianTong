@@ -29,7 +29,6 @@
     <string name="f_analysis">【解析】</string>
     <string name="f_explanation">考点讲解</string>
 
-
     <!--wen-->
     <string name="content">目录</string>
     <string name="login_pw_hint">请输入密码</string>
@@ -64,6 +63,25 @@
     <string name="announcement">公告</string>
     <string name="live_news">直播课消息</string>
     <string name="loading">正在加载...</string>
+    <string name="homework_submit">交作业</string>
+    <string name="clear">清除</string>
+    <string name="submit">确定</string>
+    <string name="standard_answer">[参考答案]</string>
+    <string name="stu_answer">[你的答案]</string>
+    <string name="analysis">[解析]</string>
+    <string name="latest">最新</string>
+    <string name="statistical_report">统计报告</string>
+    <string name="teaching_content">教学内容</string>
+    <string name="notice_announcement">通知公告</string>
+    <string name="hint_t_latest">请输入您想搜索的内容</string>
+    <string name="test_paper">试卷</string>
+    <string name="teach_package">授课包</string>
+    <string name="classroom_teaching">课堂授课</string>
+    <string name="teacher_student_interaction">师生互动</string>
+    <string name="assign_homework">布置作业</string>
+    <string name="mark_exam">批阅试题</string>
+    <string name="t_homework_search_hit">学生姓名</string>
+    <string name="watch_report">查看报告</string>
     <!--wen-->
 
 </resources>

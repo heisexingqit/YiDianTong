@@ -2,8 +2,6 @@ package com.example.yidiantong.View;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,9 +28,9 @@ public class ClickableImageView extends AppCompatImageView {
     }
 
     private void updateView(boolean pressed) {
-        if(pressed){
+        if (pressed) {
             this.setAlpha(0.2f);
-        }else{
+        } else {
             this.setAlpha(1.0f);
         }
     }

@@ -24,7 +24,7 @@ public class PswDialog extends Dialog implements View.OnClickListener {
     private Button fbtn_cancel;
     private Button fbtn_confirm;
 
-    private String cancel,confirm;
+    private String cancel, confirm;
     private IOnCancelListener cancelListener;
     private IOnConfirmListener confirmListener;
 
@@ -43,20 +43,21 @@ public class PswDialog extends Dialog implements View.OnClickListener {
     public String old_pw;
     public String new_pw;
 
-    public void setCancel(String cancel,IOnCancelListener cancelListener) {
+    public void setCancel(String cancel, IOnCancelListener cancelListener) {
         this.cancel = cancel;
-        this.cancelListener=cancelListener;
+        this.cancelListener = cancelListener;
     }
-    public void setConfirm(String confirm,IOnConfirmListener confirmListener){
+
+    public void setConfirm(String confirm, IOnConfirmListener confirmListener) {
         this.confirm = confirm;
-        this.confirmListener=confirmListener;
+        this.confirmListener = confirmListener;
     }
 
     public PswDialog(@NonNull Context context) {
         super(context);
     }
 
-    public PswDialog(@NonNull Context context,int themeResId) {
+    public PswDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
     }
 
@@ -87,44 +88,44 @@ public class PswDialog extends Dialog implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.fbtn_cancel:
-                if(cancelListener!=null){
+                if (cancelListener != null) {
                     cancelListener.onCancel(this);
                 }
                 dismiss();
                 break;
             case R.id.fbtn_confirm:
-                if(confirmListener!=null){
+                if (confirmListener != null) {
                     old_pw = fet_old_psw.getText().toString();
-                    new_pw =  fet_new1_psw.getText().toString();
+                    new_pw = fet_new1_psw.getText().toString();
                     confirmListener.onConfirm(this);
                 }
                 dismiss();
                 break;
             case R.id.fiv_old_eye:
-                if(is_old_show == 0){
+                if (is_old_show == 0) {
                     showPw(fiv_old_eye, fet_old_psw);
                     is_old_show = 1;
-                }else{
+                } else {
                     hidePw(fiv_old_eye, fet_old_psw);
                     is_old_show = 0;
                 }
                 break;
             case R.id.fiv_new1_eye:
-                if(is_new1_show == 0){
+                if (is_new1_show == 0) {
                     showPw(fiv_new1_eye, fet_new1_psw);
                     is_new1_show = 1;
-                }else{
+                } else {
                     hidePw(fiv_new1_eye, fet_new1_psw);
                     is_new1_show = 0;
                 }
                 break;
             case R.id.fiv_new2_eye:
-                if(is_new2_show == 0){
+                if (is_new2_show == 0) {
                     showPw(fiv_new2_eye, fet_new2_psw);
                     is_new2_show = 1;
-                }else{
+                } else {
                     hidePw(fiv_new2_eye, fet_new2_psw);
                     is_new2_show = 0;
                 }
@@ -158,11 +159,11 @@ public class PswDialog extends Dialog implements View.OnClickListener {
     }
 
 
-    public interface IOnCancelListener{
+    public interface IOnCancelListener {
         void onCancel(PswDialog dialog);
     }
 
-    public interface IOnConfirmListener{
+    public interface IOnConfirmListener {
         void onConfirm(PswDialog dialog);
     }
 }

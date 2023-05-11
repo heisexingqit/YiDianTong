@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_gravity="bottom"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_gray" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        android:layout_weight="1">
+        <!--最新-->
+        <LinearLayout
+            android:id="@+id/ll_bottom_latest"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="bottom|center"
+            android:orientation="vertical">
+            <!--图标-->
+            <ImageView
+                android:id="@+id/iv_bottom_latest"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/bottom_tab_latest_focus" />
+            <TextView
+                android:id="@+id/tv_bottom_latest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/latest"
+                android:textColor="@color/main_bg"
+                android:textSize="10sp" />
+        </LinearLayout>
+        <!--统计报告-->
+        <LinearLayout
+            android:id="@+id/ll_bottom_report"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="bottom|center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_bottom_report"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/bottom_tab_report_unfocus" />
+
+            <TextView
+                android:id="@+id/tv_bottom_report"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/statistical_report"
+                android:textColor="@color/tabbar_text_unselect"
+                android:textSize="10sp" />
+        </LinearLayout>
+        <!--教学内容-->
+        <LinearLayout
+            android:id="@+id/ll_bottom_teach"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="bottom|center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_bottom_teach"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/bottom_tab_teach_unfocus" />
+
+            <TextView
+                android:id="@+id/tv_bottom_teach"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/teaching_content"
+                android:textColor="@color/tabbar_text_unselect"
+                android:textSize="10sp" />
+        </LinearLayout>
+        <!--通知公告-->
+        <LinearLayout
+            android:id="@+id/ll_bottom_bell"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="bottom|center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_bottom_bell"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/bottom_tab_bell_unfocus" />
+
+            <TextView
+                android:id="@+id/tv_bottom_bell"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/notice_announcement"
+                android:textColor="@color/tabbar_text_unselect"
+                android:textSize="10sp" />
+        </LinearLayout>
+        <!--我的-->
+        <LinearLayout
+            android:id="@+id/ll_bottom_mine"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="bottom|center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_bottom_mine"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/bottom_tab_mine_unfocus" />
+
+            <TextView
+                android:id="@+id/tv_bottom_mine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/my"
+                android:textColor="@color/tabbar_text_unselect"
+                android:textSize="10sp" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

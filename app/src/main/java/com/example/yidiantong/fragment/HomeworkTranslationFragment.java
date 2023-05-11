@@ -1,55 +1,79 @@
 package com.example.yidiantong.fragment;
 
-import android.Manifest;
-import android.app.Instrumentation;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.provider.MediaStore;
+import android.text.Html;
+import android.text.SpannableString;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.provider.Settings;
-import android.text.SpannableString;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.bumptech.glide.request.target.ImageViewTargetFactory;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
+import com.example.yidiantong.adapter.ImagePagerAdapter;
 import com.example.yidiantong.bean.HomeworkEntity;
+import com.example.yidiantong.bean.StuAnswerEntity;
+import com.example.yidiantong.ui.DoodleActivity;
+import com.example.yidiantong.util.Constant;
+import com.example.yidiantong.util.ImageUtils;
+import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.PageingInterface;
-
-import com.example.yidiantong.util.PermissionUtil;
-import com.example.yidiantong.util.StringUtils;
 import com.example.yidiantong.util.PxUtils;
+import com.example.yidiantong.util.StringUtils;
+import com.example.yidiantong.util.TransmitInterface;
+import com.yanzhenjie.permission.Action;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.Rationale;
+import com.yanzhenjie.permission.RequestExecutor;
+import com.yanzhenjie.permission.runtime.Permission;
+
+import org.jetbrains.annotations.Nullable;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import javax.xml.transform.Result;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class HomeworkTranslationFragment extends Fragment implements View.OnClickListener {
@@ -57,38 +81,81 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
     private static final String TAG = "HomeworkTranslationFrag";
 
     private PageingInterface pageing;
+    private TransmitInterface transmit;
+
     private int show = 0;
     private LinearLayout ll_context;
 
     private ActivityResultLauncher<Intent> mResultLauncher;
     private ActivityResultLauncher<Intent> mResultLauncher2;
+    private ActivityResultLauncher<Intent> mResultLauncher3;
     private Uri picUri, imageUri;
 
-    private String html_answer = "<p style=\" color: rgb(117, 117, 117); word-wrap:break-word; \">";
+    //接口需要
+    private String learnPlanId, username;
 
-    //权限组
-    private static final String[] PERMISSIONS_STORAGE = new String[]{
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-    };
-    private static final String[] PERMISSIONS_CAMERA = new String[]{
-            Manifest.permission.CAMERA
-    };
+    //答题区域HTML头
+    private String html_answer_head = "<head>\n" +
+            "    <style>\n" +
+            "        img{\n" +
+            "        vertical-align: middle;" +
+            "        max-width:40px !important;" +
+            "        height:40px !important;" +
+            "        }" +
+            "        body {\n" +
+            "            color: rgb(117, 117, 117);\n" +
+            "            word-wrap: break-word;\n" +
+            "            font-size: 14px;" +
+            "        }\n" +
+            "    </style>\n" +
+            "    <script>\n" +
+            "        function bigimage(x) {\n" +
+            "            myInterface.bigPic()\n" +
+            "        }\n" +
+            "    </script>\n" +
+            "</head>\n" +
+            "\n" +
+            "<body onclick=\"bigimage(this)\">\n";
+    //html尾
+    private String html_answer_tail = "</body>";
+    //html内容数据
+    private String html_answer = "";
+
+    // 权限组（AndPermission自带）
 
     //标识码
     private static final int REQUEST_CODE_STORAGE = 1;
     private static final int REQUEST_CODE_CAMERA = 2;
+
+    //作答组件
     private EditText et_answer;
     private WebView wv_answer;
 
+    //图片编码
+    private String imageBase64;
+
+    //学生作答情况
+    private StuAnswerEntity stuAnswerEntity;
+    private ClickableImageView iv_top;
+    private View contentView = null;
+    //点击大图
+    private List<String> url_list = new ArrayList<>();
+    private PopupWindow window;
+    private ImagePagerAdapter adapter;
 
 
-    public static HomeworkTranslationFragment newInstance(HomeworkEntity homeworkEntity, int position, int size) {
+    private RelativeLayout rl_submitting;
+    private LinearLayout ll_answer;
+
+    public static HomeworkTranslationFragment newInstance(HomeworkEntity homeworkEntity, int position, int size, String learnPlanId, String username, StuAnswerEntity stuAnswerEntity) {
         HomeworkTranslationFragment fragment = new HomeworkTranslationFragment();
         Bundle args = new Bundle();
         args.putSerializable("homeworkEntity", homeworkEntity);
         args.putInt("position", position);
         args.putInt("size", size);
+        args.putString("learnPlanId", learnPlanId);
+        args.putString("username", username);
+        args.putSerializable("stuAnswerEntity", stuAnswerEntity);
         fragment.setArguments(args);
         return fragment;
     }
@@ -98,6 +165,7 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         pageing = (PageingInterface) context;
+        transmit = (TransmitInterface) context;
     }
 
     @Override
@@ -108,28 +176,85 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
         Bundle arg = getArguments();
         int position = arg.getInt("position") + 1;
         int size = arg.getInt("size");
+        learnPlanId = arg.getString("learnPlanId");
+        username = arg.getString("username");
         HomeworkEntity homeworkEntity = (HomeworkEntity) arg.getSerializable("homeworkEntity");
+        stuAnswerEntity = (StuAnswerEntity) arg.getSerializable("stuAnswerEntity");
+        html_answer = stuAnswerEntity.getStuAnswer();
+        if (url_list.size() == 0) {
+            Html.fromHtml(html_answer, new Html.ImageGetter() {
+                @Override
+                public Drawable getDrawable(String s) {
+                    url_list.add(s);
+                    return null;
+                }
+            }, null);
+        }
 
         //获取view
         View view = inflater.inflate(R.layout.fragment_homework_translation, container, false);
         TextView tv_question_number = view.findViewById(R.id.tv_question_number);
+
+        // 答题面板
+        ll_context = view.findViewById(R.id.ll_context);
+
+        /**
+         * 多机适配：底栏高度
+         */
+        WindowManager windowManager = getActivity().getWindowManager();
+        DisplayMetrics metrics = new DisplayMetrics();
+        windowManager.getDefaultDisplay().getMetrics(metrics);
+        int screenWidth = metrics.widthPixels;
+        int screenHeight = metrics.heightPixels;
+        // 长宽像素比
+        float deviceAspectRatio = (float) screenHeight / screenWidth;
+        // 获取底部布局
+        LinearLayout block = view.findViewById(R.id.ll_bottom_block);
+        if (deviceAspectRatio > 2.0) {
+            ViewGroup.LayoutParams params = block.getLayoutParams();
+            params.height = PxUtils.dip2px(getActivity(), 80);
+            block.setLayoutParams(params);
+            params = ll_context.getLayoutParams();
+            params.height = PxUtils.dip2px(getActivity(), 255);
+            ll_context.setLayoutParams(params);
+        }
 
         //题面显示
         WebView wv_content = view.findViewById(R.id.wv_content);
         String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + homeworkEntity.getQuestionContent() + "</body>";
         wv_content.loadData(html_content, "text/html", "utf-8");
 
-        //答案面显示
-//        wv_answer = view.findViewById(R.id.wv_answer);
-//        wv_answer.loadData(html_answer + "</p>", "text/html", "utf-8");
+        /**
+         * 老的作答点击事件 源组件（为了代码复用，直接用）
+         */
+        ll_answer = view.findViewById(R.id.ll_answer);
+        ll_answer.setOnClickListener(this);
 
+        //作答面显示
+        wv_answer = view.findViewById(R.id.wv_answer);
+        wv_answer.loadData(getHtmlAnswer(), "text/html", "utf-8");
+        WebSettings webSettings = wv_answer.getSettings();
+        webSettings.setJavaScriptEnabled(true);
 
-        //保存按钮
+        wv_answer.addJavascriptInterface(
+                new Object() {
+                    @JavascriptInterface
+                    @SuppressLint("JavascriptInterface")
+                    public void bigPic() {
+                        /**
+                         * Js注册的方法无法修改主UI，需要Handler
+                         */
+                        Message message = Message.obtain();
+                        // 发送消息给主线程
+                        //标识线程
+                        message.what = 101;
+                        handler.sendMessage(message);
+                    }
+                }
+                , "myInterface");
+
         view.findViewById(R.id.tv_save).setOnClickListener(this);
-
-        //答案输入框
         et_answer = view.findViewById(R.id.et_answer);
-
 
         //题目类型
         TextView tv_question_type = view.findViewById(R.id.tv_question_type);
@@ -146,19 +271,15 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
         ImageView iv_pager_next = view.findViewById(R.id.iv_page_next);
         iv_pager_last.setOnClickListener(this);
         iv_pager_next.setOnClickListener(this);
-        ll_context = view.findViewById(R.id.ll_context);
-        view.findViewById(R.id.iv_top).setOnClickListener(this);
 
-        //图片展示组件
-        ImageView iv_content = view.findViewById(R.id.iv_content);
-
-        //拍照按钮
+        //编辑框组件
+        iv_top = view.findViewById(R.id.iv_top);
+        iv_top.setOnClickListener(this);
+        view.findViewById(R.id.tv_erase).setOnClickListener(this);
         view.findViewById(R.id.civ_camera).setOnClickListener(this);
-
-        //相册按钮
         view.findViewById(R.id.civ_gallery).setOnClickListener(this);
 
-        //注册Gallery回调组件
+        // 注册Gallery回调组件
         mResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
@@ -167,32 +288,106 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
                     //Uri和path相似，都是定位路径，属于一步到位方式 =》 如果是path 则 Uri.parse(path)
                     picUri = intent.getData();
                     if (picUri != null) {
-                        iv_content.setImageURI(picUri);
-                        Log.d("ning", "onActivityResult: " + picUri.toString());
                         /*Gallery回调执行*/
-
+                        try {
+                            Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(picUri));
+                            imageBase64 = ImageUtils.Bitmap2StrByBase64(bitmap);
+                            imageBase64 = imageBase64.replace("+", "%2b");
+                            uploadImage();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
         });
 
-        //注册Camera回调组件
+        // 注册Camera回调组件
         mResultLauncher2 = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
                 if (result.getResultCode() == getActivity().RESULT_OK) {
-                    try {
-                        //  decodeStream()可以将output_image.jpg解析成Bitmap对象。
-                        Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(imageUri));
-                        iv_content.setImageBitmap(bitmap);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
+                    Intent intent = new Intent(getActivity(), DoodleActivity.class);
+                    intent.putExtra("uri", imageUri.toString());
+                    mResultLauncher3.launch(intent);
                 }
             }
         });
 
+        // 注册 涂鸦板
+        mResultLauncher3 = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == getActivity().RESULT_OK) {
+                    Intent intent = result.getData();
+                    imageBase64 = intent.getStringExtra("data");
+                    imageBase64 = imageBase64.replace("+", "%2b");
+                    uploadImage();
+                }
+            }
+        });
+
+        // 提前创建Adapter
+        adapter = new ImagePagerAdapter(getActivity(), url_list);
+
         return view;
+    }
+
+    private String getHtmlAnswer() {
+        return html_answer_head + html_answer + html_answer_tail;
+    }
+
+    private Handler handler = new Handler(Looper.getMainLooper()) {
+        @SuppressLint("NotifyDataSetChanged")
+        @Override
+        public void handleMessage(Message message) {
+            super.handleMessage(message);
+            if (message.what == 100) {
+                String url = (String) message.obj;
+                Log.d("wen", "handleMessage: " + url);
+                url_list.add(url);
+                adapter.updateData(url_list);// 关键
+                html_answer += "<img onclick=\"bigimage(this)\" src=\"" + url + "\" style=\"max-width:80px;\"/>";
+                wv_answer.loadData(getHtmlAnswer(), "text/html", "utf-8");
+                transmit.setStuAnswer(stuAnswerEntity.getOrder(), html_answer);
+                transmit.offLoading();
+            } else if (message.what == 101) {
+                // 复用老代码 触发点击
+                ll_answer.performClick();
+            }
+        }
+    };
+
+    //
+    private void uploadImage() {
+        transmit.onLoading();
+        String mRequestUrl = Constant.API + Constant.UPLOAD_IMAGE + "?baseCode=" + imageBase64 + "&leanPlanId=" + learnPlanId + "&userId=" + username;
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+
+                String url = json.getString("data");
+                Boolean isSuccess = json.getBoolean("success");
+                Toast.makeText(getActivity(), json.getString("message"), Toast.LENGTH_SHORT).show();
+
+                //封装消息，传递给主线程
+                Message message = Message.obtain();
+
+                message.obj = url;
+                // 发送消息给主线程
+                //标识线程
+                message.what = 100;
+                handler.sendMessage(message);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            rl_submitting.setVisibility(View.GONE);
+            Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
+        });
+        MyApplication.addRequest(request, TAG);
     }
 
     @Override
@@ -209,83 +404,124 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
                 ViewGroup.LayoutParams params = ll_context.getLayoutParams();
                 if (show == 0) {
                     params.height = PxUtils.dip2px(getActivity(), 729);
+                    iv_top.setImageResource(R.drawable.down_icon);
                     show = 1;
                 } else {
                     params.height = PxUtils.dip2px(getActivity(), 235);
+                    iv_top.setImageResource(R.drawable.up_icon);
                     show = 0;
                 }
                 ll_context.setLayoutParams(params);
                 break;
             case R.id.civ_camera:
-
-                //启动相机程序
+                // 启动相机程序
                 /*
-                * 第零步，先申请权限
-                * */
-                if (PermissionUtil.checkPermissionForFragment(getActivity(), PERMISSIONS_CAMERA, REQUEST_CODE_CAMERA)) {
-                    openCamera();
-                }
+                 第零步，先申请权限
+                 */
+                permissionOpenCamera();
+
                 break;
             case R.id.civ_gallery:
-
-                if (PermissionUtil.checkPermissionForFragment(getActivity(), PERMISSIONS_STORAGE, REQUEST_CODE_STORAGE)) {
-                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                    //选择图片文件类型
-                    intent.setType("image/*");
-                    //跳转
-                    mResultLauncher.launch(intent);
-                }
+                // 打开本地存储
+                permissionOpenGallery();
                 break;
             case R.id.tv_save:
                 html_answer += et_answer.getText().toString();
-                wv_answer.loadData(html_answer + "</p>", "text/html", "utf-8");
+                wv_answer.loadData(getHtmlAnswer(), "text/html", "utf-8");
+                transmit.setStuAnswer(stuAnswerEntity.getOrder(), html_answer);
                 et_answer.setText("");
                 break;
+            case R.id.tv_erase:
+                html_answer = "";
+                wv_answer.loadData(getHtmlAnswer(), "text/html", "utf-8");
+                transmit.setStuAnswer(stuAnswerEntity.getOrder(), html_answer);
+                url_list.clear();
+                adapter.updateData(url_list);
+                break;
+            case R.id.ll_answer:
+                if (contentView == null) {
+                    contentView = LayoutInflater.from(getActivity()).inflate(R.layout.picture_menu, null, false);
+                    ViewPager vp_pic = contentView.findViewById(R.id.vp_picture);
+
+                    vp_pic.setAdapter(adapter);
+
+                    //顶部标签
+                    TextView tv = contentView.findViewById(R.id.tv_picNum);
+                    tv.setText("1/" + url_list.size());
+                    window = new PopupWindow(contentView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
+                    window.setTouchable(true);
+                    adapter.setClickListener(new ImagePagerAdapter.MyItemClickListener() {
+                        @Override
+                        public void onItemClick() {
+                            vp_pic.setCurrentItem(0);
+                            window.dismiss();
+                        }
+                    });
+                    vp_pic.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+                        @Override
+                        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                        }
+
+                        @Override
+                        public void onPageSelected(int position) {
+                            tv.setText(position + 1 + "/" + url_list.size());
+                        }
+
+                        @Override
+                        public void onPageScrollStateChanged(int state) {
+
+                        }
+                    });
+                }
+                window.showAtLocation(getActivity().getWindow().getDecorView(), Gravity.CENTER, 0, 0);
+
+                break;
         }
     }
 
-    //在用户进行授权后，处理请求结果
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
+    /**
+     * 第三方权限申请包AndPermission: 自带权限组名，可直接在Fragment中回调
+     * 申请拍照权限
+     */
+    private void permissionOpenCamera() {
+        // 权限请求
+        AndPermission.with(this)
+                .runtime()
+                .permission(Permission.Group.CAMERA)
+                .onGranted(new Action<List<String>>() {
+                    // 获得权限后
+                    @Override
+                    public void onAction(List<String> data) {
+                        openCamera();
+                    }
+                }).onDenied(new Action<List<String>>() {
+                    @Override
+                    public void onAction(List<String> data) {
+                        // 判断是否点了永远拒绝，不再提示
+                        if (AndPermission.hasAlwaysDeniedPermission(getActivity(), data)) {
+                            new AlertDialog.Builder(getActivity())
+                                    .setTitle("权限被禁用")
+                                    .setMessage("拍照权限被禁用，请到APP设置页面手动开启！")
+                                    .setPositiveButton("跳转", (dialog, which) -> {
+                                        AndPermission.with(HomeworkTranslationFragment.this)
+                                                .runtime()
+                                                .setting()
+                                                .start(REQUEST_CODE_CAMERA);
+                                    })
+                                    .setNegativeButton("取消", (dialog, which) -> {
 
-            case REQUEST_CODE_STORAGE:
-                if (PermissionUtil.checkGrant(grantResults)) {
-                    //跳转到相册,这里的目的地址写得很泛。
-                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                    //选择图片文件类型
-                    intent.setType("image/*");
-                    //跳转
-                    mResultLauncher.launch(intent);
-                } else {
-                    jumpToSettings();
-                }
-                break;
-            case REQUEST_CODE_CAMERA:
-                if (PermissionUtil.checkGrant(grantResults)) {
-                    openCamera();
-                } else {
-                    jumpToSettings();
-                }
-                break;
-            default:
-                break;
-        }
+                                    })
+                                    .show();
+                        }
+                    }
+                })
+                .rationale(rCamera)
+                .start();
     }
 
-
-    //请求失败跳转设置
-    private void jumpToSettings() {
-        Intent intent = new Intent();
-        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        //必须要setData不然会闪退
-        intent.setData(Uri.fromParts("package", getActivity().getPackageName(), null));
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
-
-    private void openCamera(){
+    private void openCamera() {
         /*
         第一步
         创建File对象，用于存储拍照后的照片，并将它存放在手机SD卡的应用关联缓存目录下。
@@ -319,4 +555,116 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
         mResultLauncher2.launch(intent2);
     }
 
+    /**
+     * 第三方权限申请包AndPermission: 自带权限组名，可直接在Fragment中回调
+     * 申请读写文件权限
+     */
+    private void permissionOpenGallery() {
+        // 权限请求
+        AndPermission.with(this)
+                .runtime()
+                .permission(Permission.Group.STORAGE)
+                .onGranted(new Action<List<String>>() {
+                    // 获取权限后
+                    @Override
+                    public void onAction(List<String> data) {
+
+                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                        // 选择图片文件类型
+                        intent.setType("image/*");
+                        // 跳转到本地存储
+                        mResultLauncher.launch(intent);
+                    }
+                }).onDenied(new Action<List<String>>() {
+                    @Override
+                    public void onAction(List<String> data) {
+                        // 判断是否点了永远拒绝，不再提示
+                        if (AndPermission.hasAlwaysDeniedPermission(getActivity(), data)) {
+                            new AlertDialog.Builder(getActivity())
+                                    .setTitle("权限被禁用")
+                                    .setMessage("读写文件权限被禁用，请到APP设置页面手动开启！")
+                                    .setPositiveButton("跳转", (dialog, which) -> {
+                                        AndPermission.with(HomeworkTranslationFragment.this)
+                                                .runtime()
+                                                .setting()
+                                                .start(REQUEST_CODE_STORAGE);
+                                    })
+                                    .setNegativeButton("取消", (dialog, which) -> {
+
+                                    })
+                                    .show();
+                        }
+                    }
+                })
+                .rationale(rGallery)
+                .start();
+    }
+
+    /**
+     * 第三方权限申请包-自定义权限提示，出现在首次拒绝后。拍照申请
+     */
+    private Rationale rCamera = new Rationale() {
+        @Override
+        public void showRationale(Context context, Object data, RequestExecutor executor) {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("提示")
+                    .setMessage("开启拍照权限才能拍照上传！")
+                    .setPositiveButton("知道了", (dialog, which) -> {
+                        executor.execute();
+                    })
+                    .setNegativeButton("拒绝", (dialog, which) -> {
+                        executor.cancel();
+                    })
+                    .show();
+
+        }
+    };
+
+    /**
+     * 第三方权限申请包-自定义权限提示，出现在首次拒绝后。读写文件申请
+     */
+    private Rationale rGallery = new Rationale() {
+        @Override
+        public void showRationale(Context context, Object data, RequestExecutor executor) {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("提示")
+                    .setMessage("开启读写文件权限才能上传图片！")
+                    .setPositiveButton("知道了", (dialog, which) -> {
+                        executor.execute();
+                    })
+                    .setNegativeButton("拒绝", (dialog, which) -> {
+                        executor.cancel();
+                    })
+                    .show();
+        }
+    };
+
+    /**
+     * 处理最后从Setting返回后的提示
+     *
+     * @param requestCode 权限码
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        switch (requestCode) {
+            case REQUEST_CODE_STORAGE:
+                if (AndPermission.hasPermissions(this, Permission.Group.STORAGE)) {
+                    // 有对应的权限
+                    Toast.makeText(getActivity(), "读写文件权限已获取！", Toast.LENGTH_SHORT).show();
+                } else {
+                    // 没有对应的权限
+                    Toast.makeText(getActivity(), "读写文件权限未获取！", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case REQUEST_CODE_CAMERA:
+                if (AndPermission.hasPermissions(this, Permission.Group.CAMERA)) {
+                    // 有对应的权限
+                    Toast.makeText(getActivity(), "拍照权限已获取！", Toast.LENGTH_SHORT).show();
+                } else {
+                    // 没有对应的权限
+                    Toast.makeText(getActivity(), "拍照权限未获取！", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
 }

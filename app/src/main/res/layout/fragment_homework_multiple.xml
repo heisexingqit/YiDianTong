@@ -13,7 +13,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
@@ -22,7 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=""
-                android:textSize="13sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/tv_question_type"
@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:text="@string/f_duoxuan"
-                android:textSize="13sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -55,26 +55,23 @@
             android:background="@color/black" />
 
         <RelativeLayout
+            android:id="@+id/rl_bottom_block"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:paddingStart="10dp"
-            android:paddingTop="7dp"
-            android:paddingEnd="10dp"
-            android:paddingBottom="6dp">
+            android:layout_height="55dp">
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="55dp"
-                android:layout_marginEnd="45dp">
+                android:gravity="center_vertical"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp">
 
 
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_a"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="35dp"
                     android:layout_weight="1"
                     android:adjustViewBounds="true"
                     android:clickable="true"
@@ -84,7 +81,7 @@
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_b"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="35dp"
                     android:layout_weight="1"
                     android:adjustViewBounds="true"
                     android:clickable="true"
@@ -94,7 +91,7 @@
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_c"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="35dp"
                     android:layout_weight="1"
                     android:adjustViewBounds="true"
                     android:clickable="true"
@@ -104,7 +101,7 @@
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_d"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="35dp"
                     android:layout_weight="1"
                     android:adjustViewBounds="true"
                     android:clickable="true"
@@ -114,5 +111,6 @@
 
         </RelativeLayout>
     </LinearLayout>
+
     <include layout="@layout/pageing_homework" />
 </RelativeLayout>

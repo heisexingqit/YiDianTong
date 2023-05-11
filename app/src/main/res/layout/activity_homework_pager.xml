@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,21 +9,36 @@
     android:orientation="vertical"
     tools:context=".ui.HomeworkPagerActivity">
 
-    <!--顶部标题栏-->
-    <include layout="@layout/bar_top_homework_title" />
-
-    <!--分隔线-->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@drawable/divider_deep" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <!--顶部标题栏-->
+        <include layout="@layout/bar_top_homework_title" />
+        <!--分隔线-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/divider_deep" />
 
-    <!--可滑动ViewPager-->
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/vp_homework"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        <!--可滑动ViewPager-->
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/vp_homework"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+        <!--加载-->
+        <include
+            layout="@layout/loading_page"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/ll_divide"
+            android:visibility="visible" />
+    </LinearLayout>
 
+    <!--遮蔽-->
+    <include layout="@layout/submitting_page"
+        android:visibility="gone"/>
 
-</LinearLayout>
+</RelativeLayout>
+

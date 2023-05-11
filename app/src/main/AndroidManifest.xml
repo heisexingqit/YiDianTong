@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.yidiantong">
 
+    <permission-group android:name="${applicationId}.andpermission" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -35,16 +37,54 @@
         <activity
             android:name=".ui.SelectCourseActivity"
             android:exported="false" />
-        <activity
-            android:name=".TestActivity"
-            android:exported="true" />
 
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" /> <!-- 作业 -->
+
+        <activity
+            android:name=".ui.THomeworkAddActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.THomeworkMarkSubmitActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.THomeworkMarkPagerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.THomeworkReportActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.THomeworkActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.TMainPagerActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.HomeworkPagerFinishActivity"
+            android:exported="false" />
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" /> <!-- 涂鸦 -->
+        <activity
+            android:name=".ui.DoodleActivity"
+            android:exported="false" /> <!-- 交作业 -->
+        <activity
+            android:name=".ui.HomeworkSubmitActivity"
+            android:exported="true" /> <!-- 测试1 -->
+        <activity
+            android:name=".TestActivity"
+            android:exported="true" /> <!-- 测试2 -->
+        <activity
+            android:name=".Test2Activity"
+            android:exported="true" /> <!-- 作业 -->
         <activity
             android:name=".ui.HomeworkPagerActivity"
-            android:exported="true" /> <!-- 主页 -->
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize" /> <!-- 主页 -->
+
         <activity
             android:name=".ui.MainPagerActivity"
             android:exported="true"
@@ -57,7 +97,9 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- 内容提供者_相机 -->
+
+        </activity> <!-- 内容提供者-相机 -->
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.yidiantong.fileprovider"

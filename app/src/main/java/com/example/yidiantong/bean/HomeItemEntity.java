@@ -1,5 +1,9 @@
 package com.example.yidiantong.bean;
 
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
 public class HomeItemEntity {
 
     //类型

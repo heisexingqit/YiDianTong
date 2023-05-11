@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
+
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -16,14 +17,19 @@ import android.os.Looper;
 import android.os.Message;
 
 import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+
+
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.BooksAdapter;
 import com.example.yidiantong.bean.BookInfoEntity;
@@ -41,6 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainBookFragment extends Fragment {
+
 
     private static final String TAG = "MainBookFragment";
     private View contentView = null;

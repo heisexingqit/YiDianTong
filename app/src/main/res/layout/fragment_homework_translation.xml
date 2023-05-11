@@ -16,7 +16,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
@@ -25,15 +25,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="3/5题"
-                android:textSize="13sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/tv_question_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
                 android:text="@string/translation"
-                android:textSize="13sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <!--题目主体-->
@@ -89,6 +89,7 @@
                         android:src="@drawable/up_icon" />
 
                     <TextView
+                        android:id="@+id/tv_erase"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/delete"
@@ -96,43 +97,35 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/ll_answer"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1">
-
-<!--                    <WebView-->
-<!--                        android:id="@+id/wv_answer"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:scrollbars="none"/>-->
-                                    <ImageView
-                                        android:layout_gravity="left|top"
-                                        android:id="@+id/iv_content"
-                                        android:layout_width="100dp"
-                                        android:layout_height="70dp"/>
+                    <WebView
+                        android:id="@+id/wv_answer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="none"/>
                 </LinearLayout>
             </LinearLayout>
 
             <!--分隔线-->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:background="@color/black"
-                tools:ignore="Suspicious0dp" />
-
+                android:layout_height="1dp"
+                android:background="@color/black" />
             <!--答案输入区-->
             <LinearLayout
+                android:id="@+id/ll_bottom_block"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:background="#e6ddd6"
-                android:gravity="center_vertical">
+                android:layout_height="55dp"
+                android:background="#e6ddd6">
 
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="9.5dp"
-                    android:layout_marginBottom="5.5dp"
+                    android:layout_height="42dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:background="@drawable/shape_translation_et_bg">
 
@@ -164,23 +157,26 @@
 
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/civ_camera"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:adjustViewBounds="true"
+                    android:layout_marginStart="20dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:padding="10dp"
                     android:scaleType="fitCenter"
                     android:src="@drawable/camera" />
 
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/civ_gallery"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:adjustViewBounds="true"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:padding="11dp"
                     android:scaleType="fitCenter"
                     android:src="@drawable/photo" />
 

@@ -1,5 +1,6 @@
 package com.example.yidiantong;
 
+
 import android.app.Application;
 import android.content.Context;
 import android.util.Log;
@@ -15,25 +16,29 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
 import java.util.List;
 
 public class MyApplication extends Application {
 
+    // 全局变量
+    public static String username;
+    public static String userId;
+    public static String cnName;
+    public static String token;
 
+    private static RequestQueue mQueue;
     //ImageLoader显示图片过程中的参数
     private static DisplayImageOptions mLoaderOptions;
-    private static RequestQueue mQueue;
-    //主界面浮动按钮图片参数
-    private static DisplayImageOptions mFlatOptions;
+    private static String lastRequestUrl;
+    private static long lastRequestTime;
 
     //初始化ImageLoader
     public static void initImageLoader(Context context) {
         //初始化一个ImageLoaderConfiguration配置对象
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.
                 Builder(context).
-                memoryCacheExtraOptions(480, 800). // max width, max height，即保存的每个缓存文件的最大长宽
+                memoryCacheExtraOptions(800, 800). // max width, max height，即保存的每个缓存文件的最大长宽
                         denyCacheImageMultipleSizesInMemory().
                 threadPriority(Thread.NORM_PRIORITY - 2).
                 diskCacheFileNameGenerator(new Md5FileNameGenerator()).
@@ -47,31 +52,11 @@ public class MyApplication extends Application {
                         showImageOnFail(R.mipmap.no_image).//加载失败时
                         showImageForEmptyUri(R.mipmap.no_image).//加载的Uri为空
                         imageScaleType(ImageScaleType.EXACTLY_STRETCHED).
-                //displayer(new RoundedBitmapDisplayer(360)).//是否设置为圆角，弧度为多少
+                        //displayer(new RoundedBitmapDisplayer(360)).//是否设置为圆角，弧度为多少
                         cacheInMemory(true).//是否进行缓冲
                         cacheOnDisk(true).
                 considerExifParams(true).
                 build();
-
-        mFlatOptions = new DisplayImageOptions.Builder().
-                showImageOnLoading(R.mipmap.no_image).//正加载，显示no_image
-                        showImageOnFail(R.mipmap.no_image).//加载失败时
-                        showImageForEmptyUri(R.mipmap.no_image).//加载的Uri为空
-                        imageScaleType(ImageScaleType.EXACTLY_STRETCHED).
-                displayer(new RoundedBitmapDisplayer(360)).//是否设置为圆角，弧度为多少
-                        cacheInMemory(true).//是否进行缓冲
-                        cacheOnDisk(true).
-                considerExifParams(true).
-                build();
-    }
-
-    //将volley请求加入到请求队列,设置超时
-    public static void addRequest(Request request, Object tag) {
-        request.setTag(tag);
-        request.setRetryPolicy(new DefaultRetryPolicy(10000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        mQueue.add(request);
     }
 
     //简单的Get和Set
@@ -79,8 +64,28 @@ public class MyApplication extends Application {
         return mLoaderOptions;
     }
 
-    public static DisplayImageOptions getmFlatOptions() {
-        return mFlatOptions;
+    //将volley请求加入到请求队列,设置超时
+    public static void addRequest(Request request, Object tag) {
+        /**
+         * 延长请求超时
+         */
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                30000, // 30 seconds timeout
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        /**
+         * 拦截重复请求，时间为1.2s内（降低效率）
+         */
+        long currentTime = System.currentTimeMillis();
+        if (request.getUrl().equals(lastRequestUrl) && currentTime - lastRequestTime < 600) {
+            Log.d("wen", "Duplicate request, ignored." + request.getUrl());
+            return;
+        }
+        request.setTag(tag);
+        mQueue.add(request);
+        // 控制 请求速度
+        lastRequestUrl = request.getUrl();
+        lastRequestTime = currentTime;
     }
 
     public static RequestQueue getHttpQueue() {
@@ -94,10 +99,14 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
         //初始化ImageLoader
         initImageLoader(getApplicationContext());
-        //初始化Volley的请求队列，使用okhttp替代volley底层链接
-        mQueue = Volley.newRequestQueue(getApplicationContext(), new OkHttpStack());
+
+
+        // 初始化Volley的请求队列，使用okhttp替代volley底层链接
+        mQueue = Volley.newRequestQueue(getApplicationContext(), new OkHttpStack(),  -1);
+
 
     }
 

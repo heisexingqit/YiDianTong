@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end">
+
+        <com.example.yidiantong.View.ClickableTextView
+            android:id="@+id/ctv_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/photo_text_submit_border"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp"
+            android:text="完成"
+            android:textColor="@color/photo_editor_white"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <EditText
+            android:id="@+id/et_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:hint="请输入文本"
+            android:textCursorDrawable="@drawable/photo_text_cursor"
+            android:textColor="@color/photo_editor_white"
+            android:textColorHint="@color/gray_text"
+            android:background="@null"
+            android:textSize="30sp" />
+    </LinearLayout>
+
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <com.example.yidiantong.View.ClickableImageView
+                android:id="@+id/civ_color1"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@color/draw_color1" />
+
+            <com.example.yidiantong.View.ClickableImageView
+                android:id="@+id/civ_color2"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@color/draw_color2" />
+
+            <com.example.yidiantong.View.ClickableImageView
+                android:id="@+id/civ_color3"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@color/draw_color3" />
+
+            <com.example.yidiantong.View.ClickableImageView
+                android:id="@+id/civ_color4"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@color/draw_color4" />
+
+            <com.example.yidiantong.View.ClickableImageView
+                android:id="@+id/civ_color5"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@color/draw_color5" />
+
+            <com.example.yidiantong.View.ClickableImageView
+                android:id="@+id/civ_color6"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@color/draw_color6" />
+
+            <com.example.yidiantong.View.ClickableImageView
+                android:id="@+id/civ_color7"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@color/draw_color7" />
+
+            <com.example.yidiantong.View.ClickableImageView
+                android:id="@+id/civ_color8"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@color/draw_color8" />
+
+            <com.example.yidiantong.View.ClickableImageView
+                android:id="@+id/civ_color9"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@color/draw_color9" />
+
+            <com.example.yidiantong.View.ClickableImageView
+                android:id="@+id/civ_color10"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@color/draw_color10" />
+
+            <com.example.yidiantong.View.ClickableImageView
+                android:id="@+id/civ_color11"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@color/draw_color11" />
+
+            <com.example.yidiantong.View.ClickableImageView
+                android:id="@+id/civ_color12"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@color/draw_color12" />
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+</LinearLayout>
