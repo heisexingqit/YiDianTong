@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -29,7 +30,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.toolbox.StringRequest;
+
+import com.android.volley.toolbox.Volley;
+import com.example.yidiantong.BuildConfig;
+
 import com.example.yidiantong.MyApplication;
+
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.HomeRecyclerAdapter;
 import com.example.yidiantong.bean.HomeItemEntity;
@@ -311,15 +317,20 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
             rl_loading.setVisibility(View.VISIBLE);
         }
 
+        // 获取本地app的版本名称
+        String versionName = BuildConfig.VERSION_NAME;
+
         mRequestUrl = Constant.API + Constant.NEW_ITEM + "?currentPage=" + currentPage + "&userId=" + username + "&resourceType=" + type + "&searchStr=" + searchStr;
 
         Log.d("wen", "home: " + mRequestUrl);
+
         StringRequest request = new StringRequest(mRequestUrl, response -> {
 
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
                 String itemString = json.getString("data");
+
 
                 Gson gson = new Gson();
 

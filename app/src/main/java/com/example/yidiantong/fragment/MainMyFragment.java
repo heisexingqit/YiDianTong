@@ -21,6 +21,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,10 +37,15 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.example.yidiantong.MyApplication;
+
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.PswDialog;
 import com.example.yidiantong.View.TouxiangDialog;
+import com.example.yidiantong.adapter.HomeRecyclerAdapter;
+
 import com.example.yidiantong.ui.LoginActivity;
+
+import com.example.yidiantong.ui.SelectCourseActivity;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.StringUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -50,6 +56,10 @@ import com.yanzhenjie.permission.RequestExecutor;
 import com.yanzhenjie.permission.runtime.Permission;
 
 import org.jetbrains.annotations.Nullable;
+
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -85,6 +95,7 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
     // 标识码（与权限对应）
     private static final int REQUEST_CODE_STORAGE = 1;
     private static final int REQUEST_CODE_CAMERA = 2;
+
 
     // 创建实例（空参数）
     public static MainMyFragment newInstance() {
@@ -238,7 +249,7 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
 
                 break;
             case R.id.f_ll_update:
-
+                // update();
                 break;
             case R.id.f_ll_psw:
                 // 修改密码弹窗创建和设置
@@ -262,10 +273,14 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                 builder.show();
                 break;
             case R.id.f_ll_center:
+                Intent intent_center = new Intent(getActivity(), SelectCourseActivity.class);
+                startActivity(intent_center);
                 break;
             case R.id.fbtn_exit:
+
                 // 退出登录
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
+
                 //两个一起用
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -279,6 +294,7 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+
     // 创建修改头像Dialog
     private void openDialog() {
         final TouxiangDialog touxiangDialog = new TouxiangDialog(getActivity());
@@ -286,10 +302,12 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         WindowManager.LayoutParams p_lp = dialogWindow.getAttributes();
         int notificationBar = Resources.getSystem().getDimensionPixelSize(
                 Resources.getSystem().getIdentifier("status_bar_height", "dimen", "android"));
+
         int[] location = new int[2];
 
         fiv_my.getLocationOnScreen(location); //获取在整个屏幕内的绝对坐标
         Log.e("location", String.valueOf(location[1]));
+
         dialogWindow.setGravity(Gravity.TOP);
         p_lp.x = 0; //对 dialog 设置 x 轴坐标
         p_lp.y = location[1] + fiv_my.getHeight() - notificationBar;

@@ -1,0 +1,30 @@
+package com.example.yidiantong.ui;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.util.Log;
+
+import com.example.yidiantong.R;
+import com.example.yidiantong.View.NoScrollViewPager;
+import com.example.yidiantong.adapter.MainPagerAdapter;
+import com.example.yidiantong.fragment.BookDetailFragment;
+
+
+public class MainBookActivity extends AppCompatActivity {
+
+    private NoScrollViewPager fsvp_detail;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main_book);
+        fsvp_detail = findViewById(R.id.fsvp_detail);
+        MainPagerAdapter adapter = new MainPagerAdapter(getSupportFragmentManager());
+        fsvp_detail.setAdapter(adapter);
+        fsvp_detail.setCurrentItem(5);
+
+    }
+
+
+}

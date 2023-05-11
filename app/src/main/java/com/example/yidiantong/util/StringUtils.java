@@ -13,4 +13,6 @@ public class StringUtils {
         spannableString.setSpan(new ForegroundColorSpan(Color.parseColor(color)), start, end, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         return spannableString;
     }
+
+
 }

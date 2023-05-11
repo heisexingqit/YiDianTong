@@ -283,6 +283,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     Log.d("wen", "login: userId: " + MyApplication.userId);
                     intent.putExtra("userId", MyApplication.userId);
                     intent.putExtra("realName", MyApplication.cnName);
+
                     intent.putExtra("username", username);
                     intent.putExtra("picUrl", userInfo.getString("userPhoto"));
 

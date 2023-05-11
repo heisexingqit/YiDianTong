@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -116,6 +117,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
             public void onPageSelected(int position) {
                 //翻页同步下标
                 currentItem = position;
+                Log.e("currentItem",":"+currentItem);
             }
 
             @Override
