@@ -24,5 +24,7 @@
     <color name="f_touming">#00000000</color>
     <color name="f_light_gray">#CDCDCD</color>
     <color name="f_blue">#6DC0DE</color>
+    <color name="f_mihui">#F2F2F2</color>
+    <color name="f_dark_blue">#1D71D6</color>
 
 </resources>

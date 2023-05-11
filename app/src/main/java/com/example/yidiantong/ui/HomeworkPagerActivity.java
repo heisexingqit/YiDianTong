@@ -90,6 +90,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
             public void onPageSelected(int position) {
                 //翻页同步下标
                 currentItem = position;
+                Log.e("currentItem",":"+currentItem);
             }
 
             @Override
@@ -106,6 +107,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
 
         //获取Intent参数
         learnPlanId = getIntent().getStringExtra("learnPlanId");
+        Log.e("learnPlanId",":"+learnPlanId);
         TextView tv_title = findViewById(R.id.tv_title);
         tv_title.setText(getIntent().getStringExtra("title"));
 
@@ -170,6 +172,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
             vp_homework.setCurrentItem(currentItem);
         }
     }
+
 
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @RequiresApi(api = Build.VERSION_CODES.N)

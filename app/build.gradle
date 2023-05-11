@@ -52,4 +52,7 @@ dependencies {
     // 权限相关
     implementation 'com.yanzhenjie:permission:2.0.2'
 
+    // 视频相关
+    implementation 'com.google.android.exoplayer:exoplayer:2.16.1'
+
 }

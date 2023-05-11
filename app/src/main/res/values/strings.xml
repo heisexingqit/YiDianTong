@@ -23,6 +23,11 @@
     <string name="f_duoxuan">多项选择题</string>
     <string name="f_paizhao">拍 照</string>
     <string name="f_xiangce">从相册中选择</string>
+    <string name="f_select">高考选科</string>
+    <string name="f_answer">请选择答案：</string>
+    <string name="f_submit">提交答案</string>
+    <string name="f_analysis">【解析】</string>
+    <string name="f_explanation">考点讲解</string>
 
 
     <!--wen-->

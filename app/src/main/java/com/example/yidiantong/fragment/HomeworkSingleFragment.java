@@ -73,8 +73,7 @@ public class HomeworkSingleFragment extends Fragment implements View.OnClickList
         //题目类型
         TextView tv_question_type = view.findViewById(R.id.tv_question_type);
         tv_question_type.setText(homeworkEntity.getQuestionTypeName());
-
-
+        
         //顶部题号染色
         int positionLen = String.valueOf(position).length();
         String questionNum = position + "/" + size + "题";

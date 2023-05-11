@@ -16,7 +16,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
+
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +32,7 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.yidiantong.BuildConfig;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.HomeRecyclerAdapter;
 import com.example.yidiantong.bean.HomeItemEntity;
@@ -282,6 +283,9 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
         if(adapter.isRefresh == 1){
             rl_loading.setVisibility(View.VISIBLE);
         }
+        // 获取本地app的版本名称
+        String versionName = BuildConfig.VERSION_NAME;
+
         String mRequestUrl = Constant.API + Constant.NEW_ITEM + "?currentPage=" + currentPage + "&userId=" + username + "&resourceType=" + type + "&searchStr=" + searchStr;
         StringRequest request = new StringRequest(mRequestUrl, response -> {
 
@@ -289,6 +293,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
                 String itemString = json.getString("data");
+
 
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表

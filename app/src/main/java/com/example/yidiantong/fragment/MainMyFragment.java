@@ -31,13 +31,25 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.PswDialog;
 import com.example.yidiantong.View.TouxiangDialog;
+import com.example.yidiantong.adapter.HomeRecyclerAdapter;
+
 import com.example.yidiantong.ui.LoginActivity;
+import com.example.yidiantong.ui.SelectCourseActivity;
+import com.example.yidiantong.util.Constant;
+import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.PermissionUtil;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -76,6 +88,11 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
     //标识码
     private static final int REQUEST_CODE_STORAGE = 1;
     private static final int REQUEST_CODE_CAMERA = 2;
+
+
+    // 检测更新
+    HomeRecyclerAdapter adapter;
+    private RelativeLayout rl_loading;
 
     public static MainMyFragment newInstance() {
         MainMyFragment fragment = new MainMyFragment();
@@ -186,7 +203,7 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
 
                 break;
             case R.id.f_ll_update:
-
+                // update();
                 break;
             case R.id.f_ll_psw:
                 // 修改密码弹窗
@@ -209,14 +226,16 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                 builder.show();
                 break;
             case R.id.f_ll_center:
+                Intent intent_center = new Intent(getActivity(), SelectCourseActivity.class);
+                startActivity(intent_center);
                 break;
             case R.id.fbtn_exit:
-                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                Intent intent_exit = new Intent(getActivity(), LoginActivity.class);
                 //两个一起用
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent_exit.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent_exit.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 //登录成功跳转
-                startActivity(intent);
+                startActivity(intent_exit);
                 break;
             case R.id.fiv_my:
                 openDialog();
@@ -224,6 +243,28 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    // 检测更新
+    private void update() {
+        String url = Constant.API + Constant.CHECK_VERSION;
+        StringRequest request = new StringRequest(url, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String itemString = json.getString("data");
+                JSONObject jsonObject1 = new JSONObject(itemString);
+                Log.d("json","message:"+json.getString("data"));
+
+            }catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
+            adapter.fail();
+        });
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        queue.add(request);
+    }
+
+    // 更改头像dialog弹窗
     private void openDialog() {
         final TouxiangDialog touxiangDialog = new TouxiangDialog(getActivity());
         Window dialogWindow = touxiangDialog.getWindow();
@@ -231,9 +272,9 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         int notificationBar  = Resources.getSystem().getDimensionPixelSize(
                 Resources.getSystem().getIdentifier("status_bar_height", "dimen", "android"));
         int[] location = new int[2] ;
-        //fiv_my.getLocationInWindow(location); //获取在当前窗体内的绝对坐标
+
         fiv_my.getLocationOnScreen(location);//获取在整个屏幕内的绝对坐标
-        Log.e("location", String.valueOf(location[1]));
+
         dialogWindow.setGravity(Gravity.TOP);
         p_lp.x=0; //对 dialog 设置 x 轴坐标
         p_lp.y=location [1] + fiv_my.getHeight() - notificationBar;

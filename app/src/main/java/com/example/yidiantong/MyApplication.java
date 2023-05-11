@@ -2,11 +2,13 @@ package com.example.yidiantong;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -14,6 +16,8 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+
+import java.util.List;
 
 public class MyApplication extends Application {
 
@@ -94,5 +98,7 @@ public class MyApplication extends Application {
         initImageLoader(getApplicationContext());
         //初始化Volley的请求队列，使用okhttp替代volley底层链接
         mQueue = Volley.newRequestQueue(getApplicationContext(), new OkHttpStack());
+
     }
+
 }

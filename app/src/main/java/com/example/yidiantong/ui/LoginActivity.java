@@ -262,6 +262,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     editor.putString("password", password);
                     editor.commit();
 
+                    // 给作业列表页面传参数
                     Intent intent = new Intent(this, MainPagerActivity.class);
                     intent.putExtra("username", username);
                     //两个一起用
@@ -269,6 +270,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     //登录成功跳转
                     startActivity(intent);
+
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

@@ -20,24 +20,35 @@
         android:theme="@style/Theme.YiDianTong"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        <!-- 测试 -->
+        <activity
+            android:name=".ui.BookVedioActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.BookRecoverActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.MainBookActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.BookRecyclerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.SelectCourseActivity"
+            android:exported="false" />
         <activity
             android:name=".TestActivity"
-            android:exported="true"/>
+            android:exported="true" />
 
         <uses-library
             android:name="org.apache.http.legacy"
-            android:required="false" />
-        <!-- 作业 -->
+            android:required="false" /> <!-- 作业 -->
         <activity
             android:name=".ui.HomeworkPagerActivity"
-            android:exported="true"/>
-        <!-- 主页 -->
+            android:exported="true" /> <!-- 主页 -->
         <activity
             android:name=".ui.MainPagerActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustPan"/>
-        <!-- 登录 -->
+            android:windowSoftInputMode="adjustPan" /> <!-- 登录 -->
         <activity
             android:name=".ui.LoginActivity"
             android:exported="true">
@@ -46,9 +57,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- 内容提供者_相机 -->
+        </activity> <!-- 内容提供者_相机 -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.yidiantong.fileprovider"

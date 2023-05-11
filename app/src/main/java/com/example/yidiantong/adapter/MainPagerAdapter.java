@@ -1,10 +1,13 @@
 package com.example.yidiantong.adapter;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import com.example.yidiantong.fragment.BookDetailFragment;
 import com.example.yidiantong.fragment.MainBookFragment;
 import com.example.yidiantong.fragment.MainCourseFragment;
 import com.example.yidiantong.fragment.MainHomeFragment;
@@ -31,6 +34,8 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
             return MainBookFragment.newInstance();
         }else if(position == 4){
             return MainMyFragment.newInstance();
+        }else if(position == 5){
+            return BookDetailFragment.newInstance();
         }else{
             return null;
         }
@@ -38,6 +43,6 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 5;
+        return 6;
     }
 }

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/light_gray"
+            android:orientation="horizontal"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp">
+
+            <ImageView
+                android:id="@+id/fiv_de_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="left"
+                android:src="@drawable/homework_icon"
+                android:paddingLeft="3dp"
+                android:layout_alignParentLeft="true"/>
+            <TextView
+                android:id="@+id/ftv_de_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="集合的基本关系"
+                android:layout_marginLeft="2dp"
+                android:layout_toRightOf="@+id/fiv_de_icon"/>
+            <TextView
+                android:id="@+id/ftv_de_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/ftv_de_righy"
+                android:text="0"
+                android:paddingRight="3dp"/>
+            <TextView
+                android:id="@+id/ftv_de_righy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="道错题"
+                android:paddingRight="3dp"/>
+
+        </RelativeLayout>
+
+
+</LinearLayout>

@@ -1,6 +1,7 @@
 package com.example.yidiantong.adapter;
 
 import android.content.Context;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,7 +65,6 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((ItemViewHolder)holder).update(position);
 
             //绑定事件
-
             //item点击事件
             holder.itemView.setOnClickListener(v-> mItemClickListener.onItemClick(holder.itemView, position));
         }else{
@@ -88,6 +88,7 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
+
         return itemList.size() + 1;
     }
 
