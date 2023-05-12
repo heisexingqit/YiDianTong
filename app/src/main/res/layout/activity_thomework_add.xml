@@ -419,6 +419,7 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/btn_cancel"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
@@ -433,6 +434,7 @@
                 android:textColor="@color/white" />
 
             <Button
+                android:id="@+id/btn_confirm"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="50dp"

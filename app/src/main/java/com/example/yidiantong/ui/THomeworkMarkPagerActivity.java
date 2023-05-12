@@ -37,6 +37,7 @@ import com.example.yidiantong.bean.THomeworkStudentItemEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.FixedSpeedScroller;
 import com.example.yidiantong.util.JsonUtils;
+import com.example.yidiantong.util.NumberUtils;
 import com.example.yidiantong.util.TransmitInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -131,6 +132,7 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
                         pageCount = moreListAll.size();
                         currentItem = index;
                         vp_homework.setCurrentItem(currentItem);
+                        btnShow();
                     }
 
                 }
@@ -202,6 +204,8 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
         btn_last.setOnClickListener(this);
         btn_next.setOnClickListener(this);
 
+        btnShow();
+
     }
 
     @Override
@@ -255,8 +259,9 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
             for (int i = 0; i < pageCountAll; ++i) {
                     sum += stuScoresList.get(i);
             }
-            intent2.putExtra("stuScore", String.format("%.1f", sum));
-            intent2.putExtra("scoreCount", scoreCount);
+            // 分数格式化
+            intent2.putExtra("stuScore", NumberUtils.getFormatNumString(String.format("%.1f", sum)));
+            intent2.putExtra("scoreCount", NumberUtils.getFormatNumString(scoreCount));
             intent2.putExtra("status", (Serializable) statusList);
             intent2.putExtra("canMark", canMark);
             intent2.putExtra("taskId", taskId);
