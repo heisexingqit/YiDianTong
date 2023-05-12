@@ -87,7 +87,6 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
         course_name = getIntent().getStringExtra("name");
         TextView tv_title = findViewById(R.id.ftv_title);
         tv_title.setText(course_name + "错题详情");
-        sourceId = getIntent().getStringExtra("sourceId");
         subjectId = getIntent().getStringExtra("subjectId");
         questionId = getIntent().getStringExtra("questionId");
         userName = getIntent().getStringExtra("username");

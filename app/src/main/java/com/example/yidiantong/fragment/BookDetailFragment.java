@@ -126,7 +126,6 @@ public class BookDetailFragment extends Fragment {
         //设置item点击事件
         adapter.setmItemClickListener((v, pos) -> {
             Intent intent = new Intent(getActivity(), BookRecyclerActivity.class);
-            intent.putExtra("sourceId", adapter.itemList.get(pos).getSourceId());
             questionId = adapter.errorList.get(pos).getQuestionId();
             intent.putExtra("questionId", questionId);
             intent.putExtra("subjectId", coures_Id);

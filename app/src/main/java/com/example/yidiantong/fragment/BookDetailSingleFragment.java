@@ -90,6 +90,7 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
     private int  mode = 0;
     private String currentpage;
     private String allpage;
+    private ImageView fiv_de_icon;
 
     public static BookDetailSingleFragment newInstance(BookRecyclerEntity bookrecyclerEntity) {
         BookDetailSingleFragment fragment = new BookDetailSingleFragment();
@@ -119,6 +120,21 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
         // 知识点栏
         ftv_br_title = view.findViewById(R.id.ftv_br_title);
         ftv_br_title.setText(bookrecyclerEntity.getSourceName());
+        fiv_de_icon = view.findViewById(R.id.fiv_de_icon);
+        //设置图标和类型
+        int icon_id = -1;
+        String SourceType = bookrecyclerEntity.getSourceType();
+        switch (SourceType ){
+            case "1":
+                icon_id = R.drawable.guide_plan_icon;
+                break;
+            case "2":
+                icon_id = R.drawable.homework_icon;
+                break;
+            default:
+                break;
+        }
+        fiv_de_icon.setImageResource(icon_id);
 
         //题面显示
         WebView fwv_bd_content = view.findViewById(R.id.fwv_bd_content);
