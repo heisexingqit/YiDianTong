@@ -17,14 +17,15 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="8dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:text="统计报告"
-                android:textSize="18sp" />
+                android:text="统计报表"
+                android:textSize="20sp" />
 
             <com.example.yidiantong.View.ClickableImageView
                 android:layout_width="20dp"

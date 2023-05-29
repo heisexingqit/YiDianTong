@@ -19,6 +19,7 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.bean.THomeworkMarkedEntity;
 import com.example.yidiantong.util.StringUtils;
 import com.example.yidiantong.util.TransmitInterface;
+import com.example.yidiantong.util.TransmitInterface3;
 import com.google.android.flexbox.FlexboxLayout;
 import com.xuexiang.xui.XUI;
 import com.xuexiang.xui.widget.button.SmoothCheckBox;
@@ -31,18 +32,16 @@ public class THomeworkMarkFragment extends Fragment implements View.OnClickListe
     private THomeworkMarkedEntity homeworkMarked;
 
     // 打分同步
-    private TransmitInterface transmitInterface;
+    private TransmitInterface3 transmitInterface;
 
     // 分数上限
     private int scoreNum;
-    private int score = -1;
+    private int score = 0;
     private int zero5 = 0;
     private Button[] btnArray;
     private View[] viewArray;
     private SmoothCheckBox checkBox;
     private TextView tv_stu_scores;
-
-    private boolean isFirst = true;
     private int position; // 从1开始
 
 
@@ -61,7 +60,7 @@ public class THomeworkMarkFragment extends Fragment implements View.OnClickListe
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        transmitInterface = (TransmitInterface) context;
+        transmitInterface = (TransmitInterface3) context;
     }
 
     @Override
@@ -71,11 +70,8 @@ public class THomeworkMarkFragment extends Fragment implements View.OnClickListe
 
         //取出携带的参数
         Bundle arg = getArguments();
-//        position = arg.getInt("position") + 1;
-//        int size = arg.getInt("size");
         homeworkMarked = (THomeworkMarkedEntity) arg.getSerializable("homeworkMarked");
         position = Integer.parseInt(homeworkMarked.getOrder());
-        Log.d("wen", "xxxxxxxxxxxxxxxxxxxxxxxxx: " + position);
         int size = Integer.parseInt(homeworkMarked.getOrderCount());
         boolean canMark = arg.getBoolean("canMark");
 
@@ -129,11 +125,9 @@ public class THomeworkMarkFragment extends Fragment implements View.OnClickListe
         }
 
         // 同步学生分数
-        if (!homeworkMarked.getStatus().equals("4")) {
-            String stuScore = homeworkMarked.getStuscore();
-            score = (int) (Float.parseFloat(stuScore));
-            zero5 = stuScore.contains(".5") ? 1 : 0;
-        }
+        String stuScore = transmitInterface.getStuScore(position - 1);
+        score = (int) (Float.parseFloat(stuScore));
+        zero5 = stuScore.contains(".5") ? 1 : 0;
 
         // 如果可以批改分数
         if (canMark) {
@@ -147,7 +141,7 @@ public class THomeworkMarkFragment extends Fragment implements View.OnClickListe
                         zero5 = 0;
                         Toast.makeText(getActivity(), "分数超过上限", Toast.LENGTH_SHORT).show();
                         return;
-                    }else{
+                    } else {
                         zero5 = 1;
                     }
                 } else {
@@ -159,13 +153,11 @@ public class THomeworkMarkFragment extends Fragment implements View.OnClickListe
 
             });
 
-            // 首次创建：初始化
-            if (isFirst) {
-                // 分数组件列表创建
-                scoreNum = Integer.parseInt(homeworkMarked.getQuestionScore());
-                btnArray = new Button[scoreNum + 1];
-                viewArray = new View[scoreNum + 1];
-            }
+            // 分数组件列表创建
+            scoreNum = Integer.parseInt(homeworkMarked.getQuestionScore());
+            btnArray = new Button[scoreNum + 1];
+            viewArray = new View[scoreNum + 1];
+
 
             // 动态创建打分按钮
             for (int i = 0; i < scoreNum + 1; ++i) {
@@ -199,13 +191,8 @@ public class THomeworkMarkFragment extends Fragment implements View.OnClickListe
         }
 
         // 分数显示
-        if (homeworkMarked.getStatus().equals("4")) {
-            tv_stu_scores.setText("[得分]  ");
-        } else {
-            tv_stu_scores.setText("[得分]  " + score + (zero5 == 1 ? ".5" : ""));
-        }
+        tv_stu_scores.setText("[得分]  " + score + (zero5 == 1 ? ".5" : ""));
 
-        isFirst = false;
         return view;
     }
 

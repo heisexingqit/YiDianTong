@@ -81,4 +81,22 @@ public class Constant {
     // 教师端获取知识点
     public static final String T_HOMEWORK_ADD_ZHISHIDIAN = "/AppServer/ajax/teacherApp_getKnowledgeTree.do";
 
+    // 教师端获取题库
+    public static final String T_HOMEWORK_ADD_ALLQUESTIONS = "/AppServer/ajax/teacherApp_getAllQuestions.do";
+
+    // 教师端获取题库类型
+    public static final String T_HOMEWORK_ADD_TYPE = "/AppServer/ajax/teacherApp_getQuestionTypeList1.do";
+
+    // 教师端获得课堂列表
+    public static final String T_HOMEWORK_GET_KETANG = "/AppServer/ajax/teacherApp_getKeTangList.do";
+
+    // 教师端获得班级，小组，个人
+    public static final String T_HOMEWORK_GET_KETANG_ITEM = "/AppServer/ajax/teacherApp_getClassStudentList.do";
+
+    // 教师端获取空试卷ID
+    public static final String T_HOMEWORK_GET_PAPER_ID = "/AppServer/ajax/teacherApp_createEmptyPaper.do";
+
+    // 教师端布置作业+保存作业
+    public static final String T_HOMEWORK_ASSIGN_SAVE = "/AppServer/ajax/teacherApp_assignJobToStudents.do";
+
 }

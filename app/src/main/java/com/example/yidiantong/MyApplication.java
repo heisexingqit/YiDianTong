@@ -26,6 +26,7 @@ public class MyApplication extends Application {
     public static String userId;
     public static String cnName;
     public static String token;
+    public static String picUrl;
 
     private static RequestQueue mQueue;
     //ImageLoader显示图片过程中的参数

@@ -23,7 +23,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".THomeworkAddPickActivity"
+            android:name=".ui.THomeworkAddPickActivity"
             android:exported="false" />
         <activity
             android:name=".ui.BookVedioActivity"

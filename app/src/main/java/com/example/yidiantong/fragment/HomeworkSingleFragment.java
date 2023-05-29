@@ -75,11 +75,13 @@ public class HomeworkSingleFragment extends Fragment implements View.OnClickList
                              Bundle savedInstanceState) {
 
         //取出携带的参数
-        Bundle arg = getArguments();
-        int position = arg.getInt("position") + 1;
-        int size = arg.getInt("size");
-        homeworkEntity = (HomeworkEntity) arg.getSerializable("homeworkEntity");
-        stuAnswerEntity = (StuAnswerEntity) arg.getSerializable("stuAnswerEntity");
+        int position = 0, size = 0;
+        if(getArguments() != null){
+            homeworkEntity = (HomeworkEntity) getArguments().getSerializable("homeworkEntity");
+            stuAnswerEntity = (StuAnswerEntity) getArguments().getSerializable("stuAnswerEntity");
+            position = getArguments().getInt("position") + 1;
+            size = getArguments().getInt("size");
+        }
         choiceLen = (homeworkEntity.getQuestionChoiceList().length()+ 1) / 2;
         Log.d("wen", "onCreateView: " + choiceLen);
 

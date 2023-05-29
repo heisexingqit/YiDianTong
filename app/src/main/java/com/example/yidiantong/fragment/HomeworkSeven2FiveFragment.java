@@ -73,12 +73,14 @@ public class HomeworkSeven2FiveFragment extends Fragment implements View.OnClick
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // 取出携带的参数
-        Bundle arg = getArguments();
-        int position = arg.getInt("position") + 1;
-        int size = arg.getInt("size");
-        homeworkEntity = (HomeworkEntity) arg.getSerializable("homeworkEntity");
-        stuAnswerEntity = (StuAnswerEntity) arg.getSerializable("stuAnswerEntity");
+        //取出携带的参数
+        int position = 0, size = 0;
+        if(getArguments() != null){
+            homeworkEntity = (HomeworkEntity) getArguments().getSerializable("homeworkEntity");
+            stuAnswerEntity = (StuAnswerEntity) getArguments().getSerializable("stuAnswerEntity");
+            position = getArguments().getInt("position") + 1;
+            size = getArguments().getInt("size");
+        }
 
 
         //同步答案

@@ -251,7 +251,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     Intent intent = null;
                     JSONObject obj = json.getJSONObject("data");
 
-
                     // 将未知key转为list
                     List<String> keysList = new ArrayList<>();
                     Iterator<String> keys = obj.keys();
@@ -278,14 +277,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     MyApplication.userId = userInfo.getString("userId");
                     MyApplication.cnName = userInfo.getString("name");
                     MyApplication.token = obj.getString("token");
-                    Log.d("wen", "login: " + MyApplication.token);
+                    MyApplication.picUrl = userInfo.getString("userPhoto");
 
-                    Log.d("wen", "login: userId: " + MyApplication.userId);
-                    intent.putExtra("userId", MyApplication.userId);
-                    intent.putExtra("realName", MyApplication.cnName);
-
-                    intent.putExtra("username", username);
-                    intent.putExtra("picUrl", userInfo.getString("userPhoto"));
+                    Log.d(TAG, "login: " + userInfo);
 
                     //两个一起用
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

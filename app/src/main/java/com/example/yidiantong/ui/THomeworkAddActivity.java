@@ -3,6 +3,9 @@ package com.example.yidiantong.ui;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.PorterDuffXfermode;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,15 +15,14 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -36,17 +38,22 @@ import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
 import com.google.android.flexbox.FlexboxLayout;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class THomeworkAddActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -74,7 +81,9 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
     private String xueke = "";
     private String banben = "";
     private String jiaocai = "";
-    private String zhishidian = "知识点列表未获取到或者为空";
+    private String zhishidian = "";
+    private String zhishidianData = "知识点列表未获取到或者为空";
+    private String zhishidianId = "";
 
     // 选择的标记
     private TextView lastXueduan;
@@ -101,6 +110,7 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
     private EditText et_name;
     private EditText et_introduce;
 
+    private SharedPreferences preferences;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -166,13 +176,43 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
         findViewById(R.id.iv_back).setOnClickListener(v -> {
             finish();
         });
+
         iv_xueduan.setOnClickListener(this);
         iv_xueke.setOnClickListener(this);
         iv_banben.setOnClickListener(this);
         iv_jiaocai.setOnClickListener(this);
 
-        // 首先load学段
-        loadXueDuan();
+        // 记住选择-本地数据读取
+        preferences = getSharedPreferences("config", Context.MODE_PRIVATE);
+        String json = preferences.getString("xueduanMap", "");
+        if ("".equals(json)) {
+            // 首先load学段
+            loadXueDuan();
+        } else {
+            Gson gson = new Gson();
+            Type type = new TypeToken<LinkedHashMap<String, String>>() {
+            }.getType();
+            xueduanMap = gson.fromJson(json, type);
+            json = preferences.getString("xuekeMap", "");
+            xuekeMap = gson.fromJson(json, type);
+            json = preferences.getString("banbenMap", "");
+            banbenMap = gson.fromJson(json, type);
+            json = preferences.getString("jiaocaiMap", "");
+            jiaocaiMap = gson.fromJson(json, type);
+            zhishidianData = preferences.getString("zhishidianData", "");
+            zhishidianId = preferences.getString("zhishidianId", "");
+
+            xueduan = preferences.getString("xueduan", "");
+            xueke = preferences.getString("xueke", "");
+            banben = preferences.getString("banben", "");
+            jiaocai = preferences.getString("jiaocai", "");
+            zhishidian = preferences.getString("zhishidian", "");
+            tv_xueduan.setText(xueduan);
+            tv_xueke.setText(xueke);
+            tv_banben.setText(banben);
+            tv_jiaocai.setText(jiaocai);
+            tv_point.setText(zhishidian);
+        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -181,25 +221,22 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_xueduan:
-                // 测试Demo
                 showList(0);
                 break;
             case R.id.iv_xueke:
-                // 测试Demo
                 showList(1);
                 break;
             case R.id.iv_banben:
-                // 测试Demo
                 showList(2);
                 break;
             case R.id.iv_jiaocai:
-                // 测试Demo
                 showList(3);
                 break;
             case R.id.tv_point:
                 showList(4);
                 break;
             case R.id.tv_toPoint:
+                // 知识点选择页面
                 if (contentView == null) {
                     contentView = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_show_zsd, null, false);
                     // 获取组件
@@ -213,27 +250,58 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
                 wv_content.getSettings().setJavaScriptEnabled(true);
                 MyJavaScriptInterface jsInterface = new MyJavaScriptInterface(this);
                 wv_content.addJavascriptInterface(jsInterface, "AndroidInterface");
-                setHtmlOnWebView(wv_content, zhishidian);
+                setHtmlOnWebView(wv_content, zhishidianData);
                 window.showAsDropDown(ll_top, 0, 0);
                 break;
             case R.id.btn_confirm:
-                if(et_name.getText().toString().length() == 0 || xueduan.length() == 0 || xueke.length() == 0 || banben.length() == 0 || jiaocai.length() == 0 || zhishidian.equals("知识点列表未获取到或者为空")){
+                if (et_name.getText().toString().length() == 0 || xueduan.length() == 0 || xueke.length() == 0 || banben.length() == 0 || jiaocai.length() == 0 || zhishidian.length() == 0) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage("必填项不完整");
                     builder.setNegativeButton("关闭", null);
                     AlertDialog dialog = builder.create();
                     dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
-                    dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
-                        @Override
-                        public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                            if (keyCode == KeyEvent.KEYCODE_BACK) {
-                                finish();
-                                return true;
-                            }
-                            return false;
-                        }
-                    });
                     dialog.show();
+                } else {
+                    // 记住选择-本地写入 + Intent传参
+                    SharedPreferences.Editor editor = preferences.edit();
+                    Intent intent = new Intent(this, THomeworkAddPickActivity.class);
+                    Gson gson = new Gson();
+                    // 学段
+                    String json = gson.toJson(xueduanMap);
+                    editor.putString("xueduanMap", json);
+                    editor.putString("xueduan", xueduan);
+                    intent.putExtra("xueduanMap", json);
+                    intent.putExtra("xueduan", xueduan);
+                    // 学科
+                    json = gson.toJson(xuekeMap);
+                    editor.putString("xuekeMap", json);
+                    editor.putString("xueke", xueke);
+                    intent.putExtra("xuekeMap", json);
+                    intent.putExtra("xueke", xueke);
+                    // 学科
+                    json = gson.toJson(banbenMap);
+                    editor.putString("banbenMap", json);
+                    editor.putString("banben", banben);
+                    intent.putExtra("banbenMap", json);
+                    intent.putExtra("banben", banben);
+                    // 教材
+                    json = gson.toJson(jiaocaiMap);
+                    editor.putString("jiaocaiMap", json);
+                    editor.putString("jiaocai", jiaocai);
+                    intent.putExtra("jiaocaiMap", json);
+                    intent.putExtra("jiaocai", jiaocai);
+                    // 知识点
+                    editor.putString("zhishidianData", zhishidianData);
+                    editor.putString("zhishidian", zhishidian);
+                    editor.putString("zhishidianId", zhishidianId);
+                    intent.putExtra("zhishidianData", zhishidianData);
+                    intent.putExtra("zhishidian", zhishidian);
+                    intent.putExtra("zhishidianId", zhishidianId);
+                    editor.commit();
+
+                    intent.putExtra("name", et_name.getText().toString());
+                    intent.putExtra("introduce", et_introduce.getText().toString());
+                    startActivity(intent);
                 }
                 break;
             case R.id.btn_cancel:
@@ -249,10 +317,8 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
         public void handleMessage(Message message) {
             super.handleMessage(message);
             if (message.what == 100) {
-                zhishidian = (String) message.obj;
                 window.dismiss();
                 tv_point.setText(zhishidian);
-
             }
         }
     };
@@ -266,13 +332,13 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
         }
 
         @JavascriptInterface
-        public void displayHTMLContent(String str) {
-            Log.d("wen", "displayHTMLContent: " + str);
+        public void displayHTMLContent(String str, String id) {
             // 在这里使用htmlContent进行处理，例如显示在TextView中
 
             // 封装消息，传递给主线程
             Message message = Message.obtain();
-            message.obj = str;
+            zhishidian = str;
+            zhishidianId = id;
             message.what = 100;
             handler.sendMessage(message);
 
@@ -312,7 +378,7 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
         }
 
         if (newPos != showPos) {
-            // 展示newPos部分视图，关闭showPos部分视图
+            // 展示newPos部分视图
             switch (newPos) {
                 case 0:
                     showXueDuan();
@@ -379,6 +445,7 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
             tv_xueduan_null.setVisibility(View.VISIBLE);
         }
         lastXueduan = null;
+        
         xueduanMap.forEach((name, id) -> {
             view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_block, fl_xueduan, false);
             TextView tv_name = view.findViewById(R.id.tv_name);
@@ -391,7 +458,7 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
                 xueduan = (String) tv_name.getText();
 
                 if (lastXueduan != null) {
-                    lastXueduan.setBackgroundResource(R.color.light_gray2);
+                    lastXueduan.setBackgroundResource(R.color.light_gray3);
                 }
 
                 if (lastXueduan == tv_name) {
@@ -407,6 +474,9 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
                 }
                 tv_xueduan.setText(xueduan);
             });
+            ViewGroup.LayoutParams params = tv_name.getLayoutParams();
+            params.width = fl_xueduan.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 14);
+            tv_name.setLayoutParams(params);
             fl_xueduan.addView(view);
         });
     }
@@ -429,7 +499,7 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
                 JSONArray data = json.getJSONArray("data");
                 for (int i = 0; i < data.length(); ++i) {
                     JSONObject object = data.getJSONObject(i);
-                    xuekeMap.put(object.getString("subjectName"), object.getString("subjectId"));
+                    xuekeMap.put(object.getString("subjectName").substring(2), object.getString("subjectId"));
                 }
 
                 Log.d("wen", "学科: " + xuekeMap);
@@ -461,7 +531,7 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
                 xueke = (String) tv_name.getText();
 
                 if (lastXueke != null) {
-                    lastXueke.setBackgroundResource(R.color.light_gray2);
+                    lastXueke.setBackgroundResource(R.color.light_gray3);
                 }
 
                 if (lastXueke == tv_name) {
@@ -478,6 +548,9 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
 
                 tv_xueke.setText(xueke);
             });
+            ViewGroup.LayoutParams params = tv_name.getLayoutParams();
+            params.width = fl_xueke.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 14);
+            tv_name.setLayoutParams(params);
             fl_xueke.addView(view);
         });
     }
@@ -530,7 +603,7 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
                 banben = (String) tv_name.getText();
 
                 if (lastBanben != null) {
-                    lastBanben.setBackgroundResource(R.color.light_gray2);
+                    lastBanben.setBackgroundResource(R.color.light_gray3);
                 }
 
                 if (lastBanben == tv_name) {
@@ -546,10 +619,12 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
                 }
                 tv_banben.setText(banben);
             });
+            ViewGroup.LayoutParams params = tv_name.getLayoutParams();
+            params.width = fl_banben.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 14);
+            tv_name.setLayoutParams(params);
             fl_banben.addView(view);
         });
     }
-
 
     private void loadJiaoCai() {
 
@@ -598,7 +673,7 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
                 jiaocai = (String) tv_name.getText();
 
                 if (lastJiaocai != null) {
-                    lastJiaocai.setBackgroundResource(R.color.light_gray2);
+                    lastJiaocai.setBackgroundResource(R.color.light_gray3);
                 }
 
                 if (lastJiaocai == tv_name) {
@@ -614,6 +689,9 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
                 }
                 tv_jiaocai.setText(jiaocai);
             });
+            ViewGroup.LayoutParams params = tv_name.getLayoutParams();
+            params.width = fl_jiaocai.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 14);
+            tv_name.setLayoutParams(params);
             fl_jiaocai.addView(view);
         });
     }
@@ -632,10 +710,10 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
-                zhishidian = json.getString("data");
+                zhishidianData = json.getString("data");
                 Log.d("wen", "loadZhiShiDian: " + zhishidian);
-                if (zhishidian.length() == 0) {
-                    zhishidian = "知识点列表未获取到或者为空";
+                if (zhishidianData.length() == 0) {
+                    zhishidianData = "知识点列表未获取到或者为空";
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -646,8 +724,8 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
         MyApplication.addRequest(request, TAG);
     }
 
-    void refresh(int type){
-        switch (type){
+    void refresh(int type) {
+        switch (type) {
             case 1:
                 xueke = "";
                 xuekeMap.clear();
@@ -661,7 +739,8 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
                 jiaocaiMap.clear();
                 tv_jiaocai.setText("");
             case 4:
-                zhishidian = "知识点列表未获取到或者为空";
+                zhishidian = "";
+                zhishidianData = "知识点列表未获取到或者为空";
                 tv_point.setText("");
                 break;
         }
@@ -687,12 +766,11 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
                 "</style>" +
                 "<script>\n" +
                 "    function _fk(obj) {\n" +
-                "        AndroidInterface.displayHTMLContent(obj.textContent)" +
+                "        AndroidInterface.displayHTMLContent(obj.textContent,obj.getAttribute(\"id\"))" +
                 "     }\n" +
                 "</script>" +
                 "</head><body style=\"color: rgb(117, 117, 117); font-size: 16px; margin: 0px; padding: 0px\">" + str +
                 "</body>";
-        Log.d("wen", "setHtmlOnWebView: " + html_content);
         wb.loadData(html_content, "text/html", "utf-8");
     }
 }

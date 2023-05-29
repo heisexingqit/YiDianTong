@@ -79,11 +79,15 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
                              Bundle savedInstanceState) {
 
         //取出携带的参数
+        int position = 0, size = 0;
         Bundle arg = getArguments();
-        int position = arg.getInt("position") + 1;
-        int size = arg.getInt("size");
-        homeworkEntity = (HomeworkEntity) arg.getSerializable("homeworkEntity");
-        stuAnswerEntity = (StuAnswerEntity) arg.getSerializable("stuAnswerEntity");
+        if(getArguments() != null){
+            homeworkEntity = (HomeworkEntity) getArguments().getSerializable("homeworkEntity");
+            stuAnswerEntity = (StuAnswerEntity) getArguments().getSerializable("stuAnswerEntity");
+            position = getArguments().getInt("position") + 1;
+            size = getArguments().getInt("size");
+        }
+
         choiceLen = Integer.parseInt(homeworkEntity.getQuestionChoiceList());
         answer = new int[choiceLen];
         iv_answer_drawer = new ClickableImageView[choiceLen][4];

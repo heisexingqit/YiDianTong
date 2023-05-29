@@ -2,6 +2,7 @@ package com.example.yidiantong.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableWebView;
+import com.example.yidiantong.util.StringUtils;
 
 import java.util.List;
 
@@ -68,17 +70,17 @@ public class ShowStuAnsAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         View v;
-        if (!"简答题".equals(questionTypes[i])) {
-            v = LayoutInflater.from(context).inflate(R.layout.item_show_text, null);
-            TextView tv = v.findViewById(R.id.tv_content);
-            tv.setText("(" + (i + 1) + ") " + ansArray[i]);
+        String showAns = "";
+        v = LayoutInflater.from(context).inflate(R.layout.item_show_web, null);
+        ClickableWebView wv = v.findViewById(R.id.wv_content);
+        wv.setFocusable(false);
+        wv.setClickable(false);
+        if (ansArray[i].length() == 0) {
+            showAns = "<span style=\"color: red\">未答</span>";
         } else {
-            v = LayoutInflater.from(context).inflate(R.layout.item_show_web, null);
-            ClickableWebView wv = v.findViewById(R.id.wv_content);
-            wv.setFocusable(false);
-            wv.setClickable(false);
-            wv.loadData("(" + (i + 1) + ") " + html_answer_head + ansArray[i] + html_answer_tail, "text/html", "utf-8");
+            showAns = ansArray[i];
         }
+        wv.loadData("(" + (i + 1) + ") " + html_answer_head + showAns + html_answer_tail, "text/html", "utf-8");
         return v;
     }
 }

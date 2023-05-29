@@ -47,7 +47,9 @@
     <color name="green_pencil">#038103</color>
     <color name="red_pencil">#e32212</color>
     <color name="light_gray2">#c0c0c0</color>
+    <color name="light_gray3">#dcdcdc</color>
     <color name="t_blue">#4dc7f8</color>
+    <color name="default_gray">#FF888888</color>
     <!--wen-->
 
     <color name="f_orange">#FE7144</color>

@@ -72,6 +72,7 @@ public class HomeworkPagerAdapter extends FragmentPagerAdapter {
             case "填空题":
             case "书面表达题":
             case "单词拼写":
+            case "解答题":
                 fragment = HomeworkTranslationFragment.newInstance(itemList.get(position), position, itemList.size(), learnPlanId, username, itemList2.get(position));
                 break;
             case "七选五":

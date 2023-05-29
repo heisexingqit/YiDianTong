@@ -138,15 +138,13 @@ public class THomeworkMarkedEntity implements Serializable {
                 ", order='" + order + '\'' +
                 ", status='" + status + '\'' +
                 ", questionID='" + questionID + '\'' +
-                ", shitiShow='" + shitiShow + '\'' +
                 ", userName='" + userName + '\'' +
                 ", questionScore='" + questionScore + '\'' +
                 ", questionType='" + questionType + '\'' +
+                ", answer='" + shitiAnswer + '\'' +
                 ", stuAnswer='" + stuAnswer + '\'' +
                 ", orderCount='" + orderCount + '\'' +
-                ", shitiAnswer='" + shitiAnswer + '\'' +
                 ", typeName='" + typeName + '\'' +
-                ", shitiAnalysis='" + shitiAnalysis + '\'' +
                 '}';
     }
 }

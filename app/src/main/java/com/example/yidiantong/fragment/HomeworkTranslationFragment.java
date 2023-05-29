@@ -119,7 +119,7 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
     //html尾
     private String html_answer_tail = "</body>";
     //html内容数据
-    private String html_answer = "";
+    private String html_answer;
 
     // 权限组（AndPermission自带）
 
@@ -143,9 +143,11 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
     private PopupWindow window;
     private ImagePagerAdapter adapter;
 
-
-    private RelativeLayout rl_submitting;
     private LinearLayout ll_answer;
+
+    HomeworkEntity homeworkEntity;
+
+    private int picCount = 0;
 
     public static HomeworkTranslationFragment newInstance(HomeworkEntity homeworkEntity, int position, int size, String learnPlanId, String username, StuAnswerEntity stuAnswerEntity) {
         HomeworkTranslationFragment fragment = new HomeworkTranslationFragment();
@@ -173,14 +175,19 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
                              Bundle savedInstanceState) {
 
         //取出携带的参数
-        Bundle arg = getArguments();
-        int position = arg.getInt("position") + 1;
-        int size = arg.getInt("size");
-        learnPlanId = arg.getString("learnPlanId");
-        username = arg.getString("username");
-        HomeworkEntity homeworkEntity = (HomeworkEntity) arg.getSerializable("homeworkEntity");
-        stuAnswerEntity = (StuAnswerEntity) arg.getSerializable("stuAnswerEntity");
-        html_answer = stuAnswerEntity.getStuAnswer();
+        int position = 0, size = 0;
+        if(getArguments() != null){
+            homeworkEntity = (HomeworkEntity) getArguments().getSerializable("homeworkEntity");
+            stuAnswerEntity = (StuAnswerEntity) getArguments().getSerializable("stuAnswerEntity");
+            learnPlanId = getArguments().getString("learnPlanId");
+            username = getArguments().getString("username");
+            position = getArguments().getInt("position") + 1;
+            size = getArguments().getInt("size");
+        }
+
+        if(html_answer == null){
+            html_answer = stuAnswerEntity.getStuAnswer();
+        }
         if (url_list.size() == 0) {
             Html.fromHtml(html_answer, new Html.ImageGetter() {
                 @Override
@@ -221,8 +228,10 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
 
         //题面显示
         WebView wv_content = view.findViewById(R.id.wv_content);
+
         String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + homeworkEntity.getQuestionContent() + "</body>";
         wv_content.loadData(html_content, "text/html", "utf-8");
+
 
         /**
          * 老的作答点击事件 源组件（为了代码复用，直接用）
@@ -344,6 +353,7 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
         public void handleMessage(Message message) {
             super.handleMessage(message);
             if (message.what == 100) {
+                picCount ++;
                 String url = (String) message.obj;
                 Log.d("wen", "handleMessage: " + url);
                 url_list.add(url);
@@ -359,7 +369,6 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
         }
     };
 
-    //
     private void uploadImage() {
         transmit.onLoading();
         String mRequestUrl = Constant.API + Constant.UPLOAD_IMAGE + "?baseCode=" + imageBase64 + "&leanPlanId=" + learnPlanId + "&userId=" + username;
@@ -384,7 +393,6 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
                 e.printStackTrace();
             }
         }, error -> {
-            rl_submitting.setVisibility(View.GONE);
             Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
         });
         MyApplication.addRequest(request, TAG);
@@ -433,6 +441,7 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
                 break;
             case R.id.tv_erase:
                 html_answer = "";
+                picCount = 0;
                 wv_answer.loadData(getHtmlAnswer(), "text/html", "utf-8");
                 transmit.setStuAnswer(stuAnswerEntity.getOrder(), html_answer);
                 url_list.clear();
@@ -440,9 +449,9 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
                 break;
             case R.id.ll_answer:
                 if (contentView == null) {
+                    if(picCount == 0) break;
                     contentView = LayoutInflater.from(getActivity()).inflate(R.layout.picture_menu, null, false);
                     ViewPager vp_pic = contentView.findViewById(R.id.vp_picture);
-
                     vp_pic.setAdapter(adapter);
 
                     //顶部标签

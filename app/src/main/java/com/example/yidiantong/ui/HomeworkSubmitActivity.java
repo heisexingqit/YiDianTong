@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -35,6 +36,8 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -99,7 +102,6 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
         tv_submitting.setText("作业提交中...");
         rl_loading = findViewById(R.id.rl_loading);
         rl_loading.setVisibility(View.GONE);
-
     }
 
     @Override
@@ -145,7 +147,7 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
     private void submit() {
         rl_submitting.setVisibility(View.VISIBLE);
         java.util.Date day = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd:HH:mm:ss");
         String date = sdf.format(day);
 
         String mRequestUrl;
@@ -161,8 +163,15 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
                 submitZero += questionIds[i];
                 continue;
             }
+            String jsonString = "";
+            try {
+                jsonString = URLEncoder.encode(stuAnswer[i], "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             mRequestUrl = Constant.API + Constant.SUBMIT_ANSWER + "?learnPlanId=" + learnPlanId +
-                    "&stuId=" + username + "&questionId=" + questionIds[i] + "&answer=" + StringEscapeUtils.escapeHtml4(stuAnswer[i]) + "&answerTime=" + date;
+                    "&stuId=" + username + "&questionId=" + questionIds[i] + "&answer=" + jsonString + "&answerTime=" + date;
+            Log.d(TAG, "submit: " + mRequestUrl);
             request = new StringRequest(mRequestUrl, response -> {
                 try {
                     JSONObject json = JsonUtils.getJsonObjectFromString(response);
@@ -175,6 +184,7 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
                         msg.obj = 0;
                     }
                     msg.what = 100;
+                    Log.d(TAG, "submit: 分");
                     handler.sendMessage(msg);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -188,9 +198,10 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
         if (submitZero.length() == 0) {
             submitZero = "-1";
         }
+
         mRequestUrl = Constant.API + Constant.SUBMIT_ANSWER_FINAL + "?answerTime=" + date + "&paperId=" + learnPlanId + "&userName=" + username +
                 "&status=" + (isNew ? 1 : 3) + "&noAnswerQueId=" + submitZero;
-
+        Log.d(TAG, "submit: " + mRequestUrl);
         request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
@@ -204,6 +215,7 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
                 }
                 msg.what = 100;
                 handler.sendMessage(msg);
+                Log.d(TAG, "submit: 总");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -212,6 +224,5 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
         });
 
         MyApplication.addRequest(request, TAG);
-
     }
 }

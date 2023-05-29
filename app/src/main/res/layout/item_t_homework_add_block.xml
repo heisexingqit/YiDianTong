@@ -8,8 +8,10 @@
         android:layout_width="150dp"
         android:layout_height="35dp"
         android:layout_margin="7dp"
-        android:background="@color/light_gray2"
+        android:background="@color/light_gray3"
         android:gravity="center"
         android:text="TEST"
+        android:textColor="@color/black"
+        android:singleLine="true"
         android:textSize="15sp" />
 </LinearLayout>

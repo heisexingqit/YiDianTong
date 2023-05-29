@@ -228,13 +228,13 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
          * 真实用户数据设置
          */
         TextView tv_username = view.findViewById(R.id.tv_username);
-        String username = getActivity().getIntent().getStringExtra("username");
+        String username = MyApplication.username;
 
-        String realName = getActivity().getIntent().getStringExtra("realName");
+        String realName = MyApplication.cnName;
         tv_username.setText(realName + "(" + username + ")");
 
         // 获取图片
-        String picUrl = JsonUtils.clearString(getActivity().getIntent().getStringExtra("picUrl"));
+        String picUrl = JsonUtils.clearString(MyApplication.picUrl);
         ImageLoader.getInstance().displayImage(picUrl, fiv_my, MyApplication.getLoaderOptions());
         return view;
     }

@@ -2,6 +2,7 @@ package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,8 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TMainPagerActivity extends AppCompatActivity implements View.OnClickListener {
+    private static final String TAG = "TMainPagerActivity";
 
-    private int id_bottom_onclick = 0; //标定选择的
+    private int id_bottom_onclick = 0; // 标定选择的
     private int[] iv_bottom_tab_focus = {R.drawable.bottom_tab_latest_focus, R.drawable.bottom_tab_report_focus, R.drawable.bottom_tab_teach_focus, R.drawable.bottom_tab_bell_focus, R.drawable.bottom_tab_mine_focus};
     private int[] iv_bottom_tab_unfocus = {R.drawable.bottom_tab_latest_unfocus, R.drawable.bottom_tab_report_unfocus, R.drawable.bottom_tab_teach_unfocus, R.drawable.bottom_tab_bell_unfocus, R.drawable.bottom_tab_mine_unfocus};
 
@@ -45,6 +47,8 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
     private TMainReportFragment reportFragment;
     private TMainBellFragment bellFragment;
     private TMainMyFragment myFragment;
+
+    private int initalPos = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +83,6 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
         tv_bottom_tab.add(tv_bottom_bell);
         tv_bottom_tab.add(tv_bottom_mine);
 
-
         /**
          * ViewPager配置
          */
@@ -90,7 +93,28 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
         bellFragment = new TMainBellFragment();
         myFragment = new TMainMyFragment();
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.vp_main, latestFragment).commit();
+        initalPos = getIntent().getIntExtra("pos", 0);
+        Log.d(TAG, "onCreate: " +  getIntent().getIntExtra("pos", 0));
+
+        switch (initalPos){
+            case 0:
+                getSupportFragmentManager().beginTransaction().replace(R.id.vp_main, latestFragment).commit();
+                break;
+            case 1:
+                getSupportFragmentManager().beginTransaction().replace(R.id.vp_main, reportFragment).commit();
+                break;
+            case 2:
+                getSupportFragmentManager().beginTransaction().replace(R.id.vp_main, teachFragment).commit();
+                break;
+            case 3:
+                getSupportFragmentManager().beginTransaction().replace(R.id.vp_main, bellFragment).commit();
+                break;
+            case 4:
+                getSupportFragmentManager().beginTransaction().replace(R.id.vp_main, myFragment).commit();
+                break;
+        }
+        SwitchTabById(initalPos);
+
 
 //        vp_main = findViewById(R.id.vp_main);
 //        TMainPagerAdapter adapter = new TMainPagerAdapter(getSupportFragmentManager());

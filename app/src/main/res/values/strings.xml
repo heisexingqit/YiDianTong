@@ -82,6 +82,7 @@
     <string name="mark_exam">批阅试题</string>
     <string name="t_homework_search_hit">学生姓名</string>
     <string name="watch_report">查看报告</string>
+    <string name="answer">[答案]</string>
     <!--wen-->
 
 </resources>

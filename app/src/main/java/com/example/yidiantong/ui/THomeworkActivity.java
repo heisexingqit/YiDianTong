@@ -175,6 +175,12 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        loadItems_Net();
+    }
+
     //刷新列表
     private void refreshList() {
         loadItems_Net();
@@ -284,7 +290,7 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
                 List<THomeworkStudentItemEntity> moreList = gson.fromJson(itemString, new TypeToken<List<THomeworkStudentItemEntity>>() {
                 }.getType());
 
-                Log.d("wen", "学生列表: " + moreList.size());
+                Log.d("wen", "学生列表: " + moreList);
 
                 // 封装消息，传递给主线程
                 Message message = Message.obtain();
