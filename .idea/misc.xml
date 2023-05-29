@@ -13,10 +13,14 @@
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/activity_thomework_add.xml" value="0.264" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/activity_thomework_add_pick.xml" value="0.220162224797219" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/activity_thomework_mark_submit.xml" value="0.23641304347826086" />
+        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/activity_thomework_report.xml" value="0.23229166666666667" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/bar_top_homework_title4.xml" value="0.23641304347826086" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/bar_top_homework_title5.xml" value="0.19655797101449277" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/eraser_editor_dialog.xml" value="0.19275582573454914" />
+        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/fragment_book_detail_single.xml" value="0.18478260869565216" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/fragment_homework_finish.xml" value="0.1453804347826087" />
+        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/fragment_homework_judge.xml" value="0.18478260869565216" />
+        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/fragment_homework_seven2five.xml" value="0.18478260869565216" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/fragment_homework_single.xml" value="0.2140625" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/fragment_homework_translation.xml" value="0.1947463768115942" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/fragment_t_homework_add_pick.xml" value="0.3859223300970874" />
@@ -24,10 +28,15 @@
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/fragment_t_homework_pick_add.xml" value="0.17346014492753623" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/fragment_t_homework_pick_assign.xml" value="0.2" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/fragment_t_homework_pick_change.xml" value="0.19114583333333332" />
-        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/fragment_t_main_latest.xml" value="0.8" />
+        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/fragment_t_main_latest.xml" value="0.11296859169199595" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/fragment_t_main_report.xml" value="0.18591691995947315" />
+        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/item_home_list.xml" value="0.23229166666666667" />
+        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/item_t_home_list.xml" value="0.23229166666666667" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/item_t_homework_add_block.xml" value="0.21920289855072464" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/item_t_homework_add_show_zsd.xml" value="0.17083333333333334" />
+        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/item_t_homework_report_student.xml" value="0.23229166666666667" />
+        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/item_t_teach_list.xml" value="0.23229166666666667" />
+        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/pageing_homework.xml" value="0.17980072463768115" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/popup_t_add_homework_selector.xml" value="0.21920289855072464" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/submitting_page.xml" value="0.1621376811594203" />
       </map>

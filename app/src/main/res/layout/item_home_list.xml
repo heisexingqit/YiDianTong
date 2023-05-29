@@ -3,12 +3,12 @@
     android:id="@+id/ll_main"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     android:orientation="vertical"
     android:paddingLeft="10dp"
     android:paddingTop="9dp"
     android:paddingRight="10dp"
-    android:paddingBottom="10dp"
-    android:background="@color/white">
+    android:paddingBottom="10dp">
 
     <!--上大块-->
     <LinearLayout
@@ -48,26 +48,27 @@
                         android:id="@+id/tv_type"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="作业"
                         android:gravity="center_vertical"
+                        android:text="作业"
                         android:textColor="@color/black"
                         android:textSize="17sp"
                         android:textStyle="bold" />
 
                     <ImageView
                         android:id="@+id/iv_top_icon1"
+                        android:layout_width="25dp"
+                        android:layout_height="15dp"
                         android:layout_marginTop="-6dp"
                         android:adjustViewBounds="true"
-                        android:layout_width="25dp"
-                        android:layout_height="15dp"
-                        android:src="@drawable/new_icon"/>
+                        android:src="@drawable/new_icon" />
+
                     <ImageView
                         android:id="@+id/iv_top_icon2"
-                        android:layout_marginTop="-3dp"
-                        android:adjustViewBounds="true"
                         android:layout_width="25dp"
                         android:layout_height="15dp"
-                        android:src="@drawable/new_icon"/>
+                        android:layout_marginTop="-3dp"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/new_icon" />
                 </LinearLayout>
 
                 <TextView
@@ -76,8 +77,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:gravity="bottom"
-                    android:text="测试拍照布置作业"
                     android:singleLine="true"
+                    android:text="测试拍照布置作业"
                     android:textColor="@color/black"
                     android:textSize="17sp"
                     android:textStyle="bold" />
@@ -89,6 +90,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
+                android:singleLine="true"
                 android:text="高中数学    截止时间：2022.08"
                 android:textSize="15sp" />
         </LinearLayout>
@@ -97,8 +99,8 @@
             android:layout_width="100dp"
             android:layout_height="match_parent"
             android:gravity="right"
-            android:paddingEnd="20dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingEnd="20dp">
 
             <TextView
                 android:id="@+id/tv_is_live"

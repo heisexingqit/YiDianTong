@@ -126,25 +126,14 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
         public void handleMessage(Message message) {
             super.handleMessage(message);
             if (message.what == 100) {
-                int f = (int) message.obj;
-                if (f == 0) {
-                    Toast.makeText(HomeworkSubmitActivity.this, "提交失败！", Toast.LENGTH_SHORT).show();
-                } else {
-                    submitSum++;
-                }
-                if (submitSum == stuAnswer.length + 1) {
-                    Intent intent = new Intent();
-                    intent.putExtra("currentItem", -1);
-                    setResult(Activity.RESULT_OK, intent);
-                    rl_submitting.setVisibility(View.GONE);
-                    finish();
-                }
+                // 报错再用
             }
         }
     };
 
     //提交代码
     private void submit() {
+        submitSum = 0;
         rl_submitting.setVisibility(View.VISIBLE);
         java.util.Date day = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd:HH:mm:ss");
@@ -177,15 +166,15 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
                     JSONObject json = JsonUtils.getJsonObjectFromString(response);
                     //结果信息
                     Boolean isSuccess = json.getBoolean("success");
-                    Message msg = Message.obtain();
                     if (isSuccess) {
-                        msg.obj = 1;
+                        submitSum++;
+                        Log.d(TAG, "submit: 分");
+                        if (submitSum == stuAnswer.length) {
+                            submitFinal();
+                        }
                     } else {
-                        msg.obj = 0;
+                        Toast.makeText(HomeworkSubmitActivity.this, "提交失败！", Toast.LENGTH_SHORT).show();
                     }
-                    msg.what = 100;
-                    Log.d(TAG, "submit: 分");
-                    handler.sendMessage(msg);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -198,7 +187,14 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
         if (submitZero.length() == 0) {
             submitZero = "-1";
         }
+    }
 
+    private void submitFinal() {
+        java.util.Date day = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd:HH:mm:ss");
+        String date = sdf.format(day);
+        String mRequestUrl;
+        StringRequest request;
         mRequestUrl = Constant.API + Constant.SUBMIT_ANSWER_FINAL + "?answerTime=" + date + "&paperId=" + learnPlanId + "&userName=" + username +
                 "&status=" + (isNew ? 1 : 3) + "&noAnswerQueId=" + submitZero;
         Log.d(TAG, "submit: " + mRequestUrl);
@@ -207,22 +203,22 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 //结果信息
                 Boolean isSuccess = json.getBoolean("success");
-                Message msg = Message.obtain();
                 if (isSuccess) {
-                    msg.obj = 1;
+                    Log.d(TAG, "submit: 总");
+                    Intent intent = new Intent();
+                    intent.putExtra("currentItem", -1);
+                    setResult(Activity.RESULT_OK, intent);
+                    rl_submitting.setVisibility(View.GONE);
+                    finish();
                 } else {
-                    msg.obj = 0;
+                    Toast.makeText(HomeworkSubmitActivity.this, "提交失败！", Toast.LENGTH_SHORT).show();
                 }
-                msg.what = 100;
-                handler.sendMessage(msg);
-                Log.d(TAG, "submit: 总");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }, error -> {
             Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
         });
-
         MyApplication.addRequest(request, TAG);
     }
 }

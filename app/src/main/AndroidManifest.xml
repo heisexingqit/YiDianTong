@@ -55,14 +55,16 @@
             android:exported="false" />
         <activity
             android:name=".ui.THomeworkReportActivity"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false" />
         <activity
             android:name=".ui.THomeworkActivity"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false" />
         <activity
             android:name=".ui.TMainPagerActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustPan"  />
         <activity
             android:name=".ui.HomeworkPagerFinishActivity"
             android:exported="false" />

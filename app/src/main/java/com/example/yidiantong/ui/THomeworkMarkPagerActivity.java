@@ -132,7 +132,7 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
                         adapter.update(moreListAll);
                         pageCount = moreListAll.size();
                         currentItem = index;
-                        vp_homework.setCurrentItem(currentItem);
+                        vp_homework.setCurrentItem(currentItem, false);
                         btnShow();
                     }
 
@@ -393,7 +393,6 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
         });
         MyApplication.addRequest(request, TAG);
     }
-
 
     @Override
     public void setStuAnswer(int pos, String stuScore) {

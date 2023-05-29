@@ -80,7 +80,7 @@ public class ShowStuAnsAdapter extends BaseAdapter {
         } else {
             showAns = ansArray[i];
         }
-        wv.loadData("(" + (i + 1) + ") " + html_answer_head + showAns + html_answer_tail, "text/html", "utf-8");
+        wv.loadData(" (" + (i + 1) + ") " + html_answer_head + showAns + html_answer_tail, "text/html", "utf-8");
         return v;
     }
 }

@@ -97,7 +97,7 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
             String[] parts = stuAnswerEntity.getStuAnswer().split(",");
             for (int i = 0; i < parts.length; ++i) {
                 String part = parts[i];
-                if (part.length() > 0) {
+                if (part.length() == 1) {
                     answer[i] = part.charAt(0) - 'A';
                 }else{
                     answer[i] = -1;
@@ -338,8 +338,12 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
             } else {
                 f = !f;
             }
-            if(answer[i] != -1)
+            if(answer[i] != -1) {
                 myAnswer += (char) ('A' + answer[i]);
+            }else{
+                myAnswer += "未答";
+            }
+
         }
         transmit.setStuAnswer(stuAnswerEntity.getOrder(), myAnswer);
 
