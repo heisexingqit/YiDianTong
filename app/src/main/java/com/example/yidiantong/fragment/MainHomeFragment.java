@@ -21,7 +21,6 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -31,7 +30,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.toolbox.StringRequest;
 
-import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.BuildConfig;
 
 import com.example.yidiantong.MyApplication;
@@ -41,6 +39,7 @@ import com.example.yidiantong.adapter.HomeRecyclerAdapter;
 import com.example.yidiantong.bean.HomeItemEntity;
 import com.example.yidiantong.ui.HomeworkPagerActivity;
 import com.example.yidiantong.ui.HomeworkPagerFinishActivity;
+import com.example.yidiantong.ui.LearnPlanPagerActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.MyItemDecoration;
@@ -121,9 +120,10 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
 
             //设置item点击事件
             adapter.setmItemClickListener((v, pos) -> {
+                Intent intent;
                 switch (adapter.itemList.get(pos).getType()) {
                     case "作业":
-                        Intent intent;
+
                         if(adapter.itemList.get(pos).getStatus() != 2){
                             // 未批改的
                             intent = new Intent(getActivity(), HomeworkPagerActivity.class);
@@ -137,6 +137,19 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                         intent.putExtra("isNew", adapter.itemList.get(pos).getStatus() == 1 || adapter.itemList.get(pos).getStatus() == 5);
                         startActivity(intent);
                         break;
+                    case "导学案":
+//                        if(adapter.itemList.get(pos).getStatus() != 2){
+//                            // 未批改的
+//                        }else{
+//                            intent = new Intent(getActivity(), HomeworkPagerFinishActivity.class);
+//                        }
+                        intent = new Intent(getActivity(), LearnPlanPagerActivity.class);
+
+                        intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
+                        intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
+                        intent.putExtra("username", username);
+                        intent.putExtra("isNew", adapter.itemList.get(pos).getStatus() == 1 || adapter.itemList.get(pos).getStatus() == 5);
+                        startActivity(intent);
                 }
             });
         }else{

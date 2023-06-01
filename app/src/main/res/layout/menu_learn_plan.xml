@@ -5,7 +5,7 @@
 
     <ListView
         android:id="@+id/lv_homework"
-        android:layout_width="140dp"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:background="@drawable/search_select_bg"
         android:divider="@drawable/divider"

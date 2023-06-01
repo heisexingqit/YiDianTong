@@ -37,6 +37,10 @@ public class Constant {
     public static final String SUBMIT_ANSWER_FINAL = "/AppServer/ajax/studentApp_saveStudentHomeWork.do";
     // 查看已批改作业
     public static final String AFTER_MARKED = "/AppServer/ajax/studentApp_getMarkedJob.do";
+
+    // 导学案查看
+    public static final String LEARNPLAN_ITEM = "/AppServer/ajax/studentApp_getCatalog.do";
+
     // 教师端最新信息
     public static final String T_NEW_ITEM = "/AppServer/ajax/teacherApp_getAllNews.do";
     // 教师授课资料信息

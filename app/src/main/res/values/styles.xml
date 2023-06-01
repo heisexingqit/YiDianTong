@@ -38,8 +38,6 @@
         <item name="android:windowEnterAnimation">@xml/dialog_in_anim</item>
         <item name="android:windowExitAnimation">@xml/dialog_out_anim</item>
     </style>
-
-
 </resources>
 
 

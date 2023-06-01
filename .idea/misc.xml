@@ -8,6 +8,8 @@
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/drawable/t_homework_add_select.xml" value="0.201" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/activity_homework_pager.xml" value="0.1621376811594203" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/activity_homework_submit.xml" value="0.2046875" />
+        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/activity_learn_plan.xml" value="0.16621376811594202" />
+        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/activity_learn_plan_pager.xml" value="0.33391003460207613" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/activity_main_pager.xml" value="0.13753799392097266" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/activity_thomework.xml" value="0.12395833333333334" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/activity_thomework_add.xml" value="0.264" />
@@ -36,6 +38,8 @@
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/item_t_homework_add_show_zsd.xml" value="0.17083333333333334" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/item_t_homework_report_student.xml" value="0.23229166666666667" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/item_t_teach_list.xml" value="0.23229166666666667" />
+        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/menu_homework.xml" value="0.15104166666666666" />
+        <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/menu_learn_plan.xml" value="0.15885416666666666" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/pageing_homework.xml" value="0.17980072463768115" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/popup_t_add_homework_selector.xml" value="0.21920289855072464" />
         <entry key="..\:/AndroidProject/YiDianTong/app/src/main/res/layout/submitting_page.xml" value="0.1621376811594203" />
