@@ -10,6 +10,20 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
+    <!--直播相关-->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -22,6 +36,9 @@
         android:theme="@style/Theme.YiDianTong"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.LearnPlanPagerActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.THomeworkAddPickActivity"
             android:exported="false" />
@@ -55,16 +72,16 @@
             android:exported="false" />
         <activity
             android:name=".ui.THomeworkReportActivity"
-            android:windowSoftInputMode="adjustPan"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.THomeworkActivity"
-            android:windowSoftInputMode="adjustPan"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.TMainPagerActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"  />
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.HomeworkPagerFinishActivity"
             android:exported="false" />
@@ -110,6 +127,53 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <!-- 直播相关 -->
+
+        <activity
+            android:name="com.navigationdemo.MainActivity"
+            android:exported="true"
+            android:label="35授课一点通"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustPan">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity>
+        <!--        <activity android:name="callvideo.VideoCallingActivity_before" />-->
+        <!--        <activity android:name="com.navigationdemo.VideoCallingEnterActivity" />-->
+
+        <activity
+            android:name="com.navigationdemo.MainActivity_tea"
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.TRTC_Client.NoActionBar" >
+        </activity>
+        <activity
+            android:name="com.navigationdemo.MainActivity_stu"
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.TRTC_Client.NoActionBar" >
+        </activity>
+        <activity
+            android:name="com.navigationdemo.SetInfo_MainActivity"
+            android:exported="true"
+            android:screenOrientation="landscape">
+
+        </activity>
+        <service android:name="com.navigationdemo.MediaService"
+            android:enabled="true"
+            android:foregroundServiceType="mediaProjection"
+            android:exported="true"/>
+        <!--    分享视频功能需要    -->
+        <!--        <activity-->
+        <!--            android:name="com.tencent.rtmp.video.TXScreenCapture$TXScreenCaptureAssistantActivity"-->
+        <!--            android:theme="@android:style/Theme.Translucent"/>-->
+
     </application>
 
 </manifest>

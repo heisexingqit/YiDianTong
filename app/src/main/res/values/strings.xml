@@ -29,7 +29,7 @@
     <string name="f_analysis">【解析】</string>
     <string name="f_explanation">考点讲解</string>
 
-    <!--wen-->
+    <!-- wen -->
     <string name="content">目录</string>
     <string name="login_pw_hint">请输入密码</string>
     <string name="login">登录</string>
@@ -83,6 +83,15 @@
     <string name="t_homework_search_hit">学生姓名</string>
     <string name="watch_report">查看报告</string>
     <string name="answer">[答案]</string>
-    <!--wen-->
 
+    <!-- 直播相关 -->
+    <string-array name="data">
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
 </resources>

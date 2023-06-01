@@ -13,6 +13,10 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a"
+        }
     }
 
     buildTypes {
@@ -24,6 +28,10 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildFeatures {
+        viewBinding true
     }
 }
 
@@ -68,4 +76,64 @@ dependencies {
     // 视频相关
     implementation 'com.google.android.exoplayer:exoplayer:2.16.1'
 
+
+    // 直播相关=========================================================
+
+    // 教师直播端
+    implementation 'androidx.test:monitor:1.4.0'
+    implementation 'androidx.navigation:navigation-fragment:2.3.5'
+    implementation 'androidx.navigation:navigation-ui:2.3.5'
+
+    //ViewPage
+    implementation "androidx.viewpager2:viewpager2:1.0.0"
+
+    //RecycleListView
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
+
+    //互动白板依赖
+    implementation 'com.google.android.material:material:1.5.0-alpha01'
+    implementation 'com.tencent.edu:TEduBoardSdk:latest.release'
+
+    //即时通信依赖
+//   implementation 'com.tencent.imsdk:imsdk-plus:6.5.2816'
+    implementation 'com.tencent.imsdk:imsdk:latest.release'
+    //安卓上传文件到存储桶
+    implementation 'com.qcloud.cos:cos-android:5.9.+'
+    //wly
+    //师姐的项目用的是glide:4.9.0
+//    implementation 'com.github.bumptech.glide:glide:4.11.0'
+//    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.2'
+
+
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    //noinspection GradleDynamicVersion
+
+//    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+    implementation "androidx.core:core:1.1.0"
+    implementation "androidx.media:media:1.1.0"
+    implementation 'androidx.annotation:annotation:1.0.0'
+    // react-native-camera依赖
+    //implementation project(path: ':@react-native-async-storage_async-storage')
+
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.multidex:multidex:2.0.0'
+
+    //腾讯云SDK
+    implementation 'com.tencent.liteav:LiteAVSDK_TRTC:latest.release'
+    //相对布局插件
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    //循环列表插件
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    //学生互动答题,视频流交互
+    //implementation project(':Call')
+    implementation project(':Common')
+    implementation project(':Debug')
+    //implementation project(':Cameralibrary')
+
+    // react-native-video依赖
+
+    implementation('com.google.android.exoplayer:exoplayer:2.13.3') {
+        exclude group: 'com.android.support'
+    }
 }

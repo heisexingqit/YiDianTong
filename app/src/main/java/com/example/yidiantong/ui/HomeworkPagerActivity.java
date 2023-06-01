@@ -14,6 +14,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -35,6 +36,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.util.Util;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.HomeworkPagerAdapter;
@@ -45,6 +47,7 @@ import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.FixedSpeedScroller;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.PageingInterface;
+import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.TransmitInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -59,31 +62,32 @@ import java.util.List;
 public class HomeworkPagerActivity extends AppCompatActivity implements PageingInterface, View.OnClickListener, TransmitInterface {
     private static final String TAG = "HomeworkPagerActivity";
 
+    // Activity页面核心组件
     private ViewPager vp_homework;
+    private HomeworkPagerAdapter adapter;
+
+    // ViewPager页码
     private int currentItem = 0;
     private int pageCount = 0;
 
-    //接口参数
+    // 相关参数
     private String learnPlanId;
-    private HomeworkPagerAdapter adapter;
     private String[] questionIds;
     private boolean isNew;
-
-    //题目类型
-    private String[] question_types_array;
-
-    //顶栏目录
-    private View contentView = null;
-    private PopupWindow window;
-    private TextView tv_content;
-    private final List<String> question_types = new ArrayList<>();
-    MyArrayAdapter myArrayAdapter = new MyArrayAdapter(this, question_types);
     private String username;
-
     String[] stuAnswer;
     private String title;
 
+    // 顶部组件
+    private String[] question_types_array;
+    private View contentView = null;
+    private PopupWindow window;
+    private TextView tv_content;
+    private List<String> question_types = new ArrayList<>();
+    MyArrayAdapter myArrayAdapter = new MyArrayAdapter(this, question_types);
     private ActivityResultLauncher<Intent> mResultLauncher;
+
+    // 加载+遮蔽
     private RelativeLayout rl_submitting;
     private RelativeLayout rl_loading;
 
@@ -250,8 +254,6 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
                 List<HomeworkEntity> list = (List<HomeworkEntity>) message.obj;
 
                 pageCount = list.size();
-                myArrayAdapter.notifyDataSetChanged();
-
                 questionIds = new String[list.size()];
                 question_types_array = new String[list.size()];
                 for (int i = 0; i < list.size(); ++i) {
@@ -303,13 +305,10 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
                 List<HomeworkEntity> itemList = gson.fromJson(itemString, new TypeToken<List<HomeworkEntity>>() {
                 }.getType());
                 Log.d(TAG, "loadItems_Net-List: " + itemList);
+
                 //封装消息，传递给主线程
                 Message message = Message.obtain();
-
                 message.obj = itemList;
-                // 发送消息给主线程
-
-                //标识线程
                 message.what = 100;
                 handler.sendMessage(message);
             } catch (JSONException e) {
@@ -372,6 +371,35 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
                             window.dismiss();
                         }
                     });
+
+                    /**
+                     * 设置MaxHeight,先显示才能获取高度
+                     */
+                    lv_homework.post(() -> {
+                        int maxHeight = PxUtils.dip2px(HomeworkPagerActivity.this, 245);
+                        // 获取ListView的子项数目
+                        int itemCount = lv_homework.getAdapter().getCount();
+
+                        // 计算ListView的高度
+                        int listViewHeight = 0;
+                        int desiredWidth = View.MeasureSpec.makeMeasureSpec(lv_homework.getWidth(), View.MeasureSpec.AT_MOST);
+
+                        for (int i = 0; i < itemCount; i++) {
+                            View listItem = lv_homework.getAdapter().getView(i, null, lv_homework);
+                            listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+                            listViewHeight += listItem.getMeasuredHeight();
+                        }
+                        Log.d(TAG, "listViewHeight: " + listViewHeight);
+                        Log.d(TAG, "maxHeight: " + maxHeight);
+
+                        // 如果计算出的高度超过最大高度，则设置为最大高度
+                        ViewGroup.LayoutParams layoutParams = lv_homework.getLayoutParams();
+                        if (listViewHeight > maxHeight) {
+                            layoutParams.height = maxHeight;
+                        }
+                    });
+
+
                     window = new PopupWindow(contentView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
                     window.setTouchable(true);
                 }

@@ -17,3 +17,8 @@ dependencyResolutionManagement {
 }
 rootProject.name = "YiDianTong"
 include ':app'
+
+include ':Debug'
+include ':Common'
+include ':Cameralibrary'
+include ':Call'
