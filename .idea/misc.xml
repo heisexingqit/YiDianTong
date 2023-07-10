@@ -3,8 +3,15 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1435" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/drawable-v24/t_homework_add_pick.xml" value="0.1435" />
         <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/drawable/bell_class_focus.xml" value="0.1265" />
         <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/drawable/bell_time_btn_selector.xml" value="0.1265" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/drawable/t_homework_add_border.xml" value="0.1695" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/drawable/t_homework_add_border3.xml" value="0.1695" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/drawable/t_homework_add_border_pop.xml" value="0.1695" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/drawable/t_homework_add_pick.xml" value="0.1695" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/drawable/t_homework_add_white.xml" value="0.1695" />
         <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_book_recover.xml" value="0.1" />
         <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_book_recycle.xml" value="0.1" />
         <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_book_vedio.xml" value="0.1" />
@@ -12,10 +19,105 @@
         <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_course_scanner.xml" value="0.1" />
         <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_doodle.xml" value="0.1" />
         <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_homework_pager.xml" value="0.1" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_homework_pager_finish.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_homework_submit.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_learn_plan_pager.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_learn_plan_submit.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_live_list.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_login.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_main_book.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_main_pager.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_notice_look.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_select_course.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_select_detail.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_tbell_look_notice.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_tbell_notice_submit.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_tbell_notice_update.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_tcourse_scanner.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_test.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_test2.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_thomework.xml" value="0.291213768115942" />
         <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_thomework_add.xml" value="0.115625" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_thomework_mark.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_thomework_mark_submit.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_thomework_report.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_tlearn_plan_add.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_tlearn_plan_add_pick.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/activity_tmain_pager.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/bar_bottom_navigation2.xml" value="0.291213768115942" />
         <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/bar_top.xml" value="0.115625" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/bar_top_book.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/bar_top_homework_title.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/bar_top_homework_title2.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/bar_top_homework_title3.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/bar_top_homework_title4.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/bar_top_homework_title5.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/bar_top_learn_plan_title.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/bar_top_search.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/bar_top_search2.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/bar_top_search3.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/barcode_scanner.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/bell_class.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/bell_content_ann.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/bell_content_notice.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/bell_notice_look_stu_name.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/date_picker.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/detail_null.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/dialog_date_picker.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/dialog_time_picker.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/draw_editor_dialog.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/drawer_homework_reading.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/eraser_editor_dialog.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/error_null.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/foot_load_tips.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_book_detail.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_book_detail_multiple.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_book_detail_reading.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_book_detail_single.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_homework_finish.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_homework_judge.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_homework_multiple.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_homework_reading.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_homework_seven2five.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_homework_single.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_homework_translation.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_learn_plan_paper.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_learn_plan_ppt.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_learn_plan_video.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_main_course.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_main_home.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_main_my.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_main_study.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_mian_book.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_t_bell_announce_submit.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_t_bell_announce_update.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_t_bell_notice_submit.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_t_bell_notice_update.xml" value="0.291213768115942" />
         <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_t_homework_add_item.xml" value="0.115625" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_t_homework_mark.xml" value="0.291213768115942" />
         <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_t_homework_pick_add.xml" value="0.115625" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_t_homework_pick_assign.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_t_learn_plan_add_paper.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_t_learn_plan_add_ppt.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_t_learn_plan_add_question.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_t_learn_plan_add_video.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_t_learn_plan_pick_add.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_t_learn_plan_pick_assign.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_t_learn_plan_pick_change.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_t_main_bell.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_t_main_latest.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_t_main_my.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_t_main_report.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/fragment_t_main_teach.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/item_array_adapter.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/item_array_adapter2.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/item_book_detail_list.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/item_book_list.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/item_book_recover_list.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/item_home_list.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/item_live_list.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/item_select_course.xml" value="0.291213768115942" />
+        <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/item_show_photo.xml" value="0.291213768115942" />
         <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/menu_t_add_learn_plan_selector.xml" value="0.291213768115942" />
         <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/menu_t_bell_add.xml" value="0.291213768115942" />
         <entry key="..\:/AndroidProject/YiDianTong0601/app/src/main/res/layout/menu_t_home_add.xml" value="0.291213768115942" />
@@ -41,6 +143,7 @@
       </map>
     </option>
   </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>

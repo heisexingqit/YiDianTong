@@ -1,10 +1,18 @@
 package com.example.yidiantong.ui;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -23,6 +31,7 @@ import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
 import com.google.android.flexbox.FlexboxLayout;
+import com.google.gson.Gson;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONArray;
@@ -80,6 +89,8 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
     private View contentView;
     private PopupWindow window;
     private LinearLayout ll_top;
+    private EditText et_name;
+    private EditText et_introduce;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -89,8 +100,8 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
 
         // 获取组件
         ll_top = findViewById(R.id.ll_top);
-        EditText et_name = findViewById(R.id.et_name);
-        EditText et_introduce = findViewById(R.id.et_introduce);
+        et_name = findViewById(R.id.et_name);
+        et_introduce = findViewById(R.id.et_introduce);
 
         tv_xueduan = findViewById(R.id.tv_xueduan);
         tv_xueke = findViewById(R.id.tv_xueke);
@@ -181,7 +192,6 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
                 }
                 window.showAsDropDown(ll_top, 0,0);
                 break;
-<<<<<<< HEAD
             case R.id.btn_confirm:
                 if (et_name.getText().toString().length() == 0 || xueduan.length() == 0 || xueke.length() == 0 || banben.length() == 0 || jiaocai.length() == 0 || zhishidian.length() == 0) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -272,8 +282,6 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
             message.what = 100;
             handler.sendMessage(message);
 
-=======
->>>>>>> 04cc660738b20fd2aaa5480820ad610eb91b72d4
         }
     }
 

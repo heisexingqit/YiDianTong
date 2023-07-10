@@ -104,7 +104,7 @@
             android:layout_width="30dp"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:src="@drawable/right_" />
+            android:src="@drawable/right_ex" />
 
     </RelativeLayout>
 
