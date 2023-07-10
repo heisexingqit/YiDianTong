@@ -41,7 +41,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="上下前后练习"
-                    android:singleLine="true"
                     android:textColor="@color/black"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -50,32 +49,30 @@
                     android:id="@+id/tv_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="40dp"
+                    android:layout_marginRight="60dp"
                     android:text="3月29日" />
             </LinearLayout>
 
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal">
+                android:layout_marginTop="10dp">
 
                 <TextView
                     android:id="@+id/tv_bottom"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@+id/ll_num45"
+                    android:text="未阅:0未阅:0未阅:0"
                     android:singleLine="true"
-                    android:text="未阅:0未阅:0未阅:0" />
+                    android:layout_toLeftOf="@+id/ll_num45"/>
 
                 <LinearLayout
                     android:id="@+id/ll_num45"
                     android:layout_alignParentEnd="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="38dp"
+                    android:layout_marginEnd="55dp"
                     android:gravity="end|center_vertical">
 
                     <ImageView
@@ -104,7 +101,8 @@
                         android:text="9" />
                 </LinearLayout>
 
-            </LinearLayout>
+
+            </RelativeLayout>
 
         </LinearLayout>
     </LinearLayout>

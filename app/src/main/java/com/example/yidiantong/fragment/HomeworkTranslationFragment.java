@@ -116,7 +116,7 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
     //html尾
     private String html_answer_tail = "</body>";
     //html内容数据
-    private String html_answer;
+    private String html_answer = "";
 
     // 权限组（AndPermission自带）
 
@@ -141,6 +141,8 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
     private PopupWindow window;
     private ImagePagerAdapter adapter;
 
+
+    private RelativeLayout rl_submitting;
     private LinearLayout ll_answer;
 
     HomeworkEntity homeworkEntity;
@@ -225,10 +227,8 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
 
         //题面显示
         WebView wv_content = view.findViewById(R.id.wv_content);
-
         String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + homeworkEntity.getQuestionContent() + "</body>";
         wv_content.loadData(html_content, "text/html", "utf-8");
-
 
         /**
          * 老的作答点击事件 源组件（为了代码复用，直接用）
@@ -378,6 +378,7 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
         }
     };
 
+    //
     private void uploadImage() {
         transmit.onLoading();
         String mRequestUrl = Constant.API + Constant.UPLOAD_IMAGE + "?baseCode=" + imageBase64 + "&leanPlanId=" + learnPlanId + "&userId=" + username;
@@ -402,6 +403,7 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
                 e.printStackTrace();
             }
         }, error -> {
+            rl_submitting.setVisibility(View.GONE);
             Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
         });
         MyApplication.addRequest(request, TAG);
@@ -450,7 +452,6 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
                 break;
             case R.id.tv_erase:
                 html_answer = "";
-                picCount = 0;
                 wv_answer.loadData(getHtmlAnswer(), "text/html", "utf-8");
                 transmit.setStuAnswer(stuAnswerEntity.getOrder(), html_answer);
                 url_list.clear();

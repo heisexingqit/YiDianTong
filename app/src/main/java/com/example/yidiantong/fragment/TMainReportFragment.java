@@ -67,8 +67,8 @@ public class TMainReportFragment extends Fragment {
 
         LinearLayout ll_parent = view.findViewById(R.id.ll_parent);
 
-        username = MyApplication.username;
-        userId = MyApplication.userId;
+        username = getActivity().getIntent().getStringExtra("username");
+        userId = getActivity().getIntent().getStringExtra("userId");
 
         /**
          * 三个版块块显示（后期可能用Fragment方式）

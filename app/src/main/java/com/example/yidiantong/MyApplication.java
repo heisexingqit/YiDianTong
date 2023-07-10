@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -27,7 +28,6 @@ public class MyApplication extends Application {
     public static String userId;
     public static String cnName;
     public static String token;
-    public static String picUrl;
 
     private static RequestQueue mQueue;
     //ImageLoader显示图片过程中的参数
@@ -109,6 +109,12 @@ public class MyApplication extends Application {
         mQueue = Volley.newRequestQueue(getApplicationContext(), new OkHttpStack(),  -1);
 
 
+    }
+
+    private WindowManager.LayoutParams wmParams=new WindowManager.LayoutParams();
+
+    public WindowManager.LayoutParams getMywmParams(){
+        return wmParams;
     }
 
 }

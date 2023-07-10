@@ -19,6 +19,7 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.bean.THomeworkMarkedEntity;
 import com.example.yidiantong.util.StringUtils;
 import com.example.yidiantong.util.THomeworkMarkInterface;
+import com.example.yidiantong.util.TransmitInterface;
 import com.google.android.flexbox.FlexboxLayout;
 import com.xuexiang.xui.XUI;
 import com.xuexiang.xui.widget.button.SmoothCheckBox;
@@ -35,12 +36,14 @@ public class THomeworkMarkFragment extends Fragment {
 
     // 分数上限
     private int scoreNum;
-    private int score = 0;
+    private int score = -1;
     private int zero5 = 0;
     private Button[] btnArray;
     private View[] viewArray;
     private SmoothCheckBox checkBox;
     private TextView tv_stu_scores;
+
+    private boolean isFirst = true;
     private int position; // 从1开始
 
     public static THomeworkMarkFragment newInstance(THomeworkMarkedEntity homeworkMarked, int position, int size, boolean canMark) {
@@ -67,8 +70,11 @@ public class THomeworkMarkFragment extends Fragment {
         XUI.initTheme(getActivity());
 
         Bundle arg = getArguments();
+//        position = arg.getInt("position") + 1;
+//        int size = arg.getInt("size");
         homeworkMarked = (THomeworkMarkedEntity) arg.getSerializable("homeworkMarked");
         position = Integer.parseInt(homeworkMarked.getOrder());
+        Log.d("wen", "xxxxxxxxxxxxxxxxxxxxxxxxx: " + position);
         int size = Integer.parseInt(homeworkMarked.getOrderCount());
         boolean canMark = arg.getBoolean("canMark");
 
@@ -122,9 +128,11 @@ public class THomeworkMarkFragment extends Fragment {
         }
 
         // 同步学生分数
-        String stuScore = transmitInterface.getStuScore(position - 1);
-        score = (int) (Float.parseFloat(stuScore));
-        zero5 = stuScore.contains(".5") ? 1 : 0;
+        if (!homeworkMarked.getStatus().equals("4")) {
+            String stuScore = homeworkMarked.getStuscore();
+            score = (int) (Float.parseFloat(stuScore));
+            zero5 = stuScore.contains(".5") ? 1 : 0;
+        }
 
         // 如果可以批改分数
         if (canMark) {
@@ -138,7 +146,7 @@ public class THomeworkMarkFragment extends Fragment {
                         zero5 = 0;
                         Toast.makeText(getActivity(), "分数超过上限", Toast.LENGTH_SHORT).show();
                         return;
-                    } else {
+                    }else{
                         zero5 = 1;
                     }
                 } else {
@@ -150,11 +158,13 @@ public class THomeworkMarkFragment extends Fragment {
 
             });
 
-            // 分数组件列表创建
-            scoreNum = Integer.parseInt(homeworkMarked.getQuestionScore());
-            btnArray = new Button[scoreNum + 1];
-            viewArray = new View[scoreNum + 1];
-
+            // 首次创建：初始化
+            if (isFirst) {
+                // 分数组件列表创建
+                scoreNum = Integer.parseInt(homeworkMarked.getQuestionScore());
+                btnArray = new Button[scoreNum + 1];
+                viewArray = new View[scoreNum + 1];
+            }
 
             // 动态创建打分按钮
             for (int i = 0; i < scoreNum + 1; ++i) {
@@ -193,8 +203,13 @@ public class THomeworkMarkFragment extends Fragment {
         }
 
         // 分数显示
-        tv_stu_scores.setText("[得分]  " + score + (zero5 == 1 ? ".5" : ""));
+        if (homeworkMarked.getStatus().equals("4")) {
+            tv_stu_scores.setText("[得分]  ");
+        } else {
+            tv_stu_scores.setText("[得分]  " + score + (zero5 == 1 ? ".5" : ""));
+        }
 
+        isFirst = false;
         return view;
     }
 

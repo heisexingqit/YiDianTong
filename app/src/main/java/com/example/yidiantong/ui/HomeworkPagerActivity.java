@@ -256,6 +256,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                     // 题目ID
                     questionIds[i] = list.get(i).getQuestionId();
                 }
+
                 adapter.updateQ(list);
                 if (adapter.countReady >= 2) {
                     rl_loading.setVisibility(View.GONE);
@@ -295,7 +296,6 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                 //使用Gson框架转换Json字符串为列表
                 List<HomeworkEntity> itemList = gson.fromJson(itemString, new TypeToken<List<HomeworkEntity>>() {
                 }.getType());
-
                 //封装消息，传递给主线程
                 Message message = Message.obtain();
                 message.obj = itemList;

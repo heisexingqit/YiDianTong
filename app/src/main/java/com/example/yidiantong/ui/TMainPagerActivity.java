@@ -1,9 +1,18 @@
 package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Message;
+import android.provider.Settings;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,7 +20,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
+import com.example.yidiantong.View.CustomeMovebutton;
 import com.example.yidiantong.View.NoScrollViewPager;
 import com.example.yidiantong.adapter.TMainPagerAdapter;
 import com.example.yidiantong.fragment.MainBookFragment;
@@ -29,10 +40,14 @@ import com.example.yidiantong.util.TMainChangeInterface;
 import java.util.ArrayList;
 import java.util.List;
 
+<<<<<<< HEAD
 public class TMainPagerActivity extends AppCompatActivity implements View.OnClickListener, TMainLatestFragment.ChangePageInterface {
     private static final String TAG = "TMainPagerActivity";
+=======
+public class TMainPagerActivity extends AppCompatActivity implements View.OnClickListener {
+>>>>>>> 04cc660738b20fd2aaa5480820ad610eb91b72d4
 
-    private int id_bottom_onclick = 0; // 标定选择的
+    private int id_bottom_onclick = 0; //标定选择的
     private int[] iv_bottom_tab_focus = {R.drawable.bottom_tab_latest_focus, R.drawable.bottom_tab_report_focus, R.drawable.bottom_tab_teach_focus, R.drawable.bottom_tab_bell_focus, R.drawable.bottom_tab_mine_focus};
     private int[] iv_bottom_tab_unfocus = {R.drawable.bottom_tab_latest_unfocus, R.drawable.bottom_tab_report_unfocus, R.drawable.bottom_tab_teach_unfocus, R.drawable.bottom_tab_bell_unfocus, R.drawable.bottom_tab_mine_unfocus};
 
@@ -49,7 +64,10 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
     private TMainBellFragment bellFragment;
     private TMainMyFragment myFragment;
 
-    private int initalPos = 0;
+    // 悬浮按钮
+    private WindowManager wm;
+    private WindowManager.LayoutParams wmParams;
+    private com.example.yidiantong.View.CustomeMovebutton CustomeMovebutton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +102,7 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
         tv_bottom_tab.add(tv_bottom_bell);
         tv_bottom_tab.add(tv_bottom_mine);
 
+
         /**
          * ViewPager配置
          */
@@ -94,6 +113,7 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
         bellFragment = new TMainBellFragment();
         myFragment = new TMainMyFragment();
 
+<<<<<<< HEAD
         initalPos = getIntent().getIntExtra("pos", 0);
         Log.d(TAG, "onCreate: " +  getIntent().getIntExtra("pos", 0));
 
@@ -115,12 +135,20 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
                 break;
         }
         SwitchTabById(initalPos);
+=======
+        getSupportFragmentManager().beginTransaction().replace(R.id.vp_main, latestFragment).commit();
+>>>>>>> 04cc660738b20fd2aaa5480820ad610eb91b72d4
 
 //        vp_main = findViewById(R.id.vp_main);
 //        TMainPagerAdapter adapter = new TMainPagerAdapter(getSupportFragmentManager());
 //        vp_main.setAdapter(adapter);
 //        vp_main.setCurrentItem(0);
 
+<<<<<<< HEAD
+=======
+        // 显示悬浮按钮
+        handler.sendEmptyMessageDelayed(0, 500);
+>>>>>>> 04cc660738b20fd2aaa5480820ad610eb91b72d4
 
     }
 
@@ -193,6 +221,7 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+<<<<<<< HEAD
     @Override
     public void changePage(int position) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -237,4 +266,70 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
         }
         ft.commit();
     }
+=======
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        if (!Settings.canDrawOverlays(TMainPagerActivity.this)) {
+                            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivityForResult(intent, 1);
+                        } else {
+                            showMoveButtonView();
+                        }
+                    }
+                    break;
+            }
+        }
+    };
+
+    private void showMoveButtonView() {
+        wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        int widthPixels = dm.widthPixels;
+        int heightPixels = dm.heightPixels;
+        wmParams = ((MyApplication) getApplication()).getMywmParams();
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){//API Level 26
+            wmParams.type=WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
+        } else {
+            wmParams.type=WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
+        }
+        wmParams.format= PixelFormat.TRANSLUCENT;//设置背景图片
+        wmParams.flags= WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE ;//
+        wmParams.gravity = Gravity.LEFT|Gravity.TOP;//
+        wmParams.x = widthPixels;  //设置位置像素
+        wmParams.y = heightPixels-500;
+        wmParams.width=200; //设置图片大小
+        wmParams.height=200;
+        CustomeMovebutton = new CustomeMovebutton(getApplicationContext());
+        CustomeMovebutton.setImageResource(R.drawable.sj_bubble);
+        CustomeMovebutton.setBackgroundResource(R.drawable.move_button_bg_un);
+
+        wm.addView(CustomeMovebutton, wmParams);
+
+        CustomeMovebutton.setOnSpeakListener(new CustomeMovebutton.OnSpeakListener() {
+            @Override
+            public void onSpeakListener() {
+                goScanner();
+            }
+        });
+    }
+
+    private void goScanner() {
+        Intent intent= new Intent(this, TCourseScannerActivity.class);
+        //intent.putExtra("stuname",moreList.get(0).getIntroduction());
+        startActivity(intent);
+    }
+
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        if(CustomeMovebutton != null){
+//            wm.removeView(CustomeMovebutton);
+//        }
+//    }
+>>>>>>> 04cc660738b20fd2aaa5480820ad610eb91b72d4
 }

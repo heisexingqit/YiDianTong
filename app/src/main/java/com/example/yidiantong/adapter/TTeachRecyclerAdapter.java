@@ -166,7 +166,7 @@ public class TTeachRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 tv_num5.setText(item.getResCount());
             } else if (item.getIconUrl().contains("weike")) {
                 icon_id = R.drawable.t_weike_icon;
-                ll_num45.setVisibility(View.GONE);
+                ll_num45.setVisibility(View.VISIBLE);
                 tv_num4.setText(JsonUtils.clearString(item.getPropertyCount()));
                 tv_num5.setText(item.getResCount());
             } else if (item.getIconUrl().contains("learnPack")) {
@@ -176,7 +176,7 @@ public class TTeachRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 tv_num5.setText(item.getResCount());
             } else if (item.getIconUrl().contains("paper")) {
                 icon_id = R.drawable.t_paper_icon;
-                ll_num45.setVisibility(View.GONE);
+                ll_num45.setVisibility(View.INVISIBLE);
             } else {
                 throw new IllegalStateException("Unexpected value: " + item.getPaperType());
             }

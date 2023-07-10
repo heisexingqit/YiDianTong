@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     tools:context=".fragment.HomeworkSingleFragment">
 
+
     <LinearLayout
-        android:layout_centerInParent="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -71,7 +71,7 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal"
-                    android:paddingStart="10dp"
+                    android:paddingStart="20dp"
                     android:paddingTop="2dp"
                     android:paddingEnd="2dp"
                     android:paddingBottom="2dp">
@@ -122,7 +122,6 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:src="@drawable/d_unselect" />
-
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/civ_1e"
                         android:layout_width="0dp"
@@ -132,7 +131,6 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:src="@drawable/e_unselect" />
-
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/civ_1f"
                         android:layout_width="0dp"
@@ -142,7 +140,6 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:src="@drawable/f_unselect" />
-
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/civ_1g"
                         android:layout_width="0dp"
@@ -159,7 +156,7 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal"
-                    android:paddingStart="10dp"
+                    android:paddingStart="20dp"
                     android:paddingTop="2dp"
                     android:paddingEnd="2dp"
                     android:paddingBottom="2dp">
@@ -210,7 +207,6 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:src="@drawable/d_unselect" />
-
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/civ_2e"
                         android:layout_width="0dp"
@@ -220,7 +216,6 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:src="@drawable/e_unselect" />
-
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/civ_2f"
                         android:layout_width="0dp"
@@ -230,7 +225,6 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:src="@drawable/f_unselect" />
-
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/civ_2g"
                         android:layout_width="0dp"
@@ -247,7 +241,7 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal"
-                    android:paddingStart="10dp"
+                    android:paddingStart="20dp"
                     android:paddingTop="2dp"
                     android:paddingEnd="2dp"
                     android:paddingBottom="2dp">
@@ -298,7 +292,6 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:src="@drawable/d_unselect" />
-
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/civ_3e"
                         android:layout_width="0dp"
@@ -308,7 +301,6 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:src="@drawable/e_unselect" />
-
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/civ_3f"
                         android:layout_width="0dp"
@@ -318,7 +310,6 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:src="@drawable/f_unselect" />
-
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/civ_3g"
                         android:layout_width="0dp"
@@ -335,7 +326,7 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal"
-                    android:paddingStart="10dp"
+                    android:paddingStart="20dp"
                     android:paddingTop="2dp"
                     android:paddingEnd="2dp"
                     android:paddingBottom="2dp">
@@ -386,7 +377,6 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:src="@drawable/d_unselect" />
-
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/civ_4e"
                         android:layout_width="0dp"
@@ -396,7 +386,6 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:src="@drawable/e_unselect" />
-
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/civ_4f"
                         android:layout_width="0dp"
@@ -406,7 +395,6 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:src="@drawable/f_unselect" />
-
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/civ_4g"
                         android:layout_width="0dp"
@@ -424,7 +412,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
                     android:orientation="horizontal"
-                    android:paddingStart="10dp"
+                    android:paddingStart="20dp"
                     android:paddingTop="2dp"
                     android:paddingEnd="2dp"
                     android:paddingBottom="2dp">
@@ -475,7 +463,6 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:src="@drawable/d_unselect" />
-
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/civ_5e"
                         android:layout_width="0dp"
@@ -485,7 +472,6 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:src="@drawable/e_unselect" />
-
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/civ_5f"
                         android:layout_width="0dp"
@@ -495,7 +481,6 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:src="@drawable/f_unselect" />
-
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/civ_5g"
                         android:layout_width="0dp"
@@ -509,6 +494,5 @@
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>
-
-    <include layout="@layout/pageing_homework" />
+    <include layout="@layout/pageing_homework"/>
 </RelativeLayout>

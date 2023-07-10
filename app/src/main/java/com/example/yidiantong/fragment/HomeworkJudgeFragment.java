@@ -65,14 +65,11 @@ public class HomeworkJudgeFragment extends Fragment implements View.OnClickListe
                              Bundle savedInstanceState) {
 
         //取出携带的参数
-        int position = 0, size = 0;
-        if (getArguments() != null) {
-            homeworkEntity = (HomeworkEntity) getArguments().getSerializable("homeworkEntity");
-            stuAnswerEntity = (StuAnswerEntity) getArguments().getSerializable("stuAnswerEntity");
-            position = getArguments().getInt("position") + 1;
-            size = getArguments().getInt("size");
-
-        }
+        Bundle arg = getArguments();
+        int position = arg.getInt("position") + 1;
+        int size = arg.getInt("size");
+        homeworkEntity = (HomeworkEntity) arg.getSerializable("homeworkEntity");
+        stuAnswerEntity = (StuAnswerEntity) arg.getSerializable("stuAnswerEntity");
 
         //同步答案
         if (stuAnswerEntity.getStuAnswer().length() > 0) {

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/select_course_bg"
+                android:orientation="vertical"
+                android:paddingLeft="50dp"
+                android:paddingTop="50dp"
+                android:paddingBottom="60dp">
+
+                <TextView
+                    android:id="@+id/ftv_sc_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="2023级第一次模拟选科"
+                    android:textColor="@color/main_blue"
+                    android:textSize="25sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/ftv_sc_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:background="@color/draw_color11"
+                        android:padding="5dp"
+                        android:text="模拟选"
+                        android:textColor="@color/draw_color2"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/ftv_sc_mode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/draw_color13"
+                        android:padding="5dp"
+                        android:text="六选三"
+                        android:textColor="@color/draw_color14"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/ftv_sc_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="时间：2023-06-21 00:00至2023-07-30 00:00" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/fll_sc_selected"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="已选组合：" />
+
+                        <TextView
+                            android:id="@+id/ftv_sc_subject_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/ftv_zuhe"
+                            android:text="物理+生物+地理"
+                            android:textSize="18sp" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/ftv_sc_selsect"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:text="去选科》"
+                        android:textColor="@color/draw_color15"
+                        android:layout_marginRight="10dp"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <com.example.yidiantong.View.mySlantedTextView
+                android:id="@+id/fst_sc_status"
+                android:layout_width="105dp"
+                android:layout_height="105dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="22dp"
+                android:layout_marginTop="22dp"
+                app:myBackgroundColor="@color/draw_color15"
+                app:mySlantedHeight="40dp"
+                app:myText="进 行 中"
+                app:myTextColor="#ffffff"
+                app:myTextSize="16sp"
+                app:tagModel="left_bar" />
+
+        </RelativeLayout>
+
+</LinearLayout>

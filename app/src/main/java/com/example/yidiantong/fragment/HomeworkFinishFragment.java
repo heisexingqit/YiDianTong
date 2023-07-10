@@ -48,13 +48,12 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        int position = 0, size = 0;
+
         //取出携带的参数
-        if(getArguments() != null){
-            homeworkMarked = (HomeworkMarkedEntity) getArguments().getSerializable("homeworkMarked");
-            position = getArguments().getInt("position") + 1;
-            size = getArguments().getInt("size");
-        }
+        Bundle arg = getArguments();
+        int position = arg.getInt("position") + 1;
+        int size = arg.getInt("size");
+        homeworkMarked = (HomeworkMarkedEntity) arg.getSerializable("homeworkMarked");
 
         //获取view
         View view = inflater.inflate(R.layout.fragment_homework_finish, container, false);

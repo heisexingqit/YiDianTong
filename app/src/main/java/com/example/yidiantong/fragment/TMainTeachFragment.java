@@ -111,7 +111,7 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
 
         //获取登录传递的参数
         if (username == null) {
-            username = MyApplication.username;
+            username = getActivity().getIntent().getStringExtra("username");
         }
 
 //        if(token == null){
@@ -217,7 +217,7 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
 
     //刷新列表
     private void refreshList() {
-        currentPage = 1;
+        currentPage = 0;
         adapter.isRefresh = 1;
         adapter.isDown = 0;
         loadItems_Net();

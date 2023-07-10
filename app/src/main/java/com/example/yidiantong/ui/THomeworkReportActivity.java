@@ -26,7 +26,6 @@ import com.example.yidiantong.bean.THomeItemEntity;
 import com.example.yidiantong.bean.THomeworkReportEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
-import com.example.yidiantong.util.PxUtils;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -241,9 +240,6 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                         view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_report_student, fb_max, false);
                         TextView tv_name = view.findViewById(R.id.tv_name);
                         tv_name.setText(name);
-                        ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-                        params.width = fb_max.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 14);
-                        tv_name.setLayoutParams(params);
                         fb_max.addView(view);
                     }
                     iv_max.setImageResource(R.drawable.up_icon);
@@ -255,9 +251,6 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                         view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_report_student, fb_min, false);
                         TextView tv_name = view.findViewById(R.id.tv_name);
                         tv_name.setText(name);
-                        ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-                        params.width = fb_max.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 14);
-                        tv_name.setLayoutParams(params);
                         fb_min.addView(view);
                     }
                     iv_min.setImageResource(R.drawable.up_icon);
@@ -269,9 +262,6 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                         view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_report_student, fb_correcting, false);
                         TextView tv_name = view.findViewById(R.id.tv_name);
                         tv_name.setText(name);
-                        ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-                        params.width = fb_max.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 14);
-                        tv_name.setLayoutParams(params);
                         fb_correcting.addView(view);
                     }
                     iv_correcting.setImageResource(R.drawable.up_icon);
@@ -284,9 +274,6 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                         view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_report_student, fb_noCorrecting, false);
                         TextView tv_name = view.findViewById(R.id.tv_name);
                         tv_name.setText(name);
-                        ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-                        params.width = fb_max.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 14);
-                        tv_name.setLayoutParams(params);
                         fb_noCorrecting.addView(view);
                     }
                     iv_noCorrecting.setImageResource(R.drawable.up_icon);
@@ -300,9 +287,6 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                         view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_report_student, fb_noSubmit, false);
                         TextView tv_name = view.findViewById(R.id.tv_name);
                         tv_name.setText(name);
-                        ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-                        params.width = fb_max.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 14);
-                        tv_name.setLayoutParams(params);
                         fb_noSubmit.addView(view);
                     }
                     iv_noSubmit.setImageResource(R.drawable.up_icon);

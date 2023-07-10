@@ -275,7 +275,6 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), AlertDialog.THEME_HOLO_LIGHT);
                 //自定义title样式
                 TextView tv = new TextView(getActivity());
-
                 tv.setText("是否要标记本题？");    //内容
                 tv.setTextSize(17);//字体大小
                 tv.setPadding(30, 40, 30, 40);//位置

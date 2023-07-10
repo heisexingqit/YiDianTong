@@ -24,7 +24,7 @@
             android:layout_marginStart="10dp"
             android:clickable="true"
             android:focusable="true"
-            android:src="@drawable/left_solid"
+            android:src="@drawable/last_icon"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"/>
 
@@ -50,7 +50,7 @@
             android:layout_marginEnd="10dp"
             android:clickable="true"
             android:focusable="true"
-            android:src="@drawable/right_solid"
+            android:src="@drawable/next_icon"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"/>
 

@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -36,8 +35,6 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -102,6 +99,7 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
         tv_submitting.setText("作业提交中...");
         rl_loading = findViewById(R.id.rl_loading);
         rl_loading.setVisibility(View.GONE);
+
     }
 
     @Override
@@ -126,17 +124,28 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
         public void handleMessage(Message message) {
             super.handleMessage(message);
             if (message.what == 100) {
-                // 报错再用
+                int f = (int) message.obj;
+                if (f == 0) {
+                    Toast.makeText(HomeworkSubmitActivity.this, "提交失败！", Toast.LENGTH_SHORT).show();
+                } else {
+                    submitSum++;
+                }
+                if (submitSum == stuAnswer.length + 1) {
+                    Intent intent = new Intent();
+                    intent.putExtra("currentItem", -1);
+                    setResult(Activity.RESULT_OK, intent);
+                    rl_submitting.setVisibility(View.GONE);
+                    finish();
+                }
             }
         }
     };
 
     //提交代码
     private void submit() {
-        submitSum = 0;
         rl_submitting.setVisibility(View.VISIBLE);
         java.util.Date day = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd:HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String date = sdf.format(day);
 
         String mRequestUrl;
@@ -152,29 +161,21 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
                 submitZero += questionIds[i];
                 continue;
             }
-            String jsonString = "";
-            try {
-                jsonString = URLEncoder.encode(stuAnswer[i], "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
             mRequestUrl = Constant.API + Constant.SUBMIT_ANSWER + "?learnPlanId=" + learnPlanId +
-                    "&stuId=" + username + "&questionId=" + questionIds[i] + "&answer=" + jsonString + "&answerTime=" + date;
-            Log.d(TAG, "submit: " + mRequestUrl);
+                    "&stuId=" + username + "&questionId=" + questionIds[i] + "&answer=" + StringEscapeUtils.escapeHtml4(stuAnswer[i]) + "&answerTime=" + date;
             request = new StringRequest(mRequestUrl, response -> {
                 try {
                     JSONObject json = JsonUtils.getJsonObjectFromString(response);
                     //结果信息
                     Boolean isSuccess = json.getBoolean("success");
+                    Message msg = Message.obtain();
                     if (isSuccess) {
-                        submitSum++;
-                        Log.d(TAG, "submit: 分");
-                        if (submitSum == stuAnswer.length) {
-                            submitFinal();
-                        }
+                        msg.obj = 1;
                     } else {
-                        Toast.makeText(HomeworkSubmitActivity.this, "提交失败！", Toast.LENGTH_SHORT).show();
+                        msg.obj = 0;
                     }
+                    msg.what = 100;
+                    handler.sendMessage(msg);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -187,38 +188,30 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
         if (submitZero.length() == 0) {
             submitZero = "-1";
         }
-    }
-
-    private void submitFinal() {
-        java.util.Date day = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd:HH:mm:ss");
-        String date = sdf.format(day);
-        String mRequestUrl;
-        StringRequest request;
         mRequestUrl = Constant.API + Constant.SUBMIT_ANSWER_FINAL + "?answerTime=" + date + "&paperId=" + learnPlanId + "&userName=" + username +
                 "&status=" + (isNew ? 1 : 3) + "&noAnswerQueId=" + submitZero;
-        Log.d(TAG, "submit: " + mRequestUrl);
+
         request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 //结果信息
                 Boolean isSuccess = json.getBoolean("success");
+                Message msg = Message.obtain();
                 if (isSuccess) {
-                    Log.d(TAG, "submit: 总");
-                    Intent intent = new Intent();
-                    intent.putExtra("currentItem", -1);
-                    setResult(Activity.RESULT_OK, intent);
-                    rl_submitting.setVisibility(View.GONE);
-                    finish();
+                    msg.obj = 1;
                 } else {
-                    Toast.makeText(HomeworkSubmitActivity.this, "提交失败！", Toast.LENGTH_SHORT).show();
+                    msg.obj = 0;
                 }
+                msg.what = 100;
+                handler.sendMessage(msg);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }, error -> {
             Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
         });
+
         MyApplication.addRequest(request, TAG);
+
     }
 }

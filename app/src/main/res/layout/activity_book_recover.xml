@@ -9,7 +9,6 @@
     android:background="@color/white">
 
     <include layout="@layout/bar_top" />
-<!--    <include layout="@layout/top_detail" />-->
     <include layout="@layout/error_null"/>
     <RelativeLayout
         android:layout_width="match_parent"

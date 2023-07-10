@@ -1,6 +1,8 @@
 package com.example.yidiantong.fragment;
 
 import android.annotation.SuppressLint;
+import static com.example.yidiantong.MyApplication.username;
+
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -102,6 +104,8 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
     // 标识码（与权限对应）
     private static final int REQUEST_CODE_STORAGE = 1;
     private static final int REQUEST_CODE_CAMERA = 2;
+    private String username;
+    private String realName;
 
     private String imageBase64;
     private String username;
@@ -243,11 +247,11 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         TextView tv_username = view.findViewById(R.id.tv_username);
         username = MyApplication.username;
 
-        String realName = MyApplication.cnName;
+        realName = getActivity().getIntent().getStringExtra("realName");
         tv_username.setText(realName + "(" + username + ")");
 
         // 获取图片
-        String picUrl = JsonUtils.clearString(MyApplication.picUrl);
+        String picUrl = JsonUtils.clearString(getActivity().getIntent().getStringExtra("picUrl"));
         ImageLoader.getInstance().displayImage(picUrl, fiv_my, MyApplication.getLoaderOptions());
         return view;
     }
@@ -331,6 +335,8 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.f_ll_center:
                 Intent intent_center = new Intent(getActivity(), SelectCourseActivity.class);
+                intent_center.putExtra("username",username);
+                intent_center.putExtra("userCn",realName);
                 startActivity(intent_center);
                 break;
             case R.id.fbtn_exit:

@@ -78,15 +78,11 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
                              Bundle savedInstanceState) {
 
         //取出携带的参数
-        int position = 0, size = 0;
         Bundle arg = getArguments();
-        if(getArguments() != null){
-            homeworkEntity = (HomeworkEntity) getArguments().getSerializable("homeworkEntity");
-            stuAnswerEntity = (StuAnswerEntity) getArguments().getSerializable("stuAnswerEntity");
-            position = getArguments().getInt("position") + 1;
-            size = getArguments().getInt("size");
-        }
-
+        int position = arg.getInt("position") + 1;
+        int size = arg.getInt("size");
+        homeworkEntity = (HomeworkEntity) arg.getSerializable("homeworkEntity");
+        stuAnswerEntity = (StuAnswerEntity) arg.getSerializable("stuAnswerEntity");
         choiceLen = Integer.parseInt(homeworkEntity.getQuestionChoiceList());
         answer = new int[choiceLen];
         iv_answer_drawer = new ClickableImageView[choiceLen][4];
@@ -96,7 +92,7 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
             String[] parts = stuAnswerEntity.getStuAnswer().split(",");
             for (int i = 0; i < parts.length; ++i) {
                 String part = parts[i];
-                if (part.length() == 1) {
+                if (part.length() > 0) {
                     answer[i] = part.charAt(0) - 'A';
                 }else{
                     answer[i] = -1;
@@ -338,12 +334,8 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
             } else {
                 f = !f;
             }
-            if(answer[i] != -1) {
+            if(answer[i] != -1)
                 myAnswer += (char) ('A' + answer[i]);
-            }else{
-                myAnswer += "未答";
-            }
-
         }
         transmit.setStuAnswer(stuAnswerEntity.getOrder(), myAnswer);
 

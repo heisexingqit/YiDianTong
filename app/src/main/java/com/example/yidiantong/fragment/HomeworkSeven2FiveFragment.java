@@ -42,7 +42,6 @@ public class HomeworkSeven2FiveFragment extends Fragment implements View.OnClick
     //接口需要
     private HomeworkEntity homeworkEntity;
     private StuAnswerEntity stuAnswerEntity;
-    private boolean inital = true;
 
     public static HomeworkSeven2FiveFragment newInstance(HomeworkEntity homeworkEntity, int position, int size, StuAnswerEntity stuAnswerEntity) {
         HomeworkSeven2FiveFragment fragment = new HomeworkSeven2FiveFragment();
@@ -54,6 +53,7 @@ public class HomeworkSeven2FiveFragment extends Fragment implements View.OnClick
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -67,23 +67,20 @@ public class HomeworkSeven2FiveFragment extends Fragment implements View.OnClick
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        //取出携带的参数
-        int position = 0, size = 0;
-        if(getArguments() != null){
-            homeworkEntity = (HomeworkEntity) getArguments().getSerializable("homeworkEntity");
-            stuAnswerEntity = (StuAnswerEntity) getArguments().getSerializable("stuAnswerEntity");
-            position = getArguments().getInt("position") + 1;
-            size = getArguments().getInt("size");
-        }
+        // 取出携带的参数
+        Bundle arg = getArguments();
+        int position = arg.getInt("position") + 1;
+        int size = arg.getInt("size");
+        homeworkEntity = (HomeworkEntity) arg.getSerializable("homeworkEntity");
+        stuAnswerEntity = (StuAnswerEntity) arg.getSerializable("stuAnswerEntity");
 
 
         //同步答案
         if (stuAnswerEntity.getStuAnswer().length() > 0) {
-            Log.d(TAG, "onCreateView: " + stuAnswerEntity.getStuAnswer());
             String[] parts = stuAnswerEntity.getStuAnswer().split(",");
             for (int i = 0; i < parts.length; ++i) {
                 String part = parts[i];
-                if (part.length() == 1) {
+                if (part.length() > 0) {
                     answer[i] = part.charAt(0) - 'A';
                 }
             }
@@ -101,6 +98,15 @@ public class HomeworkSeven2FiveFragment extends Fragment implements View.OnClick
         windowManager.getDefaultDisplay().getMetrics(metrics);
         int screenWidth = metrics.widthPixels;
         int screenHeight = metrics.heightPixels;
+        // 长宽像素比
+        float deviceAspectRatio = (float) screenHeight / screenWidth;
+        // 获取底部布局
+        RelativeLayout block = view.findViewById(R.id.rl_bottom_block);
+        if (deviceAspectRatio > 2.0) {
+            ViewGroup.LayoutParams params = block.getLayoutParams();
+            params.height = PxUtils.dip2px(getActivity(), 80);
+            block.setLayoutParams(params);
+        }
 
         /** 转义数据中的字符实体 */
         homeworkEntity.setQuestionContent(StringEscapeUtils.unescapeHtml4(homeworkEntity.getQuestionContent()));
@@ -177,7 +183,6 @@ public class HomeworkSeven2FiveFragment extends Fragment implements View.OnClick
         // 底部按钮面板
         showRadioBtnDrawer();
 
-        inital = false;
         return view;
     }
 
@@ -211,23 +216,18 @@ public class HomeworkSeven2FiveFragment extends Fragment implements View.OnClick
     private void showRadioBtnDrawer() {
 
         //同步答案给Activity
-        if(!inital){
-            String myAnswer = "";
-            boolean f = false;
-            for (int i = 0; i < 5; ++i) {
-                if (f) {
-                    myAnswer += ',';
-                } else {
-                    f = !f;
-                }
-                if(answer[i] != -1){
-                    myAnswer += (char) ('A' + answer[i]);
-                }else{
-                    myAnswer += "未答";
-                }
+        String myAnswer = "";
+        boolean f = false;
+        for (int i = 0; i < 5; ++i) {
+            if (f) {
+                myAnswer += ',';
+            } else {
+                f = !f;
             }
-            transmit.setStuAnswer(stuAnswerEntity.getOrder(), myAnswer);
+            if(answer[i] != -1)
+                myAnswer += (char) ('A' + answer[i]);
         }
+        transmit.setStuAnswer(stuAnswerEntity.getOrder(), myAnswer);
 
         for (int i = 0; i < 5; ++i) {
             for (int j = 0; j < 7; ++j) {

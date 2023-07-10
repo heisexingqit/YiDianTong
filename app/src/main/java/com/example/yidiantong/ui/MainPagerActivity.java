@@ -1,21 +1,31 @@
 package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.provider.Settings;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.yidiantong.R;
-import com.example.yidiantong.View.NoScrollViewPager;
-import com.example.yidiantong.adapter.MainPagerAdapter;
+import com.example.yidiantong.View.NoScrollViewPager;;
 import com.example.yidiantong.fragment.MainBookFragment;
 import com.example.yidiantong.fragment.MainCourseFragment;
 import com.example.yidiantong.fragment.MainHomeFragment;
@@ -41,6 +51,8 @@ public class MainPagerActivity extends AppCompatActivity implements View.OnClick
     private MainCourseFragment courseFragment;
     private MainBookFragment bookFragment;
     private MainMyFragment myFragment;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +105,9 @@ public class MainPagerActivity extends AppCompatActivity implements View.OnClick
 //        MainPagerAdapter adapter = new MainPagerAdapter(getSupportFragmentManager());
 //        vp_main.setAdapter(adapter);
 //        vp_main.setCurrentItem(0);
+
+
+
     }
 
     @Override
@@ -104,6 +119,7 @@ public class MainPagerActivity extends AppCompatActivity implements View.OnClick
                     SwitchTabById(0);
 //                    vp_main.setCurrentItem(0, false);
                     ft.replace(R.id.vp_main, homeFragment);
+
                 }
                 break;
             case R.id.ll_bottom_study:
@@ -162,4 +178,28 @@ public class MainPagerActivity extends AppCompatActivity implements View.OnClick
             finish();
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        getSupportFragmentManager().getFragments();
+        if (getSupportFragmentManager().getFragments().size() > 0) {
+            List<Fragment> fragments = getSupportFragmentManager().getFragments();
+            for (Fragment mFragment : fragments) {
+                mFragment.onActivityResult(requestCode, resultCode, data);
+            }
+        }
+    }
+
+//    @Override
+//    public void onWindowFocusChanged(boolean hasFocus) {
+//        super.onWindowFocusChanged(hasFocus);
+//        if(hasFocus){
+//            showMoveButtonView();
+//        }
+//
+//    }
+
+
+
 }

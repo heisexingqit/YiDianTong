@@ -105,7 +105,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
 
         //获取登录传递的参数
         if(username == null){
-            username = MyApplication.username;
+            username = getActivity().getIntent().getStringExtra("username");
         }
 
         //加载页

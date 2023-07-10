@@ -29,7 +29,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 
-import com.example.yidiantong.MyApplication;
+
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.BooksAdapter;
 import com.example.yidiantong.bean.BookInfoEntity;
@@ -77,7 +77,8 @@ public class MainBookFragment extends Fragment {
         frv_channel.setItemAnimator(new DefaultItemAnimator());
 
         //获取登录传递的参数
-        username = MyApplication.username;
+        username =  getActivity().getIntent().getStringExtra("username");
+
         //设置RecyclerViewAdapter
         adapter = new BooksAdapter(getContext(), itemList);
 

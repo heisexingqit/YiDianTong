@@ -211,13 +211,13 @@ public class TMainMyFragment extends Fragment implements View.OnClickListener {
          * 真实用户数据设置
          */
         TextView tv_username = view.findViewById(R.id.tv_username);
-        String username = MyApplication.username;
+        String username = getActivity().getIntent().getStringExtra("username");
 
-        String realName = MyApplication.cnName;
+        String realName = getActivity().getIntent().getStringExtra("realName");
         tv_username.setText(realName + "(" + username + ")");
 
         // 获取图片
-        String picUrl = JsonUtils.clearString(MyApplication.picUrl);
+        String picUrl = JsonUtils.clearString(getActivity().getIntent().getStringExtra("picUrl"));
         ImageLoader.getInstance().displayImage(picUrl, fiv_my, MyApplication.getLoaderOptions());
 
         return view;
