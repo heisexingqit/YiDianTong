@@ -149,7 +149,7 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
                         break;
                     case "3":
                         Intent intent1;
-                        intent = new Intent(getActivity(), TBellLookNoticeActivity.class);
+                        intent1 = new Intent(getActivity(), TBellLookNoticeActivity.class);
                         intent1.putExtra("classTimeId", adapter.itemList.get(pos).getfId());
                         intent1.putExtra("noticetype", adapter.itemList.get(pos).getfType());
                         intent1.putExtra("noticetime",adapter.itemList.get(pos).getfTime());

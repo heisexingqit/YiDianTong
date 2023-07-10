@@ -108,7 +108,6 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
     private String realName;
 
     private String imageBase64;
-    private String username;
 
 
     // 创建实例（空参数）

@@ -41,17 +41,17 @@
     </style>
 
     <style name="CustomRadioStyle" parent="Widget.AppCompat.CompoundButton.RadioButton">
-<!--        <style name="AppTheme" parent="android:Theme.Light.NoTitleBar" />-->
-<!--        <style name="date_picker_dialog" parent="android:style/Theme.Dialog">-->
-<!--            <item name="android:windowFrame">@null</item>-->
-<!--            <item name="android:windowNoTitle">true</item>-->
-<!--            <item name="android:windowIsFloating">true</item>-->
-<!--            <item name="android:windowContentOverlay">@null</item>-->
-<!--            <item name="android:windowBackground">#FFFFFF</item>-->
-<!--        </style>-->
+        <item name="colorControlNormal">#939fb6</item>
+        <item name="colorControlActivated">#FF6CC1E0</item>
+    </style>
 
-<!--        <item name="colorControlNormal">#939fb6</item>-->
-<!--        <item name="colorControlActivated">#FF6CC1E0</item>-->
+    <style name="AppTheme" parent="android:Theme.Light.NoTitleBar"/>
+    <style name="date_picker_dialog" parent="android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">#FFFFFF</item>
     </style>
 </resources>
 

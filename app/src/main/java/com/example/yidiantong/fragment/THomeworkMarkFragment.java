@@ -19,7 +19,6 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.bean.THomeworkMarkedEntity;
 import com.example.yidiantong.util.StringUtils;
 import com.example.yidiantong.util.THomeworkMarkInterface;
-import com.example.yidiantong.util.TransmitInterface;
 import com.google.android.flexbox.FlexboxLayout;
 import com.xuexiang.xui.XUI;
 import com.xuexiang.xui.widget.button.SmoothCheckBox;

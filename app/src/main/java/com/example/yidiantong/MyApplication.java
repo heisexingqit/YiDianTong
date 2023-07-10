@@ -28,6 +28,7 @@ public class MyApplication extends Application {
     public static String userId;
     public static String cnName;
     public static String token;
+    public static String picUrl;
 
     private static RequestQueue mQueue;
     //ImageLoader显示图片过程中的参数
@@ -53,7 +54,7 @@ public class MyApplication extends Application {
                         showImageOnFail(R.mipmap.no_image).//加载失败时
                         showImageForEmptyUri(R.mipmap.no_image).//加载的Uri为空
                         imageScaleType(ImageScaleType.EXACTLY_STRETCHED).
-                        //displayer(new RoundedBitmapDisplayer(360)).//是否设置为圆角，弧度为多少
+                //displayer(new RoundedBitmapDisplayer(360)).//是否设置为圆角，弧度为多少
                         cacheInMemory(true).//是否进行缓冲
                         cacheOnDisk(true).
                 considerExifParams(true).
@@ -104,10 +105,8 @@ public class MyApplication extends Application {
         //初始化ImageLoader
         initImageLoader(getApplicationContext());
 
-
         // 初始化Volley的请求队列，使用okhttp替代volley底层链接
         mQueue = Volley.newRequestQueue(getApplicationContext(), new OkHttpStack(),  -1);
-
 
     }
 

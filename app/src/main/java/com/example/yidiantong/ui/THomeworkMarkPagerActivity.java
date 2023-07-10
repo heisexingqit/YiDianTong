@@ -37,12 +37,8 @@ import com.example.yidiantong.bean.THomeworkStudentItemEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.FixedSpeedScroller;
 import com.example.yidiantong.util.JsonUtils;
-<<<<<<< HEAD
 import com.example.yidiantong.util.NumberUtils;
 import com.example.yidiantong.util.THomeworkMarkInterface;
-=======
-import com.example.yidiantong.util.TransmitInterface;
->>>>>>> 04cc660738b20fd2aaa5480820ad610eb91b72d4
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -55,11 +51,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-<<<<<<< HEAD
 public class THomeworkMarkPagerActivity extends AppCompatActivity implements View.OnClickListener, THomeworkMarkInterface {
-=======
-public class THomeworkMarkPagerActivity extends AppCompatActivity implements View.OnClickListener, TransmitInterface {
->>>>>>> 04cc660738b20fd2aaa5480820ad610eb91b72d4
     private static final String TAG = "THomeworkMarkActivity";
 
     // 参数相关
@@ -142,7 +134,8 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
                         adapter.update(moreListAll);
                         pageCount = moreListAll.size();
                         currentItem = index;
-                        vp_homework.setCurrentItem(currentItem);
+                        vp_homework.setCurrentItem(currentItem, false);
+                        btnShow();
                     }
 
                 }
@@ -214,6 +207,7 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
         btn_last.setOnClickListener(this);
         btn_next.setOnClickListener(this);
 
+        btnShow();
     }
 
     @Override
@@ -251,14 +245,16 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
         }
     }
 
-    private void btnShow(){
-        if(currentItem > 0){
+    private void btnShow() {
+        if (currentItem > 0) {
             btn_last.setBackgroundResource(R.drawable.t_homework_report);
-        }else{
+        } else {
             btn_last.setBackgroundResource(R.drawable.t_homework_mark_unable);
         }
-        if(currentItem == pageCount - 1){
+        if (currentItem == pageCount - 1) {
             btn_next.setText("完成批改");
+        }else{
+            btn_next.setText("下一题");
         }
     }
 
@@ -267,9 +263,8 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
             Intent intent = new Intent(THomeworkMarkPagerActivity.this, THomeworkMarkSubmitActivity.class);
             double sum = 0;
             for (int i = 0; i < pageCountAll; ++i) {
-                    sum += stuScoresList.get(i);
+                sum += stuScoresList.get(i);
             }
-<<<<<<< HEAD
             // 分数格式化
             intent.putExtra("stuScore", NumberUtils.getFormatNumString(String.format("%.1f", sum)));
             intent.putExtra("scoreCount", NumberUtils.getFormatNumString(scoreCount));
@@ -281,23 +276,12 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
             intent.putExtra("stuScoresList", (Serializable) stuScoresList);
             intent.putExtra("questionIdList", (Serializable) questionIdList);
             intent.putExtra("type", type);
-=======
-            intent2.putExtra("stuScore", String.format("%.1f", sum));
-            intent2.putExtra("scoreCount", scoreCount);
-            intent2.putExtra("status", (Serializable) statusList);
-            intent2.putExtra("canMark", canMark);
-            intent2.putExtra("taskId", taskId);
-            intent2.putExtra("stuUserName", stuName);
-            intent2.putExtra("stuScoresList", (Serializable) stuScoresList);
-            intent2.putExtra("questionIdList", (Serializable) questionIdList);
->>>>>>> 04cc660738b20fd2aaa5480820ad610eb91b72d4
 
             mResultLauncher.launch(intent);
         }
     }
 
     // 批改情况生成
-
     private final Handler handler = new Handler(Looper.getMainLooper()) {
         @RequiresApi(api = Build.VERSION_CODES.N)
         @SuppressLint("NotifyDataSetChanged")
@@ -322,20 +306,22 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
                         statusList.add("no_answer");
                     } else {
                         // 构建状态列表
+                        String iconStr = "";
                         switch (item.getStatus()) {
                             case "1":
-                                statusList.add("correct");
+                                iconStr += "correct";
                                 break;
                             case "2":
-                                statusList.add("error");
+                                iconStr += "error";
                                 break;
                             case "3":
-                                statusList.add("half_correct");
+                                iconStr += "half_correct";
                                 break;
                             case "4":
-                                statusList.add("no_mark");
+                                iconStr += "no_mark";
                                 break;
                         }
+                        statusList.add(iconStr);
                     }
 
                     // 同步分数
@@ -390,7 +376,7 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
                 //使用Gson框架转换Json字符串为列表
                 List<THomeworkMarkedEntity> itemList = gson.fromJson(itemString, new TypeToken<List<THomeworkMarkedEntity>>() {
                 }.getType());
-                Log.d("wen", "批改总信息条目: " + itemList.size());
+                Log.d("wen", "批改总信息条目: " + itemList);
 
                 // 封装消息，传递给主线程
                 Message message = Message.obtain();
@@ -412,7 +398,6 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
         MyApplication.addRequest(request, TAG);
     }
 
-
     @Override
     public void setStuAnswer(int pos, String stuScore) {
         double socres = Double.parseDouble(stuScore);
@@ -432,13 +417,8 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
     }
 
     @Override
-    public void onLoading() {
-
-    }
-
-    @Override
-    public void offLoading() {
-
+    public String getStuScore(int pos) {
+        return String.format("%.2f", stuScoresList.get(pos));
     }
 
 }

@@ -69,18 +69,16 @@ public class THomeworkMarkSubmitActivity extends AppCompatActivity implements Vi
         stuUserName = intent.getStringExtra("stuUserName");
         stuScoresList = (List<String>) intent.getSerializableExtra("stuScoresList");
         questionIdList = (List<String>) intent.getSerializableExtra("questionIdList");
-<<<<<<< HEAD
         type = intent.getStringExtra("type");
         String name = intent.getStringExtra("name");
-=======
-
->>>>>>> 04cc660738b20fd2aaa5480820ad610eb91b72d4
 
         // 组件获取
         findViewById(R.id.iv_back).setOnClickListener(v-> finish());
         Button btn_submit = findViewById(R.id.btn_submit);
         btn_submit.setOnClickListener(this);
         fb_mark = findViewById(R.id.fb_mark);
+        TextView tv_name = findViewById(R.id.tv_name);
+        tv_name.setText(name);
 
         if(!canMark){
             btn_submit.setText("结束预览");
