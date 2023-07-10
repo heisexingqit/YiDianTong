@@ -3,6 +3,7 @@ package com.example.yidiantong.fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,9 +20,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -29,6 +32,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 
 import com.android.volley.toolbox.Volley;
@@ -41,6 +45,8 @@ import com.example.yidiantong.adapter.HomeRecyclerAdapter;
 import com.example.yidiantong.bean.HomeItemEntity;
 import com.example.yidiantong.ui.HomeworkPagerActivity;
 import com.example.yidiantong.ui.HomeworkPagerFinishActivity;
+import com.example.yidiantong.ui.NoticeLookActivity;
+import com.example.yidiantong.ui.TBellLookNoticeActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.MyItemDecoration;
@@ -137,6 +143,30 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                         intent.putExtra("isNew", adapter.itemList.get(pos).getStatus() == 1 || adapter.itemList.get(pos).getStatus() == 5);
                         startActivity(intent);
                         break;
+
+                    case "通知":
+                        Intent intent_t;
+                        intent_t = new Intent(getActivity(), NoticeLookActivity.class);
+                        intent_t.putExtra("noticetype", adapter.itemList.get(pos).getType());  // 类型
+                        intent_t.putExtra("noticetime",adapter.itemList.get(pos).getTime());   // 发布时间
+                        intent_t.putExtra("noticeAuthor",adapter.itemList.get(pos).getCreaterName());  // 创建者
+                        intent_t.putExtra("noticeTitle",adapter.itemList.get(pos).getBottomTitle());     // 标题
+                        intent_t.putExtra("noticecotent",adapter.itemList.get(pos).getCourseName()); // 内容
+                        startActivity(intent_t);
+                        reload(adapter.itemList.get(pos).getType() , adapter.itemList.get(pos).getLearnId());
+                        break;
+                    case "公告":
+                        Intent intent_g;
+                        intent_g = new Intent(getActivity(), NoticeLookActivity.class);
+                        intent_g.putExtra("noticetype", adapter.itemList.get(pos).getType());  // 类型
+                        intent_g.putExtra("noticetime",adapter.itemList.get(pos).getTime());   // 发布时间
+                        intent_g.putExtra("noticeAuthor",adapter.itemList.get(pos).getCreaterName());  // 创建者
+                        intent_g.putExtra("noticeTitle",adapter.itemList.get(pos).getBottomTitle());     // 标题
+                        intent_g.putExtra("noticecotent",adapter.itemList.get(pos).getCourseName()); // 内容
+                        startActivity(intent_g);
+                        reload(adapter.itemList.get(pos).getType() , adapter.itemList.get(pos).getLearnId());
+                        break;
+
                 }
             });
         }else{
@@ -207,6 +237,51 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
             }
         });
         return view;
+    }
+
+    private final Handler handler2 = new Handler(Looper.getMainLooper()) {
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @SuppressLint("NotifyDataSetChanged")
+        @Override
+        public void handleMessage(Message message) {
+            super.handleMessage(message);
+            if (message.what == 100) {
+                // 成功
+            }
+        }
+    };
+
+    // 修改已读状态
+    private void reload(String type , String classTimeId) {
+        int type_mode;
+        if(type.equals("通知")){
+            type_mode = 3;
+        }else {
+            type_mode = 4;
+        }
+
+        String mRequestUrl = Constant.API + Constant.READ_NOTICE + "?userName=" + username +"&type=" + type_mode + "&classTimeId=" + classTimeId + "&callback=ha";
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                //结果信息
+                Boolean isSuccess = json.getBoolean("success");
+                Message msg = Message.obtain();
+                if (isSuccess) {
+                    msg.obj = 1;
+                } else {
+                    msg.obj = 0;
+                }
+                msg.what = 100;
+                handler2.sendMessage(msg);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(getContext(), error.toString(), Toast.LENGTH_SHORT).show();
+        });
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        queue.add(request);
     }
 
     //刷新列表

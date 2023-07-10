@@ -31,6 +31,8 @@ import android.widget.RelativeLayout;
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
+import com.example.yidiantong.ui.TBellLookNoticeActivity;
+import com.example.yidiantong.ui.TBellNoticeSubmitActivity;
 import com.example.yidiantong.ui.THomeworkAddActivity;
 import com.example.yidiantong.ui.THomeworkActivity;
 import com.example.yidiantong.View.ClickableImageView;
@@ -129,6 +131,22 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
                     intent.putExtra("taskId", adapter.itemList.get(pos).getfId());
                     intent.putExtra("type", "paper");
                     startActivity(intent);
+                    break;
+                case "3":
+                    Intent intent1;
+                    intent1 = new Intent(getActivity(), TBellLookNoticeActivity.class);
+                    intent1.putExtra("classTimeId", adapter.itemList.get(pos).getfId());
+                    intent1.putExtra("noticetype", adapter.itemList.get(pos).getfType());
+                    intent1.putExtra("noticetime",adapter.itemList.get(pos).getfTime());
+                    startActivity(intent1);
+                    break;
+                case "4":
+                    Intent intent2;
+                    intent2 = new Intent(getActivity(), TBellLookNoticeActivity.class);
+                    intent2.putExtra("classTimeId", adapter.itemList.get(pos).getfId());
+                    intent2.putExtra("noticetype", adapter.itemList.get(pos).getfType());
+                    intent2.putExtra("noticetime",adapter.itemList.get(pos).getfTime());
+                    startActivity(intent2);
                     break;
             }
             });
@@ -329,8 +347,18 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
             case R.id.tv_camera_homework:
                 break;
             case R.id.tv_add_notice:
+                Intent intent;
+                intent = new Intent(getActivity(), TBellNoticeSubmitActivity.class);
+                intent.putExtra("type", "通知");
+                startActivity(intent);
+                window2.dismiss();
                 break;
             case R.id.tv_add_announcement:
+                Intent intent1;
+                intent1 = new Intent(getActivity(), TBellNoticeSubmitActivity.class);
+                intent1.putExtra("type", "公告");
+                startActivity(intent1);
+                window2.dismiss();
                 break;
         }
     }

@@ -9,7 +9,6 @@ public class Constant {
     public static final String NEW_ITEM = "/AppServer/ajax/studentApp_getStudentPlan.do";
     // 获取作业题信息
     public static final String HOMEWORK_ITEM = "/AppServer/ajax/studentApp_getJobDetails.do";
-
     //获取“我的”版本更新信息
     public static final String CHECK_VERSION = "/AppServer/ajax/teacherApp_checkAppVersion.do";
     //获取错题本学科信息
@@ -37,6 +36,16 @@ public class Constant {
     public static final String SUBMIT_ANSWER_FINAL = "/AppServer/ajax/studentApp_saveStudentHomeWork.do";
     // 查看已批改作业
     public static final String AFTER_MARKED = "/AppServer/ajax/studentApp_getMarkedJob.do";
+    // 设置公告或通知为已读状态
+    public static final String READ_NOTICE = "/AppServer/ajax/studentApp_readNotice.do";
+    // 学生选科列表查看
+    public static final String GET_SELECT_COURSE_TASK_LIST = "/AppServer/ajax/studentApp_getSelectCourseTaskList.do";
+    // 学生选科详情
+    public static final String GET_SELECT_COURSE_TASK_DETIAL = "/AppServer/ajax/studentApp_getSelectCourseTaskDetial.do";
+    // 学生选科结果保存
+    public static final String SAVE_SELECT_SUBJECT = "/AppServer/ajax/studentApp_saveSelectsubject.do";
+    // 学生端登录课堂一点通
+    public static final String KETANGPLAYBYSTU = "/KeTangServer/ajax/ketang_clientKeTangPlayByStu.do";
     // 教师端最新信息
     public static final String T_NEW_ITEM = "/AppServer/ajax/teacherApp_getAllNews.do";
     // 教师授课资料信息
@@ -81,4 +90,23 @@ public class Constant {
     // 教师端获取知识点
     public static final String T_HOMEWORK_ADD_ZHISHIDIAN = "/AppServer/ajax/teacherApp_getKnowledgeTree.do";
 
+    // 教师端发布通知获取班级列表
+    public static final String T_BELL_ADD_CLASS= "/AppServer/ajax/teacherApp_publishNotice.do";
+
+    // 教师端查看通知或公告接口
+    public static final String T_BELL_LOOK_NOTICE = "/AppServer/ajax/teacherApp_lookNotice.do?";
+
+    // 教师端撤回通知或公告
+    public static final String T_DELETE_NOTICE = "/AppServer/ajax/teacherApp_deleteNotice.do";
+
+    // 教师端保存公告接口
+    public static final String T_BELL_SAVE_MANAGE_ANN = "/AppServer/ajax/teacherApp_saveManageNotice.do";
+
+    // 教师端保存通知接口
+    public static final String T_BELL_SAVE_MANAGE_NOTICE = "/AppServer/ajax/teacherApp_saveNotice.do";
+
+    // 教师端修改通知或公告，返回对应的内容
+    public static final String T_BELL_GET_NOTICE_INFO = "/AppServer/ajax/teacherApp_getNoticeInfo.do";
+     // 教师端获取课堂
+    public static final String T_CLIENT_KETANG_PLAY_BY_TEA= "/KeTangServer/ajax/ketang_clientKeTangPlayByTea.do";
 }

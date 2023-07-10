@@ -82,66 +82,67 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <LinearLayout
             android:id="@+id/fll_bd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@color/white">
+            android:background="@color/white"
+            android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/fiv_bd_exercise"
                 android:layout_width="155dp"
                 android:layout_height="24dp"
-                android:src="@drawable/recommend"
+                android:layout_gravity="right"
                 android:layout_marginBottom="10dp"
-                android:layout_gravity="right"/>
+                android:src="@drawable/recommend" />
 
             <ImageView
                 android:id="@+id/fiv_bd_mark"
                 android:layout_width="155dp"
                 android:layout_height="24dp"
-                android:src="@drawable/mark_icon"
+                android:layout_gravity="right"
                 android:layout_marginBottom="10dp"
-                android:layout_gravity="right"/>
+                android:src="@drawable/mark_icon" />
 
             <!--分隔线-->
             <LinearLayout
                 android:id="@+id/fll_line"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:orientation="vertical"
-                android:background="@drawable/divider_deep" />
+                android:background="@drawable/divider_deep"
+                android:orientation="vertical" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@color/f_mihui">
+                android:background="@color/f_mihui"
+                android:orientation="horizontal">
 
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_page_last"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:src="@drawable/last_icon"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"/>
+                    android:src="@drawable/last_icon" />
 
                 <LinearLayout
                     android:id="@+id/fll_mid"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
 
                     <TextView
                         android:id="@+id/ftv_pbd_quenum"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="1/1"/>
+                        android:text="1/1" />
 
                 </LinearLayout>
 
@@ -149,12 +150,12 @@
                     android:id="@+id/iv_page_next"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
                     android:clickable="true"
                     android:focusable="true"
-                    android:src="@drawable/next_icon"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"/>
+                    android:src="@drawable/next_icon" />
 
             </LinearLayout>
 

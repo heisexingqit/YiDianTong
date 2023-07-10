@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:name=".MyApplication"
@@ -22,6 +23,33 @@
         android:theme="@style/Theme.YiDianTong"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.TRemoveControlActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.TCourseScannerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.CourseLookActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.CourseScannerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.SelectDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.TBellNoticeUpdateActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.TBellNoticeSubmitActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.TBellLookNoticeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.NoticeLookActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.BookVedioActivity"
             android:exported="false" />
@@ -41,7 +69,6 @@
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" /> <!-- 作业 -->
-
         <activity
             android:name=".ui.THomeworkAddActivity"
             android:exported="false" />
@@ -84,7 +111,6 @@
             android:name=".ui.HomeworkPagerActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" /> <!-- 主页 -->
-
         <activity
             android:name=".ui.MainPagerActivity"
             android:exported="true"
@@ -97,9 +123,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity> <!-- 内容提供者-相机 -->
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.yidiantong.fileprovider"

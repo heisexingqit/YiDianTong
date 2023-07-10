@@ -1,5 +1,7 @@
 package com.example.yidiantong.fragment;
 
+import static com.example.yidiantong.MyApplication.username;
+
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -95,6 +97,8 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
     // 标识码（与权限对应）
     private static final int REQUEST_CODE_STORAGE = 1;
     private static final int REQUEST_CODE_CAMERA = 2;
+    private String username;
+    private String realName;
 
 
     // 创建实例（空参数）
@@ -228,9 +232,9 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
          * 真实用户数据设置
          */
         TextView tv_username = view.findViewById(R.id.tv_username);
-        String username = getActivity().getIntent().getStringExtra("username");
+        username = getActivity().getIntent().getStringExtra("username");
 
-        String realName = getActivity().getIntent().getStringExtra("realName");
+        realName = getActivity().getIntent().getStringExtra("realName");
         tv_username.setText(realName + "(" + username + ")");
 
         // 获取图片
@@ -274,6 +278,8 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.f_ll_center:
                 Intent intent_center = new Intent(getActivity(), SelectCourseActivity.class);
+                intent_center.putExtra("username",username);
+                intent_center.putExtra("userCn",realName);
                 startActivity(intent_center);
                 break;
             case R.id.fbtn_exit:

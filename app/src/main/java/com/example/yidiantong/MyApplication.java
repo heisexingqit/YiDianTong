@@ -4,6 +4,7 @@ package com.example.yidiantong;
 import android.app.Application;
 import android.content.Context;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -108,6 +109,12 @@ public class MyApplication extends Application {
         mQueue = Volley.newRequestQueue(getApplicationContext(), new OkHttpStack(),  -1);
 
 
+    }
+
+    private WindowManager.LayoutParams wmParams=new WindowManager.LayoutParams();
+
+    public WindowManager.LayoutParams getMywmParams(){
+        return wmParams;
     }
 
 }

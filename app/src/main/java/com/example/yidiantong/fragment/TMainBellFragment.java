@@ -31,15 +31,18 @@ import android.widget.RelativeLayout;
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
-import com.example.yidiantong.adapter.HomeRecyclerAdapter;
+import com.example.yidiantong.View.ClickableImageView;
+
 import com.example.yidiantong.adapter.THomeRecyclerAdapter;
-import com.example.yidiantong.bean.HomeItemEntity;
+
 import com.example.yidiantong.bean.THomeItemEntity;
-import com.example.yidiantong.ui.HomeworkPagerActivity;
-import com.example.yidiantong.ui.HomeworkPagerFinishActivity;
+
+import com.example.yidiantong.ui.TBellLookNoticeActivity;
+import com.example.yidiantong.ui.TBellNoticeSubmitActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.MyItemDecoration;
+import com.example.yidiantong.util.TBellSubmitInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -54,13 +57,15 @@ public class TMainBellFragment extends Fragment implements View.OnClickListener 
     private static final String TAG = "TMainLatestFragment";
     private ImageView iv_search_select;
     private View contentView = null;
+    private View contentView2 = null;
     private SwipeRefreshLayout swipeRf;
-    private PopupWindow window;
+    private PopupWindow window,window2;
     private RecyclerView rv_home;
     private RelativeLayout rl_loading;
     // 请求连接url
     private String mRequestUrl;
     private MyItemDecoration divider;
+    private ClickableImageView iv_add;
 
     public static TMainBellFragment newInstance() {
         TMainBellFragment fragment = new TMainBellFragment();
@@ -121,24 +126,26 @@ public class TMainBellFragment extends Fragment implements View.OnClickListener 
 
             //设置item点击事件
             adapter.setmItemClickListener((v, pos) -> {
-//            switch (adapter.itemList.get(pos).getType()) {
-//                case "作业":
-//                    Intent intent;
-//                    if(adapter.itemList.get(pos).getStatus() != 2){
-//                        // 未批改的
-//                        intent = new Intent(getActivity(), HomeworkPagerActivity.class);
-//                    }else{
-//                        intent = new Intent(getActivity(), HomeworkPagerFinishActivity.class);
-//                    }
-//
-//                    intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
-//                    intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
-//                    intent.putExtra("username", username);
-//                    intent.putExtra("isNew", adapter.itemList.get(pos).getStatus() == 1 || adapter.itemList.get(pos).getStatus() == 5);
-//                    startActivity(intent);
-//
-//                    break;
-//            }
+
+            switch (adapter.itemList.get(pos).getfType()) {
+                case "3":
+                    Intent intent;
+                    intent = new Intent(getActivity(), TBellLookNoticeActivity.class);
+                    intent.putExtra("classTimeId", adapter.itemList.get(pos).getfId());
+                    intent.putExtra("noticetype", adapter.itemList.get(pos).getfType());
+                    intent.putExtra("noticetime",adapter.itemList.get(pos).getfTime());
+                    startActivity(intent);
+                    break;
+                case "4":
+                    Intent intent1;
+                    intent1 = new Intent(getActivity(), TBellLookNoticeActivity.class);
+                    intent1.putExtra("classTimeId", adapter.itemList.get(pos).getfId());
+                    intent1.putExtra("noticetype", adapter.itemList.get(pos).getfType());
+                    intent1.putExtra("noticetime",adapter.itemList.get(pos).getfTime());
+                    startActivity(intent1);
+                    break;
+
+            }
             });
         } else {
             rl_loading.setVisibility(View.GONE);
@@ -206,6 +213,12 @@ public class TMainBellFragment extends Fragment implements View.OnClickListener 
                 return false;
             }
         });
+
+        // 添加公告/通知
+        iv_add = view.findViewById(R.id.iv_add);
+        iv_add.setOnClickListener(this);
+
+
         return view;
     }
 
@@ -260,6 +273,32 @@ public class TMainBellFragment extends Fragment implements View.OnClickListener 
                     searchStr = et_search.getText().toString();
                     refreshList();
                 }
+                break;
+            case R.id.iv_add:
+                if (contentView2 == null) {
+                    contentView2 = LayoutInflater.from(getActivity()).inflate(R.layout.menu_t_bell_add, null, false);
+                    //绑定点击事件
+                    contentView2.findViewById(R.id.ftv_add_notice).setOnClickListener(this);
+                    contentView2.findViewById(R.id.ftv_add_announcement).setOnClickListener(this);
+
+                    window2 = new PopupWindow(contentView2, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
+                    window2.setTouchable(true);
+                }
+                window2.showAsDropDown(iv_add, -250, -20);
+                break;
+            case R.id.ftv_add_notice:
+                Intent intent;
+                intent = new Intent(getActivity(), TBellNoticeSubmitActivity.class);
+                intent.putExtra("type", "通知");
+                startActivity(intent);
+                window2.dismiss();
+                break;
+            case R.id.ftv_add_announcement:
+                Intent intent1;
+                intent1 = new Intent(getActivity(), TBellNoticeSubmitActivity.class);
+                intent1.putExtra("type", "公告");
+                startActivity(intent1);
+                window2.dismiss();
                 break;
         }
     }
@@ -339,4 +378,12 @@ public class TMainBellFragment extends Fragment implements View.OnClickListener 
         });
         MyApplication.addRequest(request, TAG);
     }
+
+    // 页面刷新
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshList();
+    }
+
 }

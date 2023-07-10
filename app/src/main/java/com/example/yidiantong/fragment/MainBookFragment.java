@@ -78,6 +78,7 @@ public class MainBookFragment extends Fragment {
 
         //获取登录传递的参数
         username =  getActivity().getIntent().getStringExtra("username");
+
         //设置RecyclerViewAdapter
         adapter = new BooksAdapter(getContext(), itemList);
 

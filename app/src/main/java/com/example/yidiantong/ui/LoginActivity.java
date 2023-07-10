@@ -286,6 +286,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     intent.putExtra("username", username);
                     intent.putExtra("picUrl", userInfo.getString("userPhoto"));
+                    intent.putExtra("password",password);
 
                     //两个一起用
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

@@ -80,13 +80,13 @@ public class BookDetailEntity {
         // 视频图标显示
         public String mp4Flag;
 
-        // 错题Id
+       // 错题Id
         public String questionId;
 
         // 错题内容
         public String shitiShow;
 
-        // 错题平均分
+       // 错题平均分
         public String avgScore;
 
         // 错题学生分数
