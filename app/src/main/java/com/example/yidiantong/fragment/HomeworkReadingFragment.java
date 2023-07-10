@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,17 +25,17 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.HomeworkEntity;
 import com.example.yidiantong.bean.StuAnswerEntity;
-import com.example.yidiantong.util.PageingInterface;
+import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
-import com.example.yidiantong.util.TransmitInterface;
+import com.example.yidiantong.util.HomeworkInterface;
 
 
 public class HomeworkReadingFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "HomeworkReadingFragment";
 
-    private PageingInterface pageing;
-    private TransmitInterface transmit;
+    private PagingInterface pageing;
+    private HomeworkInterface transmit;
 
     int[] answer;
     int[] unselectIcons = {R.drawable.a_unselect, R.drawable.b_unselect, R.drawable.c_unselect, R.drawable.d_unselect};
@@ -69,8 +68,8 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        pageing = (PageingInterface) context;
-        transmit = (TransmitInterface) context;
+        pageing = (PagingInterface) context;
+        transmit = (HomeworkInterface) context;
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -164,6 +163,7 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
         iv_b.setOnClickListener(this);
         iv_c.setOnClickListener(this);
         iv_d.setOnClickListener(this);
+        showRadioBtn();
 
         //切换小题显示答案选项
         tv_question_id = view.findViewById(R.id.tv_question_id);

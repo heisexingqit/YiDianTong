@@ -230,6 +230,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void login() {
         ll_loading.setVisibility(View.VISIBLE);
         String url = Constant.API + Constant.LOGIN + "?userName=" + username + "&passWord=" + password;
+        Log.d(TAG, "login: " + url);
         StringRequest request = new StringRequest(url, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);

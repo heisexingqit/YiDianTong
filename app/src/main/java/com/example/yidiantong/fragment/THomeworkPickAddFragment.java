@@ -201,6 +201,9 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
                 }
                 break;
             case R.id.iv_add:
+                if(adapter.itemList == null || adapter.itemList.size() == 0){
+                    break;
+                }
                 String qId = adapter.itemList.get(nowPos).getQuestionId();
                 if (pickList.stream().anyMatch(obj -> obj.getQuestionId().equals(qId))) {
                     pickList.removeIf(obj -> obj.getQuestionId().equals(qId));
@@ -324,7 +327,7 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
         if (StringUtils.hasEmptyString(xueduan, xueke, zhishidian, banben, jiaocai, type, shareTag)) {
             return;
         }
-        mRequestUrl = Constant.API + Constant.T_HOMEWORK_ADD_ALLQUESTIONS + "?channelCode=" + xueduan + "&subjectCode=" + xueke +
+        mRequestUrl = Constant.API + Constant.T_HOMEWORK_GET_ALL_QUESTIONS + "?channelCode=" + xueduan + "&subjectCode=" + xueke +
                 "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&pointCode=" + zhishidian + "&currentpage=" + currentpage +
                 "&teacherId=" + MyApplication.username + "&questionTypeName=" + type + "&shareTag=" + shareTag;
         Log.d("wen", "题面获取Url:" + mRequestUrl);

@@ -1,6 +1,6 @@
 package com.example.yidiantong.util;
 
-public interface PageingInterface{
+public interface PagingInterface {
     void pageLast();
     void pageNext();
 }

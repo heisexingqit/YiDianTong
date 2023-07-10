@@ -2,6 +2,8 @@ package com.example.yidiantong.adapter;
 
 import android.content.Context;
 
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +42,10 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     // 假0判断
     private int count = 0;
 
+    private Context mContext;
+
     public HomeRecyclerAdapter(Context context, List<HomeItemEntity> itemList) {
+        mContext = context;
         this.layoutInflater = LayoutInflater.from(context);
         this.itemList = itemList;
     }
@@ -103,23 +108,23 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             this.itemList.clear();
             this.itemList = moreList;
             this.isRefresh = 0;
-            if(moreList.size() == 0){
+            if (moreList.size() == 0) {
                 isDown = 1;
             }
         } else {
             this.itemList.addAll(moreList);
-            if(moreList.size() == 12){
-              isDown = 0;
-              count = 0;
-            } else if(moreList.size() == 0){
+            if (moreList.size() >= 12) {
                 isDown = 0;
-                count ++;
-            }else {
+                count = 0;
+            } else if (moreList.size() == 0) {
+                isDown = 0;
+                count++;
+            } else {
                 isDown = 1;
                 count = 0;
             }
 
-            if(count > 3){
+            if (count > 3) {
                 isDown = 1;
             }
         }
@@ -139,6 +144,8 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private final TextView tv_second_line;
         private final TextView tv_date;
 
+        private final LinearLayout ll_width;
+
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             //获取组件
@@ -151,6 +158,7 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             iv_top_icon2 = itemView.findViewById(R.id.iv_top_icon2);
             tv_second_line = itemView.findViewById(R.id.tv_second_line);
             tv_date = itemView.findViewById(R.id.tv_date);
+            ll_width = itemView.findViewById(R.id.ll_width);
         }
 
         //数据更新放在这里(频繁调用，不能放一次性操作，例如绑定点击事件)
@@ -175,12 +183,21 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     icon_id = R.drawable.announcement_icon;
                     break;
                 case "微课":
+                case "直播课消息":
                     icon_id = R.drawable.live_icon;
                     break;
                 default:
+                    Log.d("wen", "update: " + item.getType());
                     throw new IllegalStateException("Unexpected value: " + item.getType());
             }
             iv_icon.setImageResource(icon_id);
+            if(item.getType().equals("直播课消息")){
+                ll_width.getLayoutParams().width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                if(item.getCreaterName().equals("已结束")){
+                    tv_is_live.setText("已结束");
+                    tv_is_live.setBackgroundResource(R.color.live_btn_gray);
+                }
+            }
             tv_type.setText(item.getType());
             tv_title.setText(item.getBottomTitle());
             //清除底栏
@@ -198,32 +215,39 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             //默认隐藏直播标志
             tv_is_live.setVisibility(View.INVISIBLE);
+
             //学习内容状态
-            switch (item.getStatus()) {
-                case 1:
-                case 5:
-                    //未读
-                    //新的
-                    iv_top_icon2.setVisibility(View.GONE);
-                    iv_top_icon1.setVisibility(View.VISIBLE);
-                    iv_top_icon1.setImageResource(R.drawable.new_icon);
-                    break;
-                case 2:
-                    //已批改
-                    iv_top_icon1.setVisibility(View.GONE);
-                    iv_top_icon2.setVisibility(View.VISIBLE);
-                    iv_top_icon2.setImageResource(R.drawable.red_pencil);
-                    break;
-                case 3:
-                    //未批改
-                    iv_top_icon1.setVisibility(View.GONE);
-                    iv_top_icon2.setVisibility(View.VISIBLE);
-                    iv_top_icon2.setImageResource(R.drawable.green_pencil);
-                    break;
-                case 4:
-                    //已读
-                    iv_top_icon2.setVisibility(View.INVISIBLE);
-                    break;
+            if (item.getStatus().length() == 0) {
+                iv_top_icon1.setVisibility(View.GONE);
+                iv_top_icon2.setVisibility(View.GONE);
+                tv_is_live.setVisibility(View.VISIBLE);
+            }else{
+                switch (Integer.parseInt(item.getStatus())) {
+                    case 1:
+                    case 5:
+                        //未读
+                        //新的
+                        iv_top_icon2.setVisibility(View.GONE);
+                        iv_top_icon1.setVisibility(View.VISIBLE);
+                        iv_top_icon1.setImageResource(R.drawable.new_icon);
+                        break;
+                    case 2:
+                        //已批改
+                        iv_top_icon1.setVisibility(View.GONE);
+                        iv_top_icon2.setVisibility(View.VISIBLE);
+                        iv_top_icon2.setImageResource(R.drawable.red_pencil);
+                        break;
+                    case 3:
+                        //未批改
+                        iv_top_icon1.setVisibility(View.GONE);
+                        iv_top_icon2.setVisibility(View.VISIBLE);
+                        iv_top_icon2.setImageResource(R.drawable.green_pencil);
+                        break;
+                    case 4:
+                        //已读
+                        iv_top_icon2.setVisibility(View.INVISIBLE);
+                        break;
+                }
             }
         }
     }
@@ -250,7 +274,7 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 pbViewLoadTip.setVisibility(View.GONE);
                 tvViewLoadTip.setText("");
             }
-            if(fail){
+            if (fail) {
                 pbViewLoadTip.setVisibility(View.GONE);
                 tvViewLoadTip.setText("数据加载失败");
             }

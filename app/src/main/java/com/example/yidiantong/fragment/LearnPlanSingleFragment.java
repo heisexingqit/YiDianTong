@@ -1,8 +1,8 @@
 package com.example.yidiantong.fragment;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.text.SpannableString;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,21 +20,19 @@ import androidx.fragment.app.Fragment;
 
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
-import com.example.yidiantong.bean.HomeworkEntity;
 import com.example.yidiantong.bean.LearnPlanItemEntity;
 import com.example.yidiantong.bean.StuAnswerEntity;
-import com.example.yidiantong.util.PageingInterface;
+import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
-import com.example.yidiantong.util.StringUtils;
-import com.example.yidiantong.util.TransmitInterface;
+import com.example.yidiantong.util.HomeworkInterface;
 
 import org.apache.commons.text.StringEscapeUtils;
 
 public class LearnPlanSingleFragment extends Fragment implements View.OnClickListener {
-    private static final String TAG = "HomeworkSingleFragment";
+    private static final String TAG = "LearnPlanSingleFragment";
 
-    private PageingInterface pageing;
-    private TransmitInterface transmit;
+    private PagingInterface pageing;
+    private HomeworkInterface transmit;
 
     int[] unselectIcons = {R.drawable.a_unselect, R.drawable.b_unselect, R.drawable.c_unselect, R.drawable.d_unselect, R.drawable.e_unselect, R.drawable.f_unselect, R.drawable.g_unselect, R.drawable.h_unselect};
     int[] selectIcons = {R.drawable.a_select, R.drawable.b_select, R.drawable.c_select, R.drawable.d_select, R.drawable.e_select, R.drawable.f_select, R.drawable.g_select, R.drawable.h_select};
@@ -51,13 +49,13 @@ public class LearnPlanSingleFragment extends Fragment implements View.OnClickLis
     private LearnPlanItemEntity learnPlanEntity;
     private StuAnswerEntity stuAnswerEntity;
 
-    public static LearnPlanSingleFragment newInstance(LearnPlanItemEntity learnPlanEntity, int position, int size) {
+    public static LearnPlanSingleFragment newInstance(LearnPlanItemEntity learnPlanEntity, int position, int size, StuAnswerEntity stuAnswerEntity) {
         LearnPlanSingleFragment fragment = new LearnPlanSingleFragment();
         Bundle args = new Bundle();
         args.putSerializable("learnPlanEntity", learnPlanEntity);
         args.putInt("position", position);
         args.putInt("size", size);
-//        args.putSerializable("stuAnswerEntity", stuAnswerEntity);
+        args.putSerializable("stuAnswerEntity", stuAnswerEntity);
         fragment.setArguments(args);
         return fragment;
     }
@@ -66,8 +64,8 @@ public class LearnPlanSingleFragment extends Fragment implements View.OnClickLis
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        pageing = (PageingInterface) context;
-        transmit = (TransmitInterface) context;
+        pageing = (PagingInterface) context;
+        transmit = (HomeworkInterface) context;
     }
 
     @Override
@@ -78,21 +76,20 @@ public class LearnPlanSingleFragment extends Fragment implements View.OnClickLis
         int position = 0, size = 0;
         if(getArguments() != null){
             learnPlanEntity = (LearnPlanItemEntity) getArguments().getSerializable("learnPlanEntity");
-//            stuAnswerEntity = (StuAnswerEntity) getArguments().getSerializable("stuAnswerEntity");
+            stuAnswerEntity = (StuAnswerEntity) getArguments().getSerializable("stuAnswerEntity");
             position = getArguments().getInt("position") + 1;
             size = getArguments().getInt("size");
         }
         choiceLen = (learnPlanEntity.getQuestionChoiceList().length()+ 1) / 2;
         Log.d("wen", "onCreateView: " + choiceLen);
 
-//        //同步答案
-//        if (stuAnswerEntity.getStuAnswer().length() > 0) {
-//            answer = stuAnswerEntity.getStuAnswer().charAt(0) - 'A';
-//        }
+        //同步答案
+        if (stuAnswerEntity.getStuAnswer() != null && stuAnswerEntity.getStuAnswer().length() > 0) {
+            answer = stuAnswerEntity.getStuAnswer().charAt(0) - 'A';
+        }
 
         //获取view
         View view = inflater.inflate(R.layout.fragment_homework_single, container, false);
-        TextView tv_question_number = view.findViewById(R.id.tv_question_number);
 
         /**
          * 多机适配：底栏高度
@@ -122,12 +119,16 @@ public class LearnPlanSingleFragment extends Fragment implements View.OnClickLis
         //题目类型
         TextView tv_question_type = view.findViewById(R.id.tv_question_type);
         tv_question_type.setText(learnPlanEntity.getResourceName());
+        tv_question_type.setTextSize(18);
+        tv_question_type.setTextColor(Color.BLACK);
 
         //顶部题号染色
-        int positionLen = String.valueOf(position).length();
-        String questionNum = position + "/" + size + "题";
-        SpannableString spannableString = StringUtils.getStringWithColor(questionNum, "#6CC1E0", 0, positionLen);
-        tv_question_number.setText(spannableString);
+        TextView tv_question_number = view.findViewById(R.id.tv_question_number);
+        tv_question_number.setVisibility(View.GONE);
+//        int positionLen = String.valueOf(position).length();
+//        String questionNum = position + "/" + size + "题";
+//        SpannableString spannableString = StringUtils.getStringWithColor(questionNum, "#6CC1E0", 0, positionLen);
+//        tv_question_number.setText(spannableString);
 
         //翻页组件
         ImageView iv_pager_last = view.findViewById(R.id.iv_page_last);

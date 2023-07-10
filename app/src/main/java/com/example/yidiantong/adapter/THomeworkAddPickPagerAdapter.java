@@ -7,9 +7,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.example.yidiantong.bean.THomeworkAddEntity;
-import com.example.yidiantong.fragment.THomeworkAddPickFragment;
+import com.example.yidiantong.fragment.THomeworkAddItemFragment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class THomeworkAddPickPagerAdapter extends FragmentStatePagerAdapter {
@@ -29,7 +28,7 @@ public class THomeworkAddPickPagerAdapter extends FragmentStatePagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        return THomeworkAddPickFragment.newInstance(itemList.get(position));
+        return THomeworkAddItemFragment.newInstance(itemList.get(position));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.example.yidiantong.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +10,9 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
@@ -36,6 +40,7 @@ import androidx.fragment.app.Fragment;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 
 import com.example.yidiantong.R;
@@ -46,6 +51,8 @@ import com.example.yidiantong.adapter.HomeRecyclerAdapter;
 import com.example.yidiantong.ui.LoginActivity;
 
 import com.example.yidiantong.ui.SelectCourseActivity;
+import com.example.yidiantong.util.Constant;
+import com.example.yidiantong.util.ImageUtils;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.StringUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -95,6 +102,9 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
     // 标识码（与权限对应）
     private static final int REQUEST_CODE_STORAGE = 1;
     private static final int REQUEST_CODE_CAMERA = 2;
+
+    private String imageBase64;
+    private String username;
 
 
     // 创建实例（空参数）
@@ -203,9 +213,12 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                 if (result.getResultCode() == getActivity().RESULT_OK) {
                     try {
                         // decodeStream()可以将output_image.jpg解析成Bitmap对象。
+
                         Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(cropUri));
-                        fiv_my.setImageBitmap(bitmap);
-                        Toast.makeText(getActivity(), "修改成功！", Toast.LENGTH_SHORT).show();
+                        imageBase64 = ImageUtils.Bitmap2StrByBase64(bitmap);
+                        imageBase64 = imageBase64.replace("+", "%2b");
+                        uploadImage();
+
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -228,7 +241,7 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
          * 真实用户数据设置
          */
         TextView tv_username = view.findViewById(R.id.tv_username);
-        String username = MyApplication.username;
+        username = MyApplication.username;
 
         String realName = MyApplication.cnName;
         tv_username.setText(realName + "(" + username + ")");
@@ -237,6 +250,50 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         String picUrl = JsonUtils.clearString(MyApplication.picUrl);
         ImageLoader.getInstance().displayImage(picUrl, fiv_my, MyApplication.getLoaderOptions());
         return view;
+    }
+
+    private Handler handler = new Handler(Looper.getMainLooper()) {
+        @SuppressLint("NotifyDataSetChanged")
+        @Override
+        public void handleMessage(Message message) {
+            super.handleMessage(message);
+            if (message.what == 100) {
+                String picUrl = (String) message.obj;
+                MyApplication.picUrl = picUrl;
+                ImageLoader.getInstance().displayImage(picUrl, fiv_my, MyApplication.getLoaderOptions());
+                Toast.makeText(getActivity(), "修改成功！", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+
+    // 上传图片
+    private void uploadImage() {
+        String mRequestUrl = Constant.API + Constant.UPLOAD_IMAGE + "?baseCode=" + imageBase64 + "&userId=" + username;
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+
+                String url = json.getString("data");
+                Boolean isSuccess = json.getBoolean("success");
+                if (isSuccess) {
+                    //封装消息，传递给主线程
+                    Message message = Message.obtain();
+
+                    message.obj = url;
+                    // 发送消息给主线程
+                    //标识线程
+                    message.what = 100;
+                    handler.sendMessage(message);
+                } else {
+                    Log.d(TAG, "uploadImage: " + json);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
+        });
+        MyApplication.addRequest(request, TAG);
     }
 
     @Override
@@ -557,6 +614,7 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
 
     /**
      * 处理最后从Setting返回后的提示
+     *
      * @param requestCode 权限码
      */
     @Override

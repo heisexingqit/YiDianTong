@@ -48,7 +48,7 @@ public class ImagePagerAdapter extends PagerAdapter {
         View v = LayoutInflater.from(mContent).inflate(R.layout.item_show_photo, null, false);
 
         PhotoView pv_content = v.findViewById(R.id.pv_content);
-        /**
+        /*
          * ImageLoader 请求图片并缓存
          */
         ImageLoader.getInstance().displayImage(urlList.get(position), pv_content, MyApplication.getLoaderOptions());
@@ -59,6 +59,14 @@ public class ImagePagerAdapter extends PagerAdapter {
             public void onClick(View view) {
                 clickListener.onItemClick();
                 Log.d(TAG, "onClick: ");
+            }
+        });
+
+        pv_content.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                clickListener.onLongItemClick(position);
+                return false;
             }
         });
 
@@ -97,5 +105,6 @@ public class ImagePagerAdapter extends PagerAdapter {
     //点击dismiss
     public interface MyItemClickListener {
         void onItemClick();
+        void onLongItemClick(int pos);
     }
 }

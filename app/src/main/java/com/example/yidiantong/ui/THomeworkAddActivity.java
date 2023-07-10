@@ -278,6 +278,7 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
                     editor.putString("xueke", xueke);
                     intent.putExtra("xuekeMap", json);
                     intent.putExtra("xueke", xueke);
+
                     // 学科
                     json = gson.toJson(banbenMap);
                     editor.putString("banbenMap", json);
@@ -481,9 +482,11 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
         });
     }
 
-
     private void loadXueKe() {
-
+        /**
+         * 加载学科方法：
+         * 构建学科map<高中数学,id>
+         */
         if (xueduanMap.get(xueduan) == null) {
             return;
         }
@@ -499,7 +502,7 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
                 JSONArray data = json.getJSONArray("data");
                 for (int i = 0; i < data.length(); ++i) {
                     JSONObject object = data.getJSONObject(i);
-                    xuekeMap.put(object.getString("subjectName").substring(2), object.getString("subjectId"));
+                    xuekeMap.put(object.getString("subjectName"), object.getString("subjectId"));
                 }
 
                 Log.d("wen", "学科: " + xuekeMap);
@@ -513,22 +516,26 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
         MyApplication.addRequest(request, TAG);
     }
 
+    // 展现学科
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void showXueKe() {
+
         if (xuekeMap.size() == 0) {
             tv_xueke_null.setVisibility(View.VISIBLE);
         }
         lastXueke = null;
         xuekeMap.forEach((name, id) -> {
+            // name（包含学段）
             view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_block, fl_xueke, false);
             TextView tv_name = view.findViewById(R.id.tv_name);
-            tv_name.setText(name);
+            // 按钮显示（不含学段）
+            tv_name.setText(name.substring(2));
+            // xueke（包含学段）
             if (name.equals(xueke)) {
                 tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
                 lastXueke = tv_name;
             }
             tv_name.setOnClickListener(v -> {
-                xueke = (String) tv_name.getText();
 
                 if (lastXueke != null) {
                     lastXueke.setBackgroundResource(R.color.light_gray3);
@@ -539,7 +546,8 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
                     lastXueke = null;
                     refresh(2);
                 } else {
-                    xueke = tv_name.getText().toString();
+                    // 点击事件，获取xueke（包含学段）
+                    xueke = xueduan + tv_name.getText().toString();
                     tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
                     lastXueke = tv_name;
                     refresh(2);

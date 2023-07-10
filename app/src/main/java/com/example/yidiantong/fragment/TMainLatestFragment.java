@@ -31,11 +31,14 @@ import android.widget.RelativeLayout;
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
+import com.example.yidiantong.ui.LiveListActivity;
 import com.example.yidiantong.ui.THomeworkAddActivity;
 import com.example.yidiantong.ui.THomeworkActivity;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.adapter.THomeRecyclerAdapter;
 import com.example.yidiantong.bean.THomeItemEntity;
+import com.example.yidiantong.ui.TLearnPlanAddActivity;
+import com.example.yidiantong.ui.TLiveListActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.MyItemDecoration;
@@ -84,9 +87,13 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
     private EditText et_search;
     private String searchStr = "";
 
+    // Activity页面切换
+    private ChangePageInterface changePageInterface;
+
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        changePageInterface = (ChangePageInterface) context;
     }
 
     @Override
@@ -122,15 +129,27 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
 
             //设置item点击事件
             adapter.setmItemClickListener((v, pos) -> {
-            switch (adapter.itemList.get(pos).getfType()) {
-                case "2":
-                    Intent intent = new Intent(getActivity(), THomeworkActivity.class);
-                    intent.putExtra("teacherId", username);
-                    intent.putExtra("taskId", adapter.itemList.get(pos).getfId());
-                    intent.putExtra("type", "paper");
-                    startActivity(intent);
-                    break;
-            }
+                Intent intent = null;
+                switch (adapter.itemList.get(pos).getfType()) {
+                    case "1":
+                        intent = new Intent(getActivity(), THomeworkActivity.class);
+                        intent.putExtra("teacherId", username);
+                        intent.putExtra("taskId", adapter.itemList.get(pos).getfId());
+                        intent.putExtra("type", "learnPlan");
+                        startActivity(intent);
+                        break;
+                    case "2":
+                        intent = new Intent(getActivity(), THomeworkActivity.class);
+                        intent.putExtra("teacherId", username);
+                        intent.putExtra("taskId", adapter.itemList.get(pos).getfId());
+                        intent.putExtra("type", "paper");
+                        startActivity(intent);
+                        break;
+                    case "10":
+                        intent = new Intent(getActivity(), TLiveListActivity.class);
+                        startActivity(intent);
+                        break;
+                }
             });
         } else {
             rl_loading.setVisibility(View.GONE);
@@ -158,6 +177,8 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
+                Log.d(TAG, "onScrollStateChanged: " + lastVisibleItem + "/" + adapter.getItemCount() + "/" + adapter.isDown);
+
                 if (newState == RecyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 >= adapter.getItemCount() && adapter.isDown == 0) {
                     loadItems_Net();
                 }
@@ -202,8 +223,6 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
 
         iv_add = view.findViewById(R.id.iv_add);
         iv_add.setOnClickListener(this);
-
-
         return view;
     }
 
@@ -306,13 +325,14 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
                 break;
 
             /**
-             * 右侧菜单
+             * 顶部右侧菜单
              */
             case R.id.tv_add_package:
                 break;
             case R.id.tv_my_package:
                 break;
             case R.id.tv_add_learnPlan:
+                startActivity(new Intent(getActivity(), TLearnPlanAddActivity.class));
                 break;
             case R.id.tv_add_weike:
                 break;
@@ -321,10 +341,10 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
                 window2.dismiss();
                 break;
             case R.id.tv_select_learnPlan:
-                break;
             case R.id.tv_select_weike:
-                break;
             case R.id.tv_select_paper:
+                window2.dismiss();
+                changePageInterface.changePage(2);
                 break;
             case R.id.tv_camera_homework:
                 break;
@@ -366,9 +386,9 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
             rl_loading.setVisibility(View.VISIBLE);
         }
 
-        mRequestUrl = Constant.API + Constant.T_NEW_ITEM + "?userID=" + username + "&resourceType=" + resourceType + "&currentPage=" + currentPage + "&type=" + type + "&searchStr=" + searchStr;
+        mRequestUrl = Constant.API + Constant.T_NEW_ITEM + "?userID=" + username + "&resourceType=" + resourceType + "&currentPage=" + currentPage + "&type=" + type + "&searchStr=" + searchStr + "&source=RN";
 
-        Log.d("wen", "home: " + mRequestUrl);
+        Log.d("wen", "教师主页: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
 
             try {
@@ -408,5 +428,9 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
             adapter.fail();
         });
         MyApplication.addRequest(request, TAG);
+    }
+
+    public interface ChangePageInterface {
+        void changePage(int position);
     }
 }

@@ -83,6 +83,40 @@
     <string name="t_homework_search_hit">学生姓名</string>
     <string name="watch_report">查看报告</string>
     <string name="answer">[答案]</string>
+    <string name="title_activity_tlive_add">TLiveAddActivity</string>
+    <string name="submit_learnplan">交导学案</string>
+    <string name="live_search_input_hint">请输入课程名称，教师名称或课堂号搜索</string>
+    <string name="live_add_ketang_name">课堂名称:</string>
+    <string name="live_add_start_time">开课时间:</string>
+    <string name="live_add_time_length">课节时长:</string>
+    <string name="live_add_ketang_type">课堂类型:</string>
+    <string name="live_add_subject">学科:</string>
+    <string name="live_add_select_ketang">选择我的课堂:</string>
+    <string name="live_add_select_group">选择协作组:</string>
+    <string name="please_select_with_dash">————请选择————</string>
+    <string name="my_ketang">自己的课堂</string>
+    <string name="group_ketang">协作组的课堂</string>
+    <string name="live_add_ketang_name_hint">请输入课堂名称</string>
+    <string name="_00_hour">00小时</string>
+    <string name="_00_minute">00分钟</string>
+    <string name="_01_hour">01小时</string>
+    <string name="_02_hour">02小时</string>
+    <string name="_03_hour">03小时</string>
+    <string name="_04_hour">04小时</string>
+    <string name="_05_hour">05小时</string>
+    <string name="_06_hour">06小时</string>
+    <string name="_07_hour">07小时</string>
+    <string name="_08_hour">08小时</string>
+    <string name="_09_hour">09小时</string>
+    <string name="_10_hour">10小时</string>
+    <string name="_11_hour">11小时</string>
+    <string name="_12_hour">12小时</string>
+    <string name="_10_minute">10分钟</string>
+    <string name="_20_minute">20分钟</string>
+    <string name="_30_minute">30分钟</string>
+    <string name="_40_minute">40分钟</string>
+    <string name="_50_minute">50分钟</string>
+    <string name="set_learn_plan_params">设置导学案属性</string>
     <!--wen-->
 
 </resources>

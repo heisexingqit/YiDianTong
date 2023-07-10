@@ -38,8 +38,7 @@ import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.FixedSpeedScroller;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.NumberUtils;
-import com.example.yidiantong.util.TransmitInterface;
-import com.example.yidiantong.util.TransmitInterface3;
+import com.example.yidiantong.util.THomeworkMarkInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -52,7 +51,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class THomeworkMarkPagerActivity extends AppCompatActivity implements View.OnClickListener, TransmitInterface3 {
+public class THomeworkMarkPagerActivity extends AppCompatActivity implements View.OnClickListener, THomeworkMarkInterface {
     private static final String TAG = "THomeworkMarkActivity";
 
     // 参数相关
@@ -60,9 +59,9 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
     private String name;
     private int pageCount = 0;
     private int pageCountAll = 0;
-    private String stuScore;
     private String scoreCount;
     private String mode;
+    private String type;
 
     // 页面组件
     private NoScrollViewPager vp_homework;
@@ -88,6 +87,9 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
     private Boolean canMark;
     private List<String> questionIdList = new ArrayList<>();
 
+    // ViewPagerAdapter中列表
+    List<THomeworkMarkedEntity> moreList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,10 +101,10 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
         stuName = intent.getStringExtra("stuName");
         taskId = intent.getStringExtra("taskId");
         name = intent.getStringExtra("name");
-        stuScore = intent.getStringExtra("stuScore");
         scoreCount = intent.getStringExtra("scoreCount");
         canMark = intent.getBooleanExtra("canMark", true);
         mode = intent.getStringExtra("mode");
+        type = intent.getStringExtra("type");
 
         findViewById(R.id.iv_eye).setOnClickListener(this);
 
@@ -223,6 +225,7 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
                 } else {
                     currentItem -= 1;
                     vp_homework.setCurrentItem(currentItem);
+                    Log.d("wen", "Activity: " + moreList.get(currentItem).getOrder());
                 }
                 btnShow();
                 break;
@@ -232,6 +235,7 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
                 } else {
                     currentItem += 1;
                     vp_homework.setCurrentItem(currentItem);
+                    Log.d("wen", "Activity: " + moreList.get(currentItem).getOrder());
                 }
                 btnShow();
                 break;
@@ -256,23 +260,24 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
 
     private void jumpToSubmit() {
         if (finishData) {
-            Intent intent2 = new Intent(THomeworkMarkPagerActivity.this, THomeworkMarkSubmitActivity.class);
+            Intent intent = new Intent(THomeworkMarkPagerActivity.this, THomeworkMarkSubmitActivity.class);
             double sum = 0;
             for (int i = 0; i < pageCountAll; ++i) {
                 sum += stuScoresList.get(i);
             }
             // 分数格式化
-            intent2.putExtra("stuScore", NumberUtils.getFormatNumString(String.format("%.1f", sum)));
-            intent2.putExtra("scoreCount", NumberUtils.getFormatNumString(scoreCount));
-            intent2.putExtra("status", (Serializable) statusList);
-            intent2.putExtra("canMark", canMark);
-            intent2.putExtra("taskId", taskId);
-            intent2.putExtra("name", name);
-            intent2.putExtra("stuUserName", stuName);
-            intent2.putExtra("stuScoresList", (Serializable) stuScoresList);
-            intent2.putExtra("questionIdList", (Serializable) questionIdList);
+            intent.putExtra("stuScore", NumberUtils.getFormatNumString(String.format("%.1f", sum)));
+            intent.putExtra("scoreCount", NumberUtils.getFormatNumString(scoreCount));
+            intent.putExtra("status", (Serializable) statusList);
+            intent.putExtra("canMark", canMark);
+            intent.putExtra("taskId", taskId);
+            intent.putExtra("name", name);
+            intent.putExtra("stuUserName", stuName);
+            intent.putExtra("stuScoresList", (Serializable) stuScoresList);
+            intent.putExtra("questionIdList", (Serializable) questionIdList);
+            intent.putExtra("type", type);
 
-            mResultLauncher.launch(intent2);
+            mResultLauncher.launch(intent);
         }
     }
 
@@ -282,7 +287,6 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
         @SuppressLint("NotifyDataSetChanged")
         @Override
         public void handleMessage(Message message) {
-            Log.d("wen", "重新加载了: ");
             super.handleMessage(message);
             if (message.what == 100) {
                 /**
@@ -291,7 +295,7 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
                 moreListAll = (List<THomeworkMarkedEntity>) message.obj;
                 pageCountAll = moreListAll.size();
 
-                List<THomeworkMarkedEntity> moreList = new ArrayList<>();
+                moreList = new ArrayList<>();
 
                 // 构造提交参数
                 for (int i = 0; i < moreListAll.size(); ++i) {
@@ -358,7 +362,7 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
      */
     private void loadItems_Net() {
 
-        String mRequestUrl = Constant.API + Constant.T_HOMEWORK_MARK + "?taskId=" + taskId + "&type=paper&userName=" + stuName;
+        String mRequestUrl = Constant.API + Constant.T_HOMEWORK_MARK + "?taskId=" + taskId + "&type=" + type  + "&userName=" + stuName;
         Log.d("wen", "批改总信息: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {

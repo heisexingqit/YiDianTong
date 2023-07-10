@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,13 +29,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.util.Util;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.HomeworkPagerAdapter;
@@ -46,9 +41,9 @@ import com.example.yidiantong.bean.StuAnswerEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.FixedSpeedScroller;
 import com.example.yidiantong.util.JsonUtils;
-import com.example.yidiantong.util.PageingInterface;
+import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
-import com.example.yidiantong.util.TransmitInterface;
+import com.example.yidiantong.util.HomeworkInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -59,7 +54,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeworkPagerActivity extends AppCompatActivity implements PageingInterface, View.OnClickListener, TransmitInterface {
+public class HomeworkPagerActivity extends AppCompatActivity implements PagingInterface, View.OnClickListener, HomeworkInterface {
     private static final String TAG = "HomeworkPagerActivity";
 
     // Activity页面核心组件
@@ -104,12 +99,10 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
         username = getIntent().getStringExtra("username");
         isNew = getIntent().getBooleanExtra("isNew", true);
 
-
         //ViewPager适配器设置
         vp_homework = findViewById(R.id.vp_homework);
         adapter = new HomeworkPagerAdapter(getSupportFragmentManager(), learnPlanId, username);
         vp_homework.setAdapter(adapter);
-
 
         //滑动监听器
         vp_homework.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -176,7 +169,6 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
                 }
             }
         });
-
 
         // 遮蔽
         rl_submitting = findViewById(R.id.rl_submitting);
@@ -258,7 +250,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
                 question_types_array = new String[list.size()];
                 for (int i = 0; i < list.size(); ++i) {
                     // 顶部目录菜单内容
-                    question_types.add((i + 1) + ". " + list.get(i).getQuestionTypeName());
+                    question_types.add(list.get(i).getQuestionName());
                     // 题面类型
                     question_types_array[i] = list.get(i).getQuestionTypeName();
                     // 题目ID
@@ -268,7 +260,6 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
                 if (adapter.countReady >= 2) {
                     rl_loading.setVisibility(View.GONE);
                 }
-
 
             } else if (message.what == 101) {
                 /**
@@ -290,21 +281,20 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
         }
     };
 
-    //加载作业条目，进行ViewPager渲染；同时加载学生答题情况
+    // 加载作业条目，进行ViewPager渲染；同时加载学生答题情况
     private void loadItems_Net() {
 
         String mRequestUrl = Constant.API + Constant.HOMEWORK_ITEM + "?learnPlanId=" + learnPlanId;
+        Log.d(TAG, "题目信息: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
                 String itemString = json.getString("data");
-                Log.d(TAG, "loadItems_Net-Data: " + itemString);
                 Gson gson = new Gson();
                 //使用Gson框架转换Json字符串为列表
                 List<HomeworkEntity> itemList = gson.fromJson(itemString, new TypeToken<List<HomeworkEntity>>() {
                 }.getType());
-                Log.d(TAG, "loadItems_Net-List: " + itemList);
 
                 //封装消息，传递给主线程
                 Message message = Message.obtain();
@@ -322,6 +312,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
 
         //学生答题情况
         mRequestUrl = Constant.API + Constant.ANSWER_ITEM + "?paperId=" + learnPlanId + "&userName=" + username;
+        Log.d(TAG, "答题信息: " + mRequestUrl);
         request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
@@ -389,8 +380,6 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PageingI
                             listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
                             listViewHeight += listItem.getMeasuredHeight();
                         }
-                        Log.d(TAG, "listViewHeight: " + listViewHeight);
-                        Log.d(TAG, "maxHeight: " + maxHeight);
 
                         // 如果计算出的高度超过最大高度，则设置为最大高度
                         ViewGroup.LayoutParams layoutParams = lv_homework.getLayoutParams();

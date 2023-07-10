@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/search_select_bg2"
+        android:divider="@drawable/divider"
+        android:orientation="vertical"
+        android:padding="2dp"
+        android:showDividers="middle">
+        <!--分割线显示要设置showDividers和divider两个属性才行-->
+
+        <TextView
+            android:id="@+id/tv_0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_select_item_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/_00_hour"
+            android:textColor="@color/gray_text" />
+
+
+        <TextView
+            android:id="@+id/tv_1"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_select_item_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/_01_hour"
+            android:textColor="@color/gray_text" />
+
+        <TextView
+            android:id="@+id/tv_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_select_item_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/_02_hour"
+            android:textColor="@color/gray_text" />
+
+        <TextView
+            android:id="@+id/tv_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_select_item_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/_03_hour"
+            android:textColor="@color/gray_text" />
+
+        <TextView
+            android:id="@+id/tv_4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_select_item_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/_04_hour"
+            android:textColor="@color/gray_text" />
+        <TextView
+            android:id="@+id/tv_5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_select_item_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/_05_hour"
+            android:textColor="@color/gray_text" />
+        <TextView
+            android:id="@+id/tv_6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_select_item_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/_06_hour"
+            android:textColor="@color/gray_text" />
+        <TextView
+            android:id="@+id/tv_7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_select_item_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/_07_hour"
+            android:textColor="@color/gray_text" />
+        <TextView
+            android:id="@+id/tv_8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_select_item_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/_08_hour"
+            android:textColor="@color/gray_text" />
+        <TextView
+            android:id="@+id/tv_9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_select_item_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/_09_hour"
+            android:textColor="@color/gray_text" />
+        <TextView
+            android:id="@+id/tv_10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_select_item_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/_10_hour"
+            android:textColor="@color/gray_text" />
+        <TextView
+            android:id="@+id/tv_11"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_select_item_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/_11_hour"
+            android:textColor="@color/gray_text" />
+        <TextView
+            android:id="@+id/tv_12"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_select_item_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/_12_hour"
+            android:textColor="@color/gray_text" />
+
+    </LinearLayout>
+</LinearLayout>

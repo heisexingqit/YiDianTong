@@ -4,6 +4,7 @@ package com.example.yidiantong.adapter;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.example.yidiantong.bean.THomeworkMarkedEntity;
@@ -12,7 +13,7 @@ import com.example.yidiantong.fragment.THomeworkMarkFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-public class THomeworkMarkPagerAdapter extends FragmentStatePagerAdapter {
+public class THomeworkMarkPagerAdapter extends FragmentPagerAdapter {
 
 
     private List<THomeworkMarkedEntity> itemList = new ArrayList<>();// 批改内容
@@ -39,9 +40,4 @@ public class THomeworkMarkPagerAdapter extends FragmentStatePagerAdapter {
     public int getCount() {
         return itemList.size();
     }
-
-    public int getItemPosition(Object item) {
-        return POSITION_NONE;
-    }
-
 }

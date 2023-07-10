@@ -24,11 +24,12 @@ import com.example.yidiantong.fragment.TMainLatestFragment;
 import com.example.yidiantong.fragment.TMainMyFragment;
 import com.example.yidiantong.fragment.TMainReportFragment;
 import com.example.yidiantong.fragment.TMainTeachFragment;
+import com.example.yidiantong.util.TMainChangeInterface;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TMainPagerActivity extends AppCompatActivity implements View.OnClickListener {
+public class TMainPagerActivity extends AppCompatActivity implements View.OnClickListener, TMainLatestFragment.ChangePageInterface {
     private static final String TAG = "TMainPagerActivity";
 
     private int id_bottom_onclick = 0; // 标定选择的
@@ -115,11 +116,12 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
         }
         SwitchTabById(initalPos);
 
-
 //        vp_main = findViewById(R.id.vp_main);
 //        TMainPagerAdapter adapter = new TMainPagerAdapter(getSupportFragmentManager());
 //        vp_main.setAdapter(adapter);
 //        vp_main.setCurrentItem(0);
+
+
     }
 
     @Override
@@ -189,5 +191,50 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
         } else {
             finish();
         }
+    }
+
+    @Override
+    public void changePage(int position) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        switch (position) {
+            case 0:
+                if (id_bottom_onclick != 0) {
+                    SwitchTabById(0);
+//                    vp_main.setCurrentItem(0, false);
+                    ft.replace(R.id.vp_main, latestFragment);
+                }
+                break;
+            case 1:
+                if (id_bottom_onclick != 1) {
+                    SwitchTabById(1);
+//                    vp_main.setCurrentItem(1, false);
+                    ft.replace(R.id.vp_main, reportFragment);
+                }
+                break;
+            case 2:
+                if (id_bottom_onclick != 2) {
+                    SwitchTabById(2);
+//                    vp_main.setCurrentItem(2, false);
+                    ft.replace(R.id.vp_main, teachFragment);
+                }
+                break;
+            case 3:
+                if (id_bottom_onclick != 3) {
+                    SwitchTabById(3);
+//                    vp_main.setCurrentItem(3, false);
+                    ft.replace(R.id.vp_main, bellFragment);
+                }
+                break;
+            case 4:
+                if (id_bottom_onclick != 4) {
+                    SwitchTabById(4);
+//                    vp_main.setCurrentItem(4, false);
+                    ft.replace(R.id.vp_main, myFragment);
+                }
+                break;
+            default:
+                break;
+        }
+        ft.commit();
     }
 }

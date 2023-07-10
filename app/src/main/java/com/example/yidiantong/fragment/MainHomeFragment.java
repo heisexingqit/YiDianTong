@@ -40,6 +40,7 @@ import com.example.yidiantong.bean.HomeItemEntity;
 import com.example.yidiantong.ui.HomeworkPagerActivity;
 import com.example.yidiantong.ui.HomeworkPagerFinishActivity;
 import com.example.yidiantong.ui.LearnPlanPagerActivity;
+import com.example.yidiantong.ui.LiveListActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.MyItemDecoration;
@@ -124,7 +125,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                 switch (adapter.itemList.get(pos).getType()) {
                     case "作业":
 
-                        if(adapter.itemList.get(pos).getStatus() != 2){
+                        if(Integer.parseInt(adapter.itemList.get(pos).getStatus()) != 2){
                             // 未批改的
                             intent = new Intent(getActivity(), HomeworkPagerActivity.class);
                         }else{
@@ -134,7 +135,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                         intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
                         intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
                         intent.putExtra("username", username);
-                        intent.putExtra("isNew", adapter.itemList.get(pos).getStatus() == 1 || adapter.itemList.get(pos).getStatus() == 5);
+                        intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
                         startActivity(intent);
                         break;
                     case "导学案":
@@ -148,8 +149,14 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                         intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
                         intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
                         intent.putExtra("username", username);
-                        intent.putExtra("isNew", adapter.itemList.get(pos).getStatus() == 1 || adapter.itemList.get(pos).getStatus() == 5);
+                        intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
                         startActivity(intent);
+                        break;
+                    case "直播课消息":
+                        intent = new Intent(getActivity(), LiveListActivity.class);
+                        intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
+                        startActivity(intent);
+                        break;
                 }
             });
         }else{
@@ -326,14 +333,14 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
 
     //加载消息条目，包括刷新和加载，通过upDown标识两种状态
     private void loadItems_Net() {
+
         if (adapter.isRefresh == 1) {
             rl_loading.setVisibility(View.VISIBLE);
         }
-
         // 获取本地app的版本名称
         String versionName = BuildConfig.VERSION_NAME;
 
-        mRequestUrl = Constant.API + Constant.NEW_ITEM + "?currentPage=" + currentPage + "&userId=" + username + "&resourceType=" + type + "&searchStr=" + searchStr;
+        mRequestUrl = Constant.API + Constant.NEW_ITEM + "?currentPage=" + currentPage + "&userId=" + username + "&resourceType=" + type + "&searchStr=" + searchStr + "&source=RN";
 
         Log.d("wen", "home: " + mRequestUrl);
 
@@ -343,7 +350,6 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
                 String itemString = json.getString("data");
-
 
                 Gson gson = new Gson();
 

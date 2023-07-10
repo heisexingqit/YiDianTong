@@ -19,7 +19,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
@@ -37,7 +36,7 @@ import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
-import com.example.yidiantong.util.TransmitInterface2;
+import com.example.yidiantong.util.THomeworkAddInterface;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -53,7 +52,7 @@ import java.net.URLEncoder;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class THomeworkAddPickActivity extends AppCompatActivity implements View.OnClickListener, TransmitInterface2 {
+public class THomeworkAddPickActivity extends AppCompatActivity implements View.OnClickListener, THomeworkAddInterface {
 
     private static final String TAG = "THomeworkAddPickActivity";
     private String mRequestUrl = "";
@@ -225,6 +224,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
         getSupportFragmentManager().beginTransaction().replace(R.id.fl_main, addFragment).commit();
 
         if (paperId == null || paperId.length() == 0) {
+            // 获取空试卷id
             getPaperId();
         }
     }
@@ -259,7 +259,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                 break;
             case R.id.iv_search_select:
                 if (contentView == null) {
-                    contentView = LayoutInflater.from(this).inflate(R.layout.popup_t_add_homework_selector, null, false);
+                    contentView = LayoutInflater.from(this).inflate(R.layout.menu_t_add_homework_selector, null, false);
                     loadPopupView();
                     //绑定点击事件
                     window = new PopupWindow(contentView, PxUtils.dip2px(this, 400), PxUtils.dip2px(this, 640), true);
@@ -999,7 +999,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
         if (StringUtils.hasEmptyString(xueduan, xueke, banben, jiaocai, zhishidian)) {
             return;
         }
-        mRequestUrl = Constant.API + Constant.T_HOMEWORK_ADD_TYPE + "?channelCode=" + xueduanMap.get(xueduan) + "&subjectCode=" + xuekeMap.get(xueke) + "&textBookCode=" + banbenMap.get(banben) + "&gradeLevelCode=" +
+        mRequestUrl = Constant.API + Constant.T_GET_QUESTION_TYPE + "?channelCode=" + xueduanMap.get(xueduan) + "&subjectCode=" + xuekeMap.get(xueke) + "&textBookCode=" + banbenMap.get(banben) + "&gradeLevelCode=" +
                 jiaocaiMap.get(jiaocai) + "&pointCode=" + zhishidianId + "&shareTag=" + shareTag + "&teacherId" + MyApplication.username;
         Log.d("wen", "type: " + mRequestUrl);
         typeMap.clear();
@@ -1007,14 +1007,16 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
-                typeMap.put("全部", "all");
                 String data = json.getString("data");
                 Log.d(TAG, "loadType: " + data);
-                for (String row : data.split("\\],\\[")) {
-                    String[] values = row.replaceAll("\\[|\\]|\"", "").split(",");
-                    typeMap.put(values[1], values[1]);
-                }
 
+                if(data != "null"){
+                    typeMap.put("全部", "all");
+                    for (String row : data.split("\\],\\[")) {
+                        String[] values = row.replaceAll("\\[|\\]|\"", "").split(",");
+                        typeMap.put(values[1], values[1]);
+                    }
+                }
                 Log.d("wen", "类型: " + typeMap);
 
             } catch (JSONException e) {

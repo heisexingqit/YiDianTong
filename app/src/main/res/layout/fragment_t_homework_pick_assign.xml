@@ -246,7 +246,7 @@
 
                     <com.example.yidiantong.View.ClickableTextView
                         android:id="@+id/tv_class"
-                        android:layout_width="80dp"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@drawable/t_homework_add_pick"
                         android:gravity="center"
@@ -266,7 +266,7 @@
 
                     <com.example.yidiantong.View.ClickableTextView
                         android:id="@+id/tv_group"
-                        android:layout_width="80dp"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="小组" />
@@ -282,7 +282,7 @@
 
                     <com.example.yidiantong.View.ClickableTextView
                         android:id="@+id/tv_person"
-                        android:layout_width="80dp"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="个人" />
@@ -317,11 +317,9 @@
                     android:layout_marginEnd="30dp"
                     app:flexWrap="wrap" />
 
-
             </ScrollView>
         </LinearLayout>
     </LinearLayout>
-
 
     <RelativeLayout
         android:layout_width="match_parent"

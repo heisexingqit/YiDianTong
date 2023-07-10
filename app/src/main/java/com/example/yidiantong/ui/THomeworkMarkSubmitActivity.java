@@ -44,6 +44,7 @@ public class THomeworkMarkSubmitActivity extends AppCompatActivity implements Vi
     private String userName;
     private String teacherName;
     private String stuUserName;
+    private String type;
     private List<String> stuScoresList;
     private List<String> questionIdList;
 
@@ -68,6 +69,7 @@ public class THomeworkMarkSubmitActivity extends AppCompatActivity implements Vi
         stuUserName = intent.getStringExtra("stuUserName");
         stuScoresList = (List<String>) intent.getSerializableExtra("stuScoresList");
         questionIdList = (List<String>) intent.getSerializableExtra("questionIdList");
+        type = intent.getStringExtra("type");
         String name = intent.getStringExtra("name");
 
         // 组件获取
@@ -167,7 +169,7 @@ public class THomeworkMarkSubmitActivity extends AppCompatActivity implements Vi
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        mRequestUrl = Constant.API + Constant.T_HOMEWORK_MARK_SUBMIT + "?taskId=" + taskId + "&userName=" + userName + "&type=paper&teacherName=" + teacherName + "&stuUserName=" + stuUserName + "&stuScoreCount=" + stuScore + "&scoreCount=" + scoreCount + "&jsonStr=" + encodedJsonStr;
+        mRequestUrl = Constant.API + Constant.T_HOMEWORK_MARK_SUBMIT + "?taskId=" + taskId + "&userName=" + userName + "&type=" + type + "&teacherName=" + teacherName + "&stuUserName=" + stuUserName + "&stuScoreCount=" + stuScore + "&scoreCount=" + scoreCount + "&jsonStr=" + encodedJsonStr;
 
         Log.d("wen", "loadItems_Net: " + mRequestUrl);
 

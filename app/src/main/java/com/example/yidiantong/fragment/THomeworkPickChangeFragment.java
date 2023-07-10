@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class THomeworkPickChangeFragment extends Fragment implements View.OnClickListener {
-    private static final String TAG = "THomeworkPickChangeFrag";
+    private static final String TAG = "THomeworkPickChangeFragment";
 
     // 引用AddFragment中的
     public List<THomeworkAddEntity> pickList;
@@ -52,10 +52,6 @@ public class THomeworkPickChangeFragment extends Fragment implements View.OnClic
     // 底部Tag块
     private LinearLayout ll_bottom_tab;
     private HorizontalScrollView sv_bottom_tab;
-
-    public THomeworkPickChangeFragment() {
-
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override

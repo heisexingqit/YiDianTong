@@ -120,7 +120,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
                 switch (adapter.itemList.get(pos).getType()) {
                     case "作业":
                         Intent intent;
-                        if(adapter.itemList.get(pos).getStatus() != 2){
+                        if(Integer.parseInt(adapter.itemList.get(pos).getStatus()) != 2){
                             // 未批改的
                             intent = new Intent(getActivity(), HomeworkPagerActivity.class);
                         }else{
@@ -130,7 +130,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
                         intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
                         intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
                         intent.putExtra("username", username);
-                        intent.putExtra("isNew", adapter.itemList.get(pos).getStatus() == 1 || adapter.itemList.get(pos).getStatus() == 5);
+                        intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
                         startActivity(intent);
                         break;
                 }

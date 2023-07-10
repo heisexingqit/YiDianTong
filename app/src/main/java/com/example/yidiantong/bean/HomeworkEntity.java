@@ -3,20 +3,20 @@ package com.example.yidiantong.bean;
 import java.io.Serializable;
 
 public class HomeworkEntity implements Serializable {
-    private String questionContent;
+    // 题目类型名
     private String questionTypeName;
+    // 题目选项列表
     private String questionChoiceList;
+    // 题目ID
     private String questionId;
-    private String answer;
+    // 右上角目录显示内容
     private String questionName;
-
-    public String getQuestionContent() {
-        return questionContent;
-    }
-
-    public void setQuestionContent(String questionContent) {
-        this.questionContent = questionContent;
-    }
+    // 基类ID
+    private String baseTypeId;
+    // 题面HMTL
+    private String questionContent;
+    // 题目答案
+    private String answer;
 
     public String getQuestionTypeName() {
         return questionTypeName;
@@ -42,14 +42,6 @@ public class HomeworkEntity implements Serializable {
         this.questionId = questionId;
     }
 
-    public String getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
-
     public String getQuestionName() {
         return questionName;
     }
@@ -58,15 +50,40 @@ public class HomeworkEntity implements Serializable {
         this.questionName = questionName;
     }
 
+    public String getBaseTypeId() {
+        return baseTypeId;
+    }
+
+    public void setBaseTypeId(String baseTypeId) {
+        this.baseTypeId = baseTypeId;
+    }
+
+    public String getQuestionContent() {
+        return questionContent;
+    }
+
+    public void setQuestionContent(String questionContent) {
+        this.questionContent = questionContent;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
+
     @Override
     public String toString() {
         return "HomeworkEntity{" +
-                "questionContent='" + questionContent + '\'' +
-                ", questionTypeName='" + questionTypeName + '\'' +
+                "questionTypeName='" + questionTypeName + '\'' +
                 ", questionChoiceList='" + questionChoiceList + '\'' +
                 ", questionId='" + questionId + '\'' +
-                ", answer='" + answer + '\'' +
                 ", questionName='" + questionName + '\'' +
+                ", baseTypeId='" + baseTypeId + '\'' +
+                ", questionContent='" + questionContent + '\'' +
+                ", answer='" + answer + '\'' +
                 '}';
     }
 }

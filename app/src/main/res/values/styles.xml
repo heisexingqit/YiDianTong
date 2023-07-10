@@ -38,6 +38,12 @@
         <item name="android:windowEnterAnimation">@xml/dialog_in_anim</item>
         <item name="android:windowExitAnimation">@xml/dialog_out_anim</item>
     </style>
+
+    <style name="CustomRadioStyle" parent="Widget.AppCompat.CompoundButton.RadioButton">
+
+        <item name="colorControlNormal">#939fb6</item>
+        <item name="colorControlActivated">#FF6CC1E0</item>
+    </style>
 </resources>
 
 

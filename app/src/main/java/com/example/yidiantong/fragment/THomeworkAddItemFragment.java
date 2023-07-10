@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import com.example.yidiantong.R;
@@ -15,15 +14,14 @@ import com.example.yidiantong.bean.THomeworkAddEntity;
 
 import org.apache.commons.text.StringEscapeUtils;
 
-public class THomeworkAddPickFragment extends Fragment {
+public class THomeworkAddItemFragment extends Fragment {
 
-    public THomeworkAddPickFragment() {
+    public THomeworkAddItemFragment() {
         // Required empty public constructor
     }
 
-
-    public static THomeworkAddPickFragment newInstance(THomeworkAddEntity homeworkAddEntity) {
-        THomeworkAddPickFragment fragment = new THomeworkAddPickFragment();
+    public static THomeworkAddItemFragment newInstance(THomeworkAddEntity homeworkAddEntity) {
+        THomeworkAddItemFragment fragment = new THomeworkAddItemFragment();
         Bundle args = new Bundle();
         args.putSerializable("homeworkAddEntity", homeworkAddEntity);
         fragment.setArguments(args);
@@ -33,11 +31,13 @@ public class THomeworkAddPickFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         // 取数据
         Bundle arg = getArguments();
         THomeworkAddEntity homeworkAddEntity = (THomeworkAddEntity) arg.getSerializable("homeworkAddEntity");
 
-        View view = inflater.inflate(R.layout.fragment_t_homework_add_pick, container, false);
+        View view = inflater.inflate(R.layout.fragment_t_homework_add_item, container, false);
         WebView wv_content = view.findViewById(R.id.wv_content);
         WebView wv_answer = view.findViewById(R.id.wv_answer);
         WebView wv_analysis = view.findViewById(R.id.wv_analysis);

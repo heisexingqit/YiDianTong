@@ -419,7 +419,6 @@
             <TextView
                 android:id="@+id/tv_type"
                 android:layout_width="0dp"
-
                 android:layout_height="match_parent"
                 android:layout_marginStart="20dp"
                 android:layout_weight="1"
@@ -437,22 +436,74 @@
                 android:src="@drawable/down_icon" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_type_null"
+        <LinearLayout
+            android:id="@+id/ll_type"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="15dp"
-            android:layout_marginBottom="10dp"
-            android:text="教材列表未获取到或者为空"
-            android:textSize="13sp"
-            android:visibility="gone" />
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:layout_marginEnd="30dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tv_type_all"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_margin="7dp"
+                android:layout_weight="1"
+                android:background="@drawable/t_homework_add_select"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="全部"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tv_type_question"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_margin="7dp"
+                android:layout_weight="1"
+                android:background="@color/light_gray3"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="试题"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tv_type_paper"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_margin="7dp"
+                android:layout_weight="1"
+                android:background="@color/light_gray3"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="试卷"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tv_type_resource"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_margin="7dp"
+                android:layout_weight="1"
+                android:background="@color/light_gray3"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="资源"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+        </LinearLayout>
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <com.google.android.flexbox.FlexboxLayout
-                android:id="@+id/fl_type"
+                android:id="@+id/fl_resource_type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="18dp"

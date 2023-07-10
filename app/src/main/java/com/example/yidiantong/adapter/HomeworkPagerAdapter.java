@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeworkPagerAdapter extends FragmentPagerAdapter {
+    private static final String TAG = "HomeworkPagerAdapter";
 
     private List<HomeworkEntity> itemList = new ArrayList<>();//题面列表
     private List<StuAnswerEntity> itemList2 = new ArrayList<>();//答题情况列表
@@ -56,34 +57,30 @@ public class HomeworkPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         Fragment fragment = null;
-        String questionTypeName = itemList.get(position).getQuestionTypeName();
-        switch (questionTypeName) {
-            case "单项选择题":
-            case "单选题":
+        HomeworkEntity item = itemList.get(position);
+
+        switch (item.getBaseTypeId()) {
+            case "101":
                 fragment = HomeworkSingleFragment.newInstance(itemList.get(position), position, itemList.size(), itemList2.get(position));
                 break;
-            case "多项选择题":
+            case "102":
                 fragment = HomeworkMultipleFragment.newInstance(itemList.get(position), position, itemList.size(), itemList2.get(position));
                 break;
-            case "判断题":
+            case "103":
                 fragment = HomeworkJudgeFragment.newInstance(itemList.get(position), position, itemList.size(), itemList2.get(position));
                 break;
-            case "简答题":
-            case "填空题":
-            case "书面表达题":
-            case "单词拼写":
-            case "解答题":
+            case "104":
                 fragment = HomeworkTranslationFragment.newInstance(itemList.get(position), position, itemList.size(), learnPlanId, username, itemList2.get(position));
                 break;
-            case "七选五":
-                fragment = HomeworkSeven2FiveFragment.newInstance(itemList.get(position), position, itemList.size(), itemList2.get(position));
-                break;
-            case "阅读理解题":
-            case "完形填空题":
-                fragment = HomeworkReadingFragment.newInstance(itemList.get(position), position, itemList.size(), itemList2.get(position));
+            case "108":
+                if(item.getQuestionTypeName().equals("七选五")){
+                    fragment = HomeworkSeven2FiveFragment.newInstance(itemList.get(position), position, itemList.size(), itemList2.get(position));
+                }else{
+                    fragment = HomeworkReadingFragment.newInstance(itemList.get(position), position, itemList.size(), itemList2.get(position));
+                }
                 break;
             default:
-                Log.d("wen", "未知题型: " + questionTypeName);
+                Log.d("wen", "未知题型: " + item.getQuestionTypeName());
                 break;
         }
         return fragment;

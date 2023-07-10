@@ -18,21 +18,20 @@ import androidx.fragment.app.Fragment;
 import com.example.yidiantong.R;
 import com.example.yidiantong.bean.THomeworkMarkedEntity;
 import com.example.yidiantong.util.StringUtils;
-import com.example.yidiantong.util.TransmitInterface;
-import com.example.yidiantong.util.TransmitInterface3;
+import com.example.yidiantong.util.THomeworkMarkInterface;
 import com.google.android.flexbox.FlexboxLayout;
 import com.xuexiang.xui.XUI;
 import com.xuexiang.xui.widget.button.SmoothCheckBox;
 
 import org.apache.commons.text.StringEscapeUtils;
 
-public class THomeworkMarkFragment extends Fragment implements View.OnClickListener {
+public class THomeworkMarkFragment extends Fragment {
 
     // 接口需要
     private THomeworkMarkedEntity homeworkMarked;
 
     // 打分同步
-    private TransmitInterface3 transmitInterface;
+    private THomeworkMarkInterface transmitInterface;
 
     // 分数上限
     private int scoreNum;
@@ -43,7 +42,6 @@ public class THomeworkMarkFragment extends Fragment implements View.OnClickListe
     private SmoothCheckBox checkBox;
     private TextView tv_stu_scores;
     private int position; // 从1开始
-
 
     public static THomeworkMarkFragment newInstance(THomeworkMarkedEntity homeworkMarked, int position, int size, boolean canMark) {
         THomeworkMarkFragment fragment = new THomeworkMarkFragment();
@@ -60,7 +58,7 @@ public class THomeworkMarkFragment extends Fragment implements View.OnClickListe
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        transmitInterface = (TransmitInterface3) context;
+        transmitInterface = (THomeworkMarkInterface) context;
     }
 
     @Override
@@ -68,7 +66,6 @@ public class THomeworkMarkFragment extends Fragment implements View.OnClickListe
                              Bundle savedInstanceState) {
         XUI.initTheme(getActivity());
 
-        //取出携带的参数
         Bundle arg = getArguments();
         homeworkMarked = (THomeworkMarkedEntity) arg.getSerializable("homeworkMarked");
         position = Integer.parseInt(homeworkMarked.getOrder());
@@ -178,6 +175,11 @@ public class THomeworkMarkFragment extends Fragment implements View.OnClickListe
 
                         score = idx;
                         showScoreBtn();
+
+                        /**
+                         * 测试：修改传入参数，是否能够实现实时更改
+                         */
+
                         // 同步修改
                         transmitInterface.setStuAnswer(position - 1, score + (zero5 == 1 ? ".5" : ".0"));
                     }
@@ -212,13 +214,6 @@ public class THomeworkMarkFragment extends Fragment implements View.OnClickListe
             checkBox.setChecked(true);
         } else {
             checkBox.setChecked(false);
-        }
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-
         }
     }
 

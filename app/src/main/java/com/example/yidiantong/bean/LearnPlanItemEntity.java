@@ -107,7 +107,7 @@ public class LearnPlanItemEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "LearnPlanEntity{" +
+        return "LearnPlanItemEntity{" +
                 "resourceId='" + resourceId + '\'' +
                 ", questionChoiceList='" + questionChoiceList + '\'' +
                 ", baseTypeId='" + baseTypeId + '\'' +

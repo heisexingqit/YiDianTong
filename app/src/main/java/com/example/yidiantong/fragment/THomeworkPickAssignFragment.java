@@ -26,8 +26,7 @@ import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
-import com.example.yidiantong.util.TransmitInterface;
-import com.example.yidiantong.util.TransmitInterface2;
+import com.example.yidiantong.util.THomeworkAddInterface;
 import com.google.android.flexbox.FlexboxLayout;
 
 import org.json.JSONArray;
@@ -46,7 +45,7 @@ import java.util.Map;
 
 public class THomeworkPickAssignFragment extends Fragment implements View.OnClickListener {
 
-    private static final String TAG = "THomeworkPickAssignFrag";
+    private static final String TAG = "THomeworkPickAssignFragment";
 
     private String selectDate, selectTime;
     private TextView tv_start;
@@ -76,8 +75,8 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
     private ClickableTextView tv_class;
     private ClickableTextView tv_group;
     private ClickableTextView tv_person;
+    private ClickableTextView lastPopBtn;
 
-    private TextView lastPopBtn;
     private TextView tv_class_null;
     private FlexboxLayout fl_class;
     private ClickableTextView btn_reset;
@@ -87,16 +86,12 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
 
     private String assignType = "";
 
-    private TransmitInterface2 transmit;
-
-    public THomeworkPickAssignFragment() {
-        // Required empty public constructor
-    }
+    private THomeworkAddInterface transmit;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        transmit = (TransmitInterface2) context;
+        transmit = (THomeworkAddInterface) context;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -417,7 +412,7 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
      *
      * @param nowBtn 新点击的按钮对象
      */
-    private void changePopBtn(TextView nowBtn) {
+    private void changePopBtn(ClickableTextView nowBtn) {
         if (nowBtn != lastPopBtn) {
             nowBtn.setBackgroundResource(R.drawable.t_homework_add_pick);
             nowBtn.setTextColor(getActivity().getColor(R.color.white));

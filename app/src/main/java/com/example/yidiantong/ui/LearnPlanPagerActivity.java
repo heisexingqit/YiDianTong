@@ -1,12 +1,16 @@
 package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,35 +36,39 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.LearnPlanPagerAdapter;
-import com.example.yidiantong.adapter.MyArrayLearnPlanAdapter;
+import com.example.yidiantong.adapter.MyArrayAdapter;
 import com.example.yidiantong.bean.LearnPlanActivityEntity;
 import com.example.yidiantong.bean.LearnPlanItemEntity;
 import com.example.yidiantong.bean.LearnPlanLinkEntity;
+import com.example.yidiantong.bean.StuAnswerEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.FixedSpeedScroller;
 import com.example.yidiantong.util.JsonUtils;
+import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
+import com.example.yidiantong.util.StringUtils;
+import com.example.yidiantong.util.HomeworkInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LearnPlanPagerActivity extends AppCompatActivity implements View.OnClickListener {
+public class LearnPlanPagerActivity extends AppCompatActivity implements View.OnClickListener, PagingInterface, HomeworkInterface {
 
     private static final String TAG = "LearnPlanPagerActivity";
 
     // Activity页面核心组件
     private ViewPager vp_homework;
     private LearnPlanPagerAdapter adapter;
-    private MyArrayLearnPlanAdapter myArrayAdapter;
-    private List<LearnPlanItemEntity> learnPlanList = new ArrayList<>();
+    private MyArrayAdapter myArrayAdapter;
 
     // ViewPager页码
     private int currentItem = 0;
@@ -69,7 +77,12 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
     // 相关参数
     private String learnPlanId;
     private boolean isNew;
+    private String username;
     private String title;
+    String[] stuAnswer;
+    private List<String> questionIds = new ArrayList<>();
+    private List<Integer> questionIdx = new ArrayList<>();
+
 
     // 顶部组件
     private TextView tv_content;
@@ -82,22 +95,28 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
     // 加载+遮蔽
     private RelativeLayout rl_submitting;
     private RelativeLayout rl_loading;
+    private TextView tv_question_number;
+
+    // Adapter 参数
+    List<LearnPlanItemEntity> moreList;
+    List<StuAnswerEntity> moreList2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_learn_plan_pager);
 
-        //获取Intent参数
+        // 获取Intent参数
         learnPlanId = getIntent().getStringExtra("learnPlanId");
         TextView tv_title = findViewById(R.id.tv_title);
         title = getIntent().getStringExtra("title");
         tv_title.setText(title);
+        username = getIntent().getStringExtra("username");
         isNew = getIntent().getBooleanExtra("isNew", true);
 
         //ViewPager适配器设置
         vp_homework = findViewById(R.id.vp_homework);
-        adapter = new LearnPlanPagerAdapter(getSupportFragmentManager(), learnPlanId, learnPlanList);
+        adapter = new LearnPlanPagerAdapter(getSupportFragmentManager(), learnPlanId);
         vp_homework.setAdapter(adapter);
 
         //滑动监听器
@@ -110,9 +129,8 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
             public void onPageSelected(int position) {
                 //翻页同步下标
                 currentItem = position;
-                Log.e("currentItem",":"+currentItem);
+                Log.e("currentItem",":" + currentItem);
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
             }
@@ -131,7 +149,7 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
         vp_homework.setCurrentItem(currentItem);
 
         // 顶栏相关
-        myArrayAdapter = new MyArrayLearnPlanAdapter(this, topArrayItem);
+        myArrayAdapter = new MyArrayAdapter(this, topArrayItem);
         findViewById(R.id.iv_back).setOnClickListener(v -> {
             this.finish();
         });
@@ -159,6 +177,7 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
                     } else {
                         currentItem = index;
                         vp_homework.setCurrentItem(currentItem);
+                        setTopNum();
                     }
                 }
             }
@@ -171,19 +190,78 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
 
         // 加载
         rl_loading = findViewById(R.id.rl_loading);
+
+        tv_question_number = findViewById(R.id.tv_question_number);
+
+    }
+
+    @Override
+    public void pageLast() {
+        if (currentItem == 0) {
+            Toast.makeText(this, "已经是第一页", Toast.LENGTH_SHORT).show();
+        } else {
+            currentItem -= 1;
+            vp_homework.setCurrentItem(currentItem);
+            setTopNum();
+        }
+    }
+
+    //Fragment调用Activity方法， 实现Fragment的接口
+    @Override
+    public void pageNext() {
+        if (currentItem == pageCount - 1) {
+            //建立对话框
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
+            //自定义title样式
+            TextView tv = new TextView(this);
+            tv.setText("已经最后一页，确定要提交导学案？");    //内容
+            tv.setTextSize(17);//字体大小
+            tv.setPadding(30, 40, 30, 40);//位置
+            tv.setTextColor(Color.parseColor("#000000"));//颜色
+            //设置title组件
+            builder.setCustomTitle(tv);
+            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    jumpToSubmitPage();
+                }
+            });
+            builder.setNegativeButton("取消", null);
+            //禁止返回和外部点击
+            builder.setCancelable(false);
+            //对话框弹出
+            builder.show();
+        } else {
+            currentItem += 1;
+            vp_homework.setCurrentItem(currentItem);
+            setTopNum();
+        }
+    }
+
+    private void setTopNum(){
+        int positionLen = String.valueOf(currentItem+1).length();
+        String questionNum = (currentItem+1) + "/" + pageCount;
+        SpannableString spannableString = StringUtils.getStringWithColor(questionNum, "#6CC1E0", 0, positionLen);
+        tv_question_number.setText(spannableString);
     }
 
     //跳转至提交作业页面
     private void jumpToSubmitPage() {
-//        Intent intent = new Intent(HomeworkPagerActivity.this, HomeworkSubmitActivity.class);
-//        intent.putExtra("title", title);
-//        intent.putExtra("stuAnswer", stuAnswer);
-//        intent.putExtra("learnPlanId", learnPlanId);
-//        intent.putExtra("username", username);
-//        intent.putExtra("questionIds", questionIds);
-//        intent.putExtra("questionTypes", question_types_array);
-//        intent.putExtra("isNew", isNew);
-//        mResultLauncher.launch(intent);
+
+        String[] quesAnsList = new String[questionIdx.size()];
+        for(int i = 0; i < questionIdx.size(); ++i){
+            quesAnsList[i] = stuAnswer[questionIdx.get(i)];
+        }
+        Intent intent = new Intent(LearnPlanPagerActivity.this, LearnPlanSubmitActivity.class);
+        intent.putExtra("title", title);
+        intent.putExtra("stuAnswer", quesAnsList);
+        intent.putExtra("learnPlanId", learnPlanId);
+        intent.putExtra("username", username);
+        intent.putExtra("questionIds", (Serializable) questionIds);
+        intent.putExtra("questionIdx", (Serializable) questionIdx);
+        intent.putExtra("questionTypes", new ArrayList<>());
+        intent.putExtra("isNew", isNew);
+        mResultLauncher.launch(intent);
     }
 
     private final Handler handler = new Handler(Looper.getMainLooper()) {
@@ -196,6 +274,7 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
                 /**
                  * 题面信息
                  */
+                moreList = new ArrayList<>();
                 List<LearnPlanLinkEntity> list = (List<LearnPlanLinkEntity>) message.obj;
                 int sumCount = 0;
                 int allCount = 0;
@@ -213,43 +292,109 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
                         topPagerIdx.put(allCount, -1);
                         allCount++;
                         List<LearnPlanItemEntity> list3 = item2.getResourceList();
-
                         sumCount += list3.size();
+                        moreList.addAll(list3);
                         for(int i = 0; i < list3.size(); ++i){
+                            LearnPlanItemEntity item3 = list3.get(i);
                             // 顶部孙子名称
-                            topArrayItem.add("    " + (i+1) + "." + list3.get(i).getResourceName());
+                            topArrayItem.add("    " + (i+1) + "." + item3.getResourceName());
                             topPagerIdx.put(allCount, idxCount);
+                            if(item3.getResourceType().equals("01")){
+                                questionIds.add(item3.getResourceId());
+                                questionIdx.add(idxCount);
+                            }
                             allCount ++;
                             idxCount ++;
                         }
                     }
                 }
+
+                stuAnswer = new String[moreList.size()];
                 pageCount = sumCount;
-                rl_loading.setVisibility(View.GONE);
+                setTopNum();
+                if(moreList2 != null){
+                    adjustStuAnswerList();
+                    adapter.update(moreList, moreList2);
+                    rl_loading.setVisibility(View.GONE);
+                }
+            }else if(message.what == 101){
+                /**
+                 * 学生作答信息
+                 */
+                moreList2 = (List<StuAnswerEntity>) message.obj;
+                if(moreList != null && moreList.size() > 0){
+                    Log.d("wen", "handleMessage: 作答内容请求完毕");
+                    adjustStuAnswerList();
+                    adapter.update(moreList, moreList2);
+                    rl_loading.setVisibility(View.GONE);
+                }
             }
         }
     };
 
+    private void adjustStuAnswerList(){
+        for(int i = 0; i < moreList.size(); ++i){
+            LearnPlanItemEntity item = moreList.get(i);
+            if(moreList2.size() <= i || !moreList2.get(i).getQuestionId().equals(item.getResourceId())){
+                moreList2.add(i, new StuAnswerEntity(i+1));
+            }
+        }
+        for (int i = 0; i < moreList2.size(); ++i) {
+            // 学生作答内容
+            stuAnswer[i] = moreList2.get(i).getStuAnswer();
+        }
+    }
+
     private void loadItems_Net() {
 
         String mRequestUrl = Constant.API + Constant.LEARNPLAN_ITEM + "?learnPlanId=" + learnPlanId + "&deviceType=PHONE";
-        Log.d(TAG, "loadItems_Net: " + mRequestUrl);
+        Log.d("wen", "导学案资源URL: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
                 String itemString = json.getJSONObject("json").getString("data");
-                Log.d(TAG, "loadItems_Net-Data: " + itemString);
                 Gson gson = new Gson();
                 // 使用Gson框架转换Json字符串为列表
                 List<LearnPlanLinkEntity> itemList = gson.fromJson(itemString, new TypeToken<List<LearnPlanLinkEntity>>() {
                 }.getType());
-                Log.d(TAG, "loadItems_Net-List: " + itemList);
+                Log.d("wen", "Gson处理后: " + itemList);
 
                 // 封装消息，传递给主线程
                 Message message = Message.obtain();
                 message.obj = itemList;
                 message.what = 100;
+                handler.sendMessage(message);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }, error -> {
+            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+        });
+        MyApplication.addRequest(request, TAG);
+
+        // 学生答题情况
+        mRequestUrl = Constant.API + Constant.LEARNPLAN_ANSWER_ITEM + "?learnPlanId=" + learnPlanId + "&userName=" + username;
+        Log.d("wen", "导学案答题URL: " + mRequestUrl);
+        request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+
+                String itemString = json.getString("data");
+
+                Gson gson = new Gson();
+                // 使用Gson框架转换Json字符串为列表
+                List<StuAnswerEntity> itemList = gson.fromJson(itemString, new TypeToken<List<StuAnswerEntity>>() {
+                }.getType());
+
+                // 封装消息，传递给主线程
+                Message message = Message.obtain();
+
+                message.obj = itemList;
+                // 发送消息给主线程
+                // 标识线程
+                message.what = 101;
                 handler.sendMessage(message);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -320,5 +465,21 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
             case R.id.iv_eye:
                 jumpToSubmitPage();
         }
+    }
+
+    //pos是接口的order属性（1...n）因此要
+    @Override
+    public void setStuAnswer(int pos, String stuStr) {
+        stuAnswer[pos - 1] = stuStr;
+    }
+
+    @Override
+    public void onLoading() {
+        rl_submitting.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void offLoading() {
+        rl_submitting.setVisibility(View.GONE);
     }
 }

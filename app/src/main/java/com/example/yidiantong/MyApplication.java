@@ -3,6 +3,7 @@ package com.example.yidiantong;
 
 import android.app.Application;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -37,9 +38,8 @@ public class MyApplication extends Application {
     //初始化ImageLoader
     public static void initImageLoader(Context context) {
         //初始化一个ImageLoaderConfiguration配置对象
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.
-                Builder(context).
-                memoryCacheExtraOptions(800, 800). // max width, max height，即保存的每个缓存文件的最大长宽
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+                .memoryCacheExtraOptions(800, 800). // max width, max height，即保存的每个缓存文件的最大长宽
                         denyCacheImageMultipleSizesInMemory().
                 threadPriority(Thread.NORM_PRIORITY - 2).
                 diskCacheFileNameGenerator(new Md5FileNameGenerator()).

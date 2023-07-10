@@ -81,11 +81,11 @@
             android:src="@drawable/left_ex" />
 
         <HorizontalScrollView
-            android:layout_toEndOf="@+id/iv_left"
-            android:layout_toStartOf="@id/iv_right"
             android:id="@+id/sv_bottom_tab"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_toStartOf="@id/iv_right"
+            android:layout_toEndOf="@+id/iv_left"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
             android:scrollbars="none">

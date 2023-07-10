@@ -12,7 +12,7 @@
     <!--顶部标题栏-->
     <include
         android:id="@+id/layout_top"
-        layout="@layout/bar_top_homework_title" />
+        layout="@layout/bar_top_learn_plan_title" />
     <!--分隔线-->
     <LinearLayout
         android:id="@id/ll_divide"
@@ -30,12 +30,13 @@
         android:layout_below="@id/ll_divide" />
 
     <!--加载-->
+
     <include
         layout="@layout/loading_page"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/ll_divide"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
     <!--遮蔽-->
     <include

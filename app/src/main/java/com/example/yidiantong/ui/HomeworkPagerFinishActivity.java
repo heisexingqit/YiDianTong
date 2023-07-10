@@ -25,7 +25,7 @@ import com.example.yidiantong.bean.HomeworkMarkedEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.FixedSpeedScroller;
 import com.example.yidiantong.util.JsonUtils;
-import com.example.yidiantong.util.PageingInterface;
+import com.example.yidiantong.util.PagingInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -35,7 +35,7 @@ import org.json.JSONObject;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class HomeworkPagerFinishActivity extends AppCompatActivity implements View.OnClickListener, PageingInterface {
+public class HomeworkPagerFinishActivity extends AppCompatActivity implements View.OnClickListener, PagingInterface {
     private static final String TAG = "HomeworkPagerFinishActi";
     // Intent传入参数
     private String learnPlanId;

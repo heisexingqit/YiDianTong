@@ -101,23 +101,23 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
             this.itemList.clear();
             this.itemList = moreList;
             this.isRefresh = 0;
-            if(moreList.size() == 0){
+            if (moreList.size() == 0) {
                 isDown = 1;
             }
         } else {
             this.itemList.addAll(moreList);
-            if(moreList.size() == 12){
+            if (moreList.size() >= 12) {
                 isDown = 0;
                 count = 0;
-            }else if(moreList.size() == 0){
+            } else if (moreList.size() == 0) {
                 isDown = 0;
-                count ++;
-            }else{
+                count++;
+            } else {
                 isDown = 1;
                 count = 0;
             }
 
-            if(count > 1){
+            if (count > 1) {
                 isDown = 1;
             }
         }
@@ -137,6 +137,7 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         private final TextView tv_num5;
 
         private final LinearLayout ll_num45;
+        private final TextView tv_is_live;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -149,6 +150,7 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
             tv_num4 = itemView.findViewById(R.id.tv_num4);
             tv_num5 = itemView.findViewById(R.id.tv_num5);
             ll_num45 = itemView.findViewById(R.id.ll_num45);
+            tv_is_live = itemView.findViewById(R.id.tv_is_live);
         }
 
         //数据更新放在这里(频繁调用，不能放一次性操作，例如绑定点击事件)
@@ -165,24 +167,42 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
                     ll_num45.setVisibility(View.VISIBLE);
                     tv_num4.setText(item.getfNum4());
                     tv_num5.setText(item.getfNum5());
+                    tv_is_live.setVisibility(View.GONE);
                     break;
                 case "2":
                     icon_id = R.drawable.t_homework_icon;
                     ll_num45.setVisibility(View.GONE);
+                    tv_is_live.setVisibility(View.GONE);
                     break;
                 case "3":
                     icon_id = R.drawable.t_notice_icon;
                     ll_num45.setVisibility(View.GONE);
+                    tv_is_live.setVisibility(View.GONE);
                     break;
                 case "4":
                     icon_id = R.drawable.t_article_icon;
                     ll_num45.setVisibility(View.GONE);
+                    tv_is_live.setVisibility(View.GONE);
                     break;
                 case "7":
                     icon_id = R.drawable.t_weike_icon;
                     ll_num45.setVisibility(View.VISIBLE);
                     tv_num4.setText(item.getfNum4());
                     tv_num5.setText(item.getfNum5());
+                    tv_is_live.setVisibility(View.GONE);
+                    break;
+                case "10":
+                    icon_id = R.drawable.t_live_icon;
+                    ll_num45.setVisibility(View.GONE);
+                    tv_is_live.setVisibility(View.VISIBLE);
+                    if(item.getfFlag().equals("3")){
+                        tv_is_live.setText("已结束");
+                        tv_is_live.setBackgroundResource(R.color.live_btn_gray);
+                    }else{
+                        tv_is_live.setText("直播中");
+                        tv_is_live.setBackgroundResource(R.color.live_red);
+                    }
+
                     break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + item.getfType());
@@ -195,12 +215,19 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
             // 设置时间
             tv_date.setText(item.getfTime());
 
-            // 设置第二行
-            tv_second_line.setText(item.getfDescription());
+            if (item.getfType().equals("10")) {
+                // 设置第二行
+                tv_second_line.setText("[" + item.getfNumber() + "条]" + item.getfDescription());
+                // 设置底层
+                tv_bottom.setVisibility(View.GONE);
+            } else {
+                // 设置第二行
+                tv_second_line.setText(item.getfDescription());
 
-            // 设置底行
-            String bottomStr = item.getfNum1() + " " + item.getfNum2() + " " + item.getfNum3();
-            tv_bottom.setText(bottomStr);
+                // 设置底行
+                String bottomStr = item.getfNum1() + " " + item.getfNum2() + " " + item.getfNum3();
+                tv_bottom.setText(bottomStr);
+            }
         }
     }
 
