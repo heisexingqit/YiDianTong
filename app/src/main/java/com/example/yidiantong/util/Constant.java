@@ -109,4 +109,7 @@ public class Constant {
     public static final String T_BELL_GET_NOTICE_INFO = "/AppServer/ajax/teacherApp_getNoticeInfo.do";
      // 教师端获取课堂
     public static final String T_CLIENT_KETANG_PLAY_BY_TEA= "/KeTangServer/ajax/ketang_clientKeTangPlayByTea.do";
+
+    // 教师端连接授课一点通
+    public static final String T_GET_MESSAGE_LIST_BY_TEA = "/KeTangServer/ajax/ketang_getMessageListByTea.do";
 }

@@ -110,8 +110,9 @@ public class TCourseScannerActivity extends AppCompatActivity {
     };
 
     private void turnLookContro(String teacherId) {
-        Intent intent= new Intent(this, TCourseScannerActivity.class);
-        //intent.putExtra("stuname",moreList.get(0).getIntroduction());
+        Intent intent= new Intent(this, TRemoveControlActivity.class);
+        intent.putExtra("teacherId",teacherId);
+        intent.putExtra("ip",et_ip.getText().toString());
         startActivity(intent);
     }
 

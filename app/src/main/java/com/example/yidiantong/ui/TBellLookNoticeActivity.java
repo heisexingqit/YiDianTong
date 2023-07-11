@@ -305,6 +305,7 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
                 tv.setTextColor(Color.parseColor("#000000"));//颜色
                 //设置title组件
                 builder.setCustomTitle(tv);
+
                 AlertDialog dialog = builder.create();
                 builder.setNegativeButton("确定", new DialogInterface.OnClickListener() {
                     @Override

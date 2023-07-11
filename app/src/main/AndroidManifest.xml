@@ -24,7 +24,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".TRemoveControlActivity"
+            android:name=".ui.TRemoveControlActivity"
             android:exported="false" />
         <activity
             android:name=".ui.TCourseScannerActivity"

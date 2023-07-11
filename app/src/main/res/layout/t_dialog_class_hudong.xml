@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="340dp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:paddingTop="20dp"
+    android:paddingBottom="5dp">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/fiv_hd_dan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/hudong_01"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="35dp"/>
+
+        <ImageView
+            android:id="@+id/fiv_hd_duo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/hudong_02"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="35dp"/>
+
+    </RelativeLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp">
+
+        <ImageView
+            android:id="@+id/fiv_hd_dan_jian"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginLeft="35dp"
+            android:src="@drawable/hudong_07" />
+
+        <TextView
+            android:id="@+id/ftv_hd_dan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/fiv_hd_dan_jian"
+            app:layout_constraintEnd_toEndOf="@+id/fiv_hd_dan_jia"/>
+
+        <ImageView
+            android:id="@+id/fiv_hd_dan_jia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/hudong_08"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginLeft="98dp" />
+
+        <ImageView
+            android:id="@+id/fiv_hd_duo_jian"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginRight="98dp"
+            android:src="@drawable/hudong_07"
+            />
+
+        <TextView
+            android:id="@+id/ftv_hd_duo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/fiv_hd_duo_jian"
+            app:layout_constraintEnd_toEndOf="@+id/fiv_hd_duo_jia"/>
+
+        <ImageView
+            android:id="@+id/fiv_hd_duo_jia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/hudong_08"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginRight="35dp" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/fiv_hd_panduan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/hudong_03"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="35dp"/>
+
+        <ImageView
+            android:id="@+id/fiv_hd_luru"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/hudong_04"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="35dp"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            android:layout_width="85dp"
+            android:layout_height="wrap_content"
+            android:text="判断"
+            android:textSize="25sp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="35dp"
+            android:gravity="center"/>
+
+        <TextView
+            android:layout_width="85dp"
+            android:layout_height="wrap_content"
+            android:text="录入"
+            android:textSize="25sp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="35dp"
+            android:gravity="center"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/fiv_hd_start"
+            android:layout_width="85dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/hudong_05"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="35dp"/>
+
+        <ImageView
+            android:id="@+id/fiv_hd_cancle"
+            android:layout_width="85dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/hudong_06"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="35dp"/>
+
+    </RelativeLayout>
+
+</LinearLayout>
