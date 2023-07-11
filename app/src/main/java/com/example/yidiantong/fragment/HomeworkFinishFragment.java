@@ -3,7 +3,6 @@ package com.example.yidiantong.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.SpannableString;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,18 +15,15 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.yidiantong.R;
-import com.example.yidiantong.bean.HomeworkEntity;
 import com.example.yidiantong.bean.HomeworkMarkedEntity;
-import com.example.yidiantong.bean.StuAnswerEntity;
-import com.example.yidiantong.util.PageingInterface;
+import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.StringUtils;
-import com.example.yidiantong.util.TransmitInterface;
 
 import org.apache.commons.text.StringEscapeUtils;
 
 public class HomeworkFinishFragment extends Fragment implements View.OnClickListener {
 
-    private PageingInterface pageing;
+    private PagingInterface pageing;
 
     //接口需要
     private HomeworkMarkedEntity homeworkMarked;
@@ -46,7 +42,7 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        pageing = (PageingInterface) context;
+        pageing = (PagingInterface) context;
     }
 
     @Override

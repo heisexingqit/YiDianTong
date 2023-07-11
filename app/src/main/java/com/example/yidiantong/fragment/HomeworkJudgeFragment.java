@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -21,14 +20,14 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.HomeworkEntity;
 import com.example.yidiantong.bean.StuAnswerEntity;
-import com.example.yidiantong.util.PageingInterface;
+import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
-import com.example.yidiantong.util.TransmitInterface;
+import com.example.yidiantong.util.HomeworkInterface;
 
 public class HomeworkJudgeFragment extends Fragment implements View.OnClickListener {
 
-    private PageingInterface pageing;
+    private PagingInterface pageing;
     int[] unselectIcons = {R.drawable.right_unselect, R.drawable.error_unselect};
     int[] selectIcons = {R.drawable.right_select, R.drawable.error_select};
 
@@ -36,7 +35,7 @@ public class HomeworkJudgeFragment extends Fragment implements View.OnClickListe
     int answer = -1;
     int questionId = 0;
 
-    private TransmitInterface transmit;
+    private HomeworkInterface transmit;
 
     //接口需要
     private HomeworkEntity homeworkEntity;
@@ -57,8 +56,8 @@ public class HomeworkJudgeFragment extends Fragment implements View.OnClickListe
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        pageing = (PageingInterface) context;
-        transmit = (TransmitInterface) context;
+        pageing = (PagingInterface) context;
+        transmit = (HomeworkInterface) context;
     }
 
     @Override

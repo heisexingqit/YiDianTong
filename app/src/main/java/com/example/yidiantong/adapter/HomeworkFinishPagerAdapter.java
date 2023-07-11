@@ -38,10 +38,7 @@ public class HomeworkFinishPagerAdapter extends FragmentPagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        Fragment fragment = null;
-        fragment = HomeworkFinishFragment.newInstance(itemList.get(position), position, itemList.size());
-
-        return fragment;
+        return HomeworkFinishFragment.newInstance(itemList.get(position), position, itemList.size());
     }
 
     @Override

@@ -39,9 +39,7 @@ import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookRecyclerEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
-import com.example.yidiantong.util.PageingInterface;
 import com.example.yidiantong.util.RecyclerInterface;
-import com.example.yidiantong.util.StringUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;

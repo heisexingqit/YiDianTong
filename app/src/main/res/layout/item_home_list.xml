@@ -32,7 +32,7 @@
 
                 <LinearLayout
                     android:id="@+id/ll_width"
-                    android:layout_width="100dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
@@ -104,12 +104,12 @@
                 android:id="@+id/tv_is_live"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="#FF6666"
+                android:background="@color/live_red"
                 android:paddingLeft="7dp"
                 android:paddingRight="7dp"
                 android:text="直播中"
                 android:textColor="@color/white"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView

@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -39,20 +38,11 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
-import com.example.yidiantong.bean.BookDetailEntity;
 import com.example.yidiantong.bean.BookRecyclerEntity;
-import com.example.yidiantong.ui.BookRecoverActivity;
 import com.example.yidiantong.ui.BookVedioActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
-import com.example.yidiantong.util.PageingInterface;
 import com.example.yidiantong.util.RecyclerInterface;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.ui.StyledPlayerView;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 
 import org.json.JSONException;
 import org.json.JSONObject;

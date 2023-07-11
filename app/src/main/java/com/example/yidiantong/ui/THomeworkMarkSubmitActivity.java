@@ -44,6 +44,7 @@ public class THomeworkMarkSubmitActivity extends AppCompatActivity implements Vi
     private String userName;
     private String teacherName;
     private String stuUserName;
+    private String type;
     private List<String> stuScoresList;
     private List<String> questionIdList;
 
@@ -68,13 +69,16 @@ public class THomeworkMarkSubmitActivity extends AppCompatActivity implements Vi
         stuUserName = intent.getStringExtra("stuUserName");
         stuScoresList = (List<String>) intent.getSerializableExtra("stuScoresList");
         questionIdList = (List<String>) intent.getSerializableExtra("questionIdList");
-
+        type = intent.getStringExtra("type");
+        String name = intent.getStringExtra("name");
 
         // 组件获取
         findViewById(R.id.iv_back).setOnClickListener(v-> finish());
         Button btn_submit = findViewById(R.id.btn_submit);
         btn_submit.setOnClickListener(this);
         fb_mark = findViewById(R.id.fb_mark);
+        TextView tv_name = findViewById(R.id.tv_name);
+        tv_name.setText(name);
 
         if(!canMark){
             btn_submit.setText("结束预览");
@@ -165,7 +169,7 @@ public class THomeworkMarkSubmitActivity extends AppCompatActivity implements Vi
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        mRequestUrl = Constant.API + Constant.T_HOMEWORK_MARK_SUBMIT + "?taskId=" + taskId + "&userName=" + userName + "&type=paper&teacherName=" + teacherName + "&stuUserName=" + stuUserName + "&stuScoreCount=" + stuScore + "&scoreCount=" + scoreCount + "&jsonStr=" + encodedJsonStr;
+        mRequestUrl = Constant.API + Constant.T_HOMEWORK_MARK_SUBMIT + "?taskId=" + taskId + "&userName=" + userName + "&type=" + type + "&teacherName=" + teacherName + "&stuUserName=" + stuUserName + "&stuScoreCount=" + stuScore + "&scoreCount=" + scoreCount + "&jsonStr=" + encodedJsonStr;
 
         Log.d("wen", "loadItems_Net: " + mRequestUrl);
 

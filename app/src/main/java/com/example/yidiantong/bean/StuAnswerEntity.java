@@ -9,6 +9,10 @@ public class StuAnswerEntity implements Serializable {
     private String stuAnswer;
     private String teaScore;
 
+    public StuAnswerEntity(int order){
+        this.order = order;
+    }
+
     public int getOrder() {
         return order;
     }
@@ -51,12 +55,8 @@ public class StuAnswerEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "StuAnswerEntity{" +
+        return "SAE{" +
                 "order=" + order +
-                ", questionId='" + questionId + '\'' +
-                ", status='" + status + '\'' +
-                ", stuAnswer='" + stuAnswer + '\'' +
-                ", teaScore='" + teaScore + '\'' +
-                '}';
+                "}";
     }
 }

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/search_select_bg2"
+        android:divider="@drawable/divider"
+        android:orientation="vertical"
+        android:padding="2dp"
+        android:showDividers="middle">
+        <!--分割线显示要设置showDividers和divider两个属性才行-->
+
+        <TextView
+            android:id="@+id/tv_00"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_select_item_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/_00_minute"
+            android:textColor="@color/gray_text" />
+
+        <TextView
+            android:id="@+id/tv_10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_select_item_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/_10_minute"
+            android:textColor="@color/gray_text" />
+
+        <TextView
+            android:id="@+id/tv_20"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_select_item_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/_20_minute"
+            android:textColor="@color/gray_text" />
+
+        <TextView
+            android:id="@+id/tv_30"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_select_item_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/_30_minute"
+            android:textColor="@color/gray_text" />
+
+        <TextView
+            android:id="@+id/tv_40"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_select_item_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/_40_minute"
+            android:textColor="@color/gray_text" />
+
+        <TextView
+            android:id="@+id/tv_50"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_select_item_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/_50_minute"
+            android:textColor="@color/gray_text" />
+    </LinearLayout>
+</LinearLayout>

@@ -38,7 +38,7 @@ public class MyArrayAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        View v = LayoutInflater.from(context).inflate(R.layout.item_array_adapter, null);
+        View v = LayoutInflater.from(context).inflate(R.layout.item_array_adapter2, null);
         // 拿控件
         TextView tv_item = v.findViewById(R.id.tv_item);
         tv_item.setText(question_types.get(i));

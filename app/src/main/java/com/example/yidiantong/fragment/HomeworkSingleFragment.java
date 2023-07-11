@@ -1,7 +1,6 @@
 package com.example.yidiantong.fragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.util.DisplayMetrics;
@@ -23,18 +22,18 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.HomeworkEntity;
 import com.example.yidiantong.bean.StuAnswerEntity;
-import com.example.yidiantong.util.PageingInterface;
+import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
-import com.example.yidiantong.util.TransmitInterface;
+import com.example.yidiantong.util.HomeworkInterface;
 
 import org.apache.commons.text.StringEscapeUtils;
 
 public class HomeworkSingleFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "HomeworkSingleFragment";
 
-    private PageingInterface pageing;
-    private TransmitInterface transmit;
+    private PagingInterface pageing;
+    private HomeworkInterface transmit;
 
     int[] unselectIcons = {R.drawable.a_unselect, R.drawable.b_unselect, R.drawable.c_unselect, R.drawable.d_unselect, R.drawable.e_unselect, R.drawable.f_unselect, R.drawable.g_unselect, R.drawable.h_unselect};
     int[] selectIcons = {R.drawable.a_select, R.drawable.b_select, R.drawable.c_select, R.drawable.d_select, R.drawable.e_select, R.drawable.f_select, R.drawable.g_select, R.drawable.h_select};
@@ -66,14 +65,14 @@ public class HomeworkSingleFragment extends Fragment implements View.OnClickList
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        pageing = (PageingInterface) context;
-        transmit = (TransmitInterface) context;
+        pageing = (PagingInterface) context;
+        transmit = (HomeworkInterface) context;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        Log.d(TAG, "onCreateView: " + homeworkEntity);
         //取出携带的参数
         Bundle arg = getArguments();
         int position = arg.getInt("position") + 1;

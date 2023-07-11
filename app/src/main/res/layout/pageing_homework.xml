@@ -9,7 +9,6 @@
         android:id="@+id/iv_page_last"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity=""
         android:layout_marginStart="10dp"
         android:clickable="true"
         android:focusable="true"

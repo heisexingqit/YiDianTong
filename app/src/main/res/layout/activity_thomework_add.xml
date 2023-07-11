@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical"
     tools:context=".ui.THomeworkAddActivity">
 
@@ -37,7 +39,9 @@
             android:layout_marginStart="20dp"
             android:layout_marginEnd="10dp"
             android:background="@android:drawable/editbox_background_normal"
-            android:padding="10dp" />
+            android:padding="20dp"
+            android:singleLine="true"
+            android:textSize="14sp" />
 
     </LinearLayout>
 
@@ -398,8 +402,9 @@
             android:layout_marginStart="20dp"
             android:layout_marginEnd="10dp"
             android:background="@android:drawable/editbox_background_normal"
-            android:padding="10dp" />
-
+            android:padding="20dp"
+            android:singleLine="true"
+            android:textSize="14sp" />
     </LinearLayout>
 
     <!-- 分割线 -->

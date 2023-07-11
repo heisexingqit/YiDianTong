@@ -25,6 +25,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -55,6 +58,7 @@ dependencies {
 
     // 图片加载工具
     implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+    implementation 'com.github.bumptech.glide:glide:4.15.1'
 
     // 涂鸦工具
     implementation 'com.burhanrashid52:photoeditor:1.5.1'
@@ -70,7 +74,4 @@ dependencies {
 
     // 扫描二维码
     implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
-
-
-
 }

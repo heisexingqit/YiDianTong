@@ -43,9 +43,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
@@ -56,10 +54,10 @@ import com.example.yidiantong.ui.DoodleActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.ImageUtils;
 import com.example.yidiantong.util.JsonUtils;
-import com.example.yidiantong.util.PageingInterface;
+import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
-import com.example.yidiantong.util.TransmitInterface;
+import com.example.yidiantong.util.HomeworkInterface;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Rationale;
@@ -80,8 +78,8 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
 
     private static final String TAG = "HomeworkTranslationFrag";
 
-    private PageingInterface pageing;
-    private TransmitInterface transmit;
+    private PagingInterface pageing;
+    private HomeworkInterface transmit;
 
     private int show = 0;
     private LinearLayout ll_context;
@@ -138,6 +136,7 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
     private StuAnswerEntity stuAnswerEntity;
     private ClickableImageView iv_top;
     private View contentView = null;
+
     //点击大图
     private List<String> url_list = new ArrayList<>();
     private PopupWindow window;
@@ -146,6 +145,16 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
 
     private RelativeLayout rl_submitting;
     private LinearLayout ll_answer;
+
+    HomeworkEntity homeworkEntity;
+
+    private int picCount = 0;
+
+    // 识别
+    private View contentView2;
+    private PopupWindow window2;
+    private String identifyUrl;
+    private String originUrl;
 
     public static HomeworkTranslationFragment newInstance(HomeworkEntity homeworkEntity, int position, int size, String learnPlanId, String username, StuAnswerEntity stuAnswerEntity) {
         HomeworkTranslationFragment fragment = new HomeworkTranslationFragment();
@@ -164,8 +173,8 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        pageing = (PageingInterface) context;
-        transmit = (TransmitInterface) context;
+        pageing = (PagingInterface) context;
+        transmit = (HomeworkInterface) context;
     }
 
     @Override
@@ -173,23 +182,21 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
                              Bundle savedInstanceState) {
 
         //取出携带的参数
-        Bundle arg = getArguments();
-        int position = arg.getInt("position") + 1;
-        int size = arg.getInt("size");
-        learnPlanId = arg.getString("learnPlanId");
-        username = arg.getString("username");
-        HomeworkEntity homeworkEntity = (HomeworkEntity) arg.getSerializable("homeworkEntity");
-        stuAnswerEntity = (StuAnswerEntity) arg.getSerializable("stuAnswerEntity");
-        html_answer = stuAnswerEntity.getStuAnswer();
-        if (url_list.size() == 0) {
-            Html.fromHtml(html_answer, new Html.ImageGetter() {
-                @Override
-                public Drawable getDrawable(String s) {
-                    url_list.add(s);
-                    return null;
-                }
-            }, null);
+        int position = 0, size = 0;
+        if (getArguments() != null) {
+            homeworkEntity = (HomeworkEntity) getArguments().getSerializable("homeworkEntity");
+            stuAnswerEntity = (StuAnswerEntity) getArguments().getSerializable("stuAnswerEntity");
+            learnPlanId = getArguments().getString("learnPlanId");
+            username = getArguments().getString("username");
+            position = getArguments().getInt("position") + 1;
+            size = getArguments().getInt("size");
         }
+
+        if (html_answer == null) {
+            html_answer = stuAnswerEntity.getStuAnswer();
+        }
+
+        getPicURl();
 
         //获取view
         View view = inflater.inflate(R.layout.fragment_homework_translation, container, false);
@@ -334,6 +341,18 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
         return view;
     }
 
+    private void getPicURl() {
+        url_list.clear();
+        Html.fromHtml(html_answer, new Html.ImageGetter() {
+            @Override
+            public Drawable getDrawable(String s) {
+                url_list.add(s);
+                return null;
+            }
+        }, null);
+
+    }
+
     private String getHtmlAnswer() {
         return html_answer_head + html_answer + html_answer_tail;
     }
@@ -344,6 +363,7 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
         public void handleMessage(Message message) {
             super.handleMessage(message);
             if (message.what == 100) {
+                picCount++;
                 String url = (String) message.obj;
                 Log.d("wen", "handleMessage: " + url);
                 url_list.add(url);
@@ -439,10 +459,23 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
                 adapter.updateData(url_list);
                 break;
             case R.id.ll_answer:
+                getPicURl();
                 if (contentView == null) {
+                    if (picCount == 0) break;
                     contentView = LayoutInflater.from(getActivity()).inflate(R.layout.picture_menu, null, false);
                     ViewPager vp_pic = contentView.findViewById(R.id.vp_picture);
-
+                    LinearLayout ll_selector = contentView.findViewById(R.id.ll_selector);
+                    //  回显方法
+                    //  回显方法
+                    //  回显方法
+                    contentView.findViewById(R.id.btn_save).setOnClickListener(v->{
+                        Log.d(TAG, "onClick: ");
+                        html_answer = html_answer.replace(originUrl, identifyUrl);
+                        wv_answer.loadData(getHtmlAnswer(), "text/html", "utf-8");
+                        transmit.setStuAnswer(stuAnswerEntity.getOrder(), html_answer);
+                        window.dismiss();
+                    });
+                    contentView.findViewById(R.id.btn_cancel).setOnClickListener(v->{window.dismiss();});
                     vp_pic.setAdapter(adapter);
 
                     //顶部标签
@@ -455,6 +488,29 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
                         public void onItemClick() {
                             vp_pic.setCurrentItem(0);
                             window.dismiss();
+                        }
+
+                        @Override
+                        public void onLongItemClick(int pos) {
+                            Toast.makeText(getActivity(), "长按", Toast.LENGTH_SHORT).show();
+                            if (contentView2 == null) {
+                                contentView2 = LayoutInflater.from(getActivity()).inflate(R.layout.menu_pic_identify, null, false);
+                                //绑定点击事件
+                                contentView2.findViewById(R.id.tv_all).setOnClickListener(v -> {
+                                    identifyUrl = picIdentify(url_list.get(pos));
+                                    originUrl = url_list.get(pos);
+                                    url_list.set(pos, identifyUrl);
+                                    adapter.notifyDataSetChanged();
+                                    ll_selector.setVisibility(View.VISIBLE);
+
+                                    window2.dismiss();
+                                });
+
+                                window2 = new PopupWindow(contentView2, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
+                                window2.setTouchable(true);
+                            }
+                            window2.showAtLocation(contentView2, Gravity.CENTER, 0, 0);
+
                         }
                     });
                     vp_pic.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -475,10 +531,17 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
                         }
                     });
                 }
+                LinearLayout ll_selector = contentView.findViewById(R.id.ll_selector);
+                ll_selector.setVisibility(View.INVISIBLE);
+                adapter.notifyDataSetChanged();
                 window.showAtLocation(getActivity().getWindow().getDecorView(), Gravity.CENTER, 0, 0);
 
                 break;
         }
+    }
+
+    private String picIdentify(String inputUrl) {
+        return "https://www.baidu.com/img/PCgkdoodle_293edff43c2957071d2f6bfa606993ac.gif";
     }
 
     /**

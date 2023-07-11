@@ -24,6 +24,30 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".ui.TLearnPlanAddPickActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.TLearnPlanAddActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.TLiveAddActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.TLiveListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.LearnPlanSubmitActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.LiveListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.LearnPlanPagerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.THomeworkAddPickActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.TRemoveControlActivity"
             android:exported="false" />
         <activity
@@ -80,10 +104,13 @@
             android:exported="false" />
         <activity
             android:name=".ui.THomeworkReportActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.THomeworkActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
+
         <activity
             android:name=".ui.TMainPagerActivity"
             android:exported="false"

@@ -59,7 +59,7 @@ public class HomeItemEntity {
     private String statusUrl;
 
     //学习内容状态
-    private int status;
+    private String status;
 
     public String getTopTitle() {
         return topTitle;
@@ -205,11 +205,11 @@ public class HomeItemEntity {
         this.statusUrl = statusUrl;
     }
 
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

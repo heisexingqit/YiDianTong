@@ -1,7 +1,6 @@
 package com.example.yidiantong.util;
 
-public interface TransmitInterface {
+public interface THomeworkMarkInterface {
     void setStuAnswer(int pos, String StuAnswer);
-    void onLoading();
-    void offLoading();
+    String getStuScore(int pos);
 }

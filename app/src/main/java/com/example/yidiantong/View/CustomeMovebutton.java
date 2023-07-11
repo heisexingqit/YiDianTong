@@ -1,6 +1,7 @@
 package com.example.yidiantong.View;
 
 import android.annotation.SuppressLint;
+import android.app.Application;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -22,7 +23,8 @@ public class CustomeMovebutton extends ImageView {
     private boolean isMove=false;
     private Context context;
     private WindowManager wm = (WindowManager) getContext().getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-    private WindowManager.LayoutParams wmParams = ((MyApplication) getContext().getApplicationContext()).getMywmParams();
+    private WindowManager.LayoutParams wmParams = ((MyApplication)getContext().getApplicationContext()).getMywmParams();
+
     private float mLastX;
     private float mLastY;
     private float mStartX;

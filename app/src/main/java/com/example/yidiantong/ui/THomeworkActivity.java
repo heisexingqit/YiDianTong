@@ -137,6 +137,7 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
             intent2.putExtra("stuScore", adapter.itemList.get(pos).getScore());
             intent2.putExtra("scoreCount", adapter.itemList.get(pos).getScoreCount());
             intent2.putExtra("canMark", !adapter.itemList.get(pos).getStatus().equals("5"));
+            intent2.putExtra("type", type);
             intent2.putExtra("mode", mode);
             startActivity(intent2);
         });
@@ -189,6 +190,7 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
                     Intent intent = new Intent(this, THomeworkReportActivity.class);
                     intent.putExtra("username", teacherId);
                     intent.putExtra("taskId", taskId);
+                    intent.putExtra("type", type);
                     startActivity(intent);
                 }
                 break;
@@ -255,8 +257,6 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
                     isButtonClick = true;
                 }
                 adapter.loadData(moreList);
-            } else if (message.what == 101) {
-
             }
         }
     };
@@ -268,7 +268,8 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
      */
     private void loadItems_Net() {
 
-        mRequestUrl = Constant.API + Constant.T_HOMEWORK_STUDENT_LIST + "?taskId=" + taskId + "&teacherId=" + teacherId + "&type=" + type + "&status=" + status + "&searchStr=" + searchStr;
+        mRequestUrl = Constant.API + Constant.T_HOMEWORK_STUDENT_LIST + "?taskId=" + taskId + "&teacherId="
+                + teacherId + "&type=" + type + "&status=" + status + "&searchStr=" + searchStr;
 
         Log.d("wen", "loadItems_Net: " + mRequestUrl);
 

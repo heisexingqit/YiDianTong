@@ -42,6 +42,7 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
     // 传入参数
     private String username;
     private String taskId;
+    private String type;
 
     // 请求相关
     String mRequestUrl;
@@ -81,6 +82,7 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
         Intent intent = getIntent();
         username = intent.getStringExtra("username");
         taskId = intent.getStringExtra("taskId");
+        type = intent.getStringExtra("type");
 
         // 获取组件
         tv_avg = findViewById(R.id.tv_avg);
@@ -136,7 +138,7 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
     //加载消息条目，包括刷新和加载，通过upDown标识两种状态
     private void loadItems_Net() {
 
-        mRequestUrl = Constant.API + Constant.T_HOMEWORK_REPORT + "?userName=" + username + "&taskId=" + taskId + "&type=paper";
+        mRequestUrl = Constant.API + Constant.T_HOMEWORK_REPORT + "?userName=" + username + "&taskId=" + taskId + "&type=" + type;
 
         Log.d("wen", "home: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {

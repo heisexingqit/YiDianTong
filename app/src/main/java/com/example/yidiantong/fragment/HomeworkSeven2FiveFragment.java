@@ -6,18 +6,14 @@ import android.os.Bundle;
 import android.text.SpannableString;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -26,18 +22,18 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.HomeworkEntity;
 import com.example.yidiantong.bean.StuAnswerEntity;
-import com.example.yidiantong.util.PageingInterface;
+import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
-import com.example.yidiantong.util.TransmitInterface;
+import com.example.yidiantong.util.HomeworkInterface;
 
 import org.apache.commons.text.StringEscapeUtils;
 
 public class HomeworkSeven2FiveFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "HomeworkSeven2FiveFragm";
 
-    private PageingInterface pageing;
-    private TransmitInterface transmit;
+    private PagingInterface pageing;
+    private HomeworkInterface transmit;
 
     int[] answer = {-1, -1, -1, -1, -1};
     int[] unselectIcons = {R.drawable.a_unselect, R.drawable.b_unselect, R.drawable.c_unselect, R.drawable.d_unselect, R.drawable.e_unselect, R.drawable.f_unselect, R.drawable.g_unselect};
@@ -64,8 +60,8 @@ public class HomeworkSeven2FiveFragment extends Fragment implements View.OnClick
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        pageing = (PageingInterface) context;
-        transmit = (TransmitInterface) context;
+        pageing = (PagingInterface) context;
+        transmit = (HomeworkInterface) context;
     }
 
     @SuppressLint("ClickableViewAccessibility")

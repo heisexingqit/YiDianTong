@@ -3,6 +3,7 @@ package com.example.yidiantong;
 
 import android.app.Application;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.WindowManager;
 
@@ -27,6 +28,7 @@ public class MyApplication extends Application {
     public static String userId;
     public static String cnName;
     public static String token;
+    public static String picUrl;
 
     private static RequestQueue mQueue;
     //ImageLoader显示图片过程中的参数
@@ -37,9 +39,8 @@ public class MyApplication extends Application {
     //初始化ImageLoader
     public static void initImageLoader(Context context) {
         //初始化一个ImageLoaderConfiguration配置对象
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.
-                Builder(context).
-                memoryCacheExtraOptions(800, 800). // max width, max height，即保存的每个缓存文件的最大长宽
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+                .memoryCacheExtraOptions(800, 800). // max width, max height，即保存的每个缓存文件的最大长宽
                         denyCacheImageMultipleSizesInMemory().
                 threadPriority(Thread.NORM_PRIORITY - 2).
                 diskCacheFileNameGenerator(new Md5FileNameGenerator()).
@@ -53,7 +54,7 @@ public class MyApplication extends Application {
                         showImageOnFail(R.mipmap.no_image).//加载失败时
                         showImageForEmptyUri(R.mipmap.no_image).//加载的Uri为空
                         imageScaleType(ImageScaleType.EXACTLY_STRETCHED).
-                        //displayer(new RoundedBitmapDisplayer(360)).//是否设置为圆角，弧度为多少
+                //displayer(new RoundedBitmapDisplayer(360)).//是否设置为圆角，弧度为多少
                         cacheInMemory(true).//是否进行缓冲
                         cacheOnDisk(true).
                 considerExifParams(true).
@@ -104,10 +105,8 @@ public class MyApplication extends Application {
         //初始化ImageLoader
         initImageLoader(getApplicationContext());
 
-
         // 初始化Volley的请求队列，使用okhttp替代volley底层链接
         mQueue = Volley.newRequestQueue(getApplicationContext(), new OkHttpStack(),  -1);
-
 
     }
 

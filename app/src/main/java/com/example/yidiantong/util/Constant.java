@@ -3,6 +3,8 @@ package com.example.yidiantong.util;
 public class Constant {
     // 服务器地址
     public static final String API = "http://www.cn901.net:8111";
+    // 直播课服务器地址
+    public static final String API_LIVE = "http://www.cn901.com";
     // 登录接口
     public static final String LOGIN = "/AppServer/ajax/userManage_login.do";
     // 获取最新信息
@@ -28,6 +30,8 @@ public class Constant {
 
     // 上传图片
     public static final String UPLOAD_IMAGE = "/AppServer/ajax/studentApp_saveBase64Image.do";
+    // 上传头像
+    public static final String UPLOAD_HEAD_PHOTO = "/AppServer/ajax/studentApp_uploadUserPhoto.do";
     // 获取答题情况
     public static final String ANSWER_ITEM = "/AppServer/ajax/studentApp_getStudentAnswerList.do";
     // 提交试题答案
@@ -36,6 +40,31 @@ public class Constant {
     public static final String SUBMIT_ANSWER_FINAL = "/AppServer/ajax/studentApp_saveStudentHomeWork.do";
     // 查看已批改作业
     public static final String AFTER_MARKED = "/AppServer/ajax/studentApp_getMarkedJob.do";
+
+    // 导学案查看
+    public static final String LEARNPLAN_ITEM = "/AppServer/ajax/studentApp_getCatalog.do";
+
+    // 导学案学生答题详情
+    public static final String LEARNPLAN_ANSWER_ITEM = "/AppServer/ajax/studentApp_getstuAnswerLearnPlanList.do";
+
+    // 导学案试题提交
+    public static final String LEARNPLAN_SUBMIT_QUS_ITEM = "/AppServer/ajax/studentApp_stuSaveLpAnswer.do";
+
+    // 导学案整体保存
+    public static final String LEARNPLAN_SUBMIT_FIN_ITEM = "/AppServer/ajax/studentApp_savestuAnswerFromLearnPlan.do";
+
+    // 直播课列表
+    public static final String LIVE_ITEM = "/AppServer/ajax/studentApp_getZBLiveList.do";
+
+    // 教师端获取直播列表
+    public static final String T_LIVE_ITEM = "/AppServer/ajax/teacherApp_getZBLiveList.do";
+
+    // 教师端直播课获取学科，课堂，协作组
+    public static final String T_LIVE_ADD_PARAMS = "/ShopGoods/ajax/livePlay_getMyKtListRN.do";
+
+    // 教师端创建直播课
+    public static final String T_LIVE_ADD = "/ShopGoods/ajax/livePlay_saveZbLive.do";
+
     // 设置公告或通知为已读状态
     public static final String READ_NOTICE = "/AppServer/ajax/studentApp_readNotice.do";
     // 学生选科列表查看
@@ -48,6 +77,7 @@ public class Constant {
     public static final String KETANGPLAYBYSTU = "/KeTangServer/ajax/ketang_clientKeTangPlayByStu.do";
     // 教师端最新信息
     public static final String T_NEW_ITEM = "/AppServer/ajax/teacherApp_getAllNews.do";
+
     // 教师授课资料信息
     public static final String T_TEACH_ITEM = "/AppServer/ajax/teacherApp_getLearnPlanOrPaperList.do";
 
@@ -90,6 +120,17 @@ public class Constant {
     // 教师端获取知识点
     public static final String T_HOMEWORK_ADD_ZHISHIDIAN = "/AppServer/ajax/teacherApp_getKnowledgeTree.do";
 
+    // 教师端获取题库
+    public static final String T_HOMEWORK_GET_ALL_QUESTIONS = "/AppServer/ajax/teacherApp_getAllQuestions.do";
+
+    // 教师端获取【试题】类型
+    public static final String T_GET_QUESTION_TYPE = "/AppServer/ajax/teacherApp_getQuestionTypeList1.do";
+
+    // 教师端获取【试卷】类型
+    public static final String T_GET_PAPER_TYPE = "/AppServer/ajax/teacherApp_getPaperTypeList.do";
+
+    // 教师端获取【资源】类型
+    public static final String T_GET_RESOURCE_TYPE = "/AppServer/ajax/teacherApp_getResourceTypeList.do";
     // 教师端发布通知获取班级列表
     public static final String T_BELL_ADD_CLASS= "/AppServer/ajax/teacherApp_publishNotice.do";
 
@@ -105,6 +146,23 @@ public class Constant {
     // 教师端保存通知接口
     public static final String T_BELL_SAVE_MANAGE_NOTICE = "/AppServer/ajax/teacherApp_saveNotice.do";
 
+    // 教师端获得课堂列表
+    public static final String T_HOMEWORK_GET_KETANG = "/AppServer/ajax/teacherApp_getKeTangList.do";
+
+    // 教师端获得班级，小组，个人
+    public static final String T_HOMEWORK_GET_KETANG_ITEM = "/AppServer/ajax/teacherApp_getClassStudentList.do";
+
+    // 教师端获取空试卷ID
+    public static final String T_HOMEWORK_GET_PAPER_ID = "/AppServer/ajax/teacherApp_createEmptyPaper.do";
+
+    // 教师端布置作业+保存作业
+    public static final String T_HOMEWORK_ASSIGN_SAVE = "/AppServer/ajax/teacherApp_assignJobToStudents.do";
+
+    // 教师端获取导学案资源
+    public static final String T_LEARN_PLAN_GET_ALL_RESOURCE = "/AppServer/ajax/teacherApp_selectResToCreateLp.do";
+
+    // 教师端保存+布置导学案
+    public static final String T_LEARN_PLAN_ASSIGN_SAVE = "/AppServer/ajax/teacherApp_releaseLearnPlan.do";
     // 教师端修改通知或公告，返回对应的内容
     public static final String T_BELL_GET_NOTICE_INFO = "/AppServer/ajax/teacherApp_getNoticeInfo.do";
      // 教师端获取课堂

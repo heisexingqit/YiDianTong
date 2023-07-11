@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="circleImageStyle">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
@@ -39,6 +40,11 @@
         <item name="android:windowExitAnimation">@xml/dialog_out_anim</item>
     </style>
 
+    <style name="CustomRadioStyle" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="colorControlNormal">#939fb6</item>
+        <item name="colorControlActivated">#FF6CC1E0</item>
+    </style>
+
     <style name="AppTheme" parent="android:Theme.Light.NoTitleBar"/>
     <style name="date_picker_dialog" parent="android:style/Theme.Dialog">
         <item name="android:windowFrame">@null</item>
@@ -47,7 +53,6 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowBackground">#FFFFFF</item>
     </style>
-
 </resources>
 
 
