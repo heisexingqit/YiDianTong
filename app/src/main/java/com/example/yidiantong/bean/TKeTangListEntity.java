@@ -39,6 +39,7 @@ public class TKeTangListEntity {
     private String period;
     private String periodList;
     private String bagBean;
+
     private String desc;
     private String treeBean;
 

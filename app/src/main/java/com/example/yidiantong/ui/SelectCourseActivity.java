@@ -151,5 +151,4 @@ public class SelectCourseActivity extends AppCompatActivity {
         loadItems_Net();
     }
 
-
 }

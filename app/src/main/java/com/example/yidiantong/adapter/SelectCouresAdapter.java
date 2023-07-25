@@ -126,7 +126,7 @@ public class SelectCouresAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     break;
             }
 
-            String time = "时间："+ item.getStartTimeStr() + "至" + item.getEndTimeStr();
+            String time = "时间："+ item.getStartTimeStr() + "至\r\n" + item.getEndTimeStr();
             ftv_sc_time.setText(time);
 
             if(item.getType().equals("1")){

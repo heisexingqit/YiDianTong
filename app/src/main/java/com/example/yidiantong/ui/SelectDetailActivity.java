@@ -123,24 +123,21 @@ public class SelectDetailActivity extends AppCompatActivity implements View.OnCl
         }
         btn = new RadioButton[choiceLen];
         int btnLenmode = -1;
-        for(int i=0; i<choiceLen/3+1;i++){
+        for(int i=0; i<choiceLen/2+1;i++){
             View v = LayoutInflater.from(this).inflate(R.layout.sd_btn, fll_sd_course, false);
-            for(int j=0;j<3;j++){
-                if(i*3+j == choiceLen & j!=0){
+            for(int j=0;j<2;j++){
+                if(i*2+j == choiceLen & j!=0){
                     break;
-                }else if(i*3+j == choiceLen & j==0){
+                }else if(i*2+j == choiceLen & j==0){
                     btnLenmode = 1;
                     break;
                 }else{
                     if(j == 0){
                         v.findViewById(R.id.frb_sd_1).setVisibility(View.VISIBLE);
-                        btn[i*3+j] = v.findViewById(R.id.frb_sd_1);
+                        btn[i*2+j] = v.findViewById(R.id.frb_sd_1);
                     }else if(j == 1){
                         v.findViewById(R.id.frb_sd_2).setVisibility(View.VISIBLE);
-                        btn[i*3+j] = v.findViewById(R.id.frb_sd_2);
-                    }else {
-                        v.findViewById(R.id.frb_sd_3).setVisibility(View.VISIBLE);
-                        btn[i*3+j] = v.findViewById(R.id.frb_sd_3);
+                        btn[i*2+j] = v.findViewById(R.id.frb_sd_2);
                     }
                 }
             }
@@ -280,10 +277,12 @@ public class SelectDetailActivity extends AppCompatActivity implements View.OnCl
 
                 // 定位到“list”列表
                 String data=json.getString("data");
+                Log.e("data",""+data);
                 JSONObject data_obj=new JSONObject(data);
+                Log.e("data_obj",""+data_obj);
                 JSONArray list=data_obj.getJSONArray("list");
                 String courseString = ",\"list\":" + list.toString();
-
+                Log.e("courseString",""+courseString);
                 String itemdetailString = "[" + itemString.replace(courseString,"") + "]";
 
                 Gson gson = new Gson();

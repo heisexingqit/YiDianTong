@@ -140,7 +140,7 @@ public class MainBookFragment extends Fragment {
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(MainBookFragment.this.getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
         });
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         queue.add(request);

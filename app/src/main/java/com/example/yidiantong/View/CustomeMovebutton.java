@@ -67,11 +67,11 @@ public class CustomeMovebutton extends ImageView {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         //获取相对屏幕的坐标，即以屏幕左上角为原点
-        x = event.getRawX();
-        y = event.getRawY() - statusHeight;  //statusHeight是系统状态栏的高度
+        x = event.getRawX()-30;
+        y = event.getRawY() - 500;  //statusHeight是系统状态栏的高度
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:  //按下
-                setImageResource(R.drawable.sj_bubble);
+                //setImageResource(R.drawable.sj_bubble);
                 setBackgroundResource(R.drawable.move_button_bg);
                 mTouchStartX = event.getX();
                 mTouchStartY = event.getY();
@@ -81,7 +81,7 @@ public class CustomeMovebutton extends ImageView {
                 isMove = false;
                 break;
             case MotionEvent.ACTION_UP:  //手抬起
-                setImageResource(R.drawable.sj_bubble);
+                //setImageResource(R.drawable.sj_bubble);
                 setBackgroundResource(R.drawable.move_button_bg_un);
                 mLastX = event.getRawX();
                 mLastY = event.getRawY();

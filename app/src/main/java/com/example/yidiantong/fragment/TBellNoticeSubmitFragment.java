@@ -177,7 +177,7 @@ public class TBellNoticeSubmitFragment extends Fragment implements View.OnClickL
         @Override
         public void handleMessage(Message message) {
             super.handleMessage(message);
-
+            showClass((Map<String, String>) message.obj);
         }
     };
 
@@ -219,7 +219,7 @@ public class TBellNoticeSubmitFragment extends Fragment implements View.OnClickL
     private void showClass(Map<String, String> obj) {
 
         classMap = obj;
-        Log.e("classMap", "" + classMap);
+
         if (classMap.size() == 0) {
             ftv_bellclass_null.setVisibility(View.VISIBLE);
         }
@@ -232,7 +232,6 @@ public class TBellNoticeSubmitFragment extends Fragment implements View.OnClickL
             }
             ftv_bell_class.setOnClickListener(v -> {
                 bellclass = (String) ftv_bell_class.getText();
-                Log.e("bellclass", "" + bellclass);
 
                 if (lastbellclass != null) {
                     lastbellclass.setBackgroundResource(R.color.f_light_gray);
@@ -262,12 +261,10 @@ public class TBellNoticeSubmitFragment extends Fragment implements View.OnClickL
                 mDatePicker.show(endDatestamp);
                 break;
             case R.id.fb_bell_cancle:
-                Log.e("通知", "");
                 getActivity().finish();
                 break;
             case R.id.fb_bell_confirm:
 
-                Log.e("到这里来！", "");
                 //判断信息是否为空
                 if (fet_bell_name.length() == 0) {
                     nullmode = 0;
@@ -285,7 +282,6 @@ public class TBellNoticeSubmitFragment extends Fragment implements View.OnClickL
                 //自定义title样式
                 TextView tv = new TextView(getActivity());
                 if (nullmode == 0) {
-                    Log.e("fet_bell_name", "" + fet_bell_name.getText().toString());
                     tv.setText("请输入标题！");    //内容
                 } else if (nullmode == 1) {
                     tv.setText("请选择班级！");    //内容
@@ -338,7 +334,6 @@ public class TBellNoticeSubmitFragment extends Fragment implements View.OnClickL
         }
 
         mRequestUrl1 = Constant.API + Constant.T_BELL_SAVE_MANAGE_NOTICE + "?classId=" + classId + "&className=" + className + "&userName=" + MyApplication.username + "&userCN=" + MyApplication.cnName + "&content=" + content + "&title=" + title + "&setDateFlag=" + setDateFlag + "&setDate=" + setDate + "&saveOrUpdate=" + "save";
-        Log.d("", "submit: " + mRequestUrl1);
 
         StringRequest request = new StringRequest(mRequestUrl1, response -> {
 
@@ -369,7 +364,6 @@ public class TBellNoticeSubmitFragment extends Fragment implements View.OnClickL
         long beginTimestamp = DateFormatUtils.str2Long("2099-01-01", false);
         long endTimestamp = System.currentTimeMillis();
         endDatestamp = DateFormatUtils.long2Str(endTimestamp, false);
-        Log.e("时间", "" + DateFormatUtils.long2Str(endTimestamp, false));
         //fev_bell_time.setText(endDatestamp);
 
         // 通过时间戳初始化日期，毫秒级别

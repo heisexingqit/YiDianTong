@@ -50,6 +50,8 @@ public class MainCourseFragment extends Fragment {
     private EditText et_ip;
     private Button fbtn_lianjie;
     private ToastFormat format;
+    private String username;
+    private String ip;
 
 
     public static MainCourseFragment newInstance() {
@@ -94,7 +96,6 @@ public class MainCourseFragment extends Fragment {
         fbtn_lianjie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("",""+et_ip.getText().length());
                 if(et_ip.getText().length() == 0){
                     format.show();
                 }else {
@@ -119,6 +120,8 @@ public class MainCourseFragment extends Fragment {
 
     private void turnLookCourse(List<CourseScannerEntity> moreList) {
         Intent intent= new Intent(getActivity(), CourseLookActivity.class);
+        intent.putExtra("username", username);
+        intent.putExtra("ip", ip);
         intent.putExtra("classname",moreList.get(0).getCourseName());
         intent.putExtra("teaname",moreList.get(0).getTeacherName());
         intent.putExtra("stuname",moreList.get(0).getIntroduction());
@@ -127,9 +130,10 @@ public class MainCourseFragment extends Fragment {
 
     private void loadItems_Net() {
         String password = getActivity().getIntent().getStringExtra("password");
-        String username = getActivity().getIntent().getStringExtra("username");
-        Log.e("et_ip",""+et_ip.getText());
-        String mRequestUrl =  "http://" + et_ip.getText() + ":8901" + Constant.KETANGPLAYBYSTU +  "?userName=" + username + "&password=" + password;
+        username = getActivity().getIntent().getStringExtra("username");
+        ip = et_ip.getText().toString();
+
+        String mRequestUrl =  "http://" + ip + ":8901" + Constant.KETANGPLAYBYSTU +  "?userName=" + username + "&password=" + password;
         Log.e("mReq",""+mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -157,6 +161,7 @@ public class MainCourseFragment extends Fragment {
             }
         }, error -> {
             format.show();
+            Log.e("111",""+error.toString());
         });
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         queue.add(request);

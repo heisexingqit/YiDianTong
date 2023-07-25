@@ -7,6 +7,7 @@ import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
@@ -18,14 +19,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.CustomeMovebutton;
 import com.example.yidiantong.View.NoScrollViewPager;
 import com.example.yidiantong.adapter.TMainPagerAdapter;
+import com.example.yidiantong.bean.TKeTangListEntity;
 import com.example.yidiantong.fragment.MainBookFragment;
 import com.example.yidiantong.fragment.MainCourseFragment;
 import com.example.yidiantong.fragment.MainHomeFragment;
@@ -36,7 +42,15 @@ import com.example.yidiantong.fragment.TMainLatestFragment;
 import com.example.yidiantong.fragment.TMainMyFragment;
 import com.example.yidiantong.fragment.TMainReportFragment;
 import com.example.yidiantong.fragment.TMainTeachFragment;
+import com.example.yidiantong.util.Constant;
+import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.TMainChangeInterface;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +81,19 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
     private WindowManager wm;
     private WindowManager.LayoutParams wmParams;
     private CustomeMovebutton customeMovebutton;
+
+    // 请求授课悬浮按钮
+    private Handler handler_run = new Handler();
+    private Runnable runnable = new Runnable() {
+        public void run() {
+            this.update();
+            handler_run.postDelayed(this, 200 );
+        }
+        void update() {
+            findClassOpen();
+        }
+    };
+    private int flag = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +139,7 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
         myFragment = new TMainMyFragment();
 
         initalPos = getIntent().getIntExtra("pos", 0);
+
         Log.d(TAG, "onCreate: " +  getIntent().getIntExtra("pos", 0));
 
         switch (initalPos){
@@ -137,11 +165,68 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
 //        TMainPagerAdapter adapter = new TMainPagerAdapter(getSupportFragmentManager());
 //        vp_main.setAdapter(adapter);
 //        vp_main.setCurrentItem(0);
+        findClassOpen();
+        handler_run.postDelayed(runnable, 1000);
 
-        // 显示悬浮按钮
-        handler.sendEmptyMessageDelayed(0, 500);
+    }
 
+    private final Handler handler = new Handler(Looper.getMainLooper()) {
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @SuppressLint("NotifyDataSetChanged")
+        @Override
+        public void handleMessage(Message message) {
+            super.handleMessage(message);
+            if (message.what == 100) {
+                int f = (int) message.obj;
+                if (f == 1) {
+                    // 显示悬浮按钮
+                    perssion();
+                }else{
+                    // 关闭按钮
+                    showMoveButtonView(2);
+                }
+            }
+        }
+    };
 
+    private void perssion() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (!Settings.canDrawOverlays(TMainPagerActivity.this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivityForResult(intent, 1);
+            } else {
+                showMoveButtonView(1);
+            }
+        }
+    }
+
+    public void findClassOpen(){
+        String username = getIntent().getStringExtra("username");
+        String mRequestUrl =  Constant.API + Constant.GET_SKYDT_STATUS + "?userId=" + username ;
+        Log.e("mReq",""+mRequestUrl);
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                //结果信息
+                Boolean isSuccess = json.getBoolean("data");
+                Message msg = Message.obtain();
+                if (isSuccess) {
+                    msg.obj = 1;
+                } else {
+                    msg.obj = 0;
+                }
+                msg.what = 100;
+                handler.sendMessage(msg);
+            }catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+
+        });
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(request);
+        queue.getCache().clear();
     }
 
     @Override
@@ -258,60 +343,76 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
         ft.commit();
     }
 
-    private Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    if (Build.VERSION.SDK_INT >= 23) {
-                        if (!Settings.canDrawOverlays(TMainPagerActivity.this)) {
-                            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivityForResult(intent, 1);
-                        } else {
-                            showMoveButtonView();
-                        }
+    private void showMoveButtonView(int mode) {
+        if(mode == 1){
+            if(flag == -1){
+                wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+                DisplayMetrics dm = getResources().getDisplayMetrics();
+                int widthPixels = dm.widthPixels;
+                int heightPixels = dm.heightPixels;
+                wmParams = ((MyApplication) getApplication()).getMywmParams();
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){//API Level 26
+                    wmParams.type=WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
+                } else {
+                    wmParams.type=WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
+                }
+                wmParams.format= PixelFormat.TRANSLUCENT;//设置透明背景ming
+                wmParams.flags= WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE ;//
+                wmParams.gravity = Gravity.LEFT|Gravity.TOP;//
+                wmParams.x = widthPixels - 30;  //设置位置像素
+                wmParams.y = heightPixels - 500;
+                wmParams.width=200; //设置图片大小
+                wmParams.height=200;
+                customeMovebutton = new CustomeMovebutton(getApplicationContext());
+                customeMovebutton.setImageResource(R.drawable.sj_bubble);
+                customeMovebutton.setBackgroundResource(R.drawable.move_button_bg_un);
+                flag = 1;
+                wm.addView(customeMovebutton, wmParams);
+
+                customeMovebutton.setOnSpeakListener(new CustomeMovebutton.OnSpeakListener() {
+                    @Override
+                    public void onSpeakListener() {
+                        goScanner();
                     }
-                    break;
+                });
+            }else if(flag == 1){
+                return;
             }
-        }
-    };
 
-    private void showMoveButtonView() {
-        wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics dm = getResources().getDisplayMetrics();
-        int widthPixels = dm.widthPixels;
-        int heightPixels = dm.heightPixels;
-        wmParams = ((MyApplication) getApplication()).getMywmParams();
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){//API Level 26
-            wmParams.type=WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
-        } else {
-            wmParams.type=WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
-        }
-        wmParams.format= PixelFormat.TRANSLUCENT;//设置背景图片
-        wmParams.flags= WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE ;//
-        wmParams.gravity = Gravity.LEFT|Gravity.TOP;//
-        wmParams.x = widthPixels;  //设置位置像素
-        wmParams.y = heightPixels-500;
-        wmParams.width=200; //设置图片大小
-        wmParams.height=200;
-        customeMovebutton = new CustomeMovebutton(getApplicationContext());
-        customeMovebutton.setImageResource(R.drawable.sj_bubble);
-        customeMovebutton.setBackgroundResource(R.drawable.move_button_bg_un);
-
-        wm.addView(customeMovebutton, wmParams);
-
-        customeMovebutton.setOnSpeakListener(new CustomeMovebutton.OnSpeakListener() {
-            @Override
-            public void onSpeakListener() {
-                goScanner();
+        }else{
+            if(flag == 1){
+                if(customeMovebutton != null){
+                    wm.removeView(customeMovebutton);
+                }
+                flag = -1;
+            }else if(flag == -1){
+                return;
             }
-        });
+
+        }
     }
 
     private void goScanner() {
+        handler_run.removeCallbacks(runnable); //停止刷新
         Intent intent= new Intent(this, TCourseScannerActivity.class);
-        //intent.putExtra("stuname",moreList.get(0).getIntroduction());
         startActivity(intent);
+
     }
+
+    @Override
+    protected void onDestroy() {
+        handler_run.removeCallbacks(runnable); //停止刷新
+        if(customeMovebutton != null && wm != null){
+            wm.removeView(customeMovebutton);
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        handler_run.postDelayed(runnable, 1000);
+    }
+
+
 }

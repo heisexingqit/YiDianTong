@@ -266,9 +266,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }else if(keysList.contains("COMMON_TEACHER")){
                         typeName = "COMMON_TEACHER";
                         intent = new Intent(this, TMainPagerActivity.class);
+                        intent.putExtra("username",username);
                     }else if(keysList.contains("ADMIN_TEACHER")){
                         typeName = "ADMIN_TEACHER";
                         intent = new Intent(this, TMainPagerActivity.class);
+                        intent.putExtra("username",username);
                     }
                     JSONObject userInfo = obj.getJSONObject(typeName);
 //                    String token = obj.getString("token");

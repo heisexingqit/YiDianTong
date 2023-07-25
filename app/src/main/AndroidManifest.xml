@@ -24,6 +24,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".ui.CourseQuestionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.CourseLockActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.TLearnPlanAddPickActivity"
             android:exported="false" />
         <activity
@@ -110,7 +116,6 @@
             android:name=".ui.THomeworkActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
-
         <activity
             android:name=".ui.TMainPagerActivity"
             android:exported="false"

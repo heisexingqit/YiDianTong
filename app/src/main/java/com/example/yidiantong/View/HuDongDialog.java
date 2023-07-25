@@ -11,6 +11,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.example.yidiantong.R;
+import com.example.yidiantong.util.HomeworkInterface;
+import com.example.yidiantong.util.PagingInterface;
+import com.example.yidiantong.util.THuDongInterface;
 
 public class HuDongDialog extends Dialog implements View.OnClickListener {
 
@@ -28,14 +31,20 @@ public class HuDongDialog extends Dialog implements View.OnClickListener {
     private ImageView fiv_hd_dan;
     private int dansize;
     private int duosize;
+    private THuDongInterface hudong;
 
     int[] unselectIcons = {R.drawable.hudong_01, R.drawable.hudong_02, R.drawable.hudong_03, R.drawable.hudong_04};
     int[] selectIcons = {R.drawable.hudong_010, R.drawable.hudong_020, R.drawable.hudong_030, R.drawable.hudong_040,};
-    int[] answer = {-1,-1,-1,-1};
+    int answer = -1;
+
     ImageView[] iv_answer = new ImageView[5];
+    private int click;
+
     public HuDongDialog(@NonNull Context context) {
         super(context);
+        hudong = (THuDongInterface) context;
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +82,6 @@ public class HuDongDialog extends Dialog implements View.OnClickListener {
         fiv_hd_dan_jian.setOnClickListener(this);
         fiv_hd_duo_jia.setOnClickListener(this);
         fiv_hd_duo_jian.setOnClickListener(this);
-        ftv_hd_dan.setOnClickListener(this);
-        ftv_hd_duo.setOnClickListener(this);
         fiv_hd_start.setOnClickListener(this);
         fiv_hd_cancle.setOnClickListener(this);
 
@@ -84,53 +91,65 @@ public class HuDongDialog extends Dialog implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.fiv_hd_dan:
-                answer[0] = 1;
+                answer = 0;
+                click = 0;
                 showRadioBtn();
                 break;
             case R.id.fiv_hd_duo:
-                answer[1] = 1;
+                answer = 1;
+                click = 1;
                 showRadioBtn();
                 break;
             case R.id.fiv_hd_panduan:
-                answer[2] = 1;
+                answer = 2;
+                click = 2;
                 showRadioBtn();
                 break;
             case R.id.fiv_hd_luru:
-                answer[3] = 1;
+                answer = 3;
+                click = 3;
                 showRadioBtn();
                 break;
             case R.id.fiv_hd_dan_jia:
-                dansize = dansize + 1;
-                String dan = String.valueOf(dansize);
-                ftv_hd_dan.setText(dan);
+                if(dansize < 6){
+                    dansize = dansize + 1;
+                    String dan = String.valueOf(dansize);
+                    ftv_hd_dan.setText(dan);
+                }
                 break;
             case R.id.fiv_hd_dan_jian:
-                if(dansize > 0){
+                if(dansize > 2){
                     dansize = dansize - 1;
                     String dan1 = String.valueOf(dansize);
                     ftv_hd_dan.setText(dan1);
                 }
                 break;
             case R.id.fiv_hd_duo_jia:
-                duosize = duosize + 1;
-                String duo = String.valueOf(duosize);
-                ftv_hd_duo.setText(duo);
+                if(duosize < 6){
+                    duosize = duosize + 1;
+                    String duo = String.valueOf(duosize);
+                    ftv_hd_duo.setText(duo);
+                }
                 break;
             case R.id.fiv_hd_duo_jian:
-                if(duosize > 0){
+                if(duosize > 3){
                     duosize = duosize - 1;
                     String duo1 = String.valueOf(duosize);
                     ftv_hd_duo.setText(duo1);
                 }
                 break;
-            case R.id.ftv_hd_dan:
 
-                break;
-            case R.id.ftv_hd_duo:
-
-                break;
             case R.id.fiv_hd_start:
-
+                int size = 0;
+                if(click == 0){
+                    size = dansize;
+                }else if(click == 1){
+                    size = duosize;
+                }
+                Log.e("click",""+click);
+                Log.e("size",""+size);
+                hudong.doActionHuDong(click, size);
+                dismiss();
                 break;
             case R.id.fiv_hd_cancle:
                 dismiss();
@@ -142,10 +161,11 @@ public class HuDongDialog extends Dialog implements View.OnClickListener {
     //展示底部按钮
     private void showRadioBtn() {
         for (int i = 0; i < 4; ++i) {
-            if (answer[i] != i) {
+            if (answer != i) {
                 iv_answer[i].setImageResource(unselectIcons[i]);
             } else {
                 iv_answer[i].setImageResource(selectIcons[i]);
+                answer = -1;
             }
         }
     }

@@ -91,6 +91,7 @@ public class TCourseScannerActivity extends AppCompatActivity {
                 Log.e("",""+et_ip.getText().length());
                 if(et_ip.getText().length() == 0){
                     format.show();
+
                 }else {
                     loadItems_Net();
                 }
@@ -115,7 +116,6 @@ public class TCourseScannerActivity extends AppCompatActivity {
         intent.putExtra("ip",et_ip.getText().toString());
         startActivity(intent);
     }
-
 
     private void loadItems_Net() {
         String mRequestUrl =  "http://" + et_ip.getText() + ":8901" + Constant.T_CLIENT_KETANG_PLAY_BY_TEA ;

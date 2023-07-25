@@ -17,9 +17,9 @@
             android:id="@+id/fiv_hd_dan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/hudong_01"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="35dp"/>
+            android:layout_marginLeft="35dp"
+            android:src="@drawable/hudong_01" />
 
         <ImageView
             android:id="@+id/fiv_hd_duo"
