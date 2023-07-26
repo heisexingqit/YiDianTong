@@ -93,7 +93,7 @@ public class TMainMyFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // 获取根视图 view
-        View view = inflater.inflate(R.layout.fragment_main_my, container, false);
+        View view = inflater.inflate(R.layout.fragment_t_main_my, container, false);
 
         // 获取view中的组件
         f_ll_info = view.findViewById(R.id.f_ll_info);
