@@ -18,7 +18,7 @@ public class CourseQuestionFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static CourseQuestionFragment newInstance(String param1, String param2) {
+    public static CourseQuestionFragment newInstance() {
         CourseQuestionFragment fragment = new CourseQuestionFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);

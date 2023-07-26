@@ -114,6 +114,7 @@ public class CourseLookActivity extends AppCompatActivity {
             intent.putExtra("imagePath",imagePath);
             intent.putExtra("questionTypeName",queList.get(0).getQuestionTypeName());
             intent.putExtra("imgSource",queList.get(0).getImgSource());
+            intent.putExtra("questionValueList",queList.get(0).getQuestionValueList());
             startActivity(intent);
         }else if(queList.get(0).getType().equals("document")){
             if(queList.get(0).getLinks().contains(".ppt") | queList.get(0).getLinks().contains(".pptx")){

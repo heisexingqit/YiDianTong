@@ -58,7 +58,7 @@
 
     <!--可滑动ViewPager-->
     <androidx.viewpager.widget.ViewPager
-        android:id="@+id/fvp_book_recycle"
+        android:id="@+id/fvp_cq"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="1" />
