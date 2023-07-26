@@ -184,12 +184,12 @@ public class LearnPlanAddItemEntity implements Serializable {
     public String toData(){
         return  '{' +
                 "\"id\":\"" + id + '\"' +
-                ", \"name\":\"" + name + '\"' +
+                ", \"name\":\"" + (type.equals("question") ? "" :name) + '\"' +
                 ", \"type\":\"" + type + '\"' +
                 ", \"format\":\"" + format + '\"' +
-                ", \"shitiShow\":\"" + shitiShow + '\"' +
-                ", \"shitiAnswer\":\"" + shitiAnswer + '\"' +
-                ", \"shitiAnalysis\":\"" + shitiAnalysis + '\"' +
+                ", \"shitiShow\":\"" + shitiShow.replaceAll("[\"']", "\\\\$0") + '\"' +
+                ", \"shitiAnswer\":\"" + shitiAnswer.replaceAll("[\"']", "\\\\$0") + '\"' +
+                ", \"shitiAnalysis\":\"" + shitiAnalysis.replaceAll("[\"']", "\\\\$0") + '\"' +
                 ", \"baseTypeId\":\"" + baseTypeId + '\"' +
                 ", \"baseTypeName\":\"" + baseTypeName + '\"' +
                 ", \"typeId\":\"" + typeId + '\"' +
@@ -198,10 +198,10 @@ public class LearnPlanAddItemEntity implements Serializable {
                 ", \"pptList\":" + getPPTListString() +
                 ", \"filePath\":\"" + filePath + '\"' +
                 ", \"previewPath\":\"" + filePath + '\"' +
-                ", \"linkName\":\"" +  + '\"' +
-                ", \"linkOrder\":\"" +  + '\"' +
-                ", \"activityName\":\"" +  + '\"' +
-                ", \"activityOrder\":\"" +  + '\"' +
+                ", \"linkName\":\"" + "默认环节" + '\"' +
+                ", \"linkOrder\":\"" + 1 + '\"' +
+                ", \"activityName\":\"" + "默认活动" + '\"' +
+                ", \"activityOrder\":\"" + 1 + '\"' +
                 ", \"resourceOrder\":\"" + order + '\"' +
                 '}';
     }

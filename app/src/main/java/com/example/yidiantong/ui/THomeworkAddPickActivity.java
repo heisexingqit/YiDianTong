@@ -475,21 +475,25 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
         jsonString += "], \"paperId\":\"" + paperId + "\"}";
 
         try {
+            ketang = URLEncoder.encode(ketang, "UTF-8");
+            clas = URLEncoder.encode(clas, "UTF-8");
+            stuNames = URLEncoder.encode(stuNames, "UTF-8");
             jsonString = URLEncoder.encode(jsonString, "UTF-8");
+
+            mRequestUrl = Constant.API + Constant.T_HOMEWORK_ASSIGN_SAVE + "?assignType=" + assignType +
+                    "&channelCode=" + xueduanMap.get(xueduan) + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") +
+                    "&subjectCode=" + xuekeMap.get(xueke) + "&subjectName=" + URLEncoder.encode(xueke, "UTF-8") +
+                    "&textBookCode=" + banbenMap.get(banben) + "&textBookName=" + URLEncoder.encode(banben, "UTF-8") +
+                    "&gradeLevelCode=" + jiaocaiMap.get(jiaocai) + "&gradeLevelName=" + URLEncoder.encode(jiaocai, "UTF-8") +
+                    "&pointCode=" + zhishidianId + "&introduction=" + URLEncoder.encode(introduce, "UTF-8") +
+                    "&userName=" + MyApplication.username + "&paperName=" + URLEncoder.encode(name, "UTF-8") +
+                    "&paperId=" + paperId + "&startTime=" + startTime + "&endTime=" + endTime +
+                    "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classOrGroupId=" + classId +
+                    "&classOrGroupName=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
+                    "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=" + jsonString;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        mRequestUrl = Constant.API + Constant.T_HOMEWORK_ASSIGN_SAVE + "?assignType=" + assignType +
-                "&channelCode=" + xueduanMap.get(xueduan) + "&channelName=" + xuekeMap.get(xueke) +
-                "&subjectCode=" + xuekeMap.get(xueke) + "&subjectName=" + xueke +
-                "&textBookCode=" + banbenMap.get(banben) + "&textBookName=" + banben +
-                "&gradeLevelCode=" + jiaocaiMap.get(jiaocai) + "&gradeLevelName=" + jiaocai +
-                "&pointCode=" + zhishidianId + "&introduction=" + introduce +
-                "&userName=" + MyApplication.username + "&paperName=" + name +
-                "&paperId=" + paperId + "&startTime=" + startTime + "&endTime=" + endTime +
-                "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classOrGroupId=" + classId +
-                "&classOrGroupName=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
-                "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=" + jsonString;
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
@@ -761,7 +765,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                 JSONArray data = json.getJSONArray("data");
                 for (int i = 0; i < data.length(); ++i) {
                     JSONObject object = data.getJSONObject(i);
-                    xuekeMap.put(object.getString("subjectName").substring(2), object.getString("subjectId"));
+                    xuekeMap.put(object.getString("subjectName"), object.getString("subjectId"));
                 }
 
                 Log.d("wen", "学科: " + xuekeMap);

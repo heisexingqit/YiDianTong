@@ -215,7 +215,6 @@ public class THomeworkAddActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onClick(View view) {

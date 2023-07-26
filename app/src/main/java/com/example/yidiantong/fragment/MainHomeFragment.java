@@ -109,22 +109,22 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
         rv_home.setItemAnimator(new DefaultItemAnimator());
 
         //添加间隔线
-        if(divider == null){
+        if (divider == null) {
             divider = new MyItemDecoration(getActivity(), DividerItemDecoration.VERTICAL, false);
             divider.setDrawable(getActivity().getResources().getDrawable(R.drawable.divider_deep));
         }
         rv_home.addItemDecoration(divider);
 
         //获取登录传递的参数
-        if(username == null){
-            username = getActivity().getIntent().getStringExtra("username");
+        if (username == null) {
+            username = MyApplication.username;
         }
 
         //加载页
         rl_loading = view.findViewById(R.id.rl_loading);
 
         //设置RecyclerViewAdapter
-        if(adapter == null){
+        if (adapter == null) {
             adapter = new HomeRecyclerAdapter(getContext(), new ArrayList<>());
 
             //设置item点击事件
@@ -132,31 +132,32 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                 Intent intent;
                 switch (adapter.itemList.get(pos).getType()) {
                     case "作业":
-
-                        if(Integer.parseInt(adapter.itemList.get(pos).getStatus()) != 2){
+                        if (Integer.parseInt(adapter.itemList.get(pos).getStatus()) != 2) {
                             // 未批改的
                             intent = new Intent(getActivity(), HomeworkPagerActivity.class);
-                        }else{
+                        } else {
                             intent = new Intent(getActivity(), HomeworkPagerFinishActivity.class);
                         }
 
                         intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
                         intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
                         intent.putExtra("username", username);
+                        intent.putExtra("type", "paper");
                         intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
                         startActivity(intent);
                         break;
                     case "导学案":
-//                        if(adapter.itemList.get(pos).getStatus() != 2){
-//                            // 未批改的
-//                        }else{
-//                            intent = new Intent(getActivity(), HomeworkPagerFinishActivity.class);
-//                        }
-                        intent = new Intent(getActivity(), LearnPlanPagerActivity.class);
-
+                    case "微课":
+                        if (Integer.parseInt(adapter.itemList.get(pos).getStatus()) != 2) {
+                            // 未批改的
+                            intent = new Intent(getActivity(), LearnPlanPagerActivity.class);
+                        } else {
+                            intent = new Intent(getActivity(), HomeworkPagerFinishActivity.class);
+                        }
                         intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
                         intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
                         intent.putExtra("username", username);
+                        intent.putExtra("type", "learnPlan");
                         intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
                         startActivity(intent);
                         break;
@@ -170,28 +171,28 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                         Intent intent_t;
                         intent_t = new Intent(getActivity(), NoticeLookActivity.class);
                         intent_t.putExtra("noticetype", adapter.itemList.get(pos).getType());  // 类型
-                        intent_t.putExtra("noticetime",adapter.itemList.get(pos).getTime());   // 发布时间
-                        intent_t.putExtra("noticeAuthor",adapter.itemList.get(pos).getCreaterName());  // 创建者
-                        intent_t.putExtra("noticeTitle",adapter.itemList.get(pos).getBottomTitle());     // 标题
-                        intent_t.putExtra("noticecotent",adapter.itemList.get(pos).getCourseName()); // 内容
+                        intent_t.putExtra("noticetime", adapter.itemList.get(pos).getTime());   // 发布时间
+                        intent_t.putExtra("noticeAuthor", adapter.itemList.get(pos).getCreaterName());  // 创建者
+                        intent_t.putExtra("noticeTitle", adapter.itemList.get(pos).getBottomTitle());     // 标题
+                        intent_t.putExtra("noticecotent", adapter.itemList.get(pos).getCourseName()); // 内容
                         startActivity(intent_t);
-                        reload(adapter.itemList.get(pos).getType() , adapter.itemList.get(pos).getLearnId());
+                        reload(adapter.itemList.get(pos).getType(), adapter.itemList.get(pos).getLearnId());
                         break;
                     case "公告":
                         Intent intent_g;
                         intent_g = new Intent(getActivity(), NoticeLookActivity.class);
                         intent_g.putExtra("noticetype", adapter.itemList.get(pos).getType());  // 类型
-                        intent_g.putExtra("noticetime",adapter.itemList.get(pos).getTime());   // 发布时间
-                        intent_g.putExtra("noticeAuthor",adapter.itemList.get(pos).getCreaterName());  // 创建者
-                        intent_g.putExtra("noticeTitle",adapter.itemList.get(pos).getBottomTitle());     // 标题
-                        intent_g.putExtra("noticecotent",adapter.itemList.get(pos).getCourseName()); // 内容
+                        intent_g.putExtra("noticetime", adapter.itemList.get(pos).getTime());   // 发布时间
+                        intent_g.putExtra("noticeAuthor", adapter.itemList.get(pos).getCreaterName());  // 创建者
+                        intent_g.putExtra("noticeTitle", adapter.itemList.get(pos).getBottomTitle());     // 标题
+                        intent_g.putExtra("noticecotent", adapter.itemList.get(pos).getCourseName()); // 内容
                         startActivity(intent_g);
-                        reload(adapter.itemList.get(pos).getType() , adapter.itemList.get(pos).getLearnId());
+                        reload(adapter.itemList.get(pos).getType(), adapter.itemList.get(pos).getLearnId());
                         break;
 
                 }
             });
-        }else{
+        } else {
             rl_loading.setVisibility(View.GONE);
         }
 
@@ -232,7 +233,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
         });
 
         //慢加载，请求数据放后面
-        if(adapter.itemList.size() == 0){
+        if (adapter.itemList.size() == 0) {
             loadItems_Net();
         }
 
@@ -274,15 +275,15 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
     };
 
     // 修改已读状态
-    private void reload(String type , String classTimeId) {
+    private void reload(String type, String classTimeId) {
         int type_mode;
-        if(type.equals("通知")){
+        if (type.equals("通知")) {
             type_mode = 3;
-        }else {
+        } else {
             type_mode = 4;
         }
 
-        String mRequestUrl = Constant.API + Constant.READ_NOTICE + "?userName=" + username +"&type=" + type_mode + "&classTimeId=" + classTimeId + "&callback=ha";
+        String mRequestUrl = Constant.API + Constant.READ_NOTICE + "?userName=" + username + "&type=" + type_mode + "&classTimeId=" + classTimeId + "&callback=ha";
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
@@ -441,7 +442,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                 message.obj = moreList;
 
                 // 发送消息给主线程
-                Log.d("wen", "一个请求数量（12为界限）：" + moreList.size() );
+                Log.d("wen", "一个请求数量（12为界限）：" + moreList.size());
                 if (moreList.size() < 12 && moreList.size() > 0) {
                     adapter.isDown = 1;
                 }

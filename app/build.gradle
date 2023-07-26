@@ -4,14 +4,14 @@ plugins {
 
 android {
     compileSdk 32
-
+    aaptOptions.cruncherEnabled = false
+    aaptOptions.useNewCruncher = false
     defaultConfig {
         applicationId "com.example.yidiantong"
         minSdk 23
         targetSdk 32
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -74,4 +74,7 @@ dependencies {
 
     // 扫描二维码
     implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
+
+    // 列表 项 侧滑块组件
+    implementation "com.daimajia.swipelayout:library:1.2.0@aar"
 }

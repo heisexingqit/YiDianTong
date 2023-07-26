@@ -266,11 +266,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }else if(keysList.contains("COMMON_TEACHER")){
                         typeName = "COMMON_TEACHER";
                         intent = new Intent(this, TMainPagerActivity.class);
-                        intent.putExtra("username",username);
                     }else if(keysList.contains("ADMIN_TEACHER")){
                         typeName = "ADMIN_TEACHER";
                         intent = new Intent(this, TMainPagerActivity.class);
-                        intent.putExtra("username",username);
                     }
                     JSONObject userInfo = obj.getJSONObject(typeName);
 //                    String token = obj.getString("token");
@@ -278,9 +276,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     // 全局变量
                     MyApplication.username = username;
+                    MyApplication.password = password;
                     MyApplication.userId = userInfo.getString("userId");
                     MyApplication.cnName = userInfo.getString("name");
                     MyApplication.token = obj.getString("token");
+                    MyApplication.picUrl = userInfo.getString("userPhoto");
+
                     Log.d("wen", "login: " + MyApplication.token);
 
                     Log.d("wen", "login: userId: " + MyApplication.userId);

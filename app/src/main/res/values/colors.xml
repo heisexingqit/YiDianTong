@@ -22,6 +22,7 @@
     <color name="blue_btn_press">#1f8de5</color>
     <color name="transparent">#00000000</color>
     <color name="half_transparent">#99c1c1c1</color>
+    <color name="white_transparent">#aaffffff</color>
     <color name="progress_bar_color">#FFFFFFFF</color>
     <color name="loading_bg_gray">#FFf2f2f2</color>
     <color name="photo_editor_white">#FFF0F0F0</color>
@@ -49,6 +50,7 @@
     <color name="draw_color18">#33cc33</color>
     <color name="draw_color19">#cc9900</color>
     <color name="draw_color20">#ffff99</color>
+    <color name="progress_green">#78fee0</color>
 
     <color name="t_top_search">#4dc7f8</color>
     <color name="t_report_bg">#eceeed</color>

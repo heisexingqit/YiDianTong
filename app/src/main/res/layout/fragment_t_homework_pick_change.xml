@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.THomeworkPickChangeFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".fragment.THomeworkPickChangeFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -33,8 +33,7 @@
                 android:layout_alignParentEnd="true"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
-                android:src="@drawable/left_exchange"
-                />
+                android:src="@drawable/left_exchange" />
 
             <com.example.yidiantong.View.ClickableImageView
                 android:id="@+id/iv_right_ex"
@@ -60,6 +59,7 @@
     </RelativeLayout>
 
     <com.example.yidiantong.View.NoScrollViewPager
+        android:background="@color/white"
         android:id="@+id/vp_main"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -72,6 +72,14 @@
         android:orientation="horizontal"
         android:paddingStart="5dp"
         android:paddingEnd="5dp">
+
+        <com.example.yidiantong.View.ClickableImageView
+            android:id="@+id/iv_left"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/left_ex"
+            android:visibility="invisible" />
 
         <HorizontalScrollView
             android:id="@+id/sv_bottom_tab"
@@ -90,6 +98,13 @@
                 android:orientation="horizontal" />
         </HorizontalScrollView>
 
+        <com.example.yidiantong.View.ClickableImageView
+            android:id="@+id/iv_right"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/right_ex"
+            android:visibility="invisible" />
     </LinearLayout>
 
 

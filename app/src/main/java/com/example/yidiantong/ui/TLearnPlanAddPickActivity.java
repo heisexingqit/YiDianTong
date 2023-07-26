@@ -30,7 +30,6 @@ import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.LearnPlanAddItemEntity;
-import com.example.yidiantong.bean.TLiveItemEntity;
 import com.example.yidiantong.fragment.TLearnPlanPickAddFragment;
 import com.example.yidiantong.fragment.TLearnPlanPickAssignFragment;
 import com.example.yidiantong.fragment.TLearnPlanPickChangeFragment;
@@ -178,10 +177,9 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tlearn_plan_add_pick);
 
-        findViewById(R.id.iv_back).setOnClickListener(v -> finish());
-
         iv_search_select = findViewById(R.id.iv_search_select);
         iv_search_select.setOnClickListener(this);
+        findViewById(R.id.iv_back).setOnClickListener(v->finish());
 
         // 顶部按钮动画
         btn_add = findViewById(R.id.btn_add);
@@ -317,7 +315,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                 pop_iv_back.setOnClickListener(v -> window2.dismiss());
                 wv_content.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
                 wv_content.getSettings().setJavaScriptEnabled(true);
-                TLearnPlanAddPickActivity.MyJavaScriptInterface jsInterface = new TLearnPlanAddPickActivity.MyJavaScriptInterface(this);
+                MyJavaScriptInterface jsInterface = new MyJavaScriptInterface(this);
                 wv_content.addJavascriptInterface(jsInterface, "AndroidInterface");
                 setHtmlOnWebView(wv_content, zhishidianData);
                 window2.showAsDropDown(iv_search_select, 0, 0);
@@ -569,7 +567,6 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
         ketang = URLEncoder.encode(ketang, "UTF-8");
         clas = URLEncoder.encode(clas, "UTF-8");
         stuNames = URLEncoder.encode(stuNames, "UTF-8");
-
         jsonString = URLEncoder.encode(jsonString, "UTF-8");
         learnPlanName = URLEncoder.encode(learnPlanName, "UTF-8");
         Introduce = URLEncoder.encode(Introduce, "UTF-8");
@@ -604,7 +601,6 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 Log.d(TAG, "submit: " + json);
                 boolean success = json.getBoolean("success");
-                String message = json.getString("message");
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(lpn);
@@ -628,16 +624,24 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                         }
                     });
                 } else {
-                    builder.setMessage(message);
-
-                    builder.setNegativeButton("关闭", null);
-
+                    builder.setMessage("数据提交失败，请稍后重试");
+                    builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            rl_submitting.setVisibility(View.GONE);
+                            Intent toHome = new Intent(TLearnPlanAddPickActivity.this, TMainPagerActivity.class);
+                            toHome.putExtra("pos", 2);
+                            //两个一起用
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(toHome);
+                        }
+                    });
                 }
 
                 AlertDialog dialog = builder.create();
                 dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
                 dialog.show();
-
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -1176,6 +1180,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
         typeMap.forEach((name, id) -> {
             view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_block, fl_resource_type, false);
             TextView tv_name = view.findViewById(R.id.tv_name);
+            tv_name.setTextColor(getResources().getColor(R.color.black));
             tv_name.setText(name);
             if (name.equals(typeSub)) {
                 tv_name.setBackgroundResource(R.drawable.t_homework_add_select);

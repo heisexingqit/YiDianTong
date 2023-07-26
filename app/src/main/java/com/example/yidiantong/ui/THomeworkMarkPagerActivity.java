@@ -251,6 +251,7 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
         } else {
             btn_last.setBackgroundResource(R.drawable.t_homework_mark_unable);
         }
+        Log.d("wen", "btnShow: " + currentItem + " " + pageCount);
         if (currentItem == pageCount - 1) {
             btn_next.setText("完成批改");
         }else{
@@ -352,6 +353,8 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
                 adapter.update(moreList);
 
                 pageCount = moreList.size();
+                Log.d("wen", "handleMessage: " + pageCount);
+                btnShow();
                 finishData = true;
             }
         }

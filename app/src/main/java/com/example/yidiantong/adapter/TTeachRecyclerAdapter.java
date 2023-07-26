@@ -1,6 +1,7 @@
 package com.example.yidiantong.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.yidiantong.R;
+import com.example.yidiantong.View.ClickableTextView;
 import com.example.yidiantong.bean.THomeItemEntity;
 import com.example.yidiantong.bean.TTeachItemEntity;
 import com.example.yidiantong.util.JsonUtils;
@@ -67,9 +69,6 @@ public class TTeachRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         //绑定数据
         if (getItemViewType(position) == 0) {
             ((ItemViewHolder) holder).update(position);
-            //绑定事件
-            //item点击事件
-            holder.itemView.setOnClickListener(v -> mItemClickListener.onItemClick(holder.itemView, position));
         } else {
             ((FootViewHolder) holder).update();
         }
@@ -139,6 +138,13 @@ public class TTeachRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         private final LinearLayout ll_num45;
 
+        private final ClickableTextView tv_item_assign;
+        private final ClickableTextView tv_item_edit;
+        private final ClickableTextView tv_item_delete;
+        private final ClickableTextView tv_item_params;
+        private final LinearLayout ll_item_assign;
+        private final LinearLayout ll_item_params;
+
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             //获取组件
@@ -149,6 +155,12 @@ public class TTeachRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             tv_num4 = itemView.findViewById(R.id.tv_num4);
             tv_num5 = itemView.findViewById(R.id.tv_num5);
             ll_num45 = itemView.findViewById(R.id.ll_num45);
+            tv_item_assign = itemView.findViewById(R.id.tv_item_assign);
+            tv_item_edit = itemView.findViewById(R.id.tv_item_edit);
+            tv_item_delete = itemView.findViewById(R.id.tv_item_delete);
+            tv_item_params = itemView.findViewById(R.id.tv_item_params);
+            ll_item_assign = itemView.findViewById(R.id.ll_item_assign);
+            ll_item_params = itemView.findViewById(R.id.ll_item_params);
         }
 
         //数据更新放在这里(频繁调用，不能放一次性操作，例如绑定点击事件)
@@ -158,27 +170,47 @@ public class TTeachRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             //绑定组件
 
             //设置图标和类型
-            int icon_id;
+            int icon_id = 0;
             if (item.getIconUrl().contains("learnPlan")) {
                 icon_id = R.drawable.t_learnplan_icon;
                 ll_num45.setVisibility(View.VISIBLE);
                 tv_num4.setText(JsonUtils.clearString(item.getPropertyCount()));
                 tv_num5.setText(item.getResCount());
+
+                tv_item_assign.setVisibility(View.VISIBLE);
+                ll_item_assign.setVisibility(View.VISIBLE);
+                tv_item_params.setVisibility(View.VISIBLE);
+                ll_item_params.setVisibility(View.VISIBLE);
             } else if (item.getIconUrl().contains("weike")) {
                 icon_id = R.drawable.t_weike_icon;
                 ll_num45.setVisibility(View.VISIBLE);
                 tv_num4.setText(JsonUtils.clearString(item.getPropertyCount()));
                 tv_num5.setText(item.getResCount());
+
+                tv_item_assign.setVisibility(View.VISIBLE);
+                ll_item_assign.setVisibility(View.VISIBLE);
+                tv_item_params.setVisibility(View.VISIBLE);
+                ll_item_params.setVisibility(View.VISIBLE);
             } else if (item.getIconUrl().contains("learnPack")) {
                 icon_id = R.drawable.t_learn_package_icon;
                 ll_num45.setVisibility(View.VISIBLE);
                 tv_num4.setText(JsonUtils.clearString(item.getPropertyCount()));
                 tv_num5.setText(item.getResCount());
+
+                tv_item_assign.setVisibility(View.GONE);
+                ll_item_assign.setVisibility(View.GONE);
+                tv_item_params.setVisibility(View.VISIBLE);
+                ll_item_params.setVisibility(View.VISIBLE);
             } else if (item.getIconUrl().contains("paper")) {
                 icon_id = R.drawable.t_paper_icon;
                 ll_num45.setVisibility(View.INVISIBLE);
+
+                tv_item_assign.setVisibility(View.VISIBLE);
+                ll_item_assign.setVisibility(View.VISIBLE);
+                tv_item_params.setVisibility(View.GONE);
+                ll_item_params.setVisibility(View.GONE);
             } else {
-                throw new IllegalStateException("Unexpected value: " + item.getPaperType());
+                Log.d("wen", "教师端-教学页面-未知Item类型");
             }
             iv_icon.setImageResource(icon_id);
 
@@ -189,6 +221,12 @@ public class TTeachRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
             // 设置底行
             tv_bottom.setText(item.getKnowledge());
+
+            // 设置点击事件
+            tv_item_assign.setOnClickListener(view -> mItemClickListener.onItemClickAssign(view, pos));
+            tv_item_edit.setOnClickListener(view -> mItemClickListener.onItemClickEdit(view, pos));
+            tv_item_delete.setOnClickListener(view -> mItemClickListener.onItemClickDelete(view, pos));
+            tv_item_params.setOnClickListener(view -> mItemClickListener.onItemClickParams(view, pos));
         }
     }
 
@@ -222,6 +260,9 @@ public class TTeachRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     public interface MyItemClickListener {
-        void onItemClick(View view, int pos);
+        void onItemClickAssign(View view, int pos);
+        void onItemClickEdit(View view, int pos);
+        void onItemClickDelete(View view, int pos);
+        void onItemClickParams(View view, int pos);
     }
 }

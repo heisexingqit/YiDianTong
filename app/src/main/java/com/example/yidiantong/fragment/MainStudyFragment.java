@@ -37,6 +37,7 @@ import com.example.yidiantong.adapter.HomeRecyclerAdapter;
 import com.example.yidiantong.bean.HomeItemEntity;
 import com.example.yidiantong.ui.HomeworkPagerActivity;
 import com.example.yidiantong.ui.HomeworkPagerFinishActivity;
+import com.example.yidiantong.ui.LearnPlanPagerActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.MyItemDecoration;
@@ -105,7 +106,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
 
         //获取登录传递的参数
         if(username == null){
-            username = getActivity().getIntent().getStringExtra("username");
+            username = MyApplication.username;
         }
 
         //加载页
@@ -117,9 +118,9 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
 
             //设置item点击事件
             adapter.setmItemClickListener((v, pos) -> {
+                Intent intent = null;
                 switch (adapter.itemList.get(pos).getType()) {
                     case "作业":
-                        Intent intent;
                         if(Integer.parseInt(adapter.itemList.get(pos).getStatus()) != 2){
                             // 未批改的
                             intent = new Intent(getActivity(), HomeworkPagerActivity.class);
@@ -130,6 +131,22 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
                         intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
                         intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
                         intent.putExtra("username", username);
+                        intent.putExtra("type", "paper");
+                        intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
+                        startActivity(intent);
+                        break;
+                    case "导学案":
+                    case "微课":
+                        if(Integer.parseInt(adapter.itemList.get(pos).getStatus()) != 2){
+                            // 未批改的
+                            intent = new Intent(getActivity(), LearnPlanPagerActivity.class);
+                        }else{
+                            intent = new Intent(getActivity(), HomeworkPagerFinishActivity.class);
+                        }
+                        intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
+                        intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
+                        intent.putExtra("username", username);
+                        intent.putExtra("type", "learnPlan");
                         intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
                         startActivity(intent);
                         break;

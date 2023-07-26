@@ -31,6 +31,7 @@ import android.widget.RelativeLayout;
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
+import com.example.yidiantong.View.ClickableTextView;
 import com.example.yidiantong.ui.LiveListActivity;
 import com.example.yidiantong.ui.TBellLookNoticeActivity;
 import com.example.yidiantong.ui.TBellNoticeSubmitActivity;
@@ -39,8 +40,11 @@ import com.example.yidiantong.ui.THomeworkActivity;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.adapter.THomeRecyclerAdapter;
 import com.example.yidiantong.bean.THomeItemEntity;
+import com.example.yidiantong.ui.THomeworkAddCameraActivity;
 import com.example.yidiantong.ui.TLearnPlanAddActivity;
 import com.example.yidiantong.ui.TLiveListActivity;
+import com.example.yidiantong.ui.TPackageAddActivity;
+import com.example.yidiantong.ui.TWeikeAddActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.MyItemDecoration;
@@ -119,7 +123,7 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
 
         //获取登录传递的参数
         if (username == null) {
-            username = getActivity().getIntent().getStringExtra("username");
+            username = MyApplication.username;
         }
 
         //加载页
@@ -133,6 +137,7 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
             adapter.setmItemClickListener((v, pos) -> {
                 Intent intent = null;
                 switch (adapter.itemList.get(pos).getfType()) {
+                    case "7":
                     case "1":
                         intent = new Intent(getActivity(), THomeworkActivity.class);
                         intent.putExtra("teacherId", username);
@@ -152,16 +157,16 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
                         intent1 = new Intent(getActivity(), TBellLookNoticeActivity.class);
                         intent1.putExtra("classTimeId", adapter.itemList.get(pos).getfId());
                         intent1.putExtra("noticetype", adapter.itemList.get(pos).getfType());
-                        intent1.putExtra("noticetime",adapter.itemList.get(pos).getfTime());
+                        intent1.putExtra("noticetime", adapter.itemList.get(pos).getfTime());
                         startActivity(intent1);
-                    break;
+                        break;
                     case "4":
-                    Intent intent2;
-                    intent2 = new Intent(getActivity(), TBellLookNoticeActivity.class);
-                    intent2.putExtra("classTimeId", adapter.itemList.get(pos).getfId());
-                    intent2.putExtra("noticetype", adapter.itemList.get(pos).getfType());
-                    intent2.putExtra("noticetime",adapter.itemList.get(pos).getfTime());
-                    startActivity(intent2);
+                        Intent intent2;
+                        intent2 = new Intent(getActivity(), TBellLookNoticeActivity.class);
+                        intent2.putExtra("classTimeId", adapter.itemList.get(pos).getfId());
+                        intent2.putExtra("noticetype", adapter.itemList.get(pos).getfType());
+                        intent2.putExtra("noticetime", adapter.itemList.get(pos).getfTime());
+                        startActivity(intent2);
                     case "10":
                         intent = new Intent(getActivity(), TLiveListActivity.class);
                         startActivity(intent);
@@ -216,7 +221,8 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
         }
 
         //搜索栏优化-小键盘回车搜索
-        view.findViewById(R.id.tv_search).setOnClickListener(this);
+        ClickableTextView tv_search = view.findViewById(R.id.tv_search);
+        tv_search.setOnClickListener(this);
         et_search = view.findViewById(R.id.et_search);
         et_search.setOnKeyListener(new View.OnKeyListener() {
             @Override
@@ -230,8 +236,7 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
                     //其次再做相应操作
                     if (!searchStr.equals(et_search.getText().toString())) {
                         //做相应的操作
-                        searchStr = et_search.getText().toString();
-                        refreshList();
+                       tv_search.callOnClick();
                     }
                 }
                 return false;
@@ -345,18 +350,22 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
              * 顶部右侧菜单
              */
             case R.id.tv_add_package:
-                break;
-            case R.id.tv_my_package:
+                startActivity(new Intent(getActivity(), TPackageAddActivity.class));
+                window2.dismiss();
                 break;
             case R.id.tv_add_learnPlan:
                 startActivity(new Intent(getActivity(), TLearnPlanAddActivity.class));
+                window2.dismiss();
                 break;
             case R.id.tv_add_weike:
+                startActivity(new Intent(getActivity(), TWeikeAddActivity.class));
+                window2.dismiss();
                 break;
             case R.id.tv_add_homework:
                 startActivity(new Intent(getActivity(), THomeworkAddActivity.class));
                 window2.dismiss();
                 break;
+            case R.id.tv_my_package:
             case R.id.tv_select_learnPlan:
             case R.id.tv_select_weike:
             case R.id.tv_select_paper:
@@ -364,6 +373,8 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
                 changePageInterface.changePage(2);
                 break;
             case R.id.tv_camera_homework:
+                startActivity(new Intent(getActivity(), THomeworkAddCameraActivity.class));
+                window2.dismiss();
                 break;
             case R.id.tv_add_notice:
                 Intent intent;
