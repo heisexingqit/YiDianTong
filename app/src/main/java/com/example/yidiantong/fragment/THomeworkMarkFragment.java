@@ -73,7 +73,6 @@ public class THomeworkMarkFragment extends Fragment {
 //        int size = arg.getInt("size");
         homeworkMarked = (THomeworkMarkedEntity) arg.getSerializable("homeworkMarked");
         position = Integer.parseInt(homeworkMarked.getOrder());
-        Log.d("wen", "xxxxxxxxxxxxxxxxxxxxxxxxx: " + position);
         int size = Integer.parseInt(homeworkMarked.getOrderCount());
         boolean canMark = arg.getBoolean("canMark");
 

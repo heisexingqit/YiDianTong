@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".fragment.TWeikePickAssignFragment">
+    <RelativeLayout
+        android:id="@+id/rl_top"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/white"
+        android:paddingStart="5dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="10dp">
+
+        <!--左-->
+        <com.example.yidiantong.View.ClickableImageView
+            android:id="@+id/iv_back"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/left_ex2" />
+        <!--中-->
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center_horizontal"
+            android:singleLine="true"
+            android:text="布置导学案"
+            android:textColor="@color/main_bg_title"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_top_divider"
+        android:layout_below="@+id/rl_top"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/tabbar_text_unselect"
+        android:orientation="horizontal" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_top_divider"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center_vertical"
+                    android:text="作业名称:"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="20dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textSize="15sp" />
+                <com.example.yidiantong.View.ClickableImageView
+                    android:visibility="invisible"
+                    android:layout_width="60dp"
+                    android:layout_height="30dp"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/calendar_icon" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 分割线 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/tabbar_text_unselect" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/tv_st"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center_vertical"
+                    android:text="开始时间:"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_start"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="20dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textSize="15sp" />
+
+                <com.example.yidiantong.View.ClickableImageView
+                    android:id="@+id/iv_start"
+                    android:layout_width="60dp"
+                    android:layout_height="30dp"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/calendar_icon" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 分割线 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/tabbar_text_unselect" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/tv_en"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center_vertical"
+                    android:text="结束时间:"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_end"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="20dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textSize="15sp" />
+
+                <com.example.yidiantong.View.ClickableImageView
+                    android:id="@+id/iv_end"
+                    android:layout_width="60dp"
+                    android:layout_height="30dp"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/calendar_icon" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 分割线 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/tabbar_text_unselect" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/tv_kt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center_vertical"
+                    android:text="选择课堂:"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_ketang"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="20dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textSize="15sp" />
+
+                <com.example.yidiantong.View.ClickableImageView
+                    android:id="@+id/iv_ketang"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/down_icon" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_ketang_null"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginBottom="10dp"
+                android:text="课堂列表未获取到或者为空"
+                android:textSize="13sp"
+                android:visibility="gone" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:id="@+id/fl_ketang"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="18dp"
+                    android:layout_marginEnd="30dp"
+                    app:flexWrap="wrap" />
+
+            </ScrollView>
+        </LinearLayout>
+
+        <!-- 分割线 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/tabbar_text_unselect" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="10dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="75dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:id="@+id/tv_bz"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="11dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center_vertical"
+                    android:text="布置给:"
+                    android:textSize="15sp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <com.example.yidiantong.View.ClickableTextView
+                        android:id="@+id/tv_class"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/t_homework_add_pick"
+                        android:gravity="center"
+                        android:text="班级"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <com.example.yidiantong.View.ClickableTextView
+                        android:id="@+id/tv_group"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="小组" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <com.example.yidiantong.View.ClickableTextView
+                        android:id="@+id/tv_person"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="个人" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_class_null"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:text="请先选择课堂"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="70dp"
+                android:scrollbars="none">
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:id="@+id/fl_class"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="18dp"
+                    android:layout_marginEnd="30dp"
+                    app:flexWrap="wrap" />
+
+            </ScrollView>
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
+        android:gravity="bottom">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <com.example.yidiantong.View.ClickableTextView
+                android:id="@+id/btn_reset"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/t_homework_add"
+                android:gravity="center"
+                android:text="重置"
+                android:textColor="@color/white" />
+
+            <com.example.yidiantong.View.ClickableTextView
+                android:id="@+id/btn_confirm"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/t_homework_add"
+                android:text="确定"
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </RelativeLayout>
+    <!--遮蔽-->
+    <include
+        layout="@layout/submitting_page"
+        android:visibility="gone"/>
+</RelativeLayout>

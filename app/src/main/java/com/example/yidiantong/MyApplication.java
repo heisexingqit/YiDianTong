@@ -22,6 +22,7 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import java.util.List;
 
 public class MyApplication extends Application {
+    private static final String TAG = "MyApplication";
 
     // 全局变量
     public static String username;
@@ -29,6 +30,7 @@ public class MyApplication extends Application {
     public static String cnName;
     public static String token;
     public static String picUrl;
+    public static String password;
 
     private static RequestQueue mQueue;
     //ImageLoader显示图片过程中的参数
@@ -79,8 +81,9 @@ public class MyApplication extends Application {
          * 拦截重复请求，时间为1.2s内（降低效率）
          */
         long currentTime = System.currentTimeMillis();
-        if (request.getUrl().equals(lastRequestUrl) && currentTime - lastRequestTime < 600) {
-            Log.d("wen", "Duplicate request, ignored." + request.getUrl());
+
+        if (!tag.equals("noLimited") && request.getUrl().equals(lastRequestUrl) && currentTime - lastRequestTime < 600) {
+            Log.d(TAG, "Duplicate request, ignored." + request.getUrl());
             return;
         }
         request.setTag(tag);

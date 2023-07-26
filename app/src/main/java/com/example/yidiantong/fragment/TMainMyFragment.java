@@ -93,7 +93,7 @@ public class TMainMyFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // 获取根视图 view
-        View view = inflater.inflate(R.layout.fragment_main_my, container, false);
+        View view = inflater.inflate(R.layout.fragment_t_main_my, container, false);
 
         // 获取view中的组件
         f_ll_info = view.findViewById(R.id.f_ll_info);
@@ -211,15 +211,15 @@ public class TMainMyFragment extends Fragment implements View.OnClickListener {
          * 真实用户数据设置
          */
         TextView tv_username = view.findViewById(R.id.tv_username);
-        String username = getActivity().getIntent().getStringExtra("username");
+        String username = MyApplication.username;
 
-        String realName = getActivity().getIntent().getStringExtra("realName");
+        String realName = MyApplication.cnName;
         tv_username.setText(realName + "(" + username + ")");
 
         // 获取图片
-        String picUrl = JsonUtils.clearString(getActivity().getIntent().getStringExtra("picUrl"));
+        String picUrl = MyApplication.picUrl;
+        Log.d("wen", "onCreateView: " + picUrl);
         ImageLoader.getInstance().displayImage(picUrl, fiv_my, MyApplication.getLoaderOptions());
-
         return view;
     }
 

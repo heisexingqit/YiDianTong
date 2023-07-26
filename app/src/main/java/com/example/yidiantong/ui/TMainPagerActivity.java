@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +18,8 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +48,7 @@ import com.example.yidiantong.fragment.TMainReportFragment;
 import com.example.yidiantong.fragment.TMainTeachFragment;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
+import com.example.yidiantong.util.LoadingPageInterface;
 import com.example.yidiantong.util.TMainChangeInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -55,7 +60,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TMainPagerActivity extends AppCompatActivity implements View.OnClickListener, TMainLatestFragment.ChangePageInterface {
+public class TMainPagerActivity extends AppCompatActivity implements View.OnClickListener, TMainLatestFragment.ChangePageInterface, LoadingPageInterface {
     private static final String TAG = "TMainPagerActivity";
 
     private int id_bottom_onclick = 0; // 标定选择的
@@ -95,10 +100,19 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
     };
     private int flag = -1;
 
+    // 加载遮蔽
+    private RelativeLayout rl_submitting;
+    private TextView tv_submitting;
+    private ProgressBar pb_submitting;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tmain_pager);
+
+        rl_submitting = findViewById(R.id.rl_submitting);
+        tv_submitting = findViewById(R.id.tv_submitting);
+        pb_submitting = findViewById(R.id.pb_submitting);
 
         findViewById(R.id.ll_bottom_latest).setOnClickListener(this);
         findViewById(R.id.ll_bottom_report).setOnClickListener(this);
@@ -224,9 +238,9 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
         }, error -> {
 
         });
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(request);
-        queue.getCache().clear();
+//        RequestQueue queue = Volley.newRequestQueue(this);
+        MyApplication.addRequest(request, "noLimited");
+//        queue.getCache().clear();
     }
 
     @Override
@@ -414,5 +428,17 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
         handler_run.postDelayed(runnable, 1000);
     }
 
+    @Override
+    public void onLoading(String text, int color) {
+        tv_submitting.setText(text);
+        tv_submitting.setTextColor(getColor(color));
+        Drawable indeterminateDrawable = pb_submitting.getIndeterminateDrawable();
+        indeterminateDrawable.setColorFilter(getColor(color), PorterDuff.Mode.SRC_IN);
+        rl_submitting.setVisibility(View.VISIBLE);
+    }
 
+    @Override
+    public void offLoading() {
+        rl_submitting.setVisibility(View.GONE);
+    }
 }

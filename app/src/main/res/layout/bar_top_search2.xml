@@ -59,7 +59,7 @@
                     android:textSize="15sp" />
             </LinearLayout>
 
-            <TextView
+            <com.example.yidiantong.View.ClickableTextView
                 android:id="@+id/tv_search"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"

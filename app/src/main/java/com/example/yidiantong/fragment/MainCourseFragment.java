@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ToastFormat;
 import com.example.yidiantong.bean.BookDetailEntity;
@@ -129,8 +130,8 @@ public class MainCourseFragment extends Fragment {
     }
 
     private void loadItems_Net() {
-        String password = getActivity().getIntent().getStringExtra("password");
-        username = getActivity().getIntent().getStringExtra("username");
+        String password = MyApplication.password;
+        username = MyApplication.username;
         ip = et_ip.getText().toString();
 
         String mRequestUrl =  "http://" + ip + ":8901" + Constant.KETANGPLAYBYSTU +  "?userName=" + username + "&password=" + password;

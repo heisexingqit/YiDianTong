@@ -245,8 +245,7 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
          */
         TextView tv_username = view.findViewById(R.id.tv_username);
         username = MyApplication.username;
-
-        realName = getActivity().getIntent().getStringExtra("realName");
+        realName = MyApplication.cnName;
         tv_username.setText(realName + "(" + username + ")");
 
         // 获取图片

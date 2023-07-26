@@ -80,8 +80,6 @@ public class Constant {
     //学生端生成ip对应二维码
     public static final String GET_QRCODE_URL = "/KeTangServer/ajax/ketang_ getQRcodeUrl.do";
 
-
-
     // 教师端最新信息
     public static final String T_NEW_ITEM = "/AppServer/ajax/teacherApp_getAllNews.do";
 
@@ -138,6 +136,28 @@ public class Constant {
 
     // 教师端获取【资源】类型
     public static final String T_GET_RESOURCE_TYPE = "/AppServer/ajax/teacherApp_getResourceTypeList.do";
+
+    // 教师端删除试卷
+    public static final String T_DELETE_PAPER = "/AppServer/ajax/teacherApp_deletePaper.do";
+
+    // 教师端删除导学案,微课,授课包
+    public static final String T_DELETE_LEARN_PLAN = "/AppServer/ajax/teacherApp_deleteLearnPlan.do";
+
+    // 教师端获取导学案pickList
+    public static final String T_GET_LEARN_PLAN_PICKLIST = "//AppServer/ajax/teacherApp_getLpEditContent.do";
+
+    // 教师端获取作业pickList
+    public static final String T_GET_PAPER_PICKLIST = "/AppServer/ajax/teacherApp_getPaperEditContent.do";
+
+    // 教师端-拍照发布作业-获取题型
+    public static final String T_HOMEWORK_CAMERA_GET_TYPE = "/AppServer/ajax/teacherApp_phoneGetQueType.do";
+
+    // 教师端-拍照发布作业-新建试题Id
+    public static final String T_HOMEWORK_CAMERA_GET_ID = "/AppServer/ajax/teacherApp_phoneAddQuestion.do";
+
+    // 教师端-拍照发布作业-保存试题信息
+    public static final String T_HOMEWORK_CAMERA_SAVE = "/AppServer/ajax/teacherApp_phoneSaveQuestionAndPaper.do";
+
     // 教师端发布通知获取班级列表
     public static final String T_BELL_ADD_CLASS= "/AppServer/ajax/teacherApp_publishNotice.do";
 
@@ -170,6 +190,13 @@ public class Constant {
 
     // 教师端保存+布置导学案
     public static final String T_LEARN_PLAN_ASSIGN_SAVE = "/AppServer/ajax/teacherApp_releaseLearnPlan.do";
+
+    // 教师端教师页面属性获取
+    public static final String T_MAIN_TEACH_PARAM_GET = "/AppServer/ajax/teacherApp_getLpProperty.do";
+
+    //教师端教师页面属性设置
+    public static final String T_MAIN_TEACH_PARAM_SAVE = "/AppServer/ajax/teacherApp_saveLpProperty.do";
+
     // 教师端修改通知或公告，返回对应的内容
     public static final String T_BELL_GET_NOTICE_INFO = "/AppServer/ajax/teacherApp_getNoticeInfo.do";
     // 教师端获取授课一点通是否上课
@@ -181,7 +208,5 @@ public class Constant {
 
     // 教师端向授课一点通发消息
     public static final String T_SEND_MESSAGE = "/KeTangServer/ajax/ketang_sendMessage.do";
-
-
 
 }

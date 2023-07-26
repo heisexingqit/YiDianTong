@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">一点通</string>
+    <string name="app_name">一点通0726</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -137,6 +137,13 @@
     <string name="_40_minute">40分钟</string>
     <string name="_50_minute">50分钟</string>
     <string name="set_learn_plan_params">设置导学案属性</string>
+    <string name="add_teach_package">创建授课包</string>
+    <string name="add_assign_learn_plan">创建导学案+布置</string>
+    <string name="add_assign_wike">创建微课+布置</string>
+    <string name="add_assign_homework">创建作业+布置</string>
+    <string name="add_camera_homework">拍照布置作业</string>
+    <string name="set_weike_params">设置微课属性</string>
+    <string name="set_package_params">设置授课包属性</string>
     <!--wen-->
 
 </resources>
