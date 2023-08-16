@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.blankj.utilcode.util.SPUtils;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ToastFormat;
@@ -87,6 +88,8 @@ public class MainCourseFragment extends Fragment {
         });
 
         et_ip = view.findViewById(R.id.et_ip);
+        et_ip.setText((SPUtils.getInstance().getString("easyip", "")));
+        SPUtils.getInstance().put("easyip", et_ip.getText().toString());
 
         // 初始化toast提示信息
         format = new ToastFormat(MainCourseFragment.this.getContext());
@@ -180,6 +183,7 @@ public class MainCourseFragment extends Fragment {
             } else {
                 //Toast.makeText(this.getActivity(), "扫描内容:" + result.getContents(), Toast.LENGTH_LONG).show();
                 et_ip.setText(result.getContents());
+                SPUtils.getInstance().put("easyip", et_ip.getText().toString());
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

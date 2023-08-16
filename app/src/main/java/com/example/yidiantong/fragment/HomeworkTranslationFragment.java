@@ -294,12 +294,14 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
                     Intent intent = result.getData();
                     //Uri和path相似，都是定位路径，属于一步到位方式 =》 如果是path 则 Uri.parse(path)
                     picUri = intent.getData();
+                    Log.e("picUri",""+picUri);
                     if (picUri != null) {
                         /*Gallery回调执行*/
                         try {
                             Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(picUri));
                             imageBase64 = ImageUtils.Bitmap2StrByBase64(bitmap);
                             imageBase64 = imageBase64.replace("+", "%2b");
+                            Log.e("imageBase64",""+imageBase64);
                             uploadImage();
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -383,6 +385,7 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
     private void uploadImage() {
         transmit.onLoading();
         String mRequestUrl = Constant.API + Constant.UPLOAD_IMAGE + "?baseCode=" + imageBase64 + "&leanPlanId=" + learnPlanId + "&userId=" + username;
+        Log.e("mmm",""+mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
 
             try {
