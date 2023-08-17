@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:id="@+id/ll_root"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -39,6 +39,15 @@
             android:layout_toRightOf="@+id/tv_type"
             android:text="(2分)"
             android:textSize="18sp" />
+
+        <com.example.yidiantong.View.ClickableImageView
+            android:id="@+id/iv_change_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_toRightOf="@+id/tv_scores"
+            android:src="@drawable/homework_camera_type" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -102,8 +111,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="35dp"
-                    android:text="题目"
                     android:gravity="center"
+                    android:text="题目"
                     android:textSize="20sp" />
 
                 <LinearLayout
@@ -145,14 +154,15 @@
                 android:layout_height="155dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="20dp"
-                android:gravity="center"
-                android:background="@drawable/background_gray_border">
+                android:background="@drawable/background_gray_border"
+                android:gravity="center">
 
                 <ScrollView
                     android:id="@+id/sv_timian"
-                    android:focusable="true"
                     android:layout_width="match_parent"
-                    android:layout_height="150dp">
+                    android:layout_height="150dp"
+                    android:focusable="true"
+                    android:scrollbars="none">
 
                     <LinearLayout
                         android:id="@+id/ll_timian"
@@ -166,13 +176,14 @@
                             android:id="@+id/wv_timian"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:scrollbars="none"/>
+                            android:scrollbars="none" />
 
                         <EditText
                             android:id="@+id/et_timian"
                             android:layout_width="250dp"
                             android:layout_height="wrap_content"
                             android:background="@drawable/background_gray_border"
+                            android:imeOptions="actionDone"
                             android:padding="10dp"
                             android:singleLine="true"
                             android:textSize="15sp" />
@@ -284,10 +295,12 @@
                     android:paddingTop="5dp"
                     android:paddingEnd="10dp"
                     android:paddingBottom="5dp">
+
                     <HorizontalScrollView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:scrollbars="none">
+
                         <RadioGroup
                             android:id="@+id/rg_answer"
                             android:layout_width="match_parent"
@@ -320,8 +333,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="35dp"
-                        android:text="解析"
                         android:gravity="center"
+                        android:text="解析"
                         android:textSize="20sp" />
 
                     <LinearLayout
@@ -363,14 +376,15 @@
                     android:layout_height="155dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="20dp"
-                    android:gravity="center"
-                    android:background="@drawable/background_gray_border">
+                    android:background="@drawable/background_gray_border"
+                    android:gravity="center">
 
                     <ScrollView
                         android:id="@+id/sv_analysis"
-                        android:focusable="true"
                         android:layout_width="match_parent"
-                        android:layout_height="150dp">
+                        android:layout_height="150dp"
+                        android:focusable="true"
+                        android:scrollbars="none">
 
                         <LinearLayout
                             android:id="@+id/ll_analysis"
@@ -384,13 +398,14 @@
                                 android:id="@+id/wv_analysis"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:scrollbars="none"/>
+                                android:scrollbars="none" />
 
                             <EditText
                                 android:id="@+id/et_analysis"
                                 android:layout_width="250dp"
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/background_gray_border"
+                                android:imeOptions="actionDone"
                                 android:padding="10dp"
                                 android:singleLine="true"
                                 android:textSize="15sp" />

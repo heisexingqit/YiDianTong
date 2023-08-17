@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -552,9 +553,9 @@ public class TWeikeAddPickActivity extends AppCompatActivity implements View.OnC
         StringBuilder jsonStringBuilder = new StringBuilder();
         String jsonString = "[";
         List<LearnPlanAddItemEntity> pickList = addFragment.pickList;
-        for(int i = 0; i < pickList.size(); ++i){
+        for (int i = 0; i < pickList.size(); ++i) {
             LearnPlanAddItemEntity item = pickList.get(i);
-            item.setOrder(i+1);
+            item.setOrder(i + 1);
             if (jsonStringBuilder.length() > 0) {
                 jsonStringBuilder.append(", ");
             }
@@ -650,6 +651,7 @@ public class TWeikeAddPickActivity extends AppCompatActivity implements View.OnC
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -674,6 +676,7 @@ public class TWeikeAddPickActivity extends AppCompatActivity implements View.OnC
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -830,6 +833,7 @@ public class TWeikeAddPickActivity extends AppCompatActivity implements View.OnC
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -901,6 +905,7 @@ public class TWeikeAddPickActivity extends AppCompatActivity implements View.OnC
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -975,6 +980,7 @@ public class TWeikeAddPickActivity extends AppCompatActivity implements View.OnC
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -1048,6 +1054,7 @@ public class TWeikeAddPickActivity extends AppCompatActivity implements View.OnC
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -1118,6 +1125,7 @@ public class TWeikeAddPickActivity extends AppCompatActivity implements View.OnC
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -1172,6 +1180,7 @@ public class TWeikeAddPickActivity extends AppCompatActivity implements View.OnC
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);

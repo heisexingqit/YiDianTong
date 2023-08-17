@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -301,7 +302,8 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
                 e.printStackTrace();
             }
         }, error -> {
-            Log.d("wen", "Volley_Error: " + error.toString());
+            Log.d("wen", "loadItems_Net: " + error.toString());
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             adapter.fail();
         });
         MyApplication.addRequest(request, TAG);
@@ -333,12 +335,13 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
 //                    handler.sendMessage(message);
                     mode = mod;
                 } else {
-                    Log.d("wen", "Volley_Error: ");
+                    Toast.makeText(this, "模式获取失败", Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
-                Log.d("wen", "Volley_Error: " + e);
+                Log.d("wen", "geteMode: " + e);
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -379,12 +382,13 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 } else {
-                    Log.d("wen", "Volley_Error: ");
+                    Toast.makeText(this, "模式修改失败", Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
-                Log.d("wen", "Volley_Error: " + e);
+                Log.d("wen", "changeMode: " + e);
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);

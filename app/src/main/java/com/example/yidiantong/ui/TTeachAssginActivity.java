@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -91,6 +92,7 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
     private String learnPlanId;
     private String learnPlanName;
     private String type;
+    private String typeCamera;
     private String jsonString;
     private TextView tv_title;
 
@@ -104,6 +106,7 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
         learnPlanId = intent.getStringExtra("learnPlanId");
         learnPlanName = intent.getStringExtra("learnPlanName");
         type = intent.getStringExtra("type");
+        typeCamera = intent.getStringExtra("typeCamera");
 
         TextView tv_name = findViewById(R.id.tv_name);
         tv_name.setText(learnPlanName);
@@ -134,7 +137,6 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
         } else {
             tv_title.setText("布置试卷");
         }
-
         tv_class.setOnClickListener(this);
         tv_group.setOnClickListener(this);
         tv_person.setOnClickListener(this);
@@ -467,6 +469,7 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -567,6 +570,7 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -686,23 +690,39 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
     public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag) throws UnsupportedEncodingException {
 
         if (type.equals("paper")) {
-
+            // 试卷类型
             ketang = URLEncoder.encode(ketang, "UTF-8");
             clas = URLEncoder.encode(clas, "UTF-8");
             stuNames = URLEncoder.encode(stuNames, "UTF-8");
             String lpn = URLEncoder.encode(learnPlanName, "UTF-8");
 
-            mRequestUrl = Constant.API + Constant.T_HOMEWORK_ASSIGN_SAVE + "?assignType=" + assignType +
-                    "&channelCode=" + "&channelName=" +
-                    "&subjectCode=" + "&subjectName=" +
-                    "&textBookCode=" + "&textBookName=" +
-                    "&gradeLevelCode=" + "&gradeLevelName=" +
-                    "&pointCode=" + "&introduction=" +
-                    "&userName=" + MyApplication.username + "&paperName=" + lpn +
-                    "&paperId=" + learnPlanId + "&startTime=" + startTime + "&endTime=" + endTime +
-                    "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classOrGroupId=" + classId +
-                    "&classOrGroupName=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
-                    "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=" + URLEncoder.encode(jsonString, "UTF-8");
+            if (typeCamera != null) {
+                mRequestUrl = Constant.API + Constant.T_HOMEWORK_CAMERA_ASSIGN + "?assignType=" + assignType +
+                        "&channelCode=" + "&channelName=" +
+                        "&subjectCode=" + "&subjectName=" +
+                        "&textBookCode=" + "&textBookName=" +
+                        "&gradeLevelCode=" + "&gradeLevelName=" +
+                        "&pointCode=" + "&introduction=" +
+                        "&userName=" + MyApplication.username + "&paperName=" + lpn +
+                        "&paperId=" + learnPlanId + "&startTime=" + startTime + "&endTime=" + endTime +
+                        "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classOrGroupId=" + classId +
+                        "&classOrGroupName=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
+                        "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=" + URLEncoder.encode(jsonString, "UTF-8");
+
+            } else {
+                mRequestUrl = Constant.API + Constant.T_HOMEWORK_ASSIGN_SAVE + "?assignType=" + assignType +
+                        "&channelCode=" + "&channelName=" +
+                        "&subjectCode=" + "&subjectName=" +
+                        "&textBookCode=" + "&textBookName=" +
+                        "&gradeLevelCode=" + "&gradeLevelName=" +
+                        "&pointCode=" + "&introduction=" +
+                        "&userName=" + MyApplication.username + "&paperName=" + lpn +
+                        "&paperId=" + learnPlanId + "&startTime=" + startTime + "&endTime=" + endTime +
+                        "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classOrGroupId=" + classId +
+                        "&classOrGroupName=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
+                        "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=" + URLEncoder.encode(jsonString, "UTF-8");
+
+            }
 
             StringRequest request = new StringRequest(mRequestUrl, response -> {
                 try {
@@ -751,13 +771,14 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                     e.printStackTrace();
                 }
             }, error -> {
+                Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
                 Log.d("wen", "Volley_Error: " + error.toString());
             });
             MyApplication.addRequest(request, TAG);
             rl_submitting.setVisibility(View.VISIBLE);
 
         } else {
-
+            // 其他类型
             String xueduan = "";
             String xueke = "";
             String banben = "";
@@ -861,6 +882,7 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                     e.printStackTrace();
                 }
             }, error -> {
+                Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
                 Log.d("wen", "Volley_Error: " + error.toString());
             });
             MyApplication.addRequest(request, TAG);
@@ -887,6 +909,7 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                     e.printStackTrace();
                 }
             }, error -> {
+                Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
                 Log.d("wen", "Volley_Error: " + error.toString());
             });
             MyApplication.addRequest(request, TAG);
@@ -904,6 +927,7 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                     e.printStackTrace();
                 }
             }, error -> {
+                Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
                 Log.d("wen", "Volley_Error: " + error.toString());
             });
             MyApplication.addRequest(request, TAG);

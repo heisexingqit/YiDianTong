@@ -396,7 +396,8 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
             }
 
         }, error -> {
-            Toast.makeText(THomeworkMarkPagerActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());;
         });
         MyApplication.addRequest(request, TAG);
     }

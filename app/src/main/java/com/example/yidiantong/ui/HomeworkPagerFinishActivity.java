@@ -36,7 +36,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 public class HomeworkPagerFinishActivity extends AppCompatActivity implements View.OnClickListener, PagingInterface {
-    private static final String TAG = "HomeworkPagerFinishActi";
+    private static final String TAG = "HomeworkPagerFinishActivity";
     // Intent传入参数
     private String learnPlanId;
     private String title;
@@ -173,7 +173,8 @@ public class HomeworkPagerFinishActivity extends AppCompatActivity implements Vi
             }
 
         }, error -> {
-            Toast.makeText(HomeworkPagerFinishActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
     }

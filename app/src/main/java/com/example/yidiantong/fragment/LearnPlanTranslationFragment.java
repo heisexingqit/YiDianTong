@@ -53,6 +53,7 @@ import com.example.yidiantong.ui.DoodleActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.ImageUtils;
 import com.example.yidiantong.util.JsonUtils;
+import com.example.yidiantong.util.LearnPlanInterface;
 import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.HomeworkInterface;
@@ -77,7 +78,7 @@ public class LearnPlanTranslationFragment extends Fragment implements View.OnCli
     private static final String TAG = "HomeworkTranslationFrag";
 
     private PagingInterface pageing;
-    private HomeworkInterface transmit;
+    private LearnPlanInterface transmit;
 
     private LinearLayout ll_context;
 
@@ -164,7 +165,7 @@ public class LearnPlanTranslationFragment extends Fragment implements View.OnCli
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         pageing = (PagingInterface) context;
-        transmit = (HomeworkInterface) context;
+        transmit = (LearnPlanInterface) context;
     }
 
     @Override
@@ -393,7 +394,8 @@ public class LearnPlanTranslationFragment extends Fragment implements View.OnCli
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
     }

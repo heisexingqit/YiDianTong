@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.ResourceFolderShowActivity"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:id="@+id/rl_title"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:background="@color/white"
+        android:paddingStart="5dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="10dp">
+
+        <!--左-->
+        <com.example.yidiantong.View.ClickableImageView
+            android:id="@+id/iv_back"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/left_ex2" />
+        <!--中-->
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center_horizontal"
+            android:singleLine="true"
+            android:text="资料夹"
+            android:textColor="@color/main_bg_title"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</LinearLayout>

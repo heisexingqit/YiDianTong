@@ -103,7 +103,7 @@ public class LiveRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             this.itemList.clear();
             this.itemList = moreList;
             this.isRefresh = 0;
-            if (moreList.size() == 0) {
+            if (moreList.size() == 0 || moreList.size() < 24) {
                 isDown = 1;
             }
         } else {

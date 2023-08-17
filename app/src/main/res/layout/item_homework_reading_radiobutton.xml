@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rg_answer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <RadioButton
+        android:id="@+id/rb_a"
+        style="@style/CustomRadioButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:text="A"
+        android:textColor="@color/default_gray"
+        android:textSize="14sp" />
+
+    <RadioButton
+        android:id="@+id/rb_b"
+        style="@style/CustomRadioButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:text="B"
+        android:textColor="@color/default_gray"
+        android:textSize="14sp" />
+
+    <RadioButton
+        android:id="@+id/rb_c"
+        style="@style/CustomRadioButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:text="C"
+        android:textColor="@color/default_gray"
+        android:textSize="14sp" />
+
+    <RadioButton
+        android:id="@+id/rb_d"
+        style="@style/CustomRadioButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:text="D"
+        android:textColor="@color/default_gray"
+        android:textSize="14sp" />
+</RadioGroup>

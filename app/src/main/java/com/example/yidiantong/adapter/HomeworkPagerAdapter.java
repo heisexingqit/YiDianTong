@@ -80,6 +80,7 @@ public class HomeworkPagerAdapter extends FragmentPagerAdapter {
                 }
                 break;
             default:
+                fragment = HomeworkTranslationFragment.newInstance(itemList.get(position), position, itemList.size(), learnPlanId, username, itemList2.get(position));
                 Log.d("wen", "未知题型: " + item.getQuestionTypeName());
                 break;
         }

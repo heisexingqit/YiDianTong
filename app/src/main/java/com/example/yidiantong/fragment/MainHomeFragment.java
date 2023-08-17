@@ -48,6 +48,7 @@ import com.example.yidiantong.ui.HomeworkPagerFinishActivity;
 import com.example.yidiantong.ui.LearnPlanPagerActivity;
 import com.example.yidiantong.ui.LiveListActivity;
 import com.example.yidiantong.ui.NoticeLookActivity;
+import com.example.yidiantong.ui.ResourceFolderActivity;
 import com.example.yidiantong.ui.TBellLookNoticeActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
@@ -73,6 +74,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
     // 请求连接url
     private String mRequestUrl;
     private MyItemDecoration divider;
+    private ImageView iv_folder_ball;
 
     //获得实例，并绑定参数
     public static MainHomeFragment newInstance() {
@@ -99,6 +101,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d("wen", "onCreateView: XXXXXXXXXXXX");
         View view = inflater.inflate(R.layout.fragment_main_home, container, false);
 
         //获取组件
@@ -259,8 +262,16 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                 return false;
             }
         });
+
+        // 资料夹
+        view.findViewById(R.id.iv_folder).setOnClickListener(this);
+
+        // 资料夹红点
+        iv_folder_ball = view.findViewById(R.id.iv_folder_ball);
+        iv_folder_ball.setVisibility(View.INVISIBLE);
         return view;
     }
+
 
     private final Handler handler2 = new Handler(Looper.getMainLooper()) {
         @RequiresApi(api = Build.VERSION_CODES.N)
@@ -383,6 +394,9 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                     refreshList();
                 }
                 break;
+            case R.id.iv_folder:
+                startActivity(new Intent(getActivity(), ResourceFolderActivity.class));
+                break;
         }
     }
 
@@ -405,6 +419,8 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                 /**
                  * 假0判断移至adapter中，根据refresh一起判断
                  */
+            }else if(message.what == 101){
+                iv_folder_ball.setVisibility(View.VISIBLE);
             }
         }
     };
@@ -456,10 +472,50 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
             }
 
         }, error -> {
+            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
             rl_loading.setVisibility(View.GONE);
             adapter.fail();
         });
         MyApplication.addRequest(request, TAG);
+    }
+
+
+    private void loadIsRead() {
+        iv_folder_ball.setVisibility(View.INVISIBLE);
+
+        mRequestUrl = Constant.API + Constant.GET_RESOURCE_IS_READ + "?userId=" + MyApplication.username;
+
+        Log.d("wen", "isRead: " + mRequestUrl);
+
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+
+                int unreadCount = json.getInt("data");
+                Boolean isSuccess = json.getBoolean("success");
+                if(unreadCount > 0 && isSuccess){
+                    Message msg = Message.obtain();
+                    msg.what = 101;
+                    handler.sendMessage(msg);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }, error -> {
+            Log.d("wen", "Volley_Error: " + error.toString());
+            rl_loading.setVisibility(View.GONE);
+            adapter.fail();
+        });
+        MyApplication.addRequest(request, TAG);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // 小红点动态修改
+        loadIsRead();
     }
 }

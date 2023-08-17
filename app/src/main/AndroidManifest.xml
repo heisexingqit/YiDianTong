@@ -24,6 +24,18 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".ui.TLiveEditActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.ResourceFolderShowActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.ResourceFolderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.TTeachEditHomeworkCameraActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.CourseQuestionActivity"
             android:exported="false" />
         <activity
@@ -36,71 +48,71 @@
         <activity
             android:name=".ui.THomeworkAddCameraActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.TTeachEditPackageActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.TTeachEditHomeworkActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.TTeachEditActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.TTeachAssginActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.TLearnPlanAddPickActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.TLearnPlanAddActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.TWeikeAddPickActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.TWeikeAddActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.TPackageAddPickActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.TPackageAddActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.TLiveAddActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.TLiveListActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.LearnPlanSubmitActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.LiveListActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.LearnPlanPagerActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.THomeworkAddPickActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.TRemoveControlActivity"
             android:exported="false" />
@@ -150,15 +162,15 @@
         <activity
             android:name=".ui.THomeworkAddActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.THomeworkMarkSubmitActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.THomeworkMarkPagerActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.THomeworkReportActivity"
             android:exported="false"
@@ -174,7 +186,7 @@
         <activity
             android:name=".ui.HomeworkPagerFinishActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
 
         <uses-library
             android:name="org.apache.http.legacy"
@@ -185,7 +197,7 @@
         <activity
             android:name=".ui.HomeworkSubmitActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustPan"/> <!-- 测试1 -->
+            android:windowSoftInputMode="adjustPan" /> <!-- 测试1 -->
         <activity
             android:name=".TestActivity"
             android:exported="true" /> <!-- 测试2 -->

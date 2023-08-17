@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#dcdcdc"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/tv_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"
+            android:text="1/n"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/tv_count"
+            android:text="单项选择题"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_scores"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/tv_type"
+            android:text="(2分)"
+            android:textSize="18sp" />
+
+        <com.example.yidiantong.View.ClickableImageView
+            android:id="@+id/iv_change_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_toRightOf="@+id/tv_scores"
+            android:src="@drawable/homework_camera_type" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp">
+
+            <com.example.yidiantong.View.ClickableImageView
+                android:id="@+id/iv_up"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:src="@drawable/up_exchange" />
+
+            <com.example.yidiantong.View.ClickableImageView
+                android:id="@+id/iv_down"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:gravity="center"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:src="@drawable/down_exchange" />
+
+            <com.example.yidiantong.View.ClickableImageView
+                android:id="@+id/iv_delete"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:src="@drawable/minus_homework" />
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="15dp">
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
+
+            <!-- 题目 -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:gravity="center"
+                    android:text="题目"
+                    android:textSize="20sp" />
+
+                <LinearLayout
+                    android:id="@+id/ll_hide_timian"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:orientation="horizontal">
+
+                    <com.example.yidiantong.View.ClickableImageView
+                        android:id="@+id/iv_timian_gallery2"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_marginEnd="30dp"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/t_homework_camera_gallery_icon" />
+
+                    <com.example.yidiantong.View.ClickableImageView
+                        android:id="@+id/iv_timian_camera2"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_marginEnd="30dp"
+                        android:src="@drawable/t_homework_camera_camera_icon" />
+
+                    <com.example.yidiantong.View.ClickableImageView
+                        android:id="@+id/iv_timian_input2"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:src="@drawable/t_homework_camera_input_icon" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <!-- 外框 -->
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="155dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/background_gray_border"
+                android:gravity="center">
+
+                <ScrollView
+                    android:id="@+id/sv_timian"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:focusable="true"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/ll_timian"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp"
+                        tools:ignore="WebViewLayout">
+
+                        <WebView
+                            android:id="@+id/wv_timian"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:scrollbars="none" />
+
+                        <EditText
+                            android:id="@+id/et_timian"
+                            android:layout_width="250dp"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/background_gray_border"
+                            android:imeOptions="actionDone"
+                            android:padding="10dp"
+                            android:singleLine="true"
+                            android:textSize="15sp" />
+
+                        <!-- 按钮组件 -->
+                        <LinearLayout
+                            android:id="@+id/ll_show_timian"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginEnd="20dp"
+                            android:layout_marginBottom="20dp"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <com.example.yidiantong.View.ClickableImageView
+                                android:id="@+id/iv_timian_gallery"
+                                android:layout_width="50dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="50dp"
+                                android:adjustViewBounds="true"
+                                android:src="@drawable/t_homework_camera_gallery" />
+
+                            <com.example.yidiantong.View.ClickableImageView
+                                android:id="@+id/iv_timian_camera"
+                                android:layout_width="50dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="50dp"
+                                android:adjustViewBounds="true"
+                                android:src="@drawable/t_homework_camera_camera" />
+
+                            <com.example.yidiantong.View.ClickableImageView
+                                android:id="@+id/iv_timian_input"
+                                android:layout_width="50dp"
+                                android:layout_height="wrap_content"
+                                android:adjustViewBounds="true"
+                                android:src="@drawable/t_homework_camera_input" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </ScrollView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_hide"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <!-- 答案 -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:layout_alignParentStart="true"
+                        android:gravity="center"
+                        android:text="答案"
+                        android:textSize="20sp" />
+
+
+                </RelativeLayout>
+
+                <!-- 外框 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="20dp"
+                    android:paddingStart="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="5dp">
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="none">
+
+                        <RadioGroup
+                            android:id="@+id/rg_answer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <RadioButton
+                                android:id="@+id/rb_true"
+                                style="@style/CustomRadioStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginEnd="20dp"
+                                android:text="对" />
+
+                            <RadioButton
+                                android:id="@+id/rb_false"
+                                style="@style/CustomRadioStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:text="错" />
+                        </RadioGroup>
+                    </HorizontalScrollView>
+                </LinearLayout>
+
+                <!-- 解析 -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:gravity="center"
+                        android:text="解析"
+                        android:textSize="20sp" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_hide_analysis"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:orientation="horizontal">
+
+                        <com.example.yidiantong.View.ClickableImageView
+                            android:id="@+id/iv_analysis_gallery2"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:layout_marginEnd="30dp"
+                            android:adjustViewBounds="true"
+                            android:src="@drawable/t_homework_camera_gallery_icon" />
+
+                        <com.example.yidiantong.View.ClickableImageView
+                            android:id="@+id/iv_analysis_camera2"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:layout_marginEnd="30dp"
+                            android:src="@drawable/t_homework_camera_camera_icon" />
+
+                        <com.example.yidiantong.View.ClickableImageView
+                            android:id="@+id/iv_analysis_input2"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:src="@drawable/t_homework_camera_input_icon" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <!-- 外框 -->
+                <LinearLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="155dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/background_gray_border"
+                    android:gravity="center">
+
+                    <ScrollView
+                        android:id="@+id/sv_analysis"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:focusable="true"
+                        android:scrollbars="none">
+
+                        <LinearLayout
+                            android:id="@+id/ll_analysis"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="20dp"
+                            tools:ignore="WebViewLayout">
+
+                            <WebView
+                                android:id="@+id/wv_analysis"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:scrollbars="none" />
+
+                            <EditText
+                                android:id="@+id/et_analysis"
+                                android:layout_width="250dp"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/background_gray_border"
+                                android:imeOptions="actionDone"
+                                android:padding="10dp"
+                                android:singleLine="true"
+                                android:textSize="15sp" />
+
+                            <!-- 按钮组件 -->
+                            <LinearLayout
+                                android:id="@+id/ll_show_analysis"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginTop="20dp"
+                                android:layout_marginEnd="20dp"
+                                android:layout_marginBottom="20dp"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <com.example.yidiantong.View.ClickableImageView
+                                    android:id="@+id/iv_analysis_gallery"
+                                    android:layout_width="50dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="50dp"
+                                    android:adjustViewBounds="true"
+                                    android:src="@drawable/t_homework_camera_gallery" />
+
+                                <com.example.yidiantong.View.ClickableImageView
+                                    android:id="@+id/iv_analysis_camera"
+                                    android:layout_width="50dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="50dp"
+                                    android:adjustViewBounds="true"
+                                    android:src="@drawable/t_homework_camera_camera" />
+
+                                <com.example.yidiantong.View.ClickableImageView
+                                    android:id="@+id/iv_analysis_input"
+                                    android:layout_width="50dp"
+                                    android:layout_height="wrap_content"
+                                    android:adjustViewBounds="true"
+                                    android:src="@drawable/t_homework_camera_input" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </ScrollView>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_show"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <com.example.yidiantong.View.ClickableTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:text="查看答案和解析"
+                    android:textColor="@color/main_bg" />
+
+                <com.example.yidiantong.View.ClickableImageView
+                    android:layout_width="40dp"
+                    android:layout_height="20dp"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/down_icon" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

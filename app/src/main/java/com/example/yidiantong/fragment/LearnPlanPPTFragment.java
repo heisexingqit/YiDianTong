@@ -24,6 +24,7 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.LearnPlanItemEntity;
 import com.example.yidiantong.bean.StuAnswerEntity;
+import com.example.yidiantong.util.LearnPlanInterface;
 import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.HomeworkInterface;
 import com.github.chrisbanes.photoview.PhotoView;
@@ -34,7 +35,7 @@ import java.util.List;
 public class LearnPlanPPTFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "LearnPlanPPTFragment";
     private PagingInterface paging;
-    private HomeworkInterface transmit;
+    private LearnPlanInterface transmit;
 
     // 接口需要
     private LearnPlanItemEntity learnPlanEntity;
@@ -46,6 +47,9 @@ public class LearnPlanPPTFragment extends Fragment implements View.OnClickListen
     private int nowPos = 0;
     private ClickableImageView lastImageView;
     private List<String> picUrlList;
+
+    // 观看时间
+    private long timeStart;
 
     public static LearnPlanPPTFragment newInstance(LearnPlanItemEntity learnPlanEntity, StuAnswerEntity stuAnswerEntity) {
         LearnPlanPPTFragment fragment = new LearnPlanPPTFragment();
@@ -60,7 +64,7 @@ public class LearnPlanPPTFragment extends Fragment implements View.OnClickListen
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         paging = (PagingInterface) context;
-        transmit = (HomeworkInterface) context;
+        transmit = (LearnPlanInterface) context;
     }
 
     @Override
@@ -150,4 +154,15 @@ public class LearnPlanPPTFragment extends Fragment implements View.OnClickListen
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        timeStart = System.currentTimeMillis();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        transmit.uploadTime(System.currentTimeMillis() - timeStart);
+    }
 }

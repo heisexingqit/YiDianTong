@@ -20,6 +20,7 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.LearnPlanItemEntity;
 import com.example.yidiantong.bean.StuAnswerEntity;
+import com.example.yidiantong.util.LearnPlanInterface;
 import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.HomeworkInterface;
@@ -28,7 +29,7 @@ public class LearnPlanMultipleFragment extends Fragment implements View.OnClickL
     private static final String TAG = "HomeworkMultipleFragmen";
 
     private PagingInterface pageing;
-    private HomeworkInterface transmit;
+    private LearnPlanInterface transmit;
 
     int[] unselectIcons = {R.drawable.a_unselect2, R.drawable.b_unselect2, R.drawable.c_unselect2, R.drawable.d_unselect2};
     int[] selectIcons = {R.drawable.a_select2, R.drawable.b_select2, R.drawable.c_select2, R.drawable.d_select2};
@@ -58,7 +59,7 @@ public class LearnPlanMultipleFragment extends Fragment implements View.OnClickL
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         pageing = (PagingInterface) context;
-        transmit = (HomeworkInterface) context;
+        transmit = (LearnPlanInterface) context;
     }
 
     @Override

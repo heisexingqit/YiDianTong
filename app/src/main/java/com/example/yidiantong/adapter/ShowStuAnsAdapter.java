@@ -38,11 +38,6 @@ public class ShowStuAnsAdapter extends BaseAdapter {
             "            font-size: 14.8px;" +
             "        }\n" +
             "    </style>\n" +
-            "    <script>\n" +
-            "        function a(x) {\n" +
-            "            test.mytoast(\"我尼玛\")\n" +
-            "        }\n" +
-            "    </script>\n" +
             "</head>\n" +
             "\n" +
             "<body>\n";
@@ -68,17 +63,17 @@ public class ShowStuAnsAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         View v;
-        if (!"简答题".equals(questionTypes[i])) {
-            v = LayoutInflater.from(context).inflate(R.layout.item_show_text, null);
-            TextView tv = v.findViewById(R.id.tv_content);
-            tv.setText("(" + (i + 1) + ") " + ansArray[i]);
+        String showAns = "";
+        v = LayoutInflater.from(context).inflate(R.layout.item_show_web, null);
+        ClickableWebView wv = v.findViewById(R.id.wv_content);
+        wv.setFocusable(false);
+        wv.setClickable(false);
+        if (ansArray[i].length() == 0) {
+            showAns = "<span style=\"color: red\">未答</span>";
         } else {
-            v = LayoutInflater.from(context).inflate(R.layout.item_show_web, null);
-            ClickableWebView wv = v.findViewById(R.id.wv_content);
-            wv.setFocusable(false);
-            wv.setClickable(false);
-            wv.loadData("(" + (i + 1) + ") " + html_answer_head + ansArray[i] + html_answer_tail, "text/html", "utf-8");
+            showAns = ansArray[i];
         }
+        wv.loadData(" (" + (i + 1) + ") " + html_answer_head + showAns + html_answer_tail, "text/html", "utf-8");
         return v;
     }
 }

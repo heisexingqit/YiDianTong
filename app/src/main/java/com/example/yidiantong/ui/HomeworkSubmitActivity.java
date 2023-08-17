@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -99,7 +100,6 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
         tv_submitting.setText("作业提交中...");
         rl_loading = findViewById(R.id.rl_loading);
         rl_loading.setVisibility(View.GONE);
-
     }
 
     @Override
@@ -113,7 +113,6 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
         }
     }
 
-    private int submitSum = 0;
     private String submitZero = "";
     private Boolean isF = true;
 
@@ -127,16 +126,14 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
                 int f = (int) message.obj;
                 if (f == 0) {
                     Toast.makeText(HomeworkSubmitActivity.this, "提交失败！", Toast.LENGTH_SHORT).show();
-                } else {
-                    submitSum++;
                 }
-                if (submitSum == stuAnswer.length + 1) {
-                    Intent intent = new Intent();
-                    intent.putExtra("currentItem", -1);
-                    setResult(Activity.RESULT_OK, intent);
-                    rl_submitting.setVisibility(View.GONE);
-                    finish();
-                }
+
+                Intent intent = new Intent();
+                intent.putExtra("currentItem", -1);
+                setResult(Activity.RESULT_OK, intent);
+                rl_submitting.setVisibility(View.GONE);
+                finish();
+
             }
         }
     };
@@ -152,7 +149,6 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
         StringRequest request;
         for (int i = 0; i < stuAnswer.length; ++i) {
             if (stuAnswer[i].length() == 0) {
-                submitSum++;
                 if (isF) {
                     isF = false;
                 } else {
@@ -161,29 +157,7 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
                 submitZero += questionIds[i];
                 continue;
             }
-            mRequestUrl = Constant.API + Constant.SUBMIT_ANSWER + "?learnPlanId=" + learnPlanId +
-                    "&stuId=" + username + "&questionId=" + questionIds[i] + "&answer=" + StringEscapeUtils.escapeHtml4(stuAnswer[i]) + "&answerTime=" + date;
-            request = new StringRequest(mRequestUrl, response -> {
-                try {
-                    JSONObject json = JsonUtils.getJsonObjectFromString(response);
-                    //结果信息
-                    Boolean isSuccess = json.getBoolean("success");
-                    Message msg = Message.obtain();
-                    if (isSuccess) {
-                        msg.obj = 1;
-                    } else {
-                        msg.obj = 0;
-                    }
-                    msg.what = 100;
-                    handler.sendMessage(msg);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }, error -> {
-                Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
-            });
 
-            MyApplication.addRequest(request, TAG);
         }
         if (submitZero.length() == 0) {
             submitZero = "-1";
@@ -208,7 +182,8 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());
         });
 
         MyApplication.addRequest(request, TAG);

@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
@@ -461,6 +462,7 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
             }
 
         }, error -> {
+            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
             rl_loading.setVisibility(View.GONE);
             adapter.fail();

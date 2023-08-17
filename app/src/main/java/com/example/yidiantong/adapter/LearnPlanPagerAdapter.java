@@ -25,7 +25,7 @@ import java.util.List;
 public class LearnPlanPagerAdapter extends FragmentPagerAdapter {
     private static final String TAG = "LearnPlanPagerAdapter";
 
-    private List<LearnPlanItemEntity> itemList = new ArrayList<>();//题面列表
+    public List<LearnPlanItemEntity> itemList = new ArrayList<>();//题面列表
     private List<StuAnswerEntity> itemList2 = new ArrayList<>();//答题情况列表
 
     //传递信息

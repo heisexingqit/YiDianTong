@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.TextClock;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
@@ -166,8 +167,8 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
             }
 
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
-
         });
         MyApplication.addRequest(request, TAG);
     }

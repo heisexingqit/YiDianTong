@@ -5,6 +5,8 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 
+import java.util.Arrays;
+
 public class StringUtils {
 
     // 字符串局部变色，包含start不包含end
@@ -22,5 +24,12 @@ public class StringUtils {
             }
         }
         return false;
+    }
+
+    // 字符串排序（多选题答案）
+    public static String sortString(String input) {
+        char[] charArray = input.toCharArray();
+        Arrays.sort(charArray);
+        return new String(charArray);
     }
 }

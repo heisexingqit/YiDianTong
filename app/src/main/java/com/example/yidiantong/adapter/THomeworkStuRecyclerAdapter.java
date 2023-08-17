@@ -39,10 +39,13 @@ public class THomeworkStuRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
     // 没有数据
     public boolean isDown = false;
 
+    public boolean isChange;
+
     public THomeworkStuRecyclerAdapter(Context context, List<THomeworkStudentItemEntity> itemList) {
         mContext = context;
         this.layoutInflater = LayoutInflater.from(context);
         this.itemList = itemList;
+
     }
 
     public void setmItemClickListener(THomeworkStuRecyclerAdapter.MyItemClickListener listener) {

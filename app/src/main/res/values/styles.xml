@@ -41,8 +41,12 @@
     </style>
 
     <style name="CustomRadioStyle" parent="Widget.AppCompat.CompoundButton.RadioButton">
-        <item name="colorControlNormal">#939fb6</item>
+        <item name="colorControlNormal">@color/default_gray</item>
         <item name="colorControlActivated">#FF6CC1E0</item>
+    </style>
+
+    <style name="CustomRadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:button">@drawable/radio_button_selector</item>
     </style>
 
     <style name="AppTheme" parent="android:Theme.Light.NoTitleBar"/>

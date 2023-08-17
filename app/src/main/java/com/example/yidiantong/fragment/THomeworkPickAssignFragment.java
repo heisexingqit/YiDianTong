@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -447,6 +448,7 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -547,6 +549,7 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);

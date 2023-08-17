@@ -18,6 +18,7 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
@@ -249,6 +250,7 @@ public class TMainReportFragment extends Fragment {
             }
 
         }, error -> {
+            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
 //            rl_loading.setVisibility(View.GONE);
         });

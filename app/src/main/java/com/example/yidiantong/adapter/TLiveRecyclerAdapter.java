@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.yidiantong.R;
+import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.View.ClickableTextView;
 import com.example.yidiantong.bean.LiveItemEntity;
 import com.example.yidiantong.bean.TLiveItemEntity;
@@ -143,6 +144,11 @@ public class TLiveRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         private final ImageView iv_status;
 
+        // 编辑
+        private final ClickableImageView iv_edit;
+        private final ClickableImageView iv_delete;
+
+
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             // 获取组件
@@ -156,6 +162,8 @@ public class TLiveRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
             tv_date = itemView.findViewById(R.id.tv_date);
             tv_time = itemView.findViewById(R.id.tv_time);
             iv_status = itemView.findViewById(R.id.iv_status);
+            iv_edit = itemView.findViewById(R.id.iv_edit);
+            iv_delete = itemView.findViewById(R.id.iv_delete);
 
         }
 
@@ -196,11 +204,27 @@ public class TLiveRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
                 tv_time.setText(timeStr);
                 iv_status.setImageResource(R.drawable.t_live_status3);
                 tv_date.setText(item.getShowStrBottom());
-            }else{
+                iv_edit.setVisibility(View.GONE);
+                iv_delete.setVisibility(View.GONE);
+            }else if(item.getStatus().equals("1")){
                 ll_live_off.setVisibility(View.GONE);
                 ll_live_on.setVisibility(View.VISIBLE);
                 tv_time_already.setText(item.getShowStrBottom());
+                iv_status.setImageResource(R.drawable.t_live_status1);
+                iv_edit.setVisibility(View.GONE);
+                iv_delete.setVisibility(View.GONE);
+            }else if(item.getStatus().equals("2")){
+                ll_live_off.setVisibility(View.VISIBLE);
+                ll_live_on.setVisibility(View.GONE);
+                String timeStr = item.getShowStrTop();
+                tv_time.setText(timeStr);
+                tv_time.setTextColor(mContext.getResources().getColor(R.color.live_green));
                 iv_status.setImageResource(R.drawable.t_live_status2);
+                tv_date.setText(item.getShowStrBottom());
+                iv_edit.setVisibility(View.VISIBLE);
+                iv_delete.setVisibility(View.VISIBLE);
+                iv_edit.setOnClickListener(v->mItemClickListener.editLiveItem(pos));
+                iv_delete.setOnClickListener(v->mItemClickListener.deleteLiveItem(pos));
             }
 
             tv_enter.setOnClickListener(new View.OnClickListener() {
@@ -250,5 +274,7 @@ public class TLiveRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public interface MyItemClickListener {
         void onItemClick(int pos);
+        void editLiveItem(int pos);
+        void deleteLiveItem(int pos);
     }
 }

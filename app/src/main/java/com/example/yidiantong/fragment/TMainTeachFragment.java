@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
@@ -45,6 +46,7 @@ import com.example.yidiantong.ui.TPackageAddActivity;
 import com.example.yidiantong.ui.TTeachAssginActivity;
 import com.example.yidiantong.ui.TTeachEditActivity;
 import com.example.yidiantong.ui.TTeachEditHomeworkActivity;
+import com.example.yidiantong.ui.TTeachEditHomeworkCameraActivity;
 import com.example.yidiantong.ui.TTeachEditPackageActivity;
 import com.example.yidiantong.ui.TWeikeAddActivity;
 import com.example.yidiantong.util.Constant;
@@ -254,7 +256,11 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
                 Intent intent = null;
 
                 if (item.getIconUrl().contains("paper")) {
-                    intent = new Intent(getActivity(), TTeachEditHomeworkActivity.class);
+                    if (item.getPaperType().equals("6")) {
+                        intent = new Intent(getActivity(), TTeachEditHomeworkCameraActivity.class);
+                    }else{
+                        intent = new Intent(getActivity(), TTeachEditHomeworkActivity.class);
+                    }
                 } else if (item.getIconUrl().contains("learnPlan")) {
                     intent = new Intent(getActivity(), TTeachEditActivity.class);
                     intent.putExtra("type", "1");
@@ -331,6 +337,7 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
                             }
 
                         }, error -> {
+                            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
                             Log.d("wen", "Volley_Error: " + error.toString());
                         });
 
@@ -414,6 +421,7 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
                                 }
 
                             }, error -> {
+                                Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
                                 Log.d("wen", "Volley_Error: " + error.toString());
                             });
                             MyApplication.addRequest(request, TAG);
@@ -446,6 +454,7 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
                     }
 
                 }, error -> {
+                    Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
                     Log.d("wen", "Volley_Error: " + error.toString());
                 });
                 MyApplication.addRequest(request, TAG);
@@ -540,9 +549,9 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
                     refreshList();
                 }
                 break;
-                /**
-                 * 顶部右侧菜单
-                 */
+            /**
+             * 顶部右侧菜单
+             */
             case R.id.tv_add_package:
                 startActivity(new Intent(getActivity(), TPackageAddActivity.class));
                 addMenuWindow.dismiss();
@@ -646,6 +655,7 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
             }
 
         }, error -> {
+            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
             rl_loading.setVisibility(View.GONE);
             adapter.fail();

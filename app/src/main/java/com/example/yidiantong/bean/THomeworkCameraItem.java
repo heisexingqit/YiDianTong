@@ -1,6 +1,8 @@
 package com.example.yidiantong.bean;
 
-public class THomeworkCameraItem {
+import java.io.Serializable;
+
+public class THomeworkCameraItem implements Serializable {
     private String questionId;
     private String shitiShow;
     private String shitiAnswer;

@@ -75,8 +75,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
-                    android:gravity="end|center_vertical"
-                    android:paddingEnd="15dp">
+                    android:gravity="end|center_vertical">
 
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/iv_top"
@@ -88,10 +87,13 @@
                         android:focusable="true"
                         android:src="@drawable/up_icon" />
 
-                    <TextView
+                    <com.example.yidiantong.View.ClickableTextView
                         android:id="@+id/tv_erase"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:paddingStart="5dp"
+                        android:gravity="center"
+                        android:paddingEnd="20dp"
+                        android:layout_height="match_parent"
                         android:text="@string/delete"
                         android:textColor="#b8885f" />
                 </LinearLayout>
@@ -101,11 +103,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1">
+
                     <WebView
                         android:id="@+id/wv_answer"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:scrollbars="none"/>
+                        android:scrollbars="none" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -124,8 +127,8 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="42dp"
-                    android:layout_marginStart="20dp"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginStart="20dp"
                     android:layout_weight="1"
                     android:background="@drawable/shape_translation_et_bg">
 
@@ -157,11 +160,12 @@
 
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/civ_camera"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:padding="10dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:adjustViewBounds="true"
                     android:layout_marginStart="20dp"
+                    android:adjustViewBounds="true"
                     android:clickable="true"
                     android:focusable="true"
                     android:scaleType="fitCenter"
@@ -169,12 +173,13 @@
 
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/civ_gallery"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:padding="10dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:adjustViewBounds="true"
                     android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
+                    android:layout_marginEnd="10dp"
+                    android:adjustViewBounds="true"
                     android:clickable="true"
                     android:focusable="true"
                     android:scaleType="fitCenter"
@@ -184,6 +189,7 @@
         </LinearLayout>
 
     </LinearLayout>
+
     <!--翻页按钮-->
     <include layout="@layout/pageing_homework" />
 </RelativeLayout>

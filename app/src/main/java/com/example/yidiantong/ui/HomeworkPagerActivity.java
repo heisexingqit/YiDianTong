@@ -47,11 +47,16 @@ import com.example.yidiantong.util.HomeworkInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class HomeworkPagerActivity extends AppCompatActivity implements PagingInterface, View.OnClickListener, HomeworkInterface {
@@ -70,7 +75,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
     private String[] questionIds;
     private boolean isNew;
     private String username;
-    String[] stuAnswer;
+    private String[] stuAnswer;
     private String title;
 
     // 顶部组件
@@ -85,6 +90,9 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
     // 加载+遮蔽
     private RelativeLayout rl_submitting;
     private RelativeLayout rl_loading;
+
+    // 老答案
+    private String[] oldStuAnswer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +122,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
             public void onPageSelected(int position) {
                 //翻页同步下标
                 currentItem = position;
-                Log.e("currentItem",":"+currentItem);
+                Log.e("currentItem", ":" + currentItem);
             }
 
             @Override
@@ -126,6 +134,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
 
         // 顶栏返回按钮
         findViewById(R.id.iv_back).setOnClickListener(v -> {
+            uploadQuestion();
             this.finish();
         });
 
@@ -164,8 +173,8 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                     } else {
                         currentItem = index;
                         vp_homework.setCurrentItem(currentItem);
-                    }
 
+                    }
                 }
             }
         });
@@ -184,6 +193,8 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
         if (currentItem == 0) {
             Toast.makeText(this, "已经是第一题", Toast.LENGTH_SHORT).show();
         } else {
+            // 上传答案
+            uploadQuestion();
             currentItem -= 1;
             vp_homework.setCurrentItem(currentItem);
         }
@@ -215,6 +226,8 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
             //对话框弹出
             builder.show();
         } else {
+            // 上传答案
+            uploadQuestion();
             currentItem += 1;
             vp_homework.setCurrentItem(currentItem);
         }
@@ -222,6 +235,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
 
     //跳转至提交作业页面
     private void jumpToSubmitPage() {
+        uploadQuestion();
         Intent intent = new Intent(HomeworkPagerActivity.this, HomeworkSubmitActivity.class);
         intent.putExtra("title", title);
         intent.putExtra("stuAnswer", stuAnswer);
@@ -268,16 +282,23 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                  */
                 List<StuAnswerEntity> list2 = (List<StuAnswerEntity>) message.obj;
                 stuAnswer = new String[list2.size()];
+                oldStuAnswer = new String[list2.size()];
 
                 for (int i = 0; i < list2.size(); ++i) {
                     // 学生作答内容
                     stuAnswer[i] = list2.get(i).getStuAnswer();
+                    oldStuAnswer[i] = list2.get(i).getStuAnswer();
                 }
 
                 adapter.updateA(list2);
                 if (adapter.countReady >= 2) {
                     rl_loading.setVisibility(View.GONE);
                 }
+            } else if (message.what == 102) {
+                /**
+                 * 作答信息保存
+                 */
+
             }
         }
     };
@@ -306,7 +327,8 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
             }
 
         }, error -> {
-            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
 
@@ -337,7 +359,8 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
             }
 
         }, error -> {
-            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
     }
@@ -414,4 +437,49 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
     public void offLoading() {
         rl_submitting.setVisibility(View.GONE);
     }
+
+
+    // 上传试题
+    private void uploadQuestion() {
+        int pos = vp_homework.getCurrentItem();
+        if (stuAnswer[pos].equals(oldStuAnswer[pos])) {
+            return;
+        }
+        Log.d("wen", "uploadQuestion: " + stuAnswer[pos]);
+
+        java.util.Date day = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String date = sdf.format(day);
+
+        String mRequestUrl = null;
+        try {
+            mRequestUrl = Constant.API + Constant.SUBMIT_ANSWER + "?learnPlanId=" + learnPlanId +
+                    "&stuId=" + username + "&questionId=" + questionIds[pos] + "&answer=" + URLEncoder.encode(stuAnswer[pos], "UTF-8") + "&answerTime=" + date;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());
+        });
+
+        MyApplication.addRequest(request, TAG);
+
+        // 同步更新
+        oldStuAnswer[pos] = stuAnswer[pos];
+    }
+
+    @Override
+    public void onBackPressed() {
+        uploadQuestion();
+        super.onBackPressed();
+    }
+
 }

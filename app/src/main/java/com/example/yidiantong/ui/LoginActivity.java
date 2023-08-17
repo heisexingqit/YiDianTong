@@ -252,7 +252,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     Intent intent = null;
                     JSONObject obj = json.getJSONObject("data");
 
-
                     // 将未知key转为list
                     List<String> keysList = new ArrayList<>();
                     Iterator<String> keys = obj.keys();
@@ -305,7 +304,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }, error -> {
             // 及时解除loading效果
             ll_loading.setVisibility(View.GONE);
-            Toast.makeText(this, "登录失败", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
     }

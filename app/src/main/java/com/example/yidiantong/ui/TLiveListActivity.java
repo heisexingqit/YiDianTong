@@ -1,6 +1,8 @@
 package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,13 +12,18 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -40,6 +47,9 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +74,10 @@ public class TLiveListActivity extends AppCompatActivity implements View.OnClick
     private RelativeLayout rl_loading;
     private TextView tv_selector;
     private LiveEnterDialog dialog;
+
+    private Handler timeHandler;
+    private Runnable refreshRunnable;
+    private long refreshIntervalMillis = 30000; // 30秒
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +126,18 @@ public class TLiveListActivity extends AppCompatActivity implements View.OnClick
                 // 设置Title
                 dialog.setTitle(adapter.itemList.get(pos).getTitle());
                 dialog.getWindow().setGravity(Gravity.CENTER);
+                // 尺寸设置
+                Window window = dialog.getWindow();
+                // 获取屏幕宽度
+                int screenWidth = getResources().getDisplayMetrics().widthPixels;
+
+                // 计算宽度和边距
+                int dialogWidth = (int) (screenWidth * 0.8); // 80% 的屏幕宽度
+
+                // 设置对话框的宽度和边距
+                ViewGroup.LayoutParams layoutParams = window.getAttributes();
+                layoutParams.width = dialogWidth;
+                window.setAttributes((WindowManager.LayoutParams) layoutParams);
                 // 监听选项进行设置
                 dialog.setMyInterface(new LiveEnterDialog.MyInterface() {
                     @Override
@@ -134,6 +160,43 @@ public class TLiveListActivity extends AppCompatActivity implements View.OnClick
                 });
 
                 dialog.show();
+            }
+
+            @Override
+            public void editLiveItem(int pos) {
+                Intent editIntent = new Intent(TLiveListActivity.this, TLiveEditActivity.class);
+                editIntent.putExtra("liveItem", adapter.itemList.get(pos));
+                startActivity(editIntent);
+            }
+
+            @Override
+            public void deleteLiveItem(int pos) {
+                String mRequestUrl = Constant.API_LIVE + Constant.T_LIVE_DELETE + "?roomId=" + adapter.itemList.get(pos).getRoomId();
+                Log.d("wen", "deleteLiveItem: " + mRequestUrl);
+                StringRequest request = new StringRequest(mRequestUrl, response -> {
+                    try {
+                        JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                        AlertDialog.Builder builder= new AlertDialog.Builder(TLiveListActivity.this);
+                        builder.setMessage("删除成功");
+                        builder.setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                refreshList();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+                        dialog.show();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }, error -> {
+                    Toast.makeText(TLiveListActivity.this, "网络连接失败", Toast.LENGTH_SHORT).show();
+                    Log.d("wen", "Volley_Error: " + error.toString());
+                });
+
+                MyApplication.addRequest(request, TAG);
             }
         });
 
@@ -171,6 +234,16 @@ public class TLiveListActivity extends AppCompatActivity implements View.OnClick
             }
         });
 
+        // 定时刷新
+        timeHandler = new Handler(Looper.getMainLooper());
+        refreshRunnable = new Runnable() {
+            @Override
+            public void run() {
+                refreshList();
+                // 重复调度下一次刷新
+                timeHandler.postDelayed(this, refreshIntervalMillis);
+            }
+        };
     }
 
     //刷新列表
@@ -266,7 +339,7 @@ public class TLiveListActivity extends AppCompatActivity implements View.OnClick
         }
 
         mRequestUrl = Constant.API + Constant.T_LIVE_ITEM +
-                "?currentPage=" + currentPage + "&userId=" + MyApplication.username + "&type=" + type + "&searchStr=" + searchStr + "&userCn=" + MyApplication.cnName + "&userPhoto=" + MyApplication.picUrl + "&currentRole=1";
+                "?currentPage=" + currentPage + "&userId=" + MyApplication.username + "&type=" + type + "&searchStr=" + searchStr + "&userCn=" + MyApplication.cnName + "&currentRole=1&userPhoto=" + MyApplication.picUrl;
 
         Log.d("wen", "教师直播课列表" + mRequestUrl);
 
@@ -304,10 +377,24 @@ public class TLiveListActivity extends AppCompatActivity implements View.OnClick
             }
 
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
             rl_loading.setVisibility(View.GONE);
             adapter.fail();
         });
         MyApplication.addRequest(request, TAG);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        handler.postDelayed(refreshRunnable, refreshIntervalMillis);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // 在Activity不可见时停止定时刷新
+        timeHandler.removeCallbacks(refreshRunnable);
     }
 }

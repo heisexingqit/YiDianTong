@@ -11,104 +11,146 @@
         android:background="@color/white_transparent"
         android:paddingBottom="150dp">
 
-        <LinearLayout
-            android:id="@+id/ll_content"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="170dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:background="@color/white"
-            android:orientation="vertical"
-            android:padding="20dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:gravity="center"
-                android:text="请选择题型"
-                android:textSize="20sp" />
-
-            <com.google.android.flexbox.FlexboxLayout
-                android:id="@+id/fl_type"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:flexWrap="wrap">
-
-            </com.google.android.flexbox.FlexboxLayout>
-
+            android:layout_marginTop="170dp">
             <LinearLayout
-                android:id="@+id/ll_score"
-                android:layout_marginTop="20dp"
+                android:id="@+id/ll_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="60dp"
-                android:layout_marginEnd="60dp"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@color/white"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:padding="20dp">
 
-                <LinearLayout
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:orientation="horizontal">
+                    android:gravity="center"
+                    android:text="请选择题型"
+                    android:textSize="20sp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="分值"
-                        android:textSize="16sp" />
+                <com.google.android.flexbox.FlexboxLayout
+                    android:id="@+id/fl_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:flexWrap="wrap">
 
-                    <EditText
-                        android:id="@+id/et_score"
-                        android:layout_width="0dp"
+                </com.google.android.flexbox.FlexboxLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_score"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="60dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="60dp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="40dp"
-                        android:layout_weight="1"
-                        android:background="@color/white"
-                        android:text="2"
-                        android:inputType="number"
-                        android:textColor="@color/default_gray"
-                        android:textSize="16sp" />
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_score"
+                            android:layout_width="160dp"
+                            android:layout_height="wrap_content"
+                            android:text="每道子题面预设分值"
+                            android:textSize="16sp" />
+
+                        <EditText
+                            android:id="@+id/et_score"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@color/white"
+                            android:inputType="number"
+                            android:text="2"
+                            android:textColor="@color/default_gray"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/gray_text" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_hide"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="160dp"
+                            android:layout_height="wrap_content"
+                            android:text="子题数量"
+                            android:textSize="16sp" />
+
+                        <EditText
+                            android:id="@+id/et_num"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@color/white"
+                            android:inputType="number"
+                            android:text="5"
+                            android:textColor="@color/default_gray"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_divide_hide"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/gray_text"
+                        android:orientation="horizontal" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/gray_text" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:gravity="center">
-
-                <com.example.yidiantong.View.ClickableTextView
-                    android:id="@+id/tv_cancel"
-                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="40dp"
-                    android:padding="10dp"
-                    android:text="取消"
-                    android:textColor="@color/main_bg" />
+                    android:layout_marginTop="10dp"
+                    android:gravity="center">
 
-                <com.example.yidiantong.View.ClickableTextView
-                    android:id="@+id/tv_confirm"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="40dp"
-                    android:padding="10dp"
-                    android:text="确定"
-                    android:textColor="@color/main_bg" />
+                    <com.example.yidiantong.View.ClickableTextView
+                        android:id="@+id/tv_cancel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="40dp"
+                        android:padding="10dp"
+                        android:text="取消"
+                        android:textColor="@color/main_bg" />
+
+                    <com.example.yidiantong.View.ClickableTextView
+                        android:id="@+id/tv_confirm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="40dp"
+                        android:padding="10dp"
+                        android:text="确定"
+                        android:textColor="@color/main_bg" />
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
+        </ScrollView>
+
     </LinearLayout>
-
 </LinearLayout>

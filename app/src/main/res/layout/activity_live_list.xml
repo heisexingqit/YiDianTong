@@ -9,7 +9,7 @@
 
     <include layout="@layout/bar_top_homework_title2" />
 
-<!--    <include layout="@layout/loading_page"/>-->
+    <include layout="@layout/loading_page"/>
 
     <!-- 查询顶栏 -->
     <LinearLayout

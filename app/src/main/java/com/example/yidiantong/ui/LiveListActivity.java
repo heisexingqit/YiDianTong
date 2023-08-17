@@ -10,6 +10,9 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -69,6 +72,10 @@ public class LiveListActivity extends AppCompatActivity implements View.OnClickL
     private TextView tv_selector;
     private LiveEnterDialog dialog;
 
+    private Handler timeHandler;
+    private Runnable refreshRunnable;
+    private long refreshIntervalMillis = 30000; // 30秒
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,6 +124,17 @@ public class LiveListActivity extends AppCompatActivity implements View.OnClickL
                 // 设置Title
                 dialog.setTitle(adapter.itemList.get(pos).getTitle());
                 dialog.getWindow().setGravity(Gravity.CENTER);
+                // 尺寸设置
+                Window window = dialog.getWindow();
+                // 获取屏幕宽度
+                int screenWidth = getResources().getDisplayMetrics().widthPixels;
+
+                // 计算宽度和边距
+                int dialogWidth = (int) (screenWidth * 0.8); // 80% 的屏幕宽度
+                // 设置对话框的宽度和边距
+                ViewGroup.LayoutParams layoutParams = window.getAttributes();
+                layoutParams.width = dialogWidth;
+                window.setAttributes((WindowManager.LayoutParams) layoutParams);
                 // 监听选项进行设置
                 dialog.setMyInterface(new LiveEnterDialog.MyInterface() {
                     @Override
@@ -137,8 +155,6 @@ public class LiveListActivity extends AppCompatActivity implements View.OnClickL
 //                        startActivity(intent);
                     }
                 });
-
-                dialog.show();
             }
         });
 
@@ -175,6 +191,18 @@ public class LiveListActivity extends AppCompatActivity implements View.OnClickL
                 lastVisibleItem = lm.findLastVisibleItemPosition();
             }
         });
+
+        // 定时刷新
+        timeHandler = new Handler(Looper.getMainLooper());
+        refreshRunnable = new Runnable() {
+            @Override
+            public void run() {
+                refreshList();
+                Log.d("wen", "run: xxxxxxxxxxxxxxxxxx");
+                // 重复调度下一次刷新
+                timeHandler.postDelayed(this, refreshIntervalMillis);
+            }
+        };
     }
 
     //刷新列表
@@ -306,6 +334,7 @@ public class LiveListActivity extends AppCompatActivity implements View.OnClickL
             }
 
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
             rl_loading.setVisibility(View.GONE);
             adapter.fail();
@@ -313,4 +342,16 @@ public class LiveListActivity extends AppCompatActivity implements View.OnClickL
         MyApplication.addRequest(request, TAG);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        handler.postDelayed(refreshRunnable, refreshIntervalMillis);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // 在Activity不可见时停止定时刷新
+        timeHandler.removeCallbacks(refreshRunnable);
+    }
 }

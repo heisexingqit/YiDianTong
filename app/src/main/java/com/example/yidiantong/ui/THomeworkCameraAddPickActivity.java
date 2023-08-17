@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +29,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -38,6 +41,7 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.THomeworkCameraRecyclerAdapter;
 import com.example.yidiantong.bean.THomeworkCameraItem;
 import com.example.yidiantong.bean.THomeworkCameraType;
+import com.example.yidiantong.fragment.THomeworkCameraSingleFragment;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.ImageUtils;
 import com.example.yidiantong.util.JsonUtils;
@@ -61,12 +65,14 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class THomeworkCameraAddPickActivity extends AppCompatActivity implements View.OnClickListener {
-    private static final String TAG = "THomeworkCameraAddPickA";
+    private static final String TAG = "THomeworkCameraAddPickActivity";
 
     private ActivityResultLauncher<Intent> mResultLauncher;
     private ActivityResultLauncher<Intent> mResultLauncher2;
@@ -121,9 +127,20 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
     private ImageView iv_empty;
     public CustomLinearLayoutManager layoutManager;
 
+    // 修改标记
+    private boolean changeFlag = false;
     // 标记上传图的显示位置
     private int picUploadPos;
     private String picUploadType;
+    private LinearLayout ll_hide;
+    private LinearLayout ll_divide_hide;
+    private EditText et_num;
+
+    private ScrollView sv_main;
+
+    // 类型修改
+    private boolean isTypeChange;
+    private int typeChangePos;
 
     // 滚动控制器
     public class CustomLinearLayoutManager extends LinearLayoutManager {
@@ -150,10 +167,11 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_thomework_camera_add_pick);
         findViewById(R.id.iv_back).setOnClickListener(v -> finish());
 
-
         findViewById(R.id.btn_save).setOnClickListener(this);
         findViewById(R.id.btn_assign).setOnClickListener(this);
         findViewById(R.id.iv_add_question).setOnClickListener(this);
+
+        sv_main = findViewById(R.id.sv_main);
 
         // 列表
         rv_main = findViewById(R.id.rv_main);
@@ -166,6 +184,8 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
 
         rv_main.setItemAnimator(new DefaultItemAnimator());
 
+        layoutManager.setScrollEnabled(false);
+
         //添加间隔线
         if (divider == null) {
             divider = new MyItemDecoration(this, DividerItemDecoration.VERTICAL, false);
@@ -174,7 +194,6 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
         rv_main.addItemDecoration(divider);
 
         adapter = new THomeworkCameraRecyclerAdapter(this, itemList);
-        adapter.setManager(layoutManager);
         rv_main.setAdapter(adapter);
 
         // 记住选择-本地数据读取
@@ -182,16 +201,16 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
 
         Intent intent = getIntent();
         Gson gson = new Gson();
-        Type type = new TypeToken<LinkedHashMap<String, String>>() {
+        Type mtype = new TypeToken<LinkedHashMap<String, String>>() {
         }.getType();
         String json = intent.getStringExtra("xueduanMap");
-        xueduanMap = gson.fromJson(json, type);
+        xueduanMap = gson.fromJson(json, mtype);
         json = intent.getStringExtra("xuekeMap");
-        xuekeMap = gson.fromJson(json, type);
+        xuekeMap = gson.fromJson(json, mtype);
         json = intent.getStringExtra("banbenMap");
-        banbenMap = gson.fromJson(json, type);
+        banbenMap = gson.fromJson(json, mtype);
         json = intent.getStringExtra("jiaocaiMap");
-        jiaocaiMap = gson.fromJson(json, type);
+        jiaocaiMap = gson.fromJson(json, mtype);
         zhishidianData = intent.getStringExtra("zhishidianData");
         zhishidianId = intent.getStringExtra("zhishidianId");
 
@@ -236,6 +255,24 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                 } else {
                     iv_empty.setVisibility(View.VISIBLE);
                 }
+            }
+
+            @Override
+            public void setChangeFlag(boolean isChange) {
+                changeFlag = isChange;
+            }
+
+            @Override
+            public ScrollView getParentScrollView() {
+                return sv_main;
+            }
+
+            @Override
+            public void changeType(int pos) {
+                type = itemList.get(pos).getTypeName();
+                isTypeChange = true;
+                typeChangePos = pos;
+                showTypeMenu();
             }
         });
 
@@ -303,37 +340,41 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                 Boolean isSuccess = json.getBoolean("success");
                 Toast.makeText(this, json.getString("message"), Toast.LENGTH_SHORT).show();
 
-                THomeworkCameraItem item = itemList.get(picUploadPos);
-                String addString = "<p><img src=\"" + url + "\"></p>";
-                switch (picUploadType) {
-                    case "Show":
-                        if (item.getShitiShow() != null) {
-                            item.setShitiShow(item.getShitiShow() + addString);
-                        }else{
-                            item.setShitiShow(addString);
-                        }
-                        break;
-                    case "Answer":
-                        if (item.getShitiAnswer() != null) {
-                            item.setShitiAnswer(item.getShitiAnswer() + addString);
-                        }else{
-                            item.setShitiAnswer(addString);
-                        }
-                        break;
-                    case "Analysis":
-                        if (item.getShitiAnalysis() != null) {
-                            item.setShitiAnalysis(item.getShitiAnalysis() + addString);
-                        }else{
-                            item.setShitiAnalysis(addString);
-                        }
-                        break;
+                if (isSuccess) {
+                    changeFlag = true;
+                    THomeworkCameraItem item = itemList.get(picUploadPos);
+                    String addString = "<p><img src=\"" + url + "\"></p>";
+                    switch (picUploadType) {
+                        case "Show":
+                            if (item.getShitiShow() != null) {
+                                item.setShitiShow(item.getShitiShow() + addString);
+                            } else {
+                                item.setShitiShow(addString);
+                            }
+                            break;
+                        case "Answer":
+                            if (item.getShitiAnswer() != null) {
+                                item.setShitiAnswer(item.getShitiAnswer() + addString);
+                            } else {
+                                item.setShitiAnswer(addString);
+                            }
+                            break;
+                        case "Analysis":
+                            if (item.getShitiAnalysis() != null) {
+                                item.setShitiAnalysis(item.getShitiAnalysis() + addString);
+                            } else {
+                                item.setShitiAnalysis(addString);
+                            }
+                            break;
+                    }
+                    adapter.notifyDataSetChanged();
                 }
-                adapter.notifyDataSetChanged();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
     }
@@ -359,6 +400,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -369,26 +411,148 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_add_question:
+                isTypeChange = false;
                 showTypeMenu();
                 break;
             case R.id.btn_save:
-                submit();
+                submit(false);
                 break;
             case R.id.btn_assign:
+                assign();
                 break;
+
+            // 类型Menu相关
 
         }
     }
 
-    private void submit() {
-        for (int i = 0; i < itemList.size(); ++i) {
-            THomeworkCameraItem item = itemList.get(i);
-            item.setOrder(String.valueOf(i + 1));
+    private void assign() {
+        if (changeFlag == false && !paperId.equals("-1")) {
+            Intent intent = new Intent(this, TTeachAssginActivity.class);
+            intent.putExtra("learnPlanId", paperId);
+            intent.putExtra("learnPlanName", name);
+            intent.putExtra("type", "paper");
+            intent.putExtra("typeCamera", "true");
+            startActivity(intent);
+        } else {
+            submit(true);
         }
+    }
+
+    private void submit(boolean isAssign) {
+        if (itemList.size() == 0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("请添加试题");
+            builder.setNegativeButton("关闭", null);
+            AlertDialog dialog = builder.create();
+            dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+            dialog.show();
+        }
+
         StringBuilder jsonStringBuilder = new StringBuilder();
         String jsonStr = "[";
         for (int i = 0; i < itemList.size(); ++i) {
             THomeworkCameraItem item = itemList.get(i);
+
+            // 非法判断
+            if (item.getShitiShow() == null || item.getShitiShow().length() == 0) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("请填写第" + (i + 1) + "题面");
+                builder.setNegativeButton("关闭", null);
+                AlertDialog dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+                dialog.show();
+                return;
+            } else if (item.getShitiAnswer() == null || item.getShitiAnswer().length() == 0) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("请填写第" + (i + 1) + "答案");
+                builder.setNegativeButton("关闭", null);
+                AlertDialog dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+                dialog.show();
+                return;
+            }
+
+            // 题型格式判断
+            boolean isLegal = true;
+            switch (item.getBaseTypeId()) {
+                case "101":
+                    if (item.getShitiAnswer().length() != 1) {
+                        isLegal = false;
+                    }
+                    char ans = item.getShitiAnswer().charAt(0);
+                    if (ans < 'A' || ans >= 'A' + Integer.parseInt(item.getAnswerNum())) {
+                        isLegal = false;
+                    }
+                    break;
+
+                case "102":
+                    Set<Character> charSet = new HashSet<>();
+                    for (char c : item.getShitiAnswer().toCharArray()) {
+                        if (!charSet.add(c)) {
+                            isLegal = false;
+                        }
+                    }
+                    for (int j = 0; j < item.getShitiAnswer().length() - 1; i++) {
+                        char currentChar = item.getShitiAnswer().charAt(i);
+                        char nextChar = item.getShitiAnswer().charAt(i + 1);
+
+                        // 检查当前字符和下一个字符是否按顺序排布
+                        if (currentChar > nextChar) {
+                            isLegal = false;
+                        }
+
+                        if (currentChar < 'A' || currentChar >= 'A' + Integer.parseInt(item.getAnswerNum())) {
+                            isLegal = false;
+                        }
+
+                        if (nextChar < 'A' || nextChar >= 'A' + Integer.parseInt(item.getAnswerNum())) {
+                            isLegal = false;
+                        }
+                    }
+                case "108":
+                    if (item.getTypeName().indexOf("阅读理解") != -1 || item.getTypeName().indexOf("完形填空") != -1) {
+                        String[] strings = item.getShitiAnswer().split(",");
+                        if (strings.length != Integer.parseInt(item.getSmallQueNum())) {
+                            isLegal = false;
+                        }
+                        for (int j = 0; j < strings.length; ++j) {
+                            String str = strings[j];
+                            if (str.length() != 1) {
+                                isLegal = false;
+                            }
+                            if (strings[j].charAt(0) < 'A' || strings[j].charAt(0) > 'D') {
+                                isLegal = false;
+                            }
+                        }
+                    } else if (item.getTypeName().indexOf("七选五") != -1) {
+                        String[] strings = item.getShitiAnswer().split(",");
+                        if (strings.length != 5) {
+                            isLegal = false;
+                        }
+                        for (int j = 0; j < strings.length; ++j) {
+                            String str = strings[j];
+                            if (str.length() != 1) {
+                                isLegal = false;
+                            }
+                            if (strings[j].charAt(0) < 'A' || strings[j].charAt(0) > 'G') {
+                                isLegal = false;
+                            }
+                        }
+                    }
+                    break;
+            }
+            if (!isLegal) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("第" + (i + 1) + "题答案不完整或不合法");
+                builder.setNegativeButton("关闭", null);
+                AlertDialog dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+                dialog.show();
+                return;
+            }
+
+
             item.setOrder(String.valueOf(i + 1));
             if (jsonStringBuilder.length() > 0) {
                 jsonStringBuilder.append(", ");
@@ -397,6 +561,9 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
         }
         jsonStr += jsonStringBuilder.toString();
         jsonStr += "]";
+
+        // 知识点参数实际是属性拼接
+        String zsdLongString = banben + "/" + jiaocai + "/" + zhishidian + "/";
         try {
             mRequestUrl = Constant.API + Constant.T_HOMEWORK_CAMERA_SAVE + "?userName=" + MyApplication.username + "&paperName=" + URLEncoder.encode(name, "UTF-8")
                     + "&paperId=" + paperId
@@ -404,7 +571,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                     + "&subjectCode=" + xuekeMap.get(xueke) + "&textBookCode=" + banbenMap.get(banben) + "&gradeLevelCode=" + jiaocaiMap.get(jiaocai)
                     + "&pointCode=" + zhishidianId + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") + "&subjectName=" + URLEncoder.encode(xueduan, "UTF-8")
                     + "&textBookName=" + URLEncoder.encode(banben, "UTF-8") + "&gradeLevelName=" + URLEncoder.encode(jiaocai, "UTF-8")
-                    + "&pointName=" + URLEncoder.encode(zhishidian, "UTF-8");
+                    + "&pointName=" + URLEncoder.encode(zsdLongString, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -413,18 +580,22 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
-                String data = json.getString("data");
                 Boolean isSuccess = json.getBoolean("success");
                 if (isSuccess) {
-                    Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
+                    paperId = json.getString("data");
+                    changeFlag = false;
+                    if (isAssign) {
+                        assign();
+                    } else {
+                        Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
+                    }
                 }
-                Log.d("wen", "提交返回值 " + data);
-
-
+                Log.d("wen", "提交返回值:试卷Id： " + paperId);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -434,6 +605,10 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
         if (typeView == null) {
             typeView = LayoutInflater.from(this).inflate(R.layout.menu_t_homework_camera_type, null, false);
             fl_type = typeView.findViewById(R.id.fl_type);
+            ll_hide = typeView.findViewById(R.id.ll_hide);
+            ll_divide_hide = typeView.findViewById(R.id.ll_divide_hide);
+            TextView tv_score = typeView.findViewById(R.id.tv_score);
+            et_num = typeView.findViewById(R.id.et_num);
 
             //绑定点击事件
             View.OnClickListener typeOnclickListener = new View.OnClickListener() {
@@ -452,9 +627,19 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                                 Toast.makeText(THomeworkCameraAddPickActivity.this, "请输入试题分数", Toast.LENGTH_SHORT).show();
                                 break;
                             }
+                            Log.d("wen", "测试1: " + isTypeChange);
+
+                            THomeworkCameraItem newHomework;
+                            if (isTypeChange) {
+                                newHomework = itemList.get(typeChangePos);
+                                newHomework.setAnswerNum("-1");
+                                newHomework.setSmallQueNum("-1");
+
+                            } else {
+                                newHomework = new THomeworkCameraItem();
+                            }
 
                             // 构建试题对象
-                            THomeworkCameraItem newHomework = new THomeworkCameraItem();
                             newHomework.setTypeName(type);
 
                             for (THomeworkCameraType item : typeList) {
@@ -463,12 +648,28 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                                     newHomework.setTypeId(item.getTypeId());
                                 }
                             }
-                            newHomework.setAnswerNum("4");
-                            newHomework.setScore(et_score.getText().toString());
-                            itemList.add(newHomework);
-                            getQuestionId(itemList.size() - 1);
-                            adapter.setShowPos(itemList.size() - 1);
+                            // 构建参数
+                            String strAnswerNum = et_num.getText().toString();
+                            String strAnswerScore = et_score.getText().toString();
+                            if (newHomework.getBaseTypeId().equals("101") || newHomework.getBaseTypeId().equals("102")) {
+                                newHomework.setAnswerNum("4");
+                                newHomework.setScore(et_score.getText().toString());
+                            } else if (newHomework.getBaseTypeId().equals("108") && (newHomework.getTypeName().indexOf("阅读理解") != -1 || newHomework.getTypeName().indexOf("完形填空") != -1)) {
+                                newHomework.setSmallQueNum(strAnswerNum);
+                                newHomework.setScore(String.valueOf(Integer.parseInt(strAnswerNum) * Integer.parseInt(strAnswerScore)));
+                            } else {
+                                newHomework.setScore(et_score.getText().toString());
+                            }
 
+                            if (!isTypeChange) {
+                                itemList.add(newHomework);
+                                getQuestionId(itemList.size() - 1);
+                                adapter.setShowPos(itemList.size() - 1);
+                            } else {
+                                adapter.setShowPos(typeChangePos);
+                            }
+
+                            Log.d("wen", "测试2: " + isTypeChange);
                             adapter.notifyDataSetChanged();
                             typeWindow.dismiss();
                             break;
@@ -490,11 +691,6 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                 tv_name.setText(item.getTypeName());
 
                 tv_name.setOnClickListener(v -> {
-
-                    if (type.equals(tv_name.getText().toString())) {
-                        return;
-                    }
-
                     type = tv_name.getText().toString();
 
                     if (lastType != null) {
@@ -506,25 +702,61 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                     lastType = tv_name;
 
                     ll_score.setVisibility(View.VISIBLE);
-                    et_score.setText(item.getScore());
+                    tv_score.setText("分值");
+                    if (item.getBaseTypeId().equals("108") && item.getTypeName().indexOf("阅读理解") != -1) {
+                        ll_hide.setVisibility(View.VISIBLE);
+                        ll_divide_hide.setVisibility(View.VISIBLE);
+                        tv_score.setText("每道子题面预设分值");
+                        et_num.setText("5");
+                        et_score.setText(String.valueOf(Integer.parseInt(item.getScore()) / 5));
+                    } else if (item.getBaseTypeId().equals("108") && item.getTypeName().indexOf("完形填空") != -1) {
+                        ll_hide.setVisibility(View.VISIBLE);
+                        ll_divide_hide.setVisibility(View.VISIBLE);
+                        tv_score.setText("每道子题面预设分值");
+                        et_num.setText("10");
+                        et_score.setText(String.valueOf(Integer.parseInt(item.getScore()) / 10));
+                    } else {
+                        ll_hide.setVisibility(View.GONE);
+                        ll_divide_hide.setVisibility(View.GONE);
+                        et_score.setText(item.getScore());
+                    }
                 });
-
                 fl_type.addView(view);
-
             }
-
             typeWindow = new PopupWindow(typeView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, true);
             typeWindow.setTouchable(true);
         }
 
         ll_score.setVisibility(View.GONE);
+        ll_hide.setVisibility(View.GONE);
+        ll_divide_hide.setVisibility(View.GONE);
+
         if (lastType != null) {
             lastType.setBackgroundResource(R.color.light_gray3);
-            type = "";
+            if (!isTypeChange) {
+                type = "";
+            }
             lastType = null;
         }
-        typeWindow.showAtLocation(typeView, Gravity.CENTER, 0, 0);
 
+        Log.d("wen", "showTypeMenu: " + isTypeChange);
+        if (isTypeChange) {
+            // 同步type
+            for (int j = 0; j < fl_type.getChildCount(); j++) {
+                View child = (View) fl_type.getChildAt(j);
+                TextView tv_name = child.findViewById(R.id.tv_name);
+                if (tv_name.getText().toString().equals(type)) {
+                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    lastType = tv_name;
+                }
+            }
+            THomeworkCameraItem item = itemList.get(typeChangePos);
+            if (item.getBaseTypeId().equals("108") && (item.getTypeName().indexOf("阅读理解") != -1 || item.getTypeName().indexOf("完形填空") != -1)) {
+                et_score.setText(String.valueOf(Integer.parseInt(item.getScore()) / Integer.parseInt(item.getSmallQueNum())));
+                et_num.setText(item.getSmallQueNum());
+            }
+        }
+        typeWindow.showAtLocation(typeView, Gravity.CENTER, 0, 0);
     }
 
     private void getQuestionId(int pos) {
@@ -540,7 +772,6 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        Log.d("wen", "type: " + mRequestUrl);
         typeMap.clear();
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -554,6 +785,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);

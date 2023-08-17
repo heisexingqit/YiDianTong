@@ -26,17 +26,19 @@
 
         <com.github.chrisbanes.photoview.PhotoView
             android:id="@+id/pv_content"
-            android:layout_margin="50dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
+            android:layout_above="@+id/sv_bottom_tab"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="35dp" />
 
         <HorizontalScrollView
             android:id="@+id/sv_bottom_tab"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="120dp"
+            android:layout_marginBottom="200dp"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
             android:scrollbars="none">

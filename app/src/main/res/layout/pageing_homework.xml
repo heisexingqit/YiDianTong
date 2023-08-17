@@ -2,29 +2,31 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
     <com.example.yidiantong.View.ClickableImageView
         android:id="@+id/iv_page_last"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
+        android:layout_marginTop="-10dp"
         android:clickable="true"
         android:focusable="true"
-        android:src="@drawable/left_circle"
-        android:layout_marginTop="-10dp"/>
+        android:src="@drawable/left_circle" />
+
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="1dp"/>
+        android:layout_height="1dp"
+        android:layout_weight="1" />
+
     <com.example.yidiantong.View.ClickableImageView
         android:id="@+id/iv_page_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="-10dp"
         android:layout_marginEnd="10dp"
         android:clickable="true"
         android:focusable="true"
-        android:src="@drawable/right_circle"
-        android:layout_marginTop="-10dp"/>
+        android:src="@drawable/right_circle" />
 </LinearLayout>

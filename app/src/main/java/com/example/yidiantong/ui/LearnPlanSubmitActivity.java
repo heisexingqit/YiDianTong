@@ -113,7 +113,7 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
                 finish();
                 break;
             case R.id.btn_submit:
-                submit();
+                submitFinal();
         }
     }
 
@@ -132,64 +132,6 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
             }
         }
     };
-
-    //提交代码
-    private void submit() {
-        submitSum = 0;
-        rl_submitting.setVisibility(View.VISIBLE);
-        java.util.Date day = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd:HH:mm:ss");
-        String date = sdf.format(day);
-
-        String mRequestUrl;
-        StringRequest request;
-        for (int i = 0; i < questionIdx.size(); ++i) {
-            if (stuAnswer[i].length() == 0) {
-                submitSum++;
-                if (isF) {
-                    isF = false;
-                } else {
-                    submitZero += ",";
-                }
-                submitZero += questionIds.get(i);
-                continue;
-            }
-            String jsonString = "";
-            try {
-                jsonString = URLEncoder.encode(stuAnswer[i], "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            mRequestUrl = Constant.API + Constant.LEARNPLAN_SUBMIT_QUS_ITEM + "?learnPlanId=" + learnPlanId + "&learnPlanName=" + title +
-                    "&userName=" + username + "&questionId=" + questionIds.get(i) + "&answer=" + jsonString + "&status=" + (isNew ? 1 : 3);
-            Log.d(TAG, "submit: " + mRequestUrl);
-            request = new StringRequest(mRequestUrl, response -> {
-                try {
-                    JSONObject json = JsonUtils.getJsonObjectFromString(response);
-                    //结果信息
-                    Boolean isSuccess = json.getBoolean("success");
-                    if (isSuccess) {
-                        submitSum++;
-                        Log.d(TAG, "submit: 分");
-                        if (submitSum == stuAnswer.length) {
-                            submitFinal();
-                        }
-                    } else {
-                        Toast.makeText(LearnPlanSubmitActivity.this, "提交失败！", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }, error -> {
-                Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
-            });
-
-            MyApplication.addRequest(request, TAG);
-        }
-        if (submitZero.length() == 0) {
-            submitZero = "-1";
-        }
-    }
 
     private void submitFinal() {
         java.util.Date day = new Date();
@@ -219,7 +161,8 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
     }

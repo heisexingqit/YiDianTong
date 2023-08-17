@@ -19,6 +19,7 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.LearnPlanItemEntity;
 import com.example.yidiantong.bean.StuAnswerEntity;
+import com.example.yidiantong.util.LearnPlanInterface;
 import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.HomeworkInterface;
 
@@ -28,7 +29,7 @@ public class LearnPlanSeven2FiveFragment extends Fragment implements View.OnClic
     private static final String TAG = "HomeworkSeven2FiveFragm";
 
     private PagingInterface pageing;
-    private HomeworkInterface transmit;
+    private LearnPlanInterface transmit;
 
     int[] answer = {-1, -1, -1, -1, -1};
     int[] unselectIcons = {R.drawable.a_unselect, R.drawable.b_unselect, R.drawable.c_unselect, R.drawable.d_unselect, R.drawable.e_unselect, R.drawable.f_unselect, R.drawable.g_unselect};
@@ -56,7 +57,7 @@ public class LearnPlanSeven2FiveFragment extends Fragment implements View.OnClic
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         pageing = (PagingInterface) context;
-        transmit = (HomeworkInterface) context;
+        transmit = (LearnPlanInterface) context;
     }
 
     @SuppressLint("ClickableViewAccessibility")

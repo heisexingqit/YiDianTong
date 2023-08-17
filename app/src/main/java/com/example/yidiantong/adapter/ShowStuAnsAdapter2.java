@@ -36,11 +36,6 @@ public class ShowStuAnsAdapter2 extends BaseAdapter {
             "            font-size: 14.8px;" +
             "        }\n" +
             "    </style>\n" +
-            "    <script>\n" +
-            "        function a(x) {\n" +
-            "            test.mytoast(\"我尼玛\")\n" +
-            "        }\n" +
-            "    </script>\n" +
             "</head>\n" +
             "\n" +
             "<body>\n";

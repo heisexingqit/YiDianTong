@@ -1,6 +1,8 @@
 package com.example.yidiantong.bean;
 
-public class LiveDate {
+import java.io.Serializable;
+
+public class LiveDate implements Serializable {
     private String time;
     private String minutes;
     private String seconds;

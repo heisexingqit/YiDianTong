@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -638,6 +639,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -796,6 +798,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -826,6 +829,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -900,6 +904,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -977,6 +982,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -1052,6 +1058,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -1123,6 +1130,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -1178,6 +1186,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);

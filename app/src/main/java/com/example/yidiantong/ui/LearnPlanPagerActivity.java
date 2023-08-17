@@ -35,6 +35,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
+import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.adapter.LearnPlanPagerAdapter;
 import com.example.yidiantong.adapter.MyArrayAdapter;
 import com.example.yidiantong.bean.LearnPlanActivityEntity;
@@ -44,6 +45,7 @@ import com.example.yidiantong.bean.StuAnswerEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.FixedSpeedScroller;
 import com.example.yidiantong.util.JsonUtils;
+import com.example.yidiantong.util.LearnPlanInterface;
 import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
@@ -55,13 +57,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LearnPlanPagerActivity extends AppCompatActivity implements View.OnClickListener, PagingInterface, HomeworkInterface {
+public class LearnPlanPagerActivity extends AppCompatActivity implements View.OnClickListener, PagingInterface, LearnPlanInterface {
 
     private static final String TAG = "LearnPlanPagerActivity";
 
@@ -80,6 +86,7 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
     private String username;
     private String title;
     String[] stuAnswer;
+    String[] oldStuAnswer;
     private List<String> questionIds = new ArrayList<>();
     private List<Integer> questionIdx = new ArrayList<>();
 
@@ -129,14 +136,16 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
             public void onPageSelected(int position) {
                 //翻页同步下标
                 currentItem = position;
-                Log.e("currentItem",":" + currentItem);
+                Log.e("currentItem", ":" + currentItem);
             }
+
             @Override
             public void onPageScrollStateChanged(int state) {
             }
         });
 
         // ViewPager滑动变速
+
         try {
             Field field = ViewPager.class.getDeclaredField("mScroller");
             field.setAccessible(true);
@@ -144,7 +153,9 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
                     new AccelerateInterpolator());
             field.set(vp_homework, scroller);
             scroller.setmDuration(400);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         vp_homework.setCurrentItem(currentItem);
 
@@ -200,6 +211,7 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
         if (currentItem == 0) {
             Toast.makeText(this, "已经是第一页", Toast.LENGTH_SHORT).show();
         } else {
+            uploadQuestion();
             currentItem -= 1;
             vp_homework.setCurrentItem(currentItem);
             setTopNum();
@@ -232,24 +244,25 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
             //对话框弹出
             builder.show();
         } else {
+            uploadQuestion();
             currentItem += 1;
             vp_homework.setCurrentItem(currentItem);
             setTopNum();
         }
     }
 
-    private void setTopNum(){
-        int positionLen = String.valueOf(currentItem+1).length();
-        String questionNum = (currentItem+1) + "/" + pageCount;
+    private void setTopNum() {
+        int positionLen = String.valueOf(currentItem + 1).length();
+        String questionNum = (currentItem + 1) + "/" + pageCount;
         SpannableString spannableString = StringUtils.getStringWithColor(questionNum, "#6CC1E0", 0, positionLen);
         tv_question_number.setText(spannableString);
     }
 
     //跳转至提交作业页面
     private void jumpToSubmitPage() {
-
+        uploadQuestion();
         String[] quesAnsList = new String[questionIdx.size()];
-        for(int i = 0; i < questionIdx.size(); ++i){
+        for (int i = 0; i < questionIdx.size(); ++i) {
             quesAnsList[i] = stuAnswer[questionIdx.get(i)];
         }
         Intent intent = new Intent(LearnPlanPagerActivity.this, LearnPlanSubmitActivity.class);
@@ -280,13 +293,13 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
                 int allCount = 0;
                 int idxCount = 0;
                 // 遍历处理数据
-                for (LearnPlanLinkEntity item: list) {
+                for (LearnPlanLinkEntity item : list) {
                     // 顶部根名称
                     topArrayItem.add(item.getLink());
                     List<LearnPlanActivityEntity> list2 = item.getActivityList();
                     topPagerIdx.put(allCount, -1);
                     allCount++;
-                    for(LearnPlanActivityEntity item2: list2){
+                    for (LearnPlanActivityEntity item2 : list2) {
                         // 顶部儿子名称
                         topArrayItem.add("  " + item2.getActivityName());
                         topPagerIdx.put(allCount, -1);
@@ -294,35 +307,36 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
                         List<LearnPlanItemEntity> list3 = item2.getResourceList();
                         sumCount += list3.size();
                         moreList.addAll(list3);
-                        for(int i = 0; i < list3.size(); ++i){
+                        for (int i = 0; i < list3.size(); ++i) {
                             LearnPlanItemEntity item3 = list3.get(i);
                             // 顶部孙子名称
-                            topArrayItem.add("    " + (i+1) + "." + item3.getResourceName());
+                            topArrayItem.add("    " + (i + 1) + "." + item3.getResourceName());
                             topPagerIdx.put(allCount, idxCount);
-                            if(item3.getResourceType().equals("01")){
+                            if (item3.getResourceType().equals("01")) {
                                 questionIds.add(item3.getResourceId());
                                 questionIdx.add(idxCount);
                             }
-                            allCount ++;
-                            idxCount ++;
+                            allCount++;
+                            idxCount++;
                         }
                     }
                 }
 
                 stuAnswer = new String[moreList.size()];
+                oldStuAnswer = new String[moreList.size()];
                 pageCount = sumCount;
                 setTopNum();
-                if(moreList2 != null){
+                if (moreList2 != null) {
                     adjustStuAnswerList();
                     adapter.update(moreList, moreList2);
                     rl_loading.setVisibility(View.GONE);
                 }
-            }else if(message.what == 101){
+            } else if (message.what == 101) {
                 /**
                  * 学生作答信息
                  */
                 moreList2 = (List<StuAnswerEntity>) message.obj;
-                if(moreList != null && moreList.size() > 0){
+                if (moreList != null && moreList.size() > 0) {
                     Log.d("wen", "handleMessage: 作答内容请求完毕");
                     adjustStuAnswerList();
                     adapter.update(moreList, moreList2);
@@ -332,16 +346,17 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
         }
     };
 
-    private void adjustStuAnswerList(){
-        for(int i = 0; i < moreList.size(); ++i){
+    private void adjustStuAnswerList() {
+        for (int i = 0; i < moreList.size(); ++i) {
             LearnPlanItemEntity item = moreList.get(i);
-            if(moreList2.size() <= i || !moreList2.get(i).getQuestionId().equals(item.getResourceId())){
-                moreList2.add(i, new StuAnswerEntity(i+1));
+            if (moreList2.size() <= i || !moreList2.get(i).getQuestionId().equals(item.getResourceId())) {
+                moreList2.add(i, new StuAnswerEntity(i + 1));
             }
         }
         for (int i = 0; i < moreList2.size(); ++i) {
             // 学生作答内容
             stuAnswer[i] = moreList2.get(i).getStuAnswer();
+            oldStuAnswer[i] = stuAnswer[i];
         }
     }
 
@@ -370,7 +385,8 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
             }
 
         }, error -> {
-            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
 
@@ -401,7 +417,8 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
             }
 
         }, error -> {
-            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
     }
@@ -421,7 +438,7 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
                         @Override
                         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                             //切换页+消除选项口
-                            if(topPagerIdx.get(i) != -1){
+                            if (topPagerIdx.get(i) != -1) {
                                 Log.d(TAG, "onItemClick: " + topPagerIdx.get(i));
                                 currentItem = topPagerIdx.get(i);
                                 vp_homework.setCurrentItem(currentItem);
@@ -481,5 +498,71 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
     @Override
     public void offLoading() {
         rl_submitting.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void uploadTime(long timeLong) {
+        Log.d("wen", "uploadTime:ssssssssssssssssssss" + timeLong / 60);
+        int pos = vp_homework.getCurrentItem();
+        String mRequestUrl = null;
+
+        mRequestUrl = Constant.API + Constant.LEARNPLAN_SUBMIT_TIME + "?learnPlanId=" + learnPlanId + "&contentId=" + adapter.itemList.get(pos).getResourceId() +
+                "&userName=" + username + "&useTime=" + timeLong;
+        Log.d(TAG, "submit: " + mRequestUrl);
+
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());
+        });
+
+        MyApplication.addRequest(request, TAG);
+    }
+
+    // 上传试题
+    private void uploadQuestion() {
+        int pos = vp_homework.getCurrentItem();
+        if (stuAnswer[pos] == null || stuAnswer[pos].equals(oldStuAnswer[pos])) {
+            return;
+        }
+        Log.d("wen", "uploadQuestion: " + stuAnswer[pos]);
+
+        String mRequestUrl = null;
+        try {
+            mRequestUrl = Constant.API + Constant.LEARNPLAN_SUBMIT_QUS_ITEM + "?learnPlanId=" + learnPlanId + "&learnPlanName=" + URLEncoder.encode(title, "UTF-8") +
+                    "&userName=" + username + "&questionId=" + adapter.itemList.get(pos).getResourceId() + "&answer=" + URLEncoder.encode(stuAnswer[pos], "UTF-8") + "&status=" + (isNew ? 1 : 3);
+            Log.d(TAG, "submit: " + mRequestUrl);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());
+        });
+
+        MyApplication.addRequest(request, TAG);
+
+        // 同步更新
+        oldStuAnswer[pos] = stuAnswer[pos];
+    }
+
+    @Override
+    public void onBackPressed() {
+        uploadQuestion();
+        super.onBackPressed();
     }
 }

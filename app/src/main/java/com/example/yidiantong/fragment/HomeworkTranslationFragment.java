@@ -58,6 +58,7 @@ import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
 import com.example.yidiantong.util.HomeworkInterface;
+import com.google.common.base.Utf8;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Rationale;
@@ -70,6 +71,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -329,7 +332,11 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
                 if (result.getResultCode() == getActivity().RESULT_OK) {
                     Intent intent = result.getData();
                     imageBase64 = intent.getStringExtra("data");
-                    imageBase64 = imageBase64.replace("+", "%2b");
+                    try {
+                        imageBase64 = URLEncoder.encode(imageBase64, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
                     uploadImage();
                 }
             }
@@ -405,7 +412,8 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
             }
         }, error -> {
             rl_submitting.setVisibility(View.GONE);
-            Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
     }

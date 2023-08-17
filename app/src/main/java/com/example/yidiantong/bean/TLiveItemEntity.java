@@ -1,6 +1,8 @@
 package com.example.yidiantong.bean;
 
-public class TLiveItemEntity {
+import java.io.Serializable;
+
+public class TLiveItemEntity implements Serializable {
     private LiveDate startDate;
     private String phone;
     private String schoolName;

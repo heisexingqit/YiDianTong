@@ -2,6 +2,7 @@ package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +23,7 @@ import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -368,7 +370,11 @@ public class TLiveAddActivity extends AppCompatActivity implements View.OnClickL
                     builder.setNegativeButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            finish();
+                            //两个一起用
+                            Intent intent = new Intent(TLiveAddActivity.this, TLiveListActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            //登录成功跳转
+                            startActivity(intent);
                         }
                     });
                     AlertDialog dialog = builder.create();
@@ -447,8 +453,8 @@ public class TLiveAddActivity extends AppCompatActivity implements View.OnClickL
             }
 
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
-
         });
         MyApplication.addRequest(request, TAG);
     }
@@ -556,8 +562,8 @@ public class TLiveAddActivity extends AppCompatActivity implements View.OnClickL
             }
 
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
-
         });
         MyApplication.addRequest(request, TAG);
     }

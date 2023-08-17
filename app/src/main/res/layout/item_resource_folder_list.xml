@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:background="@color/white"
+    android:orientation="horizontal"
+    android:paddingStart="20dp"
+    android:paddingTop="6dp"
+    android:paddingEnd="20dp"
+    android:paddingBottom="6dp">
+
+    <ImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:src="@drawable/image" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="20dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:paddingTop="5dp"
+            android:singleLine="true"
+            android:text="标题dddddddddddddddddd"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_second"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="bottom"
+                android:paddingBottom="3dp"
+                android:text="科目 教师"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="bottom"
+                android:layout_marginEnd="20dp"
+                android:paddingBottom="3dp"
+                android:text="日期"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

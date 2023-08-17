@@ -53,6 +53,18 @@ public class Constant {
     // 导学案整体保存
     public static final String LEARNPLAN_SUBMIT_FIN_ITEM = "/AppServer/ajax/studentApp_savestuAnswerFromLearnPlan.do";
 
+    // 导学案学习时间保存
+    public static final String LEARNPLAN_SUBMIT_TIME = "/AppServer/ajax/studentApp_ saveLearnResTime.do?";
+
+    // 学生端资源夹未查看提示
+    public static final String GET_RESOURCE_IS_READ = "/AppServer/ajax/studentApp_checkMineFloder.do";
+
+    // 学生端资源夹列表获取
+    public static final String GET_RESOURCE_FOLDER_ITEM = "/AppServer/ajax/studentApp_getMineFloder.do";
+
+    // 学生端资源夹资源获取
+    public static final String GET_RESOURCE_FOLDER_RESOURCE = "/AppServer/ajax/studentApp_lookMineFloderFile.do";
+
     // 直播课列表
     public static final String LIVE_ITEM = "/AppServer/ajax/studentApp_getZBLiveList.do";
 
@@ -64,6 +76,12 @@ public class Constant {
 
     // 教师端创建直播课
     public static final String T_LIVE_ADD = "/ShopGoods/ajax/livePlay_saveZbLive.do";
+
+    // 教师端删除直播课
+    public static final String T_LIVE_DELETE = "/ShopGoods/ajax/livePlay_deleteZbLive.do";
+
+    // 教师端删除直播课
+    public static final String T_LIVE_EDIT = "/ShopGoods/ajax/livePlay_editZbLive.do";
 
     // 设置公告或通知为已读状态
     public static final String READ_NOTICE = "/AppServer/ajax/studentApp_readNotice.do";
@@ -157,6 +175,12 @@ public class Constant {
 
     // 教师端-拍照发布作业-保存试题信息
     public static final String T_HOMEWORK_CAMERA_SAVE = "/AppServer/ajax/teacherApp_phoneSaveQuestionAndPaper.do";
+
+    // 教师端-拍照发布作业-布置作业
+    public static final String T_HOMEWORK_CAMERA_ASSIGN = "/AppServer/ajax/teacherApp_phoneBuzhiZY.do";
+
+    // 教师端-拍照发布作业-获取作业
+    public static final String T_HOMEWORK_CAMARA_GET = "/AppServer/ajax/teacherApp_phoneEditZY.do";
 
     // 教师端发布通知获取班级列表
     public static final String T_BELL_ADD_CLASS= "/AppServer/ajax/teacherApp_publishNotice.do";

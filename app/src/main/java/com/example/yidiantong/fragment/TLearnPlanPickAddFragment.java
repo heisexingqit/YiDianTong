@@ -439,6 +439,7 @@ public class TLearnPlanPickAddFragment extends Fragment implements View.OnClickL
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);

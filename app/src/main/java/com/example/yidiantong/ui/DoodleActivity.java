@@ -158,7 +158,6 @@ public class DoodleActivity extends AppCompatActivity implements View.OnClickLis
         window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         window.setBackgroundDrawableResource(android.R.color.black);
 
-
         /**
          * 文本修改
          */

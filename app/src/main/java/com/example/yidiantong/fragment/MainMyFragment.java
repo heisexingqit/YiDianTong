@@ -293,7 +293,8 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
     }

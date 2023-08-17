@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -526,6 +527,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -545,6 +547,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -701,6 +704,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -774,6 +778,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -845,6 +850,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -918,6 +924,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -988,6 +995,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -1014,7 +1022,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                 String data = json.getString("data");
                 Log.d(TAG, "loadType: " + data);
 
-                if(data != "null"){
+                if (data != "null") {
                     typeMap.put("全部", "all");
                     for (String row : data.split("\\],\\[")) {
                         String[] values = row.replaceAll("\\[|\\]|\"", "").split(",");
@@ -1027,6 +1035,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                 e.printStackTrace();
             }
         }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);

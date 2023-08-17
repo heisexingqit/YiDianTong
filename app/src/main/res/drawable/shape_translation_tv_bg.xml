@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/main_blue" />
-    <corners android:radius="4dp" />
+    <!-- 学生端简答题定制按钮 -->
+    <solid android:color="@color/blue_btn" />
+    <corners android:bottomRightRadius="4dp" android:topRightRadius="4dp"/>
 </shape>

@@ -93,13 +93,11 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.notifyDataSetChanged();
     }
 
-
     @Override
     public int getItemCount() {
 
         return itemList.size() + 1;
     }
-
 
     public void loadData(List<HomeItemEntity> moreList) {
         fail = false;
@@ -108,7 +106,7 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             this.itemList.clear();
             this.itemList = moreList;
             this.isRefresh = 0;
-            if (moreList.size() == 0) {
+            if (moreList.size() == 0 || moreList.size() < 12) {
                 isDown = 1;
             }
         } else {

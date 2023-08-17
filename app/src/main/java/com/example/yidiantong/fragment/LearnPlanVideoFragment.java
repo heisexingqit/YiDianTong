@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.example.yidiantong.R;
 import com.example.yidiantong.bean.LearnPlanItemEntity;
 import com.example.yidiantong.bean.StuAnswerEntity;
+import com.example.yidiantong.util.LearnPlanInterface;
 import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.HomeworkInterface;
@@ -30,7 +31,7 @@ import com.google.android.exoplayer2.ui.PlayerView;
 public class LearnPlanVideoFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "LearnPlanVideoFragment";
     private PagingInterface paging;
-    private HomeworkInterface transmit;
+    private LearnPlanInterface transmit;
 
     // 接口需要
     private LearnPlanItemEntity learnPlanEntity;
@@ -39,6 +40,9 @@ public class LearnPlanVideoFragment extends Fragment implements View.OnClickList
     // 多媒体
     private PlayerView playerView;
     private SimpleExoPlayer player;
+
+    // 观看时间
+    private long timeStart;
 
     public static LearnPlanVideoFragment newInstance(LearnPlanItemEntity learnPlanEntity, StuAnswerEntity stuAnswerEntity) {
         LearnPlanVideoFragment fragment = new LearnPlanVideoFragment();
@@ -54,7 +58,7 @@ public class LearnPlanVideoFragment extends Fragment implements View.OnClickList
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         paging = (PagingInterface) context;
-        transmit = (HomeworkInterface) context;
+        transmit = (LearnPlanInterface) context;
     }
 
     @Override
@@ -104,11 +108,23 @@ public class LearnPlanVideoFragment extends Fragment implements View.OnClickList
                     playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT);
                     playerView.getLayoutParams().height = PxUtils.dip2px(getActivity(), 90);
                 } else if (mimeType.startsWith("video/")) {
+                    // 获取屏幕宽度
+                    float screenWidth = getResources().getDisplayMetrics().widthPixels;
+
+                    // 计算高度为宽度的 3/4
+                    float aspectRatio = 3.0f / 4.0f;
+                    int height = Math.round(screenWidth * aspectRatio);
+
+                    // 设置视图的高度
+                    ViewGroup.LayoutParams layoutParams = playerView.getLayoutParams();
+                    layoutParams.height = height;
+
                     // 如果是视频，设置 PlayerView 的高度为 WRAP_CONTENT
-                    playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
-                    playerView.setUseController(true); // 启用控制器
+                    playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
                 }
             }
+            playerView.setUseController(true); // 启用控制器
+
             MediaItem mediaItem = MediaItem.fromUri(Uri.parse(audioUrl));
             // 隐藏音频切换按钮
             playerView.setShowPreviousButton(false);
@@ -117,9 +133,6 @@ public class LearnPlanVideoFragment extends Fragment implements View.OnClickList
             player.setMediaItem(mediaItem);
             // 准备播放器
             player.prepare();
-
-
-
 
         }else{
             // 设置PlayerView用于显示视频
@@ -144,9 +157,16 @@ public class LearnPlanVideoFragment extends Fragment implements View.OnClickList
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        timeStart = System.currentTimeMillis();
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         player.pause();
+        transmit.uploadTime(System.currentTimeMillis() - timeStart);
     }
 
     @Override
