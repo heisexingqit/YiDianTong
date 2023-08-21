@@ -37,10 +37,14 @@
             android:exported="false" />
         <activity
             android:name=".ui.CourseQuestionActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape" />
         <activity
             android:name=".ui.CourseLockActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape" />
         <activity
             android:name=".ui.THomeworkCameraAddPickActivity"
             android:exported="false"
@@ -121,7 +125,9 @@
             android:exported="false" />
         <activity
             android:name=".ui.CourseLookActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape" />
         <activity
             android:name=".ui.CourseScannerActivity"
             android:exported="false" />

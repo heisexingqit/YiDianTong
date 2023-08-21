@@ -12,42 +12,42 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp">
 
-        <ImageView
+        <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/fiv_cb_a"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="35dp"
             android:layout_weight="1"
             android:src="@drawable/a_unselect" />
-        <ImageView
+        <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/fiv_cb_b"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="35dp"
             android:layout_weight="1"
             android:src="@drawable/b_unselect" />
-        <ImageView
+        <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/fiv_cb_c"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="35dp"
             android:layout_weight="1"
             android:src="@drawable/c_unselect" />
-        <ImageView
+        <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/fiv_cb_d"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="35dp"
             android:layout_weight="1"
             android:src="@drawable/d_unselect"
             android:visibility="gone"/>
-        <ImageView
+        <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/fiv_cb_e"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="35dp"
             android:layout_weight="1"
             android:src="@drawable/e_unselect"
             android:visibility="gone"/>
-        <ImageView
+        <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/fiv_cb_f"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="35dp"
             android:layout_weight="1"
             android:src="@drawable/f_unselect"
             android:visibility="gone"/>
@@ -63,42 +63,42 @@
         android:layout_marginRight="20dp"
         android:visibility="gone">
 
-        <ImageView
+        <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/fiv_cb_a2"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="35dp"
             android:layout_weight="1"
             android:src="@drawable/a_unselect2" />
-        <ImageView
+        <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/fiv_cb_b2"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="35dp"
             android:layout_weight="1"
             android:src="@drawable/b_unselect2" />
-        <ImageView
+        <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/fiv_cb_c2"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="35dp"
             android:layout_weight="1"
             android:src="@drawable/c_unselect2" />
-        <ImageView
+        <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/fiv_cb_d2"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="35dp"
             android:layout_weight="1"
             android:src="@drawable/d_unselect2"
             android:visibility="gone"/>
-        <ImageView
+        <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/fiv_cb_e2"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="35dp"
             android:layout_weight="1"
             android:src="@drawable/e_unselect2"
             android:visibility="gone"/>
-        <ImageView
+        <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/fiv_cb_f2"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="35dp"
             android:layout_weight="1"
             android:src="@drawable/f_unselect2"
             android:visibility="gone"/>
@@ -114,16 +114,16 @@
         android:layout_marginRight="20dp"
         android:visibility="gone">
 
-        <ImageView
+        <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/fiv_cb_r"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="35dp"
             android:layout_weight="1"
             android:src="@drawable/right_unselect" />
-        <ImageView
+        <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/fiv_cb_er"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="35dp"
             android:layout_weight="1"
             android:src="@drawable/error_unselect" />
 

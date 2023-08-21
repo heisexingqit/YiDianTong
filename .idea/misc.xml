@@ -1,21 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DesignSurface">
-    <option name="filePathToZoomLevelMap">
-      <map>
-        <entry key="..\:/AndroidProject/YiDianTong0725/app/src/main/res/drawable/check_box_default.xml" value="0.1525" />
-        <entry key="..\:/AndroidProject/YiDianTong0725/app/src/main/res/drawable/shape_translation_tv_bg.xml" value="0.1445" />
-        <entry key="..\:/AndroidProject/YiDianTong0725/app/src/main/res/layout/activity_live_list.xml" value="0.15520833333333334" />
-        <entry key="..\:/AndroidProject/YiDianTong0725/app/src/main/res/layout/activity_tlive_add.xml" value="0.30520833333333336" />
-        <entry key="..\:/AndroidProject/YiDianTong0725/app/src/main/res/layout/activity_tlive_edit.xml" value="0.30520833333333336" />
-        <entry key="..\:/AndroidProject/YiDianTong0725/app/src/main/res/layout/fragment_homework_translation.xml" value="0.2" />
-        <entry key="..\:/AndroidProject/YiDianTong0725/app/src/main/res/layout/fragment_t_homework_mark.xml" value="0.1514690982776089" />
-        <entry key="..\:/AndroidProject/YiDianTong0725/app/src/main/res/layout/fragment_t_main_report.xml" value="0.1342451874366768" />
-        <entry key="..\:/AndroidProject/YiDianTong0725/app/src/main/res/layout/item_tlive_list.xml" value="0.24479166666666666" />
-        <entry key="..\:/AndroidProject/YiDianTong0725/app/src/main/res/layout/live_enter_dialog.xml" value="0.22056159420289856" />
-      </map>
-    </option>
-  </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="11" project-jdk-type="JavaSDK" />
 </project>

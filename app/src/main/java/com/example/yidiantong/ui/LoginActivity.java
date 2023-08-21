@@ -96,6 +96,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         ll_loading = findViewById(R.id.ll_loading);
         ll_loading.setVisibility(View.GONE);
 
+        // 自动登录
+        if (user != null && MyApplication.autoLogin) {
+            btn_login.callOnClick();
+        }
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -255,17 +259,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     // 将未知key转为list
                     List<String> keysList = new ArrayList<>();
                     Iterator<String> keys = obj.keys();
-                    for(Iterator<String> it = keys; keys.hasNext();){
+                    for (Iterator<String> it = keys; keys.hasNext(); ) {
                         keysList.add(it.next());
                     }
                     String typeName = null;
-                    if(keysList.contains("STUDENT")){
+                    if (keysList.contains("STUDENT")) {
                         typeName = "STUDENT";
                         intent = new Intent(this, MainPagerActivity.class);
-                    }else if(keysList.contains("COMMON_TEACHER")){
+                    } else if (keysList.contains("COMMON_TEACHER")) {
                         typeName = "COMMON_TEACHER";
                         intent = new Intent(this, TMainPagerActivity.class);
-                    }else if(keysList.contains("ADMIN_TEACHER")){
+                    } else if (keysList.contains("ADMIN_TEACHER")) {
                         typeName = "ADMIN_TEACHER";
                         intent = new Intent(this, TMainPagerActivity.class);
                     }
@@ -289,7 +293,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     intent.putExtra("username", username);
                     intent.putExtra("picUrl", userInfo.getString("userPhoto"));
-                    intent.putExtra("password",password);
+                    intent.putExtra("password", password);
+
+                    // 开启自动登录
+                    MyApplication.autoLogin = true;
 
                     //两个一起用
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

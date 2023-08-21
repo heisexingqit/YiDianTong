@@ -191,9 +191,12 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             iv_icon.setImageResource(icon_id);
             if(item.getType().equals("直播课消息")){
                 ll_width.getLayoutParams().width = ViewGroup.LayoutParams.WRAP_CONTENT;
-                if(item.getCreaterName().equals("已结束")){
+                if(item.getCreaterName().equals("已结束")) {
                     tv_is_live.setText("已结束");
                     tv_is_live.setBackgroundResource(R.color.live_btn_gray);
+                }else if(item.getCreaterName().equals("未开始")){
+                    tv_is_live.setText("未开始");
+                    tv_is_live.setBackgroundResource(R.color.live_btn_purple);
                 }
             }
             tv_type.setText(item.getType());

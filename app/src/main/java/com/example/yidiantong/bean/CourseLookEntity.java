@@ -155,8 +155,7 @@ public class CourseLookEntity {
         public String questionAnswerText;
         public String links;
         public String imgSource;
-        public String bagBean;
-        public String desc;
+        public String questionAnswerStr;
 
         public String getName() {
             return name;
@@ -254,20 +253,12 @@ public class CourseLookEntity {
             this.imgSource = imgSource;
         }
 
-        public String getBagBean() {
-            return bagBean;
+        public String getQuestionAnswerStr() {
+            return questionAnswerStr;
         }
 
-        public void setBagBean(String bagBean) {
-            this.bagBean = bagBean;
-        }
-
-        public String getDesc() {
-            return desc;
-        }
-
-        public void setDesc(String desc) {
-            this.desc = desc;
+        public void setQuestionAnswerStr(String questionAnswerStr) {
+            this.questionAnswerStr = questionAnswerStr;
         }
 
         @Override
@@ -285,8 +276,7 @@ public class CourseLookEntity {
                     ", questionAnswerText='" + questionAnswerText + '\'' +
                     ", links='" + links + '\'' +
                     ", imgSource='" + imgSource + '\'' +
-                    ", bagBean='" + bagBean + '\'' +
-                    ", desc='" + desc + '\'' +
+                    ", questionAnswerStr='" + questionAnswerStr + '\'' +
                     '}';
         }
     }

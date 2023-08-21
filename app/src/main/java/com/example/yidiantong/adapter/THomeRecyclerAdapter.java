@@ -67,7 +67,11 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
             ((ItemViewHolder) holder).update(position);
             //绑定事件
             //item点击事件
-            holder.itemView.setOnClickListener(v -> mItemClickListener.onItemClick(holder.itemView, position));
+            holder.itemView.setOnClickListener(v -> {
+                        mItemClickListener.onItemClick(holder.itemView, position);
+                        ((ItemViewHolder) holder).tv_unread.setVisibility(View.INVISIBLE);
+                    }
+            );
         } else {
             ((FootViewHolder) holder).update();
         }
@@ -138,6 +142,7 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         private final LinearLayout ll_num45;
         private final TextView tv_is_live;
+        public final TextView tv_unread;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -151,6 +156,7 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
             tv_num5 = itemView.findViewById(R.id.tv_num5);
             ll_num45 = itemView.findViewById(R.id.ll_num45);
             tv_is_live = itemView.findViewById(R.id.tv_is_live);
+            tv_unread = itemView.findViewById(R.id.tv_unread);
         }
 
         //数据更新放在这里(频繁调用，不能放一次性操作，例如绑定点击事件)
@@ -195,10 +201,13 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
                     icon_id = R.drawable.t_live_icon;
                     ll_num45.setVisibility(View.GONE);
                     tv_is_live.setVisibility(View.VISIBLE);
-                    if(item.getfFlag().equals("3")){
+                    if (item.getfFlag().equals("3")) {
                         tv_is_live.setText("已结束");
                         tv_is_live.setBackgroundResource(R.color.live_btn_gray);
-                    }else{
+                    } else if (item.getfFlag().equals("1")) {
+                        tv_is_live.setText("未开始");
+                        tv_is_live.setBackgroundResource(R.color.live_btn_purple);
+                    } else {
                         tv_is_live.setText("直播中");
                         tv_is_live.setBackgroundResource(R.color.live_red);
                     }
@@ -208,6 +217,19 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
                     throw new IllegalStateException("Unexpected value: " + item.getfType());
 
             }
+
+            // 未阅小球
+            if (item.getfNumber() != null) {
+                if (!item.getfNumber().equals("0") && !item.getfType().equals("10")) {
+                    tv_unread.setVisibility(View.VISIBLE);
+                    tv_unread.setText(item.getfNumber());
+                } else {
+                    tv_unread.setVisibility(View.INVISIBLE);
+                }
+            } else {
+                tv_unread.setVisibility(View.INVISIBLE);
+            }
+
             iv_icon.setImageResource(icon_id);
 
             tv_title.setText(item.getfName());

@@ -63,6 +63,7 @@
     <color name="t_blue">#4dc7f8</color>
     <color name="default_gray">#FF888888</color>
     <color name="live_btn_gray">#949599</color>
+    <color name="live_btn_purple">#6600ff</color>
     <color name="live_gray">#93959a</color>
     <color name="checkbox_gray">#939fb6</color>
     <color name="zxing_custom_possible_result_points">#903A89CF</color>

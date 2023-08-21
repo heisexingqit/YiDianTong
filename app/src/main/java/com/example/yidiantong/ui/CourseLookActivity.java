@@ -3,6 +3,7 @@ package com.example.yidiantong.ui;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -40,10 +41,11 @@ public class CourseLookActivity extends AppCompatActivity {
     private TextView ftv_cl_exit;
 
     private Handler handler_run = new Handler();
+    private int runTime = 500;
     private Runnable runnable = new Runnable() {
         public void run() {
             this.update();
-            handler_run.postDelayed(this, 200 );
+            handler_run.postDelayed(this, runTime );
         }
         void update() {
             loadItems_Net();
@@ -51,20 +53,19 @@ public class CourseLookActivity extends AppCompatActivity {
     };
     private List<CourseLookEntity.queList> queList;
     private int quemode = 0;
-    private String action;
+    private String action = "";
     private String resPath;
     private String ip;
     private String stunum;
+    private String desc;
+    private RequestQueue queue;
+    private String learnPlanId;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_look);
-
-        if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        }
 
         ftv_cl_classname = findViewById(R.id.ftv_cl_classname);
         ftv_cl_teaname = findViewById(R.id.ftv_cl_teaname);
@@ -91,7 +92,6 @@ public class CourseLookActivity extends AppCompatActivity {
         public void handleMessage(Message message) {
             super.handleMessage(message);
             if (message.what == 100) {
-
                 listenclass((List<CourseLookEntity>) message.obj);
             }else if(message.what == 101){
                 hudongclass((List<CourseLookEntity.queList>) message.obj);
@@ -102,19 +102,30 @@ public class CourseLookActivity extends AppCompatActivity {
     private void hudongclass(List<CourseLookEntity.queList> queList) {
         if(queList.get(0).getType().equals("question")){
             String imagePath = null;
-            if(queList.get(0).getImgSource().contains(".jpg")){
-                imagePath = ip + "/html" + queList.get(0).getLinks() + "Show.html";
-            }else {
-                imagePath = resPath + queList.get(0).getLinks() + queList.get(0).getId() + ".jpg";
+            if(queList.get(0).getLinks().contains("bag")){
+                imagePath = ip + "/html" + queList.get(0).getLinks() +  "/" +queList.get(0).getQuestionId() + "Show.html";
+            }else{
+                imagePath = ip + "/html" + queList.get(0).getLinks()  + queList.get(0).getQuestionId() + "Show.html";
             }
+            Log.e("imagePath",imagePath);
             Intent intent= new Intent(this, CourseQuestionActivity.class);
+            intent.putExtra("action",action);
+            intent.putExtra("queList", String.valueOf(queList));
             intent.putExtra("stuname" , getIntent().getStringExtra("stuname"));
             intent.putExtra("stunum",stunum);
             intent.putExtra("ip",ip);
             intent.putExtra("imagePath",imagePath);
+            intent.putExtra("learnPlanId",learnPlanId);
+            intent.putExtra("resourceID", queList.get(0).getResourceId());
+            intent.putExtra("questionScore",queList.get(0).getQuestionScore());
+            intent.putExtra("interactionType", queList.get(0).getQuestionType());
+            intent.putExtra("questionAnswer",queList.get(0).getQuestionAnswerStr());
             intent.putExtra("questionTypeName",queList.get(0).getQuestionTypeName());
-            intent.putExtra("imgSource",queList.get(0).getImgSource());
+            intent.putExtra("questionValueList",queList.get(0).getQuestionValueList());
+            intent.putExtra("learnPlanName", this.getIntent().getStringExtra("classname"));
+            intent.putExtra("answerTime", desc);
             startActivity(intent);
+            action = "";
         }else if(queList.get(0).getType().equals("document")){
             if(queList.get(0).getLinks().contains(".ppt") | queList.get(0).getLinks().contains(".pptx")){
 
@@ -132,17 +143,60 @@ public class CourseLookActivity extends AppCompatActivity {
 
     private void listenclass(List<CourseLookEntity> moreList) {
             if(moreList.get(0).getAction().equals("lock")){
-                Intent intent= new Intent(this, CourseLockActivity.class);
-                intent.putExtra("stuname" , getIntent().getStringExtra("stuname"));
-                Log.e("学生姓名",""+getIntent().getStringExtra("stuname"));
-                intent.putExtra("stunum",moreList.get(0).getTarget());
-                intent.putExtra("ip",moreList.get(0).getResRootPath());
-                startActivity(intent);
+                if(quemode == -1){
+                    Intent intent= new Intent(this, CourseLockActivity.class);
+                    intent.putExtra("stuname" , getIntent().getStringExtra("stuname"));
+                    intent.putExtra("stunum",moreList.get(0).getTarget());
+                    intent.putExtra("ip",moreList.get(0).getResRootPath());
+                    String action = "lock";
+                    intent.putExtra("action",action);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+                    startActivity(intent);
+                }else{
+                    action = "lock";
+                }
+
             }else if(moreList.get(0).getAction().equals("read-lock")){
-                action = "read-lock";
+                if(action.equals("lock")){
+                    action = "lock";
+                }else{
+                    action = "read-lock";
+                }
+                Log.e("action",""+action);
                 resPath = moreList.get(0).getResPath();
                 ip = moreList.get(0).getResRootPath();
                 stunum = moreList.get(0).getTarget();
+                desc = moreList.get(0).getDesc();
+                learnPlanId = moreList.get(0).getLearnPlanId();
+            }else if(moreList.get(0).getAction().equals("readyResponder")){
+                runTime = 100;
+                Intent intent= new Intent(this, CourseLockActivity.class);
+                intent.putExtra("stuname" , getIntent().getStringExtra("stuname"));
+                intent.putExtra("stunum",moreList.get(0).getTarget());
+                intent.putExtra("ip",moreList.get(0).getResRootPath());
+                String action = "readyResponder";
+                intent.putExtra("action",action);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+                startActivity(intent);
+            }else if(moreList.get(0).getAction().equals("startResponder")){
+                Intent intent1= new Intent(this, CourseLockActivity.class);
+                intent1.putExtra("stuname" , getIntent().getStringExtra("stuname"));
+                intent1.putExtra("stunum",moreList.get(0).getTarget());
+                intent1.putExtra("ip",moreList.get(0).getResRootPath());
+                String action1 = "startResponder";
+                intent1.putExtra("action",action1);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent1,PendingIntent.FLAG_UPDATE_CURRENT);
+                startActivity(intent1);
+            }else if(moreList.get(0).getAction().equals("stopQiangDa")){
+                runTime = 500;
+                Intent intent1= new Intent(this, CourseLockActivity.class);
+                intent1.putExtra("stuname" , getIntent().getStringExtra("stuname"));
+                intent1.putExtra("stunum",moreList.get(0).getTarget());
+                intent1.putExtra("ip",moreList.get(0).getResRootPath());
+                String action1 = "startResponder";
+                intent1.putExtra("action",action1);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent1,PendingIntent.FLAG_UPDATE_CURRENT);
+                startActivity(intent1);
             }
 
     }
@@ -180,7 +234,6 @@ public class CourseLookActivity extends AppCompatActivity {
                     quemode = 1;
                 }
 
-
                 //封装消息，传递给主线程
                 Message message1 = Message.obtain();
                 message1.obj = moreList;
@@ -208,14 +261,25 @@ public class CourseLookActivity extends AppCompatActivity {
         }, error -> {
             Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
         });
-        RequestQueue queue = Volley.newRequestQueue(this);
+
+        if(queue == null){
+            queue = Volley.newRequestQueue(this);
+            queue.add(request);
+        }else{
+            queue.add(request);
+        }
         queue.add(request);
-        queue.getCache().clear();
+        //queue.getCache().clear();
+    }
+
+    // 按返回键，不传回上一界面
+    public void onBackPressed(){
+        super.onBackPressed();
     }
 
     @Override
     protected void onDestroy() {
-        handler.removeCallbacks(runnable); //停止刷新
+        handler_run.removeCallbacks(runnable); //停止刷新
         super.onDestroy();
     }
 }

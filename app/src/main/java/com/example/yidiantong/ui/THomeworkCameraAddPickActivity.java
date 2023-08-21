@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -141,6 +142,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
     // 类型修改
     private boolean isTypeChange;
     private int typeChangePos;
+    private RelativeLayout rl_submitting;
 
     // 滚动控制器
     public class CustomLinearLayoutManager extends LinearLayoutManager {
@@ -170,6 +172,9 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
         findViewById(R.id.btn_save).setOnClickListener(this);
         findViewById(R.id.btn_assign).setOnClickListener(this);
         findViewById(R.id.iv_add_question).setOnClickListener(this);
+        TextView tv_submitting = findViewById(R.id.tv_submitting);
+        tv_submitting.setText("保存中...");
+        rl_submitting = findViewById(R.id.rl_submitting);
 
         sv_main = findViewById(R.id.sv_main);
 
@@ -594,11 +599,14 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            rl_submitting.setVisibility(View.GONE);
         }, error -> {
             Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
+            rl_submitting.setVisibility(View.GONE);
         });
         MyApplication.addRequest(request, TAG);
+        rl_submitting.setVisibility(View.VISIBLE);
     }
 
     private void showTypeMenu() {

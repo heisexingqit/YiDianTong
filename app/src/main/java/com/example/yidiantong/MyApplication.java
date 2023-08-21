@@ -31,6 +31,7 @@ public class MyApplication extends Application {
     public static String token;
     public static String picUrl;
     public static String password;
+    public static Boolean autoLogin;
 
     private static RequestQueue mQueue;
     //ImageLoader显示图片过程中的参数
@@ -104,6 +105,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        autoLogin = true;
 
         //初始化ImageLoader
         initImageLoader(getApplicationContext());

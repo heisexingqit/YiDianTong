@@ -259,6 +259,8 @@ public class TMainMyFragment extends Fragment implements View.OnClickListener {
             case R.id.f_ll_center:
                 break;
             case R.id.fbtn_exit:
+                // 关闭自动登录
+                MyApplication.autoLogin = false;
                 // 退出登录
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                 //两个一起用

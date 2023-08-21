@@ -119,5 +119,7 @@
             android:text="布置"
             android:textColor="@color/white" />
     </LinearLayout>
-
+    <!--遮蔽-->
+    <include layout="@layout/submitting_page"
+        android:visibility="gone"/>
 </RelativeLayout>

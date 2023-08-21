@@ -2,6 +2,7 @@ package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -140,13 +142,10 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
 
     //提交代码
     private void submit() {
-        rl_submitting.setVisibility(View.VISIBLE);
         java.util.Date day = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd:HH:mm:ss");
         String date = sdf.format(day);
 
-        String mRequestUrl;
-        StringRequest request;
         for (int i = 0; i < stuAnswer.length; ++i) {
             if (stuAnswer[i].length() == 0) {
                 if (isF) {
@@ -162,31 +161,45 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
         if (submitZero.length() == 0) {
             submitZero = "-1";
         }
-        mRequestUrl = Constant.API + Constant.SUBMIT_ANSWER_FINAL + "?answerTime=" + date + "&paperId=" + learnPlanId + "&userName=" + username +
-                "&status=" + (isNew ? 1 : 3) + "&noAnswerQueId=" + submitZero;
 
-        request = new StringRequest(mRequestUrl, response -> {
-            try {
-                JSONObject json = JsonUtils.getJsonObjectFromString(response);
-                //结果信息
-                Boolean isSuccess = json.getBoolean("success");
-                Message msg = Message.obtain();
-                if (isSuccess) {
-                    msg.obj = 1;
-                } else {
-                    msg.obj = 0;
+        if (!submitZero.equals("-1")) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("有题目未作答,是否提交?");
+            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    String mRequestUrl = Constant.API + Constant.SUBMIT_ANSWER_FINAL + "?answerTime=" + date + "&paperId=" + learnPlanId + "&userName=" + username +
+                            "&status=" + (isNew ? 1 : 3) + "&noAnswerQueId=" + submitZero;
+
+                    StringRequest request = new StringRequest(mRequestUrl, response -> {
+                        try {
+                            JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                            //结果信息
+                            Boolean isSuccess = json.getBoolean("success");
+                            Message msg = Message.obtain();
+                            if (isSuccess) {
+                                msg.obj = 1;
+                            } else {
+                                msg.obj = 0;
+                            }
+                            msg.what = 100;
+                            handler.sendMessage(msg);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }, error -> {
+                        Toast.makeText(HomeworkSubmitActivity.this, "网络连接失败", Toast.LENGTH_SHORT).show();
+                        Log.d("wen", "Volley_Error: " + error.toString());
+                    });
+
+                    MyApplication.addRequest(request, TAG);
+                    rl_submitting.setVisibility(View.VISIBLE);
                 }
-                msg.what = 100;
-                handler.sendMessage(msg);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }, error -> {
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
-        });
-
-        MyApplication.addRequest(request, TAG);
-
+            });
+            builder.setNegativeButton("取消", null);
+            AlertDialog dialog = builder.create();
+            dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+            dialog.show();
+        }
     }
 }

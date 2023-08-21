@@ -3,6 +3,7 @@ package com.example.yidiantong.ui;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -14,6 +15,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -38,25 +40,23 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class CourseLockActivity extends AppCompatActivity  {
+public class CourseLockActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
 
     private ImageView fiv_ls_ma;
     private TextView ftv_ls_user;
     private String ip;
     private Bitmap imgBitmap = null;
     private ImageView fiv_cls_look;
+    private String stunum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_look_screen);
-        if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        }
 
         ip = getIntent().getStringExtra("ip");
         String stuname = getIntent().getStringExtra("stuname");
-        String stunum = getIntent().getStringExtra("stunum");
+        stunum = getIntent().getStringExtra("stunum");
         ftv_ls_user = findViewById(R.id.ftv_ls_user);
         ftv_ls_user.setText(stuname + "(" + stunum + ")");
         fiv_cls_look = findViewById(R.id.fiv_cls_look);
@@ -67,6 +67,28 @@ public class CourseLockActivity extends AppCompatActivity  {
                 loadItems_Net();
             }
         });
+        changeImage();
+    }
+
+    private void changeImage() {
+        String action = getIntent().getStringExtra("action");
+        // 听讲状态
+        if(action.equals("lock")){
+            fiv_cls_look.setImageResource(R.drawable.qing1);
+        }// 准备抢答
+        else if(action.equals("readyResponder")){
+            fiv_cls_look.setImageResource(R.drawable.readyqiangda);
+        }// 抢答
+        else if(action.equals("startResponder")){
+            fiv_cls_look.setImageResource(R.drawable.qiangdabutton);
+            fiv_cls_look.setEnabled(true);
+            fiv_cls_look.setOnClickListener(this);
+            fiv_cls_look.setOnTouchListener(this);
+        }// 停止抢答
+        else if(action.equals("stopQiangDa")){
+            fiv_cls_look.setImageResource(R.drawable.qiangdagray);
+            fiv_cls_look.setEnabled(false);
+        }
     }
 
     private Handler handler = new Handler(Looper.getMainLooper()) {
@@ -76,10 +98,14 @@ public class CourseLockActivity extends AppCompatActivity  {
             super.handleMessage(message);
             if (message.what == 100) {
                 requestWebPhotoBitmap((String) message.obj);
+            }else if(message.what == 101){
+                if((int)message.obj == 1){
+                    Log.e("成功","");
+                }
             }
         }
     };
-
+    // 二维码图片
     private void requestWebPhotoBitmap(String imageurl) {
         new Thread(() -> {
             HttpURLConnection connection = null;
@@ -153,9 +179,6 @@ public class CourseLockActivity extends AppCompatActivity  {
         }
     };
 
-
-
-
     private void loadItems_Net() {
         String mRequestUrl = ip + Constant.GET_QRCODE_URL ;
         Log.e("mReq_stu",""+mRequestUrl);
@@ -182,5 +205,66 @@ public class CourseLockActivity extends AppCompatActivity  {
         queue.add(request);
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.fiv_cls_look:
+                qiangda();
+                break;
+        }
+    }
 
+    private void qiangda() {
+        String mRequestUrl = ip + Constant.RESPONDER_FROM_APP + "?userName=" + stunum ;
+        Log.e("mReq_stu",""+mRequestUrl);
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                //结果信息
+                Boolean isSuccess = json.getBoolean("success");
+                Message msg = Message.obtain();
+                if (isSuccess) {
+                    msg.obj = 1;
+                } else {
+                    msg.obj = 0;
+                }
+                msg.what = 101;
+                handler.sendMessage(msg);
+
+            }catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+        });
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(request);
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if(v.getId() == R.id.fiv_cls_look){
+            if(event.getAction() == MotionEvent.ACTION_UP){
+                fiv_cls_look.setImageResource(R.drawable.qiangdabutton);
+            }
+            if(event.getAction() == MotionEvent.ACTION_DOWN){
+                fiv_cls_look.setImageResource(R.drawable.qiangdagray);
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        changeImage();
+    }
+
+    public void onBackPressed(){
+        Intent intent = new Intent(CourseLockActivity.this, CourseLookActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+    }
 }

@@ -97,7 +97,12 @@ public class Constant {
     public static final String GET_MESSAGE_LIST_BY_STU = "/KeTangServer/ajax/ketang_getMessageListByStu.do";
     //学生端生成ip对应二维码
     public static final String GET_QRCODE_URL = "/KeTangServer/ajax/ketang_ getQRcodeUrl.do";
-
+    //学生端抢答发送给课堂一点通
+    public static final String RESPONDER_FROM_APP = "/KeTangServer/ajax/ketang_responderFromApp.do";
+    //学生端提交答案到服务器（客）
+    public static final String SAVE_STU_ANSWER_FROM_APP = "/KeTangServer/ajax/ketang_saveStuAnswerFromApp.do";
+    // 学生端保存图片到服务器
+    public static final String SAVE_BASE64_IMAGE = "/KeTangServer/ajax/ketang_saveBase64Image.do";
     // 教师端最新信息
     public static final String T_NEW_ITEM = "/AppServer/ajax/teacherApp_getAllNews.do";
 
@@ -223,10 +228,13 @@ public class Constant {
 
     // 教师端修改通知或公告，返回对应的内容
     public static final String T_BELL_GET_NOTICE_INFO = "/AppServer/ajax/teacherApp_getNoticeInfo.do";
+
     // 教师端获取授课一点通是否上课
     public static final String GET_SKYDT_STATUS = "/AppServer/ajax/teacherApp_getSkydtStatus.do";
-     // 教师端获取课堂
+
+    // 教师端获取课堂
     public static final String T_CLIENT_KETANG_PLAY_BY_TEA= "/KeTangServer/ajax/ketang_clientKeTangPlayByTea.do";
+
     // 教师端连接授课一点通
     public static final String T_GET_MESSAGE_LIST_BY_TEA = "/KeTangServer/ajax/ketang_getMessageListByTea.do";
 

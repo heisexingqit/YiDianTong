@@ -339,7 +339,8 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                 startActivity(intent_center);
                 break;
             case R.id.fbtn_exit:
-
+                // 关闭自动登录
+                MyApplication.autoLogin = false;
                 // 退出登录
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
 
