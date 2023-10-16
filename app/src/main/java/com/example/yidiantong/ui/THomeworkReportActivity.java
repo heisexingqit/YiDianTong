@@ -1,8 +1,10 @@
 package com.example.yidiantong.ui;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -69,10 +71,7 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
     private FlexboxLayout fb_noCorrecting;
     private FlexboxLayout fb_noSubmit;
 
-
-
     THomeworkReportEntity homeworkReport;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +103,7 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
         iv_correcting.setOnClickListener(this);
         iv_noCorrecting.setOnClickListener(this);
         iv_noSubmit.setOnClickListener(this);
+        findViewById(R.id.iv_setting).setOnClickListener(this);
 
         // 父容器
         fb_max = findViewById(R.id.fb_max);
@@ -112,7 +112,7 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
         fb_noCorrecting = findViewById(R.id.fb_noCorrecting);
         fb_noSubmit = findViewById(R.id.fb_noSubmit);
 
-        findViewById(R.id.iv_back).setOnClickListener(v-> finish());
+        findViewById(R.id.iv_back).setOnClickListener(v -> finish());
 
         loadItems_Net();
 
@@ -131,7 +131,6 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                 tv_correcting.setText(homeworkReport.getCorrecting());
                 tv_noCorrecting.setText(homeworkReport.getNoCorrecting());
                 tv_noSubmit.setText(homeworkReport.getNoSubmit());
-
             }
         }
     };
@@ -175,7 +174,7 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.iv_avg:
                 showList(0);
                 break;
@@ -194,14 +193,69 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
             case R.id.iv_noSubmit:
                 showList(5);
                 break;
+            case R.id.iv_setting:
+                int un_submit = Integer.parseInt(homeworkReport.getNoSubmit());
+                int all_num = Integer.parseInt(homeworkReport.getCorrecting());
+                all_num += Integer.parseInt(homeworkReport.getNoCorrecting());
+                all_num += un_submit;
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                if (homeworkReport.getStatus().equals("show")) {
+
+                    builder.setMessage("答案已经公布");
+                    builder.setPositiveButton("确定", null);
+                    AlertDialog dialog = builder.create();
+                    dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+                    dialog.show();
+
+                } else if (un_submit / all_num > 0.2) {
+                    builder.setMessage("提交率不足80%，确定要公布答案吗？");
+                    builder.setNegativeButton("取消", null);
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            publishAnswer();
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+                    dialog.show();
+                } else {
+                    publishAnswer();
+                }
+                break;
         }
     }
 
-    public void showList(int newPos){
+    private void publishAnswer() {
+        String mRequestUrl = Constant.API + Constant.PUBLISH_ANSWER + "?userName=" + MyApplication.username + "&taskId=" + taskId;
+        Log.d("wen", "publishAnswer: " + mRequestUrl);
+
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String message = json.getString("message");
+                Boolean isSuccess = json.getBoolean("success");
+                message.replace("。", "");
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                if (isSuccess) {
+                    homeworkReport.setStatus("show");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());
+        });
+
+        MyApplication.addRequest(request, TAG);
+    }
+
+    public void showList(int newPos) {
         View view = null;
         int len;
         // 关闭showPos部分视图
-        switch (showPos){
+        switch (showPos) {
             case 0:
                 break;
             case 1:
@@ -228,15 +282,15 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                 break;
         }
 
-        if(newPos != showPos){
+        if (newPos != showPos) {
             // 展示newPos部分视图，关闭showPos部分视图
-            switch (newPos){
+            switch (newPos) {
                 case 0:
 
                     break;
                 case 1:
                     len = homeworkReport.getMaxList().size();
-                    for(int i = 0; i < len; ++i){
+                    for (int i = 0; i < len; ++i) {
                         String name = homeworkReport.getMaxList().get(i);
                         view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_report_student, fb_max, false);
                         TextView tv_name = view.findViewById(R.id.tv_name);
@@ -247,7 +301,7 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                     break;
                 case 2:
                     len = homeworkReport.getMinList().size();
-                    for(int i = 0; i < len; ++i){
+                    for (int i = 0; i < len; ++i) {
                         String name = homeworkReport.getMinList().get(i);
                         view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_report_student, fb_min, false);
                         TextView tv_name = view.findViewById(R.id.tv_name);
@@ -258,7 +312,7 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                     break;
                 case 3:
                     len = homeworkReport.getCorrectingList().size();
-                    for(int i = 0; i < len; ++i){
+                    for (int i = 0; i < len; ++i) {
                         String name = homeworkReport.getCorrectingList().get(i);
                         view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_report_student, fb_correcting, false);
                         TextView tv_name = view.findViewById(R.id.tv_name);
@@ -269,7 +323,7 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                     break;
                 case 4:
                     len = homeworkReport.getNoCorrectingList().size();
-                    for(int i = 0; i < len; ++i){
+                    for (int i = 0; i < len; ++i) {
                         String name = homeworkReport.getNoCorrectingList().get(i);
 
                         view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_report_student, fb_noCorrecting, false);
@@ -282,7 +336,7 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                 case 5:
                     len = homeworkReport.getNoSubmitList().size();
                     Log.d(TAG, "showList: " + len);
-                    for(int i = 0; i < len; ++i){
+                    for (int i = 0; i < len; ++i) {
                         String name = homeworkReport.getNoSubmitList().get(i);
                         Log.d(TAG, "showList: " + i + " " + name);
                         view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_report_student, fb_noSubmit, false);
@@ -297,7 +351,7 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
             }
 
             showPos = newPos;
-        }else{
+        } else {
             // 同时showPos为-1
             showPos = -1;
         }

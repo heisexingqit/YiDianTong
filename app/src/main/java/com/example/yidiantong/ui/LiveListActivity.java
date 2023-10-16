@@ -43,6 +43,7 @@ import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.navigationdemo.MainActivity_stu;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -74,7 +75,8 @@ public class LiveListActivity extends AppCompatActivity implements View.OnClickL
 
     private Handler timeHandler;
     private Runnable refreshRunnable;
-    private long refreshIntervalMillis = 30000; // 30秒
+    private long refreshIntervalMillis = 20000; // 20秒
+    private boolean shouldStopTimer = false; // 标记定时器启动和停止
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,23 +140,27 @@ public class LiveListActivity extends AppCompatActivity implements View.OnClickL
                 // 监听选项进行设置
                 dialog.setMyInterface(new LiveEnterDialog.MyInterface() {
                     @Override
-                    public void submit(boolean isCamera, boolean isMico) {
-//                        Intent intent = new Intent(LiveListActivity.this, MainActivity_stu.class);
-//                        LiveItemEntity item = adapter.itemList.get(pos);
-//                        String roomName = "null";
-//                        String ketangId = "null";
-//                        String ketangName = "null";
-//                        String userHead = MyApplication.picUrl;
-//                        String classAlreadtStartTime = item.getStartDate().getTime();
-//                        Log.d(TAG, "已开始时间: " + classAlreadtStartTime);
-//                        String params = MyApplication.username + "-@-" + MyApplication.cnName + "-@-" +
-//                                item.getRoomId() + "-@-" + roomName + "-@-" + item.getSubject() + "-@-" + ketangId + "-@-" + ketangName + "-@-" +
-//                                userHead + "-@-" + item.getTeacherId() + "-@-" + item.getTeacherName() +
-//                                "-@-" + isCamera + "-@-" + isMico + "-@-" + classAlreadtStartTime;
-//                        intent.putExtra("params", params);
-//                        startActivity(intent);
+                    public void submit(boolean isCamera, boolean isMicro) {
+                        Intent intent = new Intent(LiveListActivity.this, MainActivity_stu.class);
+                        LiveItemEntity item = adapter.itemList.get(pos);
+                        String userHead = MyApplication.picUrl;
+                        String classAlreadtStartTime = item.getStartDate().getTime();
+                        Log.d(TAG, "已开始时间: " + classAlreadtStartTime);
+                        String params = MyApplication.username + "-@-" + MyApplication.cnName + "-@-" + item.getRoomId() + "-@-" + item.getTitle() + "-@-" + item.getSubject() + "-@-" + item.getRoomId() + "-@-" + item.getTitle() + "-@-" + userHead + "-@-" + item.getTeacherId() + "-@-" + item.getTeacherName() + "-@-" + isCamera + "-@-" + isMicro + "-@-" + classAlreadtStartTime;
+                        intent.putExtra("params", params);
+
+                        // 关闭定时器
+                        shouldStopTimer = true;
+                        startActivity(intent);
+                        Log.d("wen", "参数：" + params);
+                        // 关闭对话框
+                        dialog.dismiss();
                     }
+
                 });
+
+                dialog.show();
+
             }
         });
 
@@ -197,10 +203,13 @@ public class LiveListActivity extends AppCompatActivity implements View.OnClickL
         refreshRunnable = new Runnable() {
             @Override
             public void run() {
-                refreshList();
-                Log.d("wen", "run: xxxxxxxxxxxxxxxxxx");
-                // 重复调度下一次刷新
-                timeHandler.postDelayed(this, refreshIntervalMillis);
+                if (shouldStopTimer) {
+                    timeHandler.removeCallbacks(this);
+                } else {
+                    refreshList();
+                    // 重复调度下一次刷新
+                    timeHandler.postDelayed(this, refreshIntervalMillis);
+                }
             }
         };
     }
@@ -344,14 +353,18 @@ public class LiveListActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     protected void onResume() {
-        super.onResume();
+        // 开启定时刷新
+        shouldStopTimer = false;
         handler.postDelayed(refreshRunnable, refreshIntervalMillis);
+        Log.d("wen", "onResume: 开启定时器");
+        super.onResume();
     }
 
     @Override
     protected void onPause() {
-        super.onPause();
         // 在Activity不可见时停止定时刷新
-        timeHandler.removeCallbacks(refreshRunnable);
+        shouldStopTimer = true;
+        Log.d("wen", "onPause: 关闭定时器");
+        super.onPause();
     }
 }

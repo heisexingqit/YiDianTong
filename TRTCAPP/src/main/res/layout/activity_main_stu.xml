@@ -1,0 +1,1325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/rl_main_bg"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="horizontal">
+
+    <com.tencent.rtmp.ui.TXCloudVideoView
+        android:id="@+id/teacher_share"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:padding="0dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.97"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="parent"
+
+        app:layout_constraintWidth_percent="0.98">
+        <!--        app:layout_constraintHorizontal_bias="0.5"-->
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.tencent.rtmp.ui.TXCloudVideoView>
+
+    <RelativeLayout
+        android:id="@+id/info_bar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/border_bottom_background"
+        app:layout_constraintEnd_toStartOf="@+id/stroll"
+        app:layout_constraintHeight_percent="0.035"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/class_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="3dp"
+            android:gravity="center_vertical"
+            android:text="基因突变和基因重组"
+            android:textColor="@color/white"
+            android:textSize="7sp" />
+
+        <View
+            android:id="@+id/divider_1"
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginVertical="3.8dp"
+            android:layout_toStartOf="@+id/class_time"
+            android:background="@color/white" />
+
+        <TextView
+            android:id="@+id/class_time"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/border_right_background"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="3dp"
+            android:text="已上课 00:05:32"
+            android:textColor="@color/white"
+            android:textSize="7sp"
+            tools:ignore="SmallSp" />
+
+        <TextView
+            android:id="@+id/class_id"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toStartOf="@id/divider_1"
+            android:background="@drawable/border_right_background"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="3dp"
+            android:text="课堂号: 5723908"
+            android:textColor="@color/white"
+            android:textSize="7sp"
+            tools:ignore="SmallSp" />
+    </RelativeLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/boardcontent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/teacher_background"
+        app:layout_constraintBottom_toTopOf="@+id/group_buttons"
+        app:layout_constraintEnd_toStartOf="@+id/stroll"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/info_bar">
+
+        <!-- 互动白板-->
+        <FrameLayout
+            android:id="@+id/teachingcontent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/teacher_background" />
+
+        <!-- 左侧画笔功能-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/menu_left"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="bottom"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent">
+
+            <TableLayout
+                android:id="@+id/select_menu_top"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/select_menu"
+                app:layout_constraintHeight_percent="0.54"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TableLayout
+                android:id="@+id/select_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/bg_select_menu"
+                android:gravity="bottom"
+                android:orientation="vertical"
+                android:paddingTop="5dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/select_menu_top">
+
+                <RelativeLayout
+                    android:id="@+id/menu01RL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/menu01"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:background="@mipmap/menu_01_mouse" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/menu02RL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/menu02"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:adjustViewBounds="true"
+                        android:background="@mipmap/menu_02_paint1" />
+
+                    <ImageView
+                        android:id="@+id/menu02color"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignRight="@id/menu02"
+                        android:layout_alignBottom="@id/menu02"
+                        android:alpha="0.7"
+                        android:background="@color/bg_selected_menu" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/menu03RL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/menu03"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:background="@mipmap/menu_03_text" />
+
+                    <ImageView
+                        android:id="@+id/menu03color"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignRight="@id/menu03"
+                        android:layout_alignBottom="@id/menu03"
+                        android:alpha="0.7"
+                        android:background="@color/bg_select_menu" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/menu04RL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/menu04"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:background="@mipmap/menu_04_jihe" />
+
+                    <ImageView
+                        android:id="@+id/menu04color"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignRight="@id/menu04"
+                        android:layout_alignBottom="@id/menu04"
+                        android:alpha="0.7"
+                        android:background="@color/bg_select_menu" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/menu05RL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/menu05"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:background="@mipmap/menu_05_select" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/menu06RL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/menu06"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:background="@mipmap/menu_06_tools" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/menu07RL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/menu07"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:background="@mipmap/menu_07_move" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/menu08RL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/menu08"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:background="@mipmap/menu_08_earsea" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/menu09RL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/menu09"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:background="@mipmap/menu_09_clean" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/menu10RL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/menu10"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:background="@mipmap/menu_10" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/menu11RL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/menu11"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:background="@mipmap/menu_11_bg" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/menu12RL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="bottom"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/menu12"
+                        android:layout_width="31dp"
+                        android:layout_height="15dp"
+                        android:background="@mipmap/menu_12_down"
+                        tools:ignore="MissingConstraints" />
+                </RelativeLayout>
+            </TableLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- 底部功能-->
+        <RelativeLayout
+            android:id="@+id/menu_bottom"
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="right|bottom"
+            android:visibility="visible">
+
+            <TableLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="1dp"
+                android:layout_marginBottom="1dp"
+                android:orientation="vertical">
+
+                <TableRow
+                    android:background="@color/bg_select_menu"
+                    android:gravity="center"
+                    android:paddingLeft="3dp">
+
+                    <ImageButton
+                        android:id="@+id/menub01"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_marginBottom="4dp"
+                        android:background="@mipmap/menu_b01" />
+
+                    <ImageButton
+                        android:id="@+id/menub02"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_marginBottom="4dp"
+                        android:background="@mipmap/menu_b02" />
+
+                    <ImageButton
+                        android:id="@+id/menub02_1"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:background="@mipmap/bottom_line" />
+
+                    <ImageButton
+                        android:id="@+id/menub03"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_marginBottom="4dp"
+                        android:background="@mipmap/menu_b03" />
+
+                    <ImageButton
+                        android:id="@+id/menub04"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_marginBottom="4dp"
+                        android:background="@mipmap/menu_b04" />
+
+                    <TextView
+                        android:id="@+id/board_size"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginRight="2dp"
+                        android:background="@color/bg_select_menu"
+                        android:gravity="center_vertical"
+                        android:text="100"
+                        android:textColor="@color/white"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/b_per"
+                        android:layout_width="8dp"
+                        android:layout_height="wrap_content"
+                        android:background="@color/bg_select_menu"
+                        android:gravity="center_vertical"
+                        android:text="%"
+                        android:textColor="@color/white"
+                        android:textSize="10sp" />
+
+                    <ImageButton
+                        android:id="@+id/menub05"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:background="@mipmap/menu_b05" />
+
+                    <ImageButton
+                        android:id="@+id/menub05_1"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:background="@mipmap/bottom_line" />
+
+                    <ImageButton
+                        android:id="@+id/menub06"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_marginBottom="4dp"
+                        android:background="@mipmap/menu_b06" />
+
+                    <TextView
+                        android:id="@+id/board_curpage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginRight="3dp"
+                        android:background="@color/bg_select_menu"
+                        android:gravity="center_vertical"
+                        android:text="1"
+                        android:textColor="@color/white"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/b_chu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/bg_select_menu"
+                        android:gravity="center_vertical"
+                        android:text="/"
+                        android:textColor="@color/white"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/board_sumpage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginRight="3dp"
+                        android:background="@color/bg_select_menu"
+                        android:gravity="center_vertical"
+                        android:text="1"
+                        android:textColor="@color/white"
+                        android:textSize="10sp" />
+
+                    <ImageButton
+                        android:id="@+id/menub07"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_marginBottom="4dp"
+                        android:background="@mipmap/menu_b07" />
+
+                    <ImageButton
+                        android:id="@+id/menub08"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_marginBottom="4dp"
+                        android:background="@mipmap/menu_b08" />
+
+                    <ImageButton
+                        android:id="@+id/menub09"
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_marginBottom="4dp"
+                        android:background="@mipmap/menu_b09" />
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center">
+
+                        <ImageButton
+                            android:id="@+id/menub10"
+                            android:layout_width="15dp"
+                            android:layout_height="31dp"
+                            android:background="@mipmap/menu_b10" />
+                    </RelativeLayout>
+
+                </TableRow>
+            </TableLayout>
+
+        </RelativeLayout>
+        <!--用来显示设置窗口-->
+        <RelativeLayout
+            android:id="@+id/setBoardWindow"
+            android:layout_width="145dp"
+            android:layout_height="122dp"
+            android:layout_marginLeft="2dp"
+            android:background="@color/bg_select_menu"
+            android:gravity="bottom"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/menu_left"
+            app:layout_constraintLeft_toRightOf="@id/menu_left">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/bg_select_menu"
+                android:orientation="vertical">
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/setboard_tar_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center"
+                    android:background="@color/bg_select_menu"
+                    app:tabIndicatorColor="@color/blue_white"
+                    app:tabPaddingEnd="5dp"
+                    app:tabPaddingStart="5dp"
+                    app:tabRippleColor="@color/blue_white"
+                    app:tabSelectedTextColor="@color/blue_white"
+                    app:tabTextAppearance="@style/Set_bgTabBarTextStyle"
+                    app:tabTextColor="@color/gray_text" />
+
+                <androidx.viewpager.widget.ViewPager
+                    android:id="@+id/set_board_tar_bar_viewpage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/bg_select_menu" />
+            </LinearLayout>
+        </RelativeLayout>
+
+
+        <!--授课内容为空，请载入-->
+        <RelativeLayout
+            android:id="@+id/bg_shoukeneirong"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true">
+
+                <TextView
+                    android:id="@+id/alert_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="白板加载中,请稍等..."
+                    android:textColor="@color/gray_text"
+                    android:textSize="20sp" />
+            </LinearLayout>
+        </RelativeLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--    <ScrollView-->
+    <!--        android:id="@+id/stroll_tiankong_temp"-->
+    <!--        android:layout_width="0dp"-->
+    <!--        android:layout_height="0dp"-->
+    <!--        android:layout_gravity="top"-->
+    <!--        android:background="@color/white"-->
+    <!--        android:fadingEdge="vertical"-->
+    <!--        android:gravity="top"-->
+    <!--        android:padding="2dp"-->
+    <!--        android:scrollbars="vertical"-->
+    <!--        android:visibility="invisible"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintHeight_percent="0.2"-->
+    <!--        app:layout_constraintTop_toTopOf="parent"-->
+    <!--        app:layout_constraintWidth_percent="0.2">-->
+    <!--    </ScrollView>-->
+
+
+    <RelativeLayout
+        android:id="@+id/stroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_gravity="top"
+        android:background="@color/background_chatroom"
+        android:fadingEdge="vertical"
+        android:gravity="right"
+        android:paddingHorizontal="4dp"
+        android:paddingVertical="4dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="1.0"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.25">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/teacher_camera_block"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:padding="2dp"
+                app:layout_constraintDimensionRatio="w,9:16"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <RelativeLayout
+                    android:id="@+id/camera_block"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <!--教师端摄像头流 teacher_camera-->
+                    <com.tencent.rtmp.ui.TXCloudVideoView
+                        android:id="@+id/teacher_camera"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="2dp" />
+
+                    <RelativeLayout
+                        android:id="@+id/teacher_background"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/temp_camera"
+                        android:padding="2dp"
+                        android:visibility="visible">
+
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_centerInParent="true"
+                            android:maxWidth="20dp"
+                            android:maxHeight="20dp"
+                            android:paddingBottom="10dp"
+                            android:src="@drawable/zbcameranoopen" />
+                    </RelativeLayout>
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/teacher_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/camera_block"
+                    android:alpha="0.7"
+                    android:background="@color/teacher_background"
+                    android:drawablePadding="2dp"
+                    android:paddingHorizontal="2dp"
+                    android:paddingVertical="2dp"
+                    android:text="XX老师"
+                    android:textColor="@color/white"
+                    android:textSize="7sp" />
+            </RelativeLayout>
+
+            <ScrollView
+                android:id="@+id/stroll_tiankong"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="top"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:background="@color/white"
+                android:fadingEdge="vertical"
+                android:gravity="right"
+                android:padding="2dp"
+                android:scrollbars="vertical"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.74"
+                app:layout_constraintTop_toBottomOf="@+id/teacher_camera_block">
+
+                <TextView
+                    android:id="@+id/tiankong_echo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginRight="2dp"
+                    android:padding="2dp"
+                    android:text=""
+                    android:textColor="@color/black"
+                    android:textSize="12dp" />
+
+            </ScrollView>
+
+            <RelativeLayout
+                android:id="@+id/student_camera_big_block"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:padding="2dp"
+                app:layout_constraintDimensionRatio="w,9:16"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/teacher_camera_block">
+
+                <RelativeLayout
+                    android:id="@+id/student_camera_block"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <!--教师端摄像头流 teacher_camera-->
+                    <com.tencent.rtmp.ui.TXCloudVideoView
+                        android:id="@+id/student_camera"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="2dp" />
+
+                    <RelativeLayout
+                        android:id="@+id/student_background"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/temp_camera"
+                        android:padding="2dp"
+                        android:visibility="visible">
+
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_centerInParent="true"
+                            android:maxWidth="20dp"
+                            android:maxHeight="20dp"
+                            android:paddingBottom="10dp"
+                            android:src="@drawable/zbcameranoopen" />
+                    </RelativeLayout>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/student_camera_block">
+
+                    <TextView
+                        android:id="@+id/student_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:alpha="0.7"
+                        android:background="@color/teacher_background"
+                        android:drawablePadding="2dp"
+                        android:paddingHorizontal="2dp"
+                        android:paddingVertical="2dp"
+                        android:text="XX老师"
+                        android:textColor="@color/white"
+                        android:textSize="7sp" />
+
+                    <ImageView
+                        android:id="@+id/speaker_icon"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/speaker_controller_on"
+                        android:visibility="invisible" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+
+            <!--            <androidx.fragment.app.FragmentContainerView-->
+            <!--                android:id="@+id/teacher_camera"-->
+            <!--                android:name="com.navigationdemo.trtc_client.CameraFragment"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                app:layout_constraintTop_toTopOf="parent"-->
+            <!--                />-->
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_bar_table_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/background_chatroom"
+                app:layout_constraintTop_toBottomOf="@id/student_camera_big_block"
+                app:tabIndicatorColor="@color/blue_white"
+                app:tabMode="fixed"
+                app:tabPadding="0dp"
+                app:tabPaddingBottom="0dp"
+                app:tabPaddingEnd="5dp"
+                app:tabPaddingStart="5dp"
+                app:tabPaddingTop="0dp"
+                app:tabRippleColor="@color/blue_white"
+                app:tabSelectedTextColor="@color/blue_white"
+                app:tabTextAppearance="@style/TabBarTextStyle"
+                app:tabTextColor="@color/tab_bar_title_text_color" />
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/tar_bar_view_page"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tab_bar_table_layout" />
+
+            <!--学生端摄像头 txcvv_main-->
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/qiangda"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@mipmap/qiangda"
+        android:gravity="center_horizontal"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/mic_btn"
+        app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.07" />
+
+    <!--底部一排功能按钮-->
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_buttons"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/message_input"
+
+        android:gravity="bottom"
+        android:padding="10dp"
+        android:visibility="visible"
+
+        app:constraint_referenced_ids="hand_btn, mic_btn, camera_btn, exit_btn,  bottom_line_2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/stroll"
+        app:layout_constraintHeight_percent="0.07"
+        app:layout_constraintWidth_percent="0.8" />
+
+    <ImageView
+        android:id="@+id/mic_btn"
+        android:layout_width="50dp"
+        android:layout_height="0dp"
+        android:onClick="switchMusic"
+        android:src="@drawable/mic_btn"
+        app:layout_constraintBottom_toBottomOf="@+id/group_buttons"
+        app:layout_constraintEnd_toStartOf="@+id/camera_btn"
+        app:layout_constraintTop_toTopOf="@+id/group_buttons" />
+
+    <ImageView
+        android:id="@+id/camera_btn"
+        android:layout_width="50dp"
+        android:layout_height="0dp"
+        android:onClick="handleOpenCamera"
+        android:src="@drawable/camera_btn"
+        app:layout_constraintBottom_toBottomOf="@+id/group_buttons"
+        app:layout_constraintEnd_toStartOf="@+id/hand_btn"
+        app:layout_constraintTop_toTopOf="@+id/group_buttons" />
+
+    <ImageView
+        android:id="@+id/hand_btn"
+        android:layout_width="50dp"
+        android:layout_height="0dp"
+        android:src="@drawable/hand_btn"
+        app:layout_constraintBottom_toBottomOf="@+id/group_buttons"
+        app:layout_constraintEnd_toEndOf="@+id/group_buttons"
+        app:layout_constraintStart_toStartOf="@+id/group_buttons"
+        app:layout_constraintTop_toTopOf="@+id/group_buttons" />
+
+    <ImageView
+        android:id="@+id/bottom_line_2"
+        android:layout_width="20dp"
+        android:layout_height="0dp"
+        android:src="@drawable/bottom_line"
+        app:layout_constraintBottom_toBottomOf="@+id/group_buttons"
+        app:layout_constraintStart_toEndOf="@+id/hand_btn"
+        app:layout_constraintTop_toTopOf="@+id/group_buttons" />
+
+    <ImageView
+        android:id="@+id/exit_btn"
+        android:layout_width="50dp"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
+        android:src="@drawable/bottom_exitkt"
+        app:layout_constraintBottom_toBottomOf="@+id/group_buttons"
+        app:layout_constraintStart_toEndOf="@+id/bottom_line_2"
+        app:layout_constraintTop_toTopOf="@+id/group_buttons" />
+
+    <TextView
+        android:id="@+id/hand_time"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:text="20s后自动放下手"
+        android:textColor="@color/text_white"
+        android:textSize="8sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/group_buttons"
+        app:layout_constraintStart_toEndOf="@+id/exit_btn"
+        app:layout_constraintTop_toTopOf="@+id/group_buttons" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/tfanswer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/gray_back"
+        android:gravity="bottom"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="1.0">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <CheckBox
+                android:id="@+id/tfyes"
+                style="@style/select_style"
+                android:tag="对"
+                android:text="对" />
+
+            <CheckBox
+                android:id="@+id/tfno"
+                style="@style/select_style"
+                android:tag="错"
+                android:text="错" />
+
+            <Button
+                android:id="@+id/tfsubmit"
+                style="@style/submit_style"
+                android:tag="0"
+                android:text="提交" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/singleanswer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/gray_back"
+        android:gravity="bottom"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="1.0">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <CheckBox
+                android:id="@+id/singlea"
+                style="@style/select_style"
+                android:tag="A"
+                android:text="A" />
+
+            <CheckBox
+                android:id="@+id/singleb"
+                style="@style/select_style"
+                android:tag="B"
+                android:text="B" />
+
+            <CheckBox
+                android:id="@+id/singlec"
+                style="@style/select_style"
+                android:tag="C"
+                android:text="C" />
+
+            <CheckBox
+                android:id="@+id/singled"
+                style="@style/select_style"
+                android:tag="D"
+                android:text="D" />
+
+            <CheckBox
+                android:id="@+id/singlee"
+                style="@style/select_style"
+                android:tag="E"
+                android:text="E" />
+
+            <CheckBox
+                android:id="@+id/singlef"
+                style="@style/select_style"
+                android:tag="F"
+                android:text="F" />
+
+            <CheckBox
+                android:id="@+id/singleg"
+                style="@style/select_style"
+                android:tag="G"
+                android:text="G" />
+
+            <CheckBox
+                android:id="@+id/singleh"
+                style="@style/select_style"
+                android:tag="H"
+                android:text="H" />
+
+            <Button
+                android:id="@+id/singlesubmit"
+                style="@style/submit_style"
+                android:tag="0"
+                android:text="提交" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/multianswer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/gray_back"
+        android:gravity="bottom"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="1.0">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <CheckBox
+                android:id="@+id/multia"
+                style="@style/multiselect_style"
+                android:tag="A"
+                android:text="A" />
+
+            <CheckBox
+                android:id="@+id/multib"
+                style="@style/multiselect_style"
+                android:tag="B"
+                android:text="B" />
+
+            <CheckBox
+                android:id="@+id/multic"
+                style="@style/multiselect_style"
+                android:tag="C"
+                android:text="C" />
+
+            <CheckBox
+                android:id="@+id/multid"
+                style="@style/multiselect_style"
+                android:tag="D"
+                android:text="D" />
+
+            <CheckBox
+                android:id="@+id/multie"
+                style="@style/multiselect_style"
+                android:tag="E"
+                android:text="E" />
+
+            <CheckBox
+                android:id="@+id/multif"
+                style="@style/multiselect_style"
+                android:tag="F"
+                android:text="F" />
+
+            <CheckBox
+                android:id="@+id/multig"
+                style="@style/multiselect_style"
+                android:tag="G"
+                android:text="G" />
+
+            <CheckBox
+                android:id="@+id/multih"
+                style="@style/multiselect_style"
+                android:tag="H"
+                android:text="H" />
+
+            <Button
+                android:id="@+id/multisubmit"
+                style="@style/submit_style"
+                android:tag="0"
+                android:text="提交" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/subjectiveanswer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/gray_back"
+        android:gravity="bottom"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="1.0">
+
+        <Button
+            android:id="@+id/xiangce"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="20dp"
+            android:background="@mipmap/xiangce"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHeight_percent="0.7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.035" />
+
+        <Button
+            android:id="@+id/paizhao"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="10dp"
+            android:background="@mipmap/paizhao"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHeight_percent="0.7"
+            app:layout_constraintStart_toEndOf="@+id/xiangce"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.035" />
+
+        <EditText
+            android:id="@+id/tiankong"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="20dp"
+            android:imeOptions="actionDone"
+            android:text=""
+            android:textColor="@color/black"
+            android:textSize="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHeight_percent="0.8"
+            app:layout_constraintStart_toEndOf="@+id/paizhao"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.55" />
+
+        <TextView
+            android:id="@+id/tiankong_save"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:text="保存"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHeight_percent="0.5"
+            app:layout_constraintStart_toEndOf="@+id/tiankong"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.05" />
+
+        <Button
+            android:id="@+id/qingkong"
+            style="@style/submit_style"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginRight="10dp"
+            android:tag="0"
+            android:text="清空"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/subjectivesubmit"
+            app:layout_constraintHeight_percent="0.6"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.08" />
+
+        <Button
+            android:id="@+id/subjectivesubmit"
+            style="@style/submit_style"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginRight="10dp"
+            android:tag="0"
+            android:text="提交"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.6"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.08" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!--    共享屏幕按钮-->
+    <!--    <ImageView-->
+    <!--        android:id="@+id/share_btn"-->
+    <!--        android:layout_width="50dp"-->
+    <!--        android:layout_height="0dp"-->
+    <!--        app:layout_constraintEnd_toStartOf="@id/exit_btn"-->
+    <!--        app:layout_constraintBottom_toBottomOf="@+id/group_buttons"-->
+    <!--        app:layout_constraintTop_toTopOf="@+id/group_buttons"-->
+    <!--        android:src="@drawable/bottom_share"-->
+    <!--        />-->
+
+
+    <!--    <androidx.constraintlayout.widget.ConstraintLayout-->
+    <!--        android:id="@+id/constraintLayout"-->
+    <!--        android:layout_width="0dp"-->
+    <!--        android:layout_height="0dp"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintHeight_percent="1.0"-->
+    <!--        app:layout_constraintTop_toTopOf="parent"-->
+    <!--        app:layout_constraintWidth_percent="0.2">-->
+
+    <!--        <androidx.recyclerview.widget.RecyclerView-->
+    <!--            android:id="@+id/chatroom"-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="0dp"-->
+    <!--            android:layout_gravity="top"-->
+    <!--            android:background="@color/gray_text_dark"-->
+    <!--            android:scrollbars="vertical"-->
+    <!--            android:visibility="invisible"-->
+    <!--            app:layout_constraintBottom_toTopOf="@+id/chatroom_temp"-->
+    <!--            app:layout_constraintEnd_toEndOf="parent"-->
+    <!--            app:layout_constraintHeight_percent="1.0"-->
+    <!--            app:layout_constraintTop_toTopOf="parent"-->
+    <!--            app:layout_constraintWidth_percent="1.0" />-->
+
+    <!--        <androidx.recyclerview.widget.RecyclerView-->
+    <!--            android:id="@+id/chatroom_temp"-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="0dp"-->
+    <!--            android:layout_gravity="top"-->
+    <!--            android:background="@color/gray_text_dark"-->
+    <!--            android:scrollbars="vertical"-->
+    <!--            android:visibility="invisible"-->
+
+    <!--            app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--            app:layout_constraintEnd_toEndOf="parent"-->
+    <!--            app:layout_constraintHeight_percent="0.1"-->
+    <!--            app:layout_constraintTop_toBottomOf="@+id/chatroom"-->
+    <!--            app:layout_constraintWidth_percent="1.0" />-->
+
+    <!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

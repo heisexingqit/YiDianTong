@@ -32,6 +32,7 @@ public class MyApplication extends Application {
     public static String picUrl;
     public static String password;
     public static Boolean autoLogin;
+    public static String typeName;
 
     private static RequestQueue mQueue;
     //ImageLoader显示图片过程中的参数

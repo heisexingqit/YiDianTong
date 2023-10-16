@@ -40,8 +40,9 @@
                 <TextView
                     android:id="@+id/tv_title"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:gravity="center_vertical"
                     android:singleLine="true"
                     android:text="测试课堂"
                     android:textSize="17sp" />
@@ -56,6 +57,7 @@
                     android:paddingTop="4dp"
                     android:paddingRight="6dp"
                     android:paddingBottom="4dp"
+                    android:layout_marginTop="3dp"
                     android:text="直播中"
                     android:textColor="@color/white"
                     android:textSize="15sp" />
@@ -70,6 +72,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
+                    android:layout_marginStart="2dp"
                     android:layout_height="match_parent">
 
                     <LinearLayout

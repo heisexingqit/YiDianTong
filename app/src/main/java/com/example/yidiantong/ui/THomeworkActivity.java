@@ -341,8 +341,8 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
                 Log.d("wen", "geteMode: " + e);
             }
         }, error -> {
+            Log.d("wen", "geteMode: " + error.toString());
             Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
     }
@@ -388,7 +388,6 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
                 Log.d("wen", "changeMode: " + e);
             }
         }, error -> {
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);

@@ -3,17 +3,26 @@ package com.example.yidiantong.bean;
 import java.util.List;
 
 public class THomeworkReportEntity {
-    private String avg;		//平均分
-    private String max;		//最高分
-    private String min;		//最低分
-    private String noSubmit;		//未提交人数
+    private String avg;        //平均分
+    private String max;        //最高分
+    private String min;        //最低分
+    private String noSubmit;        //未提交人数
     private String noCorrecting;    //未批改人数
-    private String correcting;		//已批改人数
+    private String correcting;        //已批改人数
     private List<String> maxList;//最高分人员列表
-    private List<String>minList;//最高分人员列表
-    private List<String>noSubmitList;//未提交人员列表
-    private List<String>noCorrectingList;//未批改人员列表
-    private List<String>correctingList;//已批改人员列表
+    private List<String> minList;//最高分人员列表
+    private List<String> noSubmitList;//未提交人员列表
+    private List<String> noCorrectingList;//未批改人员列表
+    private List<String> correctingList;//已批改人员列表
+    private String status;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public String getAvg() {
         return avg;

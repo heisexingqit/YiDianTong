@@ -22,6 +22,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,6 +42,7 @@ import com.example.yidiantong.util.NumberUtils;
 import com.example.yidiantong.util.THomeworkMarkInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -424,5 +426,4 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
     public String getStuScore(int pos) {
         return String.format("%.2f", stuScoresList.get(pos));
     }
-
 }

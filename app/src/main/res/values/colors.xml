@@ -86,6 +86,7 @@
     <color name="f_mihui">#F2F2F2</color>
     <color name="f_dark_blue">#1D71D6</color>
     <color name="live_red">#FF6666</color>
+    <color name="live_blue">#7c9dfc</color>
     <color name="f_gray">#F2F4F6</color>
     <color name="date_picker_bg">#FFFFFF</color>
     <color name="date_picker_divider">#11112233</color>

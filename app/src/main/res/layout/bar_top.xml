@@ -28,7 +28,4 @@
         android:text="null"
         android:textColor="@color/main_bg"
         android:textSize="17sp" />
-
-
-
 </RelativeLayout>

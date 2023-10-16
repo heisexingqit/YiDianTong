@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.navigationdemo"
+    >
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <!--    截屏权限-->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <!-- react-native-camera依赖 -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <application>
+        
+<!--        <activity-->
+<!--            android:name=".MainActivity"-->
+<!--            android:exported="true"-->
+<!--            android:label="35授课一点通"-->
+<!--            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"-->
+<!--            android:launchMode="singleTask"-->
+<!--            android:windowSoftInputMode="adjustPan">-->
+<!--        <intent-filter>-->
+<!--            <action android:name="android.intent.action.MAIN" />-->
+<!--            <category android:name="android.intent.category.LAUNCHER" />-->
+<!--        </intent-filter>-->
+<!--        </activity>-->
+        <!--        <activity android:name="callvideo.VideoCallingActivity_before" />-->
+<!--        <activity android:name="com.navigationdemo.VideoCallingEnterActivity" />-->
+<!--        <activity-->
+<!--            android:name="com.navigationdemo.LaunchActivity"-->
+<!--            android:screenOrientation="landscape"-->
+<!--            android:requestLegacyExternalStorage="true"/>-->
+<!--        <activity android:name="com.navigationdemo.EntranceActivity"/>-->
+        <activity
+            android:name=".MainActivity_tea"
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.TRTC_Client.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".MainActivity_stu"
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.TRTC_Client.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".SetInfo_MainActivity"
+            android:exported="true"
+            android:screenOrientation="landscape">
+
+        </activity>
+        <service android:name=".MediaService"
+            android:enabled="true"
+            android:foregroundServiceType="mediaProjection"
+            android:exported="true"/>
+        <!--    分享视频功能需要    -->
+<!--        <activity-->
+<!--            android:name="com.tencent.rtmp.video.TXScreenCapture$TXScreenCaptureAssistantActivity"-->
+<!--            android:theme="@android:style/Theme.Translucent"/>-->
+    </application>
+</manifest>

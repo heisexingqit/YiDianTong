@@ -203,6 +203,7 @@ public class TLiveRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
                 String timeStr = item.getShowStrTop();
                 tv_time.setText(timeStr);
                 iv_status.setImageResource(R.drawable.t_live_status3);
+                tv_time.setTextColor(mContext.getResources().getColor(R.color.live_gray));
                 tv_date.setText(item.getShowStrBottom());
                 iv_edit.setVisibility(View.GONE);
                 iv_delete.setVisibility(View.GONE);
@@ -211,6 +212,7 @@ public class TLiveRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
                 ll_live_on.setVisibility(View.VISIBLE);
                 tv_time_already.setText(item.getShowStrBottom());
                 iv_status.setImageResource(R.drawable.t_live_status1);
+                tv_time.setTextColor(mContext.getResources().getColor(R.color.live_green));
                 iv_edit.setVisibility(View.GONE);
                 iv_delete.setVisibility(View.GONE);
             }else if(item.getStatus().equals("2")){

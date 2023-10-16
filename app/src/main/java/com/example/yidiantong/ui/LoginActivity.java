@@ -265,6 +265,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     String typeName = null;
                     if (keysList.contains("STUDENT")) {
                         typeName = "STUDENT";
+
                         intent = new Intent(this, MainPagerActivity.class);
                     } else if (keysList.contains("COMMON_TEACHER")) {
                         typeName = "COMMON_TEACHER";
@@ -278,6 +279,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                    intent.putExtra("token", token);
 
                     // 全局变量
+                    // 角色变量
+                    MyApplication.typeName = typeName;
+                    Log.d("wen", "login: " + typeName);
                     MyApplication.username = username;
                     MyApplication.password = password;
                     MyApplication.userId = userInfo.getString("userId");

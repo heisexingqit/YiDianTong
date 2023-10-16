@@ -24,6 +24,10 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".ui.TImageEditActivity"
+            android:exported="true">
+        </activity>
+        <activity
             android:name=".ui.TLiveEditActivity"
             android:exported="false" />
         <activity
@@ -193,7 +197,6 @@
             android:name=".ui.HomeworkPagerFinishActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
-
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" /> <!-- 涂鸦 -->
@@ -206,7 +209,8 @@
             android:windowSoftInputMode="adjustPan" /> <!-- 测试1 -->
         <activity
             android:name=".TestActivity"
-            android:exported="true" /> <!-- 测试2 -->
+            android:exported="true">
+        </activity><!-- 测试2 -->
         <activity
             android:name=".Test2Activity"
             android:exported="true" /> <!-- 作业 -->
@@ -223,7 +227,6 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity> <!-- 内容提供者-相机 -->

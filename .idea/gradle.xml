@@ -11,7 +11,13 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/Call" />
+            <option value="$PROJECT_DIR$/Cameralibrary" />
+            <option value="$PROJECT_DIR$/Common" />
+            <option value="$PROJECT_DIR$/Debug" />
+            <option value="$PROJECT_DIR$/TRTCAPP" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/imageeditlibrary" />
           </set>
         </option>
       </GradleProjectSettings>

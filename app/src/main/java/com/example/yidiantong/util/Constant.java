@@ -41,6 +41,12 @@ public class Constant {
     // 查看已批改作业
     public static final String AFTER_MARKED = "/AppServer/ajax/studentApp_getMarkedJob.do";
 
+    // 公布答案
+    public static final String PUBLISH_ANSWER = "/AppServer/ajax/teacherApp_publishZYPaperAnwer.do";
+
+    // 退出批改操作
+    public static final String T_AFTER_MARKED = "/AppServer/ajax/teacherApp_deleteAccessControl.do";
+
     // 导学案查看
     public static final String LEARNPLAN_ITEM = "/AppServer/ajax/studentApp_getCatalog.do";
 

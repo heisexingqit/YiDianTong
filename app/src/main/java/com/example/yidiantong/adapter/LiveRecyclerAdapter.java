@@ -160,42 +160,47 @@ public class LiveRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             //设置图标和类型
             int icon_id = 0;
-            if(item.getSubject().contains("语文")){
+            if (item.getSubject().contains("语文")) {
                 icon_id = R.drawable.yuwen_icon;
-            }else if(item.getSubject().contains("数学")){
+            } else if (item.getSubject().contains("数学")) {
                 icon_id = R.drawable.shuxue_icon;
-            }else if(item.getSubject().contains("英语")){
+            } else if (item.getSubject().contains("英语")) {
                 icon_id = R.drawable.yingyu_icon;
-            }else if(item.getSubject().contains("物理")){
+            } else if (item.getSubject().contains("物理")) {
                 icon_id = R.drawable.wuli_icon;
-            }else if(item.getSubject().contains("化学")){
+            } else if (item.getSubject().contains("化学")) {
                 icon_id = R.drawable.huaxue_icon;
-            }else if(item.getSubject().contains("生物")){
+            } else if (item.getSubject().contains("生物")) {
                 icon_id = R.drawable.shengwu_icon;
-            }else if(item.getSubject().contains("政治")){
+            } else if (item.getSubject().contains("政治")) {
                 icon_id = R.drawable.zhengzhi_icon;
-            }else if(item.getSubject().contains("历史")){
+            } else if (item.getSubject().contains("历史")) {
                 icon_id = R.drawable.lishi_icon;
-            }else if(item.getSubject().contains("地理")){
+            } else if (item.getSubject().contains("地理")) {
                 icon_id = R.drawable.dili_icon;
-            }else {
+            } else {
                 icon_id = R.drawable.other_icon;
             }
             iv_icon.setImageResource(icon_id);
 
-            if(item.getStatus().equals("3")){
+            if (item.getStatus().equals("3")) {
                 tv_is_live.setText("已结束");
                 tv_is_live.setBackgroundColor(mContext.getColor(R.color.live_btn_gray));
                 tv_enter.setVisibility(View.GONE);
-            }else{
+            } else if (item.getStatus().equals("1")) {
                 tv_is_live.setText("直播中");
                 tv_is_live.setBackgroundResource(R.color.live_red);
                 tv_enter.setVisibility(View.VISIBLE);
+            } else if (item.getStatus().equals("2")) {
+                tv_is_live.setText("未开始");
+                tv_is_live.setBackgroundResource(R.color.live_blue);
+                tv_enter.setVisibility(View.GONE);
             }
+
             tv_enter.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(!itemList.get(pos).getStatus().equals("3")){
+                    if (itemList.get(pos).getStatus().equals("1")) {
                         mItemClickListener.onItemClick(pos);
                     }
                 }

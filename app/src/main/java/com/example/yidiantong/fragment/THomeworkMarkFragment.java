@@ -1,25 +1,33 @@
 package com.example.yidiantong.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
 import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.yidiantong.R;
 import com.example.yidiantong.bean.THomeworkMarkedEntity;
+import com.example.yidiantong.ui.THomeworkAddActivity;
 import com.example.yidiantong.util.StringUtils;
 import com.example.yidiantong.util.THomeworkMarkInterface;
 import com.google.android.flexbox.FlexboxLayout;
+import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
 import com.xuexiang.xui.XUI;
 import com.xuexiang.xui.widget.button.SmoothCheckBox;
 
@@ -44,6 +52,10 @@ public class THomeworkMarkFragment extends Fragment {
 
     private boolean isFirst = true;
     private int position; // 从1开始
+    private WebView wv_content2;
+    private String stuStr;
+
+    private String oldUrl;
 
     public static THomeworkMarkFragment newInstance(THomeworkMarkedEntity homeworkMarked, int position, int size, boolean canMark) {
         THomeworkMarkFragment fragment = new THomeworkMarkFragment();
@@ -87,7 +99,6 @@ public class THomeworkMarkFragment extends Fragment {
         tv_stu_scores = view.findViewById(R.id.tv_stu_scores);
         checkBox = view.findViewById(R.id.cb_zero5);
 
-
         //题号染色
         int positionLen = String.valueOf(position).length();
         String questionNum = position + " / " + size;
@@ -98,11 +109,26 @@ public class THomeworkMarkFragment extends Fragment {
          *  数据显示，四个vw_content
          */
         WebView wv_content = view.findViewById(R.id.wv_content);
-        WebView wv_content2 = view.findViewById(R.id.wv_content2);
+        wv_content2 = view.findViewById(R.id.wv_content2);
         WebView wv_content3 = view.findViewById(R.id.wv_content3);
         WebView wv_content4 = view.findViewById(R.id.wv_content4);
         setHtmlOnWebView(wv_content, homeworkMarked.getShitiShow());
-        String stuStr = homeworkMarked.getStuAnswer().trim();
+        stuStr = homeworkMarked.getStuAnswer().trim();
+
+        // 图片批改
+        WebSettings webSettings = wv_content2.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+
+        wv_content2.addJavascriptInterface(
+                new Object() {
+                    @JavascriptInterface
+                    @SuppressLint("JavascriptInterface")
+                    public void bigPic(String url) {
+                        oldUrl = url;
+                        EditImageActivity.start(getActivity(), THomeworkMarkFragment.this, url, null, 0);
+                    }
+                }
+                , "myInterface");
         if (stuStr.length() == 0) {
             stuStr = "未答";
         }
@@ -244,7 +270,26 @@ public class THomeworkMarkFragment extends Fragment {
                 "   line-height: 30px;" +
                 "   }" +
                 "</style>" +
+                "<script>\n" +
+                "function bigimage(x) {\n" +
+                "    myInterface.bigPic(x.src)\n" +
+                "}\n" +
+                "</script>\n" +
                 "</head><body style=\"color: rgb(117, 117, 117); font-size: 14px; margin: 0px; padding: 0px\">" + str + "</body>";
         wb.loadData(html_content, "text/html", "utf-8");
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == getActivity().RESULT_OK) {
+            String newUrl = data.getStringExtra("newUrl");
+            boolean isImageEdit = data.getBooleanExtra(EditImageActivity.IMAGE_IS_EDIT, false);
+            // 图片已修改
+            if (isImageEdit) {
+                stuStr = homeworkMarked.getStuAnswer().trim().replace(oldUrl, newUrl);
+                setHtmlOnWebView(wv_content2, stuStr);
+            }
+        }
     }
 }

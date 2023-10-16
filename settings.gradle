@@ -16,4 +16,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "YiDianTong"
-include ':app'
+include ':app', ':imageeditlibrary', ':Debug', ':Common', ':Cameralibrary', ':Call', ':TRTCAPP'

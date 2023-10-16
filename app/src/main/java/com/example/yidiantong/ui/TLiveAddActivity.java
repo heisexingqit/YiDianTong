@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -166,6 +169,7 @@ public class TLiveAddActivity extends AppCompatActivity implements View.OnClickL
         time.setSeconds(0);
         tv_start_time.setText(dateFormat.format(time));
 
+        //
         loadItems_Net();
 
         // 初始化协作组选择适配器，后面更新
@@ -340,15 +344,20 @@ public class TLiveAddActivity extends AppCompatActivity implements View.OnClickL
                         radioButton.setLayoutParams(params);
                         rg_subject.addView(radioButton);
                         if (i == 0) {
+                            // 默认首选，单选监听器自动显示课堂
                             radioButton.setChecked(true);
                             selectedSubject = item.getSubjectName();
                         }
                     } else {
+                        // 学科列表仅一项，取消单选组件
                         rg_subject.setVisibility(View.GONE);
                         TextView textView = new TextView(TLiveAddActivity.this);
                         textView.setText(item.getSubjectName());
                         textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                         ll_subject.addView(textView);
+                        // 直接显示课堂
+                        selectedSubject = item.getSubjectName();
+                        showKeTang();
                     }
 
                     subjectMap.put(item.getSubjectName(), item.getSubjectId());
@@ -425,6 +434,14 @@ public class TLiveAddActivity extends AppCompatActivity implements View.OnClickL
             checkBox.setButtonTintList(colorStateList);
             checkBox.setOnCheckedChangeListener(listener);
             ll_ketang.addView(checkBox);
+            // 默认选上
+            if(list.size() == 1){
+                checkBox.setOnCheckedChangeListener(null);
+                // 框选图标隐藏
+                selectedKetang.add(checkBox.getText().toString());
+                Drawable transparentDrawable = new ColorDrawable(Color.TRANSPARENT);
+                checkBox.setButtonDrawable(transparentDrawable);
+            }
         }
     }
 
@@ -442,6 +459,7 @@ public class TLiveAddActivity extends AppCompatActivity implements View.OnClickL
                 Gson gson = new Gson();
                 // 使用Goson框架转换Json字符串为列表
                 LiveAddParamsEntity params = gson.fromJson(String.valueOf(json), LiveAddParamsEntity.class);
+                Log.d("wen", "测试内容: " + params);
 
                 Message msg = new Message();
                 msg.obj = params;

@@ -27,4 +27,12 @@
         style="@style/CustomRadioButton"
         android:textColor="@color/default_gray"
         android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/btn_submit"
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:backgroundTint="@color/checkbox_gray"
+        android:text="@string/homework_submit"
+        android:textColor="@color/white" />
 </LinearLayout>

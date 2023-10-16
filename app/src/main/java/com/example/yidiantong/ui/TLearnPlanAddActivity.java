@@ -291,6 +291,7 @@ public class TLearnPlanAddActivity extends AppCompatActivity implements View.OnC
                     AlertDialog dialog = builder.create();
                     dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
                     dialog.show();
+
                 } else {
                     // 记住选择-本地写入 + Intent传参
                     SharedPreferences.Editor editor = preferences.edit();

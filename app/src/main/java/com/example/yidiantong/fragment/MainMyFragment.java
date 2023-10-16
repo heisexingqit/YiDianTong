@@ -56,7 +56,6 @@ import com.example.yidiantong.ui.SelectCourseActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.ImageUtils;
 import com.example.yidiantong.util.JsonUtils;
-import com.example.yidiantong.util.StringUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;

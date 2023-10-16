@@ -388,11 +388,10 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
         }
     };
 
-    //
+    // 图片上传
     private void uploadImage() {
         transmit.onLoading();
         String mRequestUrl = Constant.API + Constant.UPLOAD_IMAGE + "?baseCode=" + imageBase64 + "&leanPlanId=" + learnPlanId + "&userId=" + username;
-        Log.e("mmm",""+mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
 
             try {

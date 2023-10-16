@@ -97,6 +97,8 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
     // Activity页面切换
     private ChangePageInterface changePageInterface;
 
+    private boolean backRefresh = false;
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -169,6 +171,7 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
                         intent2.putExtra("noticetime", adapter.itemList.get(pos).getfTime());
                         startActivity(intent2);
                     case "10":
+                        backRefresh = true;
                         intent = new Intent(getActivity(), TLiveListActivity.class);
                         startActivity(intent);
                         break;
@@ -472,5 +475,14 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
 
     public interface ChangePageInterface {
         void changePage(int position);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(backRefresh){
+            refreshList();
+            backRefresh = false;
+        }
     }
 }

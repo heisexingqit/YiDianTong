@@ -23,36 +23,49 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
+            android:layout_marginStart="0dp"
             android:layout_marginTop="20dp"
-            android:layout_marginEnd="40dp"
+            android:layout_marginEnd="0dp"
             android:layout_marginBottom="20dp"
-            android:gravity="center">
+            android:orientation="horizontal">
 
-            <CheckBox
-                android:id="@+id/cb_camera"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:buttonTint="@color/checkbox_color"
-                android:layout_marginEnd="20dp"
-                android:textColor="@color/default_gray"
-                android:text="开启摄像头"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_horizontal">
 
+                <CheckBox
+                    android:id="@+id/cb_camera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:buttonTint="@color/checkbox_color"
+                    android:text="开启摄像头"
+                    android:textColor="@color/default_gray" />
+            </LinearLayout>
 
-            <CheckBox
-                android:id="@+id/cb_mico"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:buttonTint="@color/checkbox_color"
-                android:textColor="@color/default_gray"
-                android:text="开启麦克风" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_horizontal">
+
+                <CheckBox
+                    android:id="@+id/cb_mico"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:buttonTint="@color/checkbox_color"
+                    android:text="开启麦克风"
+                    android:textColor="@color/default_gray" />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:layout_marginTop="10dp"
             android:background="@color/light_gray3" />
 
         <LinearLayout

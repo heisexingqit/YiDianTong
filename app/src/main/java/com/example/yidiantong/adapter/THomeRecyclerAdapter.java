@@ -247,6 +247,7 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
                 tv_second_line.setText(item.getfDescription());
 
                 // 设置底行
+                tv_bottom.setVisibility(View.VISIBLE);
                 String bottomStr = item.getfNum1() + " " + item.getfNum2() + " " + item.getfNum3();
                 tv_bottom.setText(bottomStr);
             }

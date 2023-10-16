@@ -18,6 +18,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -104,6 +105,7 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
     private RelativeLayout rl_submitting;
     private TextView tv_submitting;
     private ProgressBar pb_submitting;
+    private LinearLayout ll_bottom_report;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +117,8 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
         pb_submitting = findViewById(R.id.pb_submitting);
 
         findViewById(R.id.ll_bottom_latest).setOnClickListener(this);
-        findViewById(R.id.ll_bottom_report).setOnClickListener(this);
+        ll_bottom_report = findViewById(R.id.ll_bottom_report);
+        ll_bottom_report.setOnClickListener(this);
         findViewById(R.id.ll_bottom_teach).setOnClickListener(this);
         findViewById(R.id.ll_bottom_bell).setOnClickListener(this);
         findViewById(R.id.ll_bottom_mine).setOnClickListener(this);
@@ -181,7 +184,6 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
 //        vp_main.setCurrentItem(0);
         findClassOpen();
         handler_run.postDelayed(runnable, 1000);
-
     }
 
     private final Handler handler = new Handler(Looper.getMainLooper()) {
@@ -358,7 +360,7 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
         ft.commit();
     }
 
-    private void showMoveButtonView(int mode) {
+    public void showMoveButtonView(int mode) {
         if(mode == 1){
             if(flag == -1){
                 wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
@@ -383,7 +385,6 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
                 customeMovebutton.setBackgroundResource(R.drawable.move_button_bg_un);
                 flag = 1;
                 wm.addView(customeMovebutton, wmParams);
-
                 customeMovebutton.setOnSpeakListener(new CustomeMovebutton.OnSpeakListener() {
                     @Override
                     public void onSpeakListener() {
@@ -416,17 +417,27 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         handler_run.removeCallbacks(runnable); //停止刷新
         if(customeMovebutton != null && wm != null){
             wm.removeView(customeMovebutton);
         }
-        super.onDestroy();
+    }
+
+    @Override
+    protected void onStop() {
+        handler_run.removeCallbacks(runnable); //停止刷新
+        super.onStop();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         handler_run.postDelayed(runnable, 1000);
+        // 普通教师隐藏统计页面
+        if(MyApplication.typeName.equals("COMMON_TEACHER")){
+            ll_bottom_report.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -442,4 +453,5 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
     public void offLoading() {
         rl_submitting.setVisibility(View.GONE);
     }
+
 }
