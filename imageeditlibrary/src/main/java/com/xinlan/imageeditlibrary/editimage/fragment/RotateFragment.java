@@ -6,6 +6,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -75,8 +76,9 @@ public class RotateFragment extends BaseEditFragment {
         activity.mRotateFragment.mSeekBar.setProgress(0);
         activity.mRotatePanel.reset();
         activity.mRotatePanel.setVisibility(View.VISIBLE);
-        activity.bannerFlipper.showNext();
+//        activity.bannerFlipper.showNext();
         mRotatePanel.rotateImage(90);
+        Log.e(TAG, "onShow: ");
         applyRotateImage();
     }
 

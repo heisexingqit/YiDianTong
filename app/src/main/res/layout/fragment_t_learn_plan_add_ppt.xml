@@ -22,16 +22,16 @@
             android:textSize="14sp" />
     </LinearLayout>
 
-        <com.github.chrisbanes.photoview.PhotoView
-            android:id="@+id/pv_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/sv_bottom_tab"
-            android:layout_below="@+id/ll_top_title"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="50dp" />
+    <ImageView
+        android:id="@+id/pv_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/sv_bottom_tab"
+        android:layout_below="@+id/ll_top_title"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="50dp" />
 
         <HorizontalScrollView
             android:id="@+id/sv_bottom_tab"

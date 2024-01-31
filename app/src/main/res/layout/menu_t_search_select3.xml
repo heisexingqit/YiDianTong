@@ -36,6 +36,17 @@
             android:text="未批改"
             android:textColor="@color/gray_text"
             android:textSize="13sp" />
+        <TextView
+            android:id="@+id/tv_all_mark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_select_item_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="10dp"
+            android:text="全部"
+            android:textColor="@color/gray_text"
+            android:textSize="13sp" />
 
     </LinearLayout>
 </LinearLayout>

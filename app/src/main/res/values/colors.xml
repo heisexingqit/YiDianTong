@@ -9,6 +9,8 @@
     <color name="white">#FFFFFFFF</color>
 
     <!--wen-->
+    <color name="gray_ccc">#FFCCCCCC</color>
+    <color name="gray_new">#a3a1ae</color>
     <color name="main_bg">#FF6CC1E0</color>
     <color name="main_bg_btn_press">#FF4e9ac0</color>
     <color name="main_bg_title">#59b8e0</color>
@@ -19,15 +21,18 @@
     <color name="gray_text">#424960</color>
     <color name="light_gray">#EAEAEA</color>
     <color name="blue_btn">#2196f3</color>
+    <color name="blue_btn2">#2fa4e7</color>
     <color name="blue_btn_press">#1f8de5</color>
     <color name="transparent">#00000000</color>
     <color name="half_transparent">#99c1c1c1</color>
+    <color name="half8_transparent">#ccc1c1c1</color>
     <color name="white_transparent">#aaffffff</color>
     <color name="progress_bar_color">#FFFFFFFF</color>
     <color name="loading_bg_gray">#FFf2f2f2</color>
     <color name="photo_editor_white">#FFF0F0F0</color>
     <color name="photo_editor_black">#FF222222</color>
     <color name="red">#FFFF0000</color>
+    <color name="orange">#FFdc5b1c</color>
     <color name="green">#FF00FF00</color>
     <color name="blue">#FF0000FF</color>
     <color name="draw_color1">#0062ff</color>
@@ -61,11 +66,11 @@
     <color name="light_gray2">#c0c0c0</color>
     <color name="light_gray3">#dcdcdc</color>
     <color name="t_blue">#4dc7f8</color>
-    <color name="default_gray">#FF888888</color>
+    <color name="default_gray">#656565</color>
     <color name="live_btn_gray">#949599</color>
     <color name="live_btn_purple">#6600ff</color>
     <color name="live_gray">#93959a</color>
-    <color name="checkbox_gray">#939fb6</color>
+    <color name="checkbox_gray">#7c7c7c</color>
     <color name="zxing_custom_possible_result_points">#903A89CF</color>
     <color name="zxing_custom_result_view">#b0000000</color>
     <color name="zxing_custom_viewfinder_laser">#1976D2</color>

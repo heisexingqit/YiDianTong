@@ -8,10 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.appcompat.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -21,6 +17,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.xinlan.imageeditlibrary.BaseActivity;
 import com.xinlan.imageeditlibrary.R;
@@ -32,7 +33,7 @@ import com.xinlan.imageeditlibrary.editimage.fragment.MainMenuFragment;
 import com.xinlan.imageeditlibrary.editimage.fragment.PaintFragment;
 import com.xinlan.imageeditlibrary.editimage.fragment.RotateFragment;
 import com.xinlan.imageeditlibrary.editimage.fragment.StickerFragment;
-import com.xinlan.imageeditlibrary.editimage.utils.FileUtil;
+import com.xinlan.imageeditlibrary.editimage.utils.ImageUtils;
 import com.xinlan.imageeditlibrary.editimage.view.CropImageView;
 import com.xinlan.imageeditlibrary.editimage.view.CustomPaintView;
 import com.xinlan.imageeditlibrary.editimage.view.CustomViewPager;
@@ -40,31 +41,36 @@ import com.xinlan.imageeditlibrary.editimage.view.RotateImageView;
 import com.xinlan.imageeditlibrary.editimage.view.StickerView;
 import com.xinlan.imageeditlibrary.editimage.view.TextStickerView;
 import com.xinlan.imageeditlibrary.editimage.view.imagezoom.ImageViewTouch;
-import com.xinlan.imageeditlibrary.editimage.utils.BitmapUtils;
 import com.xinlan.imageeditlibrary.editimage.view.imagezoom.ImageViewTouchBase;
 import com.xinlan.imageeditlibrary.editimage.widget.RedoUndoController;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.List;
 
 /**
  * <p>
  * 图片编辑 主页面
  *
  * @author panyi
- *         <p>
- *         包含 1.贴图 2.滤镜 3.剪裁 4.底图旋转 功能
- *         add new modules
+ * <p>
+ * 包含 1.贴图 2.滤镜 3.剪裁 4.底图旋转 功能
+ * add new modules
  */
 public class EditImageActivity extends BaseActivity {
     public static final String FILE_PATH = "file_path";
@@ -128,7 +134,7 @@ public class EditImageActivity extends BaseActivity {
      * @param outputPath
      * @param requestCode
      */
-    public static void start(Activity context, Fragment fragment,final String editImagePath, final String outputPath, final int requestCode) {
+    public static void start(Activity context, Fragment fragment, final String editImagePath, final String outputPath, final int requestCode) {
         if (TextUtils.isEmpty(editImagePath)) {
             Toast.makeText(context, R.string.no_choose, Toast.LENGTH_SHORT).show();
             return;
@@ -358,14 +364,14 @@ public class EditImageActivity extends BaseActivity {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder.setMessage(R.string.exit_without_save)
                     .setCancelable(false).setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    mContext.finish();
-                }
-            }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.cancel();
-                }
-            });
+                        public void onClick(DialogInterface dialog, int id) {
+                            mContext.finish();
+                        }
+                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
 
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
@@ -427,11 +433,12 @@ public class EditImageActivity extends BaseActivity {
     protected void doSaveImage() {
         if (mOpTimes <= 0)
             return;
+        Log.e("wenpp", "doSaveImage: 修改保存");
 
         if (mSaveImageTask != null) {
             mSaveImageTask.cancel(true);
         }
-
+        Log.e("wenpp", "doSaveImage: 修改保存执行");
         mSaveImageTask = new SaveImageTask();
         mSaveImageTask.execute(mainBitmap);
     }
@@ -446,7 +453,7 @@ public class EditImageActivity extends BaseActivity {
 
         if (mainBitmap == null || mainBitmap != newBit) {
             if (needPushUndoStack) {
-                mRedoUndoController.switchMainBit(mainBitmap,newBit);
+                mRedoUndoController.switchMainBit(mainBitmap, newBit);
                 increaseOpTimes();
             }
             mainBitmap = newBit;
@@ -484,6 +491,9 @@ public class EditImageActivity extends BaseActivity {
         return isBeenSaved || mOpTimes == 0;
     }
 
+    // -------------------------------
+    //  最终返回newUrl
+    // -------------------------------
     protected void onSaveTaskDone() {
         Intent returnIntent = new Intent();
         returnIntent.putExtra(FILE_PATH, filePath);
@@ -491,7 +501,7 @@ public class EditImageActivity extends BaseActivity {
         returnIntent.putExtra(IMAGE_IS_EDIT, mOpTimes > 0);
         returnIntent.putExtra("newUrl", newUrl);
 
-        FileUtil.ablumUpdate(this, saveFilePath);
+//        FileUtil.ablumUpdate(this, saveFilePath);
         setResult(RESULT_OK, returnIntent);
         finish();
     }
@@ -505,25 +515,29 @@ public class EditImageActivity extends BaseActivity {
 
         @Override
         protected Boolean doInBackground(Bitmap... params) {
-
             Bitmap bitmap = params[0];
             String base64 = Bitmap2StrByBase64(bitmap);
-            try {
-                base64 = URLEncoder.encode(base64, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+
             HttpURLConnection connection = null;
             BufferedReader reader = null;
+            OutputStream outputStream = null;
+
 
             try {
                 // 创建一个URL对象，替换为您要请求的URL
-                URL url = new URL("http://www.cn901.net:8111/AppServer/ajax/userManage_saveCanvasImageFromRn.do?type=move&imagePath=" + filePath + "&baseData=" + base64);
-
+                URL url = new URL("http://www.cn901.net:8111/AppServer/ajax/userManage_saveCanvasImageFromRn.do");
                 // 打开连接
                 connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.connect();
+                connection.setRequestMethod("POST");
+                connection.setDoOutput(true);
+
+                // 构建请求参数
+                String params_json = "type=save&imagePath=" + URLEncoder.encode(filePath, "UTF-8") + "&baseData=" + URLEncoder.encode(base64, "UTF-8");;
+
+                // 获取输出流，用于发送请求数据
+                outputStream = connection.getOutputStream();
+                outputStream.write(params_json.getBytes("UTF-8"));
+                outputStream.flush();
 
                 // 获取输入流，用于读取响应数据
                 InputStream inputStream = connection.getInputStream();
@@ -537,7 +551,6 @@ public class EditImageActivity extends BaseActivity {
 
                 // 输出响应数据
                 String responseData = response.toString();
-                Log.d("wen", "doInBackground: " + responseData);
                 JSONObject jsonObject = JsonUtils.getJsonObjectFromString(responseData);
                 newUrl = jsonObject.getString("url");
             } catch (IOException | JSONException e) {
@@ -595,18 +608,28 @@ public class EditImageActivity extends BaseActivity {
         return mainBitmap;
     }
 
-    public static String Bitmap2StrByBase64(Bitmap image) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        int q = 100;
-        int maxSize = 120;
-        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        while (baos.toByteArray().length / 1024 > maxSize) {
-            baos.reset(); // 重置baos即清空baos
-            q -= 5;
-            image.compress(Bitmap.CompressFormat.JPEG, q, baos);
+    public String Bitmap2StrByBase64(Bitmap image) {
+        // 获取应用的缓存目录
+        File filesDir = this.getFilesDir();
+
+        // 在缓存目录中创建一个临时文件
+        File file = new File(filesDir, "marked.jpg");
+        Log.e("debug0116", "临时修改文件路径: " + file.getAbsolutePath());
+        try {
+            FileOutputStream outputStream = new FileOutputStream(file);
+
+            // 将 Bitmap 压缩为 JPEG 格式，并写入文件
+            image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+
+            // 关闭输出流
+            outputStream.close();
+        }  catch (IOException e) {
+            e.printStackTrace();
         }
-        byte[] bytes = baos.toByteArray();
-        return Base64.encodeToString(bytes, Base64.DEFAULT);
+        if(file.exists() && file.length() > 0){
+            Log.e("debug0116", "OK了: " + file.length());
+        }
+        return ImageUtils.Bitmap2StrByBase64(this, file);
     }
 
 }// end class

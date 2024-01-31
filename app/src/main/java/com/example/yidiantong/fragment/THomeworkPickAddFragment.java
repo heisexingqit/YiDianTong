@@ -1,16 +1,8 @@
 package com.example.yidiantong.fragment;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
-
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -19,13 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.webkit.WebView;
-import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
 
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
@@ -33,28 +25,21 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.View.NoScrollViewPager;
 import com.example.yidiantong.adapter.THomeworkAddPickPagerAdapter;
-import com.example.yidiantong.bean.HomeworkEntity;
-import com.example.yidiantong.bean.StuAnswerEntity;
 import com.example.yidiantong.bean.THomeworkAddEntity;
-import com.example.yidiantong.ui.THomeworkAddPickActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
-import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.commons.text.StringEscapeUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 public class THomeworkPickAddFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "THomeworkPickAddFragmen";
@@ -102,6 +87,9 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
     String type = "";
     String shareTag = "";
 
+    private LinearLayout ll_loading;
+    private LinearLayout ll_loading2;
+
     public THomeworkPickAddFragment(String xd, String xk, String bb, String jc, String zsd, String type, String shareTag) {
         xueduan = xd;
         xueke = xk;
@@ -111,12 +99,16 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
         this.type = type;
         this.shareTag = shareTag;
     }
-    
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
         View view = inflater.inflate(R.layout.fragment_t_homework_pick_add, container, false);
+        ll_loading = view.findViewById(R.id.ll_loading);
+        ll_loading2 = view.findViewById(R.id.ll_loading2);
+
         ll_bottom_tab = view.findViewById(R.id.ll_bottom_tab);
         sv_bottom_tab = view.findViewById(R.id.sv_bottom_tab);
         tv_hide = view.findViewById(R.id.tv_hide);
@@ -137,19 +129,24 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
         tv_count = view.findViewById(R.id.tv_count);
         iv_add = view.findViewById(R.id.iv_add);
         iv_add.setOnClickListener(this);
+        Log.e("wen", "启动页面 ");
+        Log.e("wen", "列表长度 " + adapter.itemList.size());
 
+        // 判断数据是否已存在
         if (adapter.itemList.size() == 0) {
             loadItems_Net();
+        } else {
+            tv_hide.setVisibility(View.GONE);
         }
 
         tv_count.setText("(已选择" + pickList.size() + ")");
+
         return view;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
 
         // 延迟初始化获取组件宽度
         ViewTreeObserver vto = sv_bottom_tab.getViewTreeObserver();
@@ -201,15 +198,17 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
                 }
                 break;
             case R.id.iv_add:
-                if(adapter.itemList == null || adapter.itemList.size() == 0){
+                if (adapter.itemList == null || adapter.itemList.size() == 0) {
                     break;
                 }
                 String qId = adapter.itemList.get(nowPos).getQuestionId();
                 if (pickList.stream().anyMatch(obj -> obj.getQuestionId().equals(qId))) {
                     pickList.removeIf(obj -> obj.getQuestionId().equals(qId));
+                    sortPickList();
                     iv_add.setImageResource(R.drawable.add_homework);
                 } else {
                     pickList.add(adapter.itemList.get(nowPos));
+                    sortPickList();
                     iv_add.setImageResource(R.drawable.minus_homework);
                 }
                 tv_count.setText("(已选择" + pickList.size() + ")");
@@ -318,19 +317,30 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
                 nowPos = 0;
                 vp_main.setCurrentItem(nowPos, false);
                 showQuestionBlock(moreList);
+                ll_loading.setVisibility(View.GONE);// 解除遮挡
+                ll_loading2.setVisibility(View.GONE);// 解除遮挡
             }
         }
     };
 
     private void loadItems_Net() {
+        Log.e("wen", "loadItems_Net: " + xueduan);
+        Log.e("wen", "loadItems_Net: " + xueke);
+        Log.e("wen", "loadItems_Net: " + zhishidian);
+        Log.e("wen", "loadItems_Net: " + banben);
+        Log.e("wen", "loadItems_Net: " + jiaocai);
+        Log.e("wen", "loadItems_Net: " + type);
+        Log.e("wen", "loadItems_Net: " + shareTag);
 
         if (StringUtils.hasEmptyString(xueduan, xueke, zhishidian, banben, jiaocai, type, shareTag)) {
             return;
         }
+        ll_loading.setVisibility(View.VISIBLE);// 遮挡
+        ll_loading2.setVisibility(View.VISIBLE);// 遮挡
+
         mRequestUrl = Constant.API + Constant.T_HOMEWORK_GET_ALL_QUESTIONS + "?channelCode=" + xueduan + "&subjectCode=" + xueke +
                 "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&pointCode=" + zhishidian + "&currentpage=" + currentpage +
                 "&teacherId=" + MyApplication.username + "&questionTypeName=" + type + "&shareTag=" + shareTag;
-        Log.d("wen", "题面获取Url:" + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
@@ -342,15 +352,23 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
 
                 if (moreList.size() < 5)
                     isAll = true;
+
+
                 if (moreList.size() == 0) {
+                    if (currentpage == 1) {
+                        tv_hide.setVisibility(View.VISIBLE);
+                    } else {
+                        Toast.makeText(getActivity(), "已经是最后一页", Toast.LENGTH_SHORT).show();
+                        currentpage -= 1;
+                    }
                     isAll = true;
+                    ll_loading.setVisibility(View.GONE);// 解除遮挡
+                    ll_loading2.setVisibility(View.GONE);// 解除遮挡
                     return;
-                }
-                if(moreList.size() > 0){
+                } else {
                     tv_hide.setVisibility(View.GONE);
-                }else{
-                    tv_hide.setVisibility(View.VISIBLE);
                 }
+
                 adapter.update(moreList);
 
                 Message message = Message.obtain();
@@ -362,9 +380,29 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
+            ll_loading.setVisibility(View.GONE);// 解除遮挡
+            ll_loading2.setVisibility(View.GONE);// 解除遮挡
+            Log.e("volley", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
+    }
+
+    // 创建一个自定义比较器
+    Comparator<THomeworkAddEntity> customComparator = new Comparator<THomeworkAddEntity>() {
+        @Override
+        public int compare(THomeworkAddEntity obj1, THomeworkAddEntity obj2) {
+            // 你需要根据对象的 propertyName 属性来比较
+            // 假设 propertyName 是 String 类型
+            String propertyName1 = ((THomeworkAddEntity) obj1).getBaseTypeId();
+            String propertyName2 = ((THomeworkAddEntity) obj2).getBaseTypeId();
+
+            // 这里根据 propertyName 进行比较，这里使用字符串比较，你可以根据属性类型自定义比较
+            return propertyName1.compareTo(propertyName2);
+        }
+    };
+
+    private void sortPickList() {
+        // 使用自定义比较器进行排序
+        Collections.sort(pickList, customComparator);
     }
 }

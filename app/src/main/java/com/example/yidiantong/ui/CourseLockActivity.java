@@ -1,11 +1,10 @@
 package com.example.yidiantong.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -21,13 +20,15 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
@@ -41,13 +42,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class CourseLockActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
-
+    private static final String TAG = "CourseLockActivity";
     private ImageView fiv_ls_ma;
     private TextView ftv_ls_user;
     private String ip;
     private Bitmap imgBitmap = null;
     private ImageView fiv_cls_look;
     private String stunum;
+
+    private BroadcastReceiver finishReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,25 +71,37 @@ public class CourseLockActivity extends AppCompatActivity implements View.OnClic
             }
         });
         changeImage();
+
+        // 注册广播接收器
+        finishReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                finish(); // 结束子Activity
+            }
+        };
+        IntentFilter filter = new IntentFilter("finish_activities");
+        registerReceiver(finishReceiver, filter);
     }
 
     private void changeImage() {
         String action = getIntent().getStringExtra("action");
+        Log.e("wencc", "changeImage: " + action);
         // 听讲状态
-        if(action.equals("lock")){
+        if (action.equals("lock")) {
             fiv_cls_look.setImageResource(R.drawable.qing1);
+            fiv_cls_look.setEnabled(false);
         }// 准备抢答
-        else if(action.equals("readyResponder")){
+        else if (action.equals("readyResponder")) {
             fiv_cls_look.setImageResource(R.drawable.readyqiangda);
         }// 抢答
-        else if(action.equals("startResponder")){
+        else if (action.equals("startResponder")) {
             fiv_cls_look.setImageResource(R.drawable.qiangdabutton);
             fiv_cls_look.setEnabled(true);
             fiv_cls_look.setOnClickListener(this);
             fiv_cls_look.setOnTouchListener(this);
         }// 停止抢答
-        else if(action.equals("stopQiangDa")){
-            fiv_cls_look.setImageResource(R.drawable.qiangdagray);
+        else if (action.equals("stopQiangDa")) {
+            fiv_cls_look.setImageResource(R.drawable.qing1);
             fiv_cls_look.setEnabled(false);
         }
     }
@@ -98,13 +113,14 @@ public class CourseLockActivity extends AppCompatActivity implements View.OnClic
             super.handleMessage(message);
             if (message.what == 100) {
                 requestWebPhotoBitmap((String) message.obj);
-            }else if(message.what == 101){
-                if((int)message.obj == 1){
-                    Log.e("成功","");
+            } else if (message.what == 101) {
+                if ((int) message.obj == 1) {
+                    Log.e("成功", "");
                 }
             }
         }
     };
+
     // 二维码图片
     private void requestWebPhotoBitmap(String imageurl) {
         new Thread(() -> {
@@ -140,12 +156,13 @@ public class CourseLockActivity extends AppCompatActivity implements View.OnClic
         }).start();
     }
 
-    private final Handler hintHandler = new Handler(Looper.getMainLooper()){
+    private final Handler hintHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
-            if(msg.what == 100)
-                Toast.makeText(CourseLockActivity.this, "获取图片中，请稍等", Toast.LENGTH_SHORT).show();
-            else if(msg.what == 101)
+            if (msg.what == 100)
+                Log.e(TAG, "handleMessage: 获取图片中，请稍等");
+//                Toast.makeText(CourseLockActivity.this, "获取图片中，请稍等", Toast.LENGTH_SHORT).show();
+            else if (msg.what == 101)
                 Toast.makeText(CourseLockActivity.this, "网络错误，请重试", Toast.LENGTH_SHORT).show();
         }
     };
@@ -159,15 +176,15 @@ public class CourseLockActivity extends AppCompatActivity implements View.OnClic
             // 弹窗
             View inflater = LayoutInflater.from(CourseLockActivity.this).inflate(R.layout.course_stu_erweima, null);
             PopupWindow popupWindow = new PopupWindow(inflater,
-                    ViewGroup.LayoutParams.WRAP_CONTENT ,
-                    ViewGroup.LayoutParams.WRAP_CONTENT,false);
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT, false);
             WindowManager.LayoutParams lp = getWindow().getAttributes();
             lp.alpha = 0.5f; //0.0-1.0
             getWindow().setAttributes(lp);
             fiv_erweima = inflater.findViewById(R.id.fiv_erweima);
             fiv_erweima.setImageBitmap(imgBitmap); //填充控件
             popupWindow.setOutsideTouchable(true);
-            popupWindow.showAtLocation(fiv_cls_look, Gravity.CENTER,0,0);
+            popupWindow.showAtLocation(fiv_cls_look, Gravity.CENTER, 0, 0);
             popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
                 @Override
                 public void onDismiss() {
@@ -180,13 +197,13 @@ public class CourseLockActivity extends AppCompatActivity implements View.OnClic
     };
 
     private void loadItems_Net() {
-        String mRequestUrl = ip + Constant.GET_QRCODE_URL ;
-        Log.e("mReq_stu",""+mRequestUrl);
+        String mRequestUrl = ip + Constant.GET_QRCODE_URL;
+        Log.e("mReq_stu", "" + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 String imageurl = json.getString("url");
-                Log.e("imageurl", ""+imageurl);
+                Log.e("imageurl", "" + imageurl);
 
                 Message message = Message.obtain();
                 message.obj = imageurl;
@@ -195,19 +212,20 @@ public class CourseLockActivity extends AppCompatActivity implements View.OnClic
                 message.what = 100;
                 handler.sendMessage(message);
 
-            }catch (JSONException e) {
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+            Log.e("volley", "Volley_Error: " + error.toString());
+
         });
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(request);
+
+        MyApplication.addRequest(request, TAG);
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.fiv_cls_look:
                 qiangda();
                 break;
@@ -215,8 +233,8 @@ public class CourseLockActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void qiangda() {
-        String mRequestUrl = ip + Constant.RESPONDER_FROM_APP + "?userName=" + stunum ;
-        Log.e("mReq_stu",""+mRequestUrl);
+        String mRequestUrl = ip + Constant.RESPONDER_FROM_APP + "?userName=" + stunum;
+        Log.e("mReq_stu", "" + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
@@ -231,11 +249,12 @@ public class CourseLockActivity extends AppCompatActivity implements View.OnClic
                 msg.what = 101;
                 handler.sendMessage(msg);
 
-            }catch (JSONException e) {
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+            Log.e("volley", "Volley_Error: " + error.toString());
+
         });
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(request);
@@ -243,11 +262,11 @@ public class CourseLockActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if(v.getId() == R.id.fiv_cls_look){
-            if(event.getAction() == MotionEvent.ACTION_UP){
+        if (v.getId() == R.id.fiv_cls_look) {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
                 fiv_cls_look.setImageResource(R.drawable.qiangdabutton);
             }
-            if(event.getAction() == MotionEvent.ACTION_DOWN){
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 fiv_cls_look.setImageResource(R.drawable.qiangdagray);
             }
         }
@@ -261,10 +280,20 @@ public class CourseLockActivity extends AppCompatActivity implements View.OnClic
         changeImage();
     }
 
-    public void onBackPressed(){
-        Intent intent = new Intent(CourseLockActivity.this, CourseLookActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(intent);
+    public void onBackPressed() {
+//        Intent intent = new Intent(CourseLockActivity.this, CourseLookActivity.class);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//        startActivity(intent);
+        // 按返回键，不传回上一界面
+
+//        super.onBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 取消广播接收器的注册
+        unregisterReceiver(finishReceiver);
     }
 }

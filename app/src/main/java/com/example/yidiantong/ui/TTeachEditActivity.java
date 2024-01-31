@@ -49,6 +49,8 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -174,20 +176,27 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
     private String jiaocaiCode;
     private String learnPlanType;
 
+    private boolean initalTime = true;
+
+    private RelativeLayout rl_loading;
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_tteach_edit);
 
         learnPlanId = getIntent().getStringExtra("learnPlanId");
         learnPlanName = getIntent().getStringExtra("learnPlanName");
         learnPlanType = getIntent().getStringExtra("type");
-        setContentView(R.layout.activity_tteach_edit);
 
         iv_search_select = findViewById(R.id.iv_search_select);
         iv_search_select.setOnClickListener(this);
-        findViewById(R.id.iv_back).setOnClickListener(v->finish());
+        findViewById(R.id.iv_back).setOnClickListener(v -> finish());
+        rl_loading = findViewById(R.id.rl_loading); // 遮蔽
+        iv_search_select = findViewById(R.id.iv_search_select);
+        iv_search_select.setOnClickListener(this);
 
         // 顶部按钮动画
         btn_add = findViewById(R.id.btn_add);
@@ -219,9 +228,14 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
         zhishidian = intent.getStringExtra("zhishidian");
         zhishidianId = intent.getStringExtra("zhishidianId");
 
+        // ----------------//
+        //  第1步，加载学段
+        // ----------------//
+        loadXueDuan();
+
         // 添加子页面Fragment
         // 默认参数
-        this.type = "0";
+        this.type = "resource";
         shareTag = "99";
         addFragment = new TLearnPlanPickAddFragment(xueduan, xueduanCode, xueke, xuekeCode, banben, banbenCode, jiaocai, jiaocaiCode, zhishidian, zhishidianId, this.type, typeSub, shareTag);
         changeFragment = new TLearnPlanPickChangeFragment();
@@ -338,8 +352,8 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
             case R.id.tv_type_all:
                 if (lastType != view) {
                     Log.d(TAG, "onClick: 不同");
-                    lastType.setBackgroundResource(R.color.light_gray3);
-                    tv_type_all.setBackgroundResource(R.drawable.t_homework_add_select);
+                    unselectedTv(lastType);
+                    selectedTv(tv_type_all);
                     lastType = (TextView) view;
                     type = "0";
                     fl_resource_type.removeAllViews();
@@ -348,8 +362,8 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.tv_type_question:
                 if (lastType != view) {
-                    lastType.setBackgroundResource(R.color.light_gray3);
-                    tv_type_question.setBackgroundResource(R.drawable.t_homework_add_select);
+                    unselectedTv(lastType);
+                    selectedTv(tv_type_question);
                     lastType = (TextView) view;
                     type = "question";
                     loadType();
@@ -358,8 +372,8 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.tv_type_paper:
                 if (lastType != view) {
-                    lastType.setBackgroundResource(R.color.light_gray3);
-                    tv_type_paper.setBackgroundResource(R.drawable.t_homework_add_select);
+                    unselectedTv(lastType);
+                    selectedTv(tv_type_paper);
                     lastType = (TextView) view;
                     type = "paper";
                     typeSub = "";
@@ -369,8 +383,8 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.tv_type_resource:
                 if (lastType != view) {
-                    lastType.setBackgroundResource(R.color.light_gray3);
-                    tv_type_resource.setBackgroundResource(R.drawable.t_homework_add_select);
+                    unselectedTv(lastType);
+                    selectedTv(tv_type_resource);
                     lastType = (TextView) view;
                     type = "resource";
                     typeSub = "";
@@ -396,7 +410,10 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
         }
         changeBtn(btn_change);
         getSupportFragmentManager().beginTransaction().replace(R.id.fl_main, changeFragment).commit();
+        changeFragment.updateItem(addFragment.pickList);
         iv_search_select.setVisibility(View.INVISIBLE);
+        rl_loading.setVisibility(View.GONE);
+
     }
 
     // 挑选试题页面
@@ -505,152 +522,181 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                 break;
         }
         tv_type.setText(typeName);
-        loadXueDuan();
-        loadXueKe();
-        loadBanBen();
-        loadJiaoCai();
-        loadZhiShiDian();
     }
+
+    int count = 0; // 成功请求计数
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag) throws UnsupportedEncodingException {
+    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag) {
         Intent intent = getIntent();
 
-        // 导学案专属参数
+        List<String> ketangNameList = new ArrayList<>(Arrays.asList(ketang.split(", ")));
+        List<String> ketangIdList = new ArrayList<>(Arrays.asList(ketangId.split(", ")));
+        List<String> clasList = new ArrayList<>(Arrays.asList(clas.split(", ")));
+        List<String> classIdList = new ArrayList<>(Arrays.asList(classId.split(", ")));
+        List<String> stuIdsList = new ArrayList<>(Arrays.asList(stuIds.split(", ")));
+        List<String> stuNamesList = new ArrayList<>(Arrays.asList(stuNames.split(", ")));
+        count = 0;
 
-        String classHours = "";
-        String studyHours = "";
-
-        String Introduce = "";
-        String Goal = "";
-        String Emphasis = "";
-        String Difficulty = "";
-        String Extension = "";
-        String Summary = "";
-
-        // 真正数据
-        String xueduan = intent.getStringExtra("xueduan");
-        String xueduanCode = intent.getStringExtra("xueduanCode");
-        String xueke = intent.getStringExtra("xueke");
-        String xuekeCode = intent.getStringExtra("xuekeCode");
-        String banben = intent.getStringExtra("banben");
-        String banbenCode = intent.getStringExtra("banbenCode");
-        String jiaocai = intent.getStringExtra("jiaocai");
-        String jiaocaiCode = intent.getStringExtra("jiaocaiCode");
-        String zhishidian = intent.getStringExtra("zhishidian");
-        String zhishidianId = intent.getStringExtra("zhishidianId");
-
-
-        StringBuilder jsonStringBuilder = new StringBuilder();
-        String jsonString = "[";
-        List<LearnPlanAddItemEntity> pickList = addFragment.pickList;
-        for(int i = 0; i < pickList.size(); ++i){
-            LearnPlanAddItemEntity item = pickList.get(i);
-            item.setOrder(i+1);
-            if (jsonStringBuilder.length() > 0) {
-                jsonStringBuilder.append(", ");
+        String assignType_ = assignType;
+        for (int i = 0; i < ketangNameList.size(); ++i) {
+            // 第一次保存+布置，后面直接布置即可
+            if (i > 0 && assignType.equals("1")) {
+                assignType_ = "2";
             }
-            jsonStringBuilder.append(item.toData());
-        }
-        jsonString += jsonStringBuilder.toString();
-        jsonString += "]";
+            ketang = ketangNameList.get(i);
+            ketangId = ketangIdList.get(i);
+            clas = clasList.get(i);
+            classId = classIdList.get(i);
+            stuIds = stuIdsList.get(i);
+            stuNames = stuNamesList.get(i);
 
-        Log.d("wen", "内容串: " + jsonString);
+            // 导学案专属参数
 
-        ketang = URLEncoder.encode(ketang, "UTF-8");
-        clas = URLEncoder.encode(clas, "UTF-8");
-        stuNames = URLEncoder.encode(stuNames, "UTF-8");
-        jsonString = URLEncoder.encode(jsonString, "UTF-8");
+            String classHours = "";
+            String studyHours = "";
 
-        mRequestUrl = Constant.API + Constant.T_LEARN_PLAN_ASSIGN_SAVE + "?assignType=" + assignType +
-                "&channelCode=" + xueduanCode + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") +
-                "&subjectCode=" + xuekeCode + "&subjectName=" + URLEncoder.encode(xueke, "UTF-8") +
-                "&textBookCode=" + banbenCode + "&textBookName=" + URLEncoder.encode(banben, "UTF-8") +
-                "&gradeLevelCode=" + jiaocaiCode + "&gradeLevelName=" + URLEncoder.encode(jiaocai, "UTF-8") +
-                "&pointCode=" + zhishidianId + "&pointName=" + URLEncoder.encode(zhishidian, "UTF-8") +
+            String Introduce = "";
+            String Goal = "";
+            String Emphasis = "";
+            String Difficulty = "";
+            String Extension = "";
+            String Summary = "";
 
-                "&type=" + learnPlanType + "&learnPlanType=" + "&classHours=" + classHours +
-                "&studyHours=" + studyHours + "&Introduce=" + URLEncoder.encode(Introduce, "UTF-8") + "&Goal=" + URLEncoder.encode(Goal, "UTF-8") +
-                "&Emphasis=" + URLEncoder.encode(Emphasis, "UTF-8") + "&Difficulty=" + URLEncoder.encode(Difficulty, "UTF-8") + "&Summary=" + URLEncoder.encode(Summary, "UTF-8") + "&Extension=" + URLEncoder.encode(Extension, "UTF-8") +
-
-                "&startTime=" + startTime + "&endTime=" + endTime +
-                "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classIds=" + classId +
-                "&className=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
-                "&roomType=" + learnType +
-
-                "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                "&learnPlanName=" + URLEncoder.encode(learnPlanName, "UTF-8") + "&flag=edit"  + "&jsonStr=" + jsonString;
-
-        Log.d("wen", "URL: " + mRequestUrl);
-
-        StringRequest request = new StringRequest(mRequestUrl, response -> {
-            try {
-                JSONObject json = JsonUtils.getJsonObjectFromString(response);
-                Log.d(TAG, "submit: " + json);
-                boolean success = json.getBoolean("success");
-                String msg = json.getString("message");
+            // 真正数据
+            String xueduan = intent.getStringExtra("xueduan");
+            String xueduanCode = intent.getStringExtra("xueduanCode");
+            String xueke = intent.getStringExtra("xueke");
+            String xuekeCode = intent.getStringExtra("xuekeCode");
+            String banben = intent.getStringExtra("banben");
+            String banbenCode = intent.getStringExtra("banbenCode");
+            String jiaocai = intent.getStringExtra("jiaocai");
+            String jiaocaiCode = intent.getStringExtra("jiaocaiCode");
+            String zhishidian = intent.getStringExtra("zhishidian");
+            String zhishidianId = intent.getStringExtra("zhishidianId");
 
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(learnPlanName);
-
-                if (success) {
-                    if(learnPlanType.equals("1")){
-                        if (assignType.equals("3")) {
-                            builder.setMessage("导学案保存成功");
-                        } else {
-                            builder.setMessage("导学案布置成功");
-                        }
-                    }else{
-                        if (assignType.equals("3")) {
-                            builder.setMessage("微课保存成功");
-                        } else {
-                            builder.setMessage("微课布置成功");
-                        }
-                    }
-
-                    builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            rl_submitting.setVisibility(View.GONE);
-                            Intent toHome = new Intent(TTeachEditActivity.this, TMainPagerActivity.class);
-                            toHome.putExtra("pos", 2);
-                            //两个一起用
-                            toHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            toHome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(toHome);
-                        }
-                    });
-                } else {
-                    builder.setMessage(msg);
-                    builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            rl_submitting.setVisibility(View.GONE);
-                            Intent toHome = new Intent(TTeachEditActivity.this, TMainPagerActivity.class);
-                            toHome.putExtra("pos", 2);
-                            //两个一起用
-                            toHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            toHome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(toHome);
-                        }
-                    });
+            StringBuilder jsonStringBuilder = new StringBuilder();
+            String jsonString = "[";
+            List<LearnPlanAddItemEntity> pickList = addFragment.pickList;
+            for (int j = 0; j < pickList.size(); ++j) {
+                LearnPlanAddItemEntity item = pickList.get(j);
+                item.setOrder(j + 1);
+                if (jsonStringBuilder.length() > 0) {
+                    jsonStringBuilder.append(", ");
                 }
+                jsonStringBuilder.append(item.toData());
+            }
+            jsonString += jsonStringBuilder.toString();
+            jsonString += "]";
 
-                AlertDialog dialog = builder.create();
-                dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
-                dialog.show();
+            Log.d("wen", "内容串: " + jsonString);
+            try {
 
-            } catch (JSONException e) {
+                ketang = URLEncoder.encode(ketang, "UTF-8");
+                clas = URLEncoder.encode(clas, "UTF-8");
+                stuNames = URLEncoder.encode(stuNames, "UTF-8");
+                jsonString = URLEncoder.encode(jsonString, "UTF-8");
+
+                mRequestUrl = Constant.API + Constant.T_LEARN_PLAN_ASSIGN_SAVE + "?assignType=" + assignType_ +
+                        "&channelCode=" + xueduanCode + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") +
+                        "&subjectCode=" + xuekeCode + "&subjectName=" + URLEncoder.encode(xueke, "UTF-8") +
+                        "&textBookCode=" + banbenCode + "&textBookName=" + URLEncoder.encode(banben, "UTF-8") +
+                        "&gradeLevelCode=" + jiaocaiCode + "&gradeLevelName=" + URLEncoder.encode(jiaocai, "UTF-8") +
+                        "&pointCode=" + zhishidianId + "&pointName=" + URLEncoder.encode(zhishidian, "UTF-8") +
+
+                        "&type=" + learnPlanType + "&learnPlanType=" + "&classHours=" + classHours +
+                        "&studyHours=" + studyHours + "&Introduce=" + URLEncoder.encode(Introduce, "UTF-8") + "&Goal=" + URLEncoder.encode(Goal, "UTF-8") +
+                        "&Emphasis=" + URLEncoder.encode(Emphasis, "UTF-8") + "&Difficulty=" + URLEncoder.encode(Difficulty, "UTF-8") + "&Summary=" + URLEncoder.encode(Summary, "UTF-8") + "&Extension=" + URLEncoder.encode(Extension, "UTF-8") +
+
+                        "&startTime=" + startTime + "&endTime=" + endTime +
+                        "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classIds=" + classId +
+                        "&className=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
+                        "&roomType=" + learnType +
+
+                        "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
+                        "&learnPlanName=" + URLEncoder.encode(learnPlanName, "UTF-8") + "&flag=edit" + "&jsonStr=" + jsonString;
+
+                Log.d("wen", "URL: " + mRequestUrl);
+            } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-        }, error -> {
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
-        });
-        MyApplication.addRequest(request, TAG);
-        rl_submitting.setVisibility(View.VISIBLE);
+            StringRequest request = new StringRequest(mRequestUrl, response -> {
+                try {
+                    JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                    Log.d(TAG, "submit: " + json);
+                    boolean success = json.getBoolean("success");
+                    String msg = json.getString("message");
+
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle(learnPlanName);
+
+                    if (success) {
+                        if (learnPlanType.equals("1")) {
+                            if (assignType.equals("3")) {
+                                builder.setMessage("导学案保存成功");
+                            } else {
+                                builder.setMessage("导学案布置成功");
+                            }
+                        } else {
+                            if (assignType.equals("3")) {
+                                builder.setMessage("微课保存成功");
+                            } else {
+                                builder.setMessage("微课布置成功");
+                            }
+                        }
+
+                        builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                rl_submitting.setVisibility(View.GONE);
+                                Intent toHome = new Intent(TTeachEditActivity.this, TMainPagerActivity.class);
+                                toHome.putExtra("pos", 2);
+                                //两个一起用
+                                toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+                                startActivity(toHome);
+                            }
+                        });
+                    } else {
+                        builder.setMessage(msg);
+                        builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                rl_submitting.setVisibility(View.GONE);
+                                Intent toHome = new Intent(TTeachEditActivity.this, TMainPagerActivity.class);
+                                toHome.putExtra("pos", 2);
+                                //两个一起用
+                                toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+                                startActivity(toHome);
+                            }
+                        });
+                    }
+
+                    AlertDialog dialog = builder.create();
+                    dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+                    dialog.show();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }, error -> {
+                Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+                Log.d("wen", "Volley_Error: " + error.toString());
+            });
+            MyApplication.addRequest(request, TAG);
+            rl_submitting.setVisibility(View.VISIBLE);
+            try {
+                // 休眠2秒钟，避免请求过快被丢弃
+                Thread.sleep(100);
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -786,6 +832,9 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
     // 获取选题信息
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void loadPickList() {
+
+        rl_loading.setVisibility(View.VISIBLE);
+
         mRequestUrl = Constant.API + Constant.T_GET_LEARN_PLAN_PICKLIST + "?learnPlanId=" + learnPlanId + "&deviceType=PAD";
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
@@ -805,6 +854,7 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                 e.printStackTrace();
             }
         }, error -> {
+            rl_loading.setVisibility(View.GONE);
             Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
@@ -831,6 +881,12 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                     xueduanMap.put(object.getString("channelName"), object.getString("channelId"));
                 }
                 Log.d("wen", "学段: " + xueduanMap);
+                // ----------------//
+                //  第2步，加载学科
+                // ----------------//
+                if (xueduan.length() > 0) {
+                    loadXueKe();
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -854,14 +910,14 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
             TextView tv_name = view.findViewById(R.id.tv_name);
             tv_name.setText(name);
             if (name.equals(xueduan)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastXueduan = tv_name;
             }
             tv_name.setOnClickListener(v -> {
                 xueduan = (String) tv_name.getText();
 
                 if (lastXueduan != null) {
-                    lastXueduan.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastXueduan);
                 }
 
                 if (lastXueduan == tv_name) {
@@ -872,7 +928,7 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                 } else {
                     xueduan = tv_name.getText().toString();
                     xueduanCode = xueduanMap.get(xueduan);
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastXueduan = tv_name;
                     refresh(1);
                     loadXueKe();
@@ -881,7 +937,7 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
 
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_xueduan.getWidth() / 3 - PxUtils.dip2px(this, 14);
+            params.width = fl_xueduan.getWidth() / 3 - PxUtils.dip2px(this, 15);
             tv_name.setLayoutParams(params);
             fl_xueduan.addView(view);
         });
@@ -902,10 +958,16 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                 JSONArray data = json.getJSONArray("data");
                 for (int i = 0; i < data.length(); ++i) {
                     JSONObject object = data.getJSONObject(i);
-                    xuekeMap.put(object.getString("subjectName"), object.getString("subjectId"));
+                    xuekeMap.put(object.getString("subjectName").substring(2), object.getString("subjectId"));
                 }
 
                 Log.d("wen", "学科: " + xuekeMap);
+                // ----------------//
+                //  第3步，加载版本
+                // ----------------//
+                if (xueke.length() > 0) {
+                    loadBanBen();
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -924,33 +986,26 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
         }
         lastXueke = null;
         xuekeMap.forEach((name, id) -> {
-            // name（包含学段）
             view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_block, fl_xueke, false);
             TextView tv_name = view.findViewById(R.id.tv_name);
-            // 按钮显示（不含学段）
-            tv_name.setText(name.substring(2));
-            // xueke（包含学段）
+            tv_name.setText(name);
             if (name.equals(xueke)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastXueke = tv_name;
             }
             tv_name.setOnClickListener(v -> {
+                xueke = (String) tv_name.getText();
 
                 if (lastXueke != null) {
-                    lastXueke.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastXueke);
                 }
 
                 if (lastXueke == tv_name) {
                     xueke = "";
-                    xuekeCode = "";
                     lastXueke = null;
                     refresh(2);
                 } else {
-                    // 点击事件，获取xueke（包含学段）
-                    xueke = xueduan + tv_name.getText().toString();
-                    xuekeCode = xuekeMap.get(xueke);
-
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastXueke = tv_name;
                     refresh(2);
                     loadBanBen();
@@ -959,7 +1014,7 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                 tv_xueke.setText(xueke);
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_xueke.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 14);
+            params.width = fl_xueke.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 15);
             tv_name.setLayoutParams(params);
             fl_xueke.addView(view);
         });
@@ -984,6 +1039,12 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                 }
 
                 Log.d("wen", "版本: " + banbenMap);
+                // ----------------//
+                //  第4步，加载教材
+                // ----------------//
+                if (banben.length() > 0) {
+                    loadJiaoCai();
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -1006,14 +1067,14 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
             TextView tv_name = view.findViewById(R.id.tv_name);
             tv_name.setText(name);
             if (name.equals(banben)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastBanben = tv_name;
             }
             tv_name.setOnClickListener(v -> {
                 banben = (String) tv_name.getText();
 
                 if (lastBanben != null) {
-                    lastBanben.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastBanben);
                 }
 
                 if (lastBanben == tv_name) {
@@ -1024,7 +1085,7 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                 } else {
                     banben = tv_name.getText().toString();
                     banbenCode = banbenMap.get(banben);
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastBanben = tv_name;
                     refresh(3);
                     loadJiaoCai();
@@ -1032,7 +1093,7 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                 tv_banben.setText(banben);
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_banben.getWidth() / 3 - PxUtils.dip2px(this, 14);
+            params.width = fl_banben.getWidth() / 3 - PxUtils.dip2px(this, 15);
             tv_name.setLayoutParams(params);
             fl_banben.addView(view);
         });
@@ -1060,6 +1121,12 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                 }
 
                 Log.d("wen", "教材: " + jiaocaiMap);
+                // ----------------//
+                //  第5步，加载知识点
+                // ----------------//
+                if (jiaocai.length() > 0) {
+                    loadZhiShiDian();
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -1083,13 +1150,13 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
             TextView tv_name = view.findViewById(R.id.tv_name);
             tv_name.setText(name);
             if (name.equals(jiaocai)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastJiaocai = tv_name;
             }
             tv_name.setOnClickListener(v -> {
                 jiaocai = (String) tv_name.getText();
                 if (lastJiaocai != null) {
-                    lastJiaocai.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastJiaocai);
                 }
 
                 if (lastJiaocai == tv_name) {
@@ -1100,7 +1167,7 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                 } else {
                     jiaocai = tv_name.getText().toString();
                     jiaocaiCode = jiaocaiMap.get(jiaocai);
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastJiaocai = tv_name;
                     refresh(4);
                     loadZhiShiDian();
@@ -1108,7 +1175,7 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                 tv_jiaocai.setText(jiaocai);
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_jiaocai.getWidth() / 3 - PxUtils.dip2px(this, 14);
+            params.width = fl_jiaocai.getWidth() / 3 - PxUtils.dip2px(this, 15);
             tv_name.setLayoutParams(params);
             fl_jiaocai.addView(view);
         });
@@ -1170,8 +1237,12 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                 break;
         }
 
-        mRequestUrl += "channelCode=" + xueduanMap.get(xueduan) + "&subjectCode=" + xuekeMap.get(xueke) + "&textBookCode=" + banbenMap.get(banben) + "&gradeLevelCode=" +
-                jiaocaiMap.get(jiaocai) + "&pointCode=" + zhishidianId + "&shareTag=" + shareTag + "&teacherId=" + MyApplication.username;
+        if (initalTime) {
+            mRequestUrl += "?channelCode=" + xueduanCode + "&subjectCode=" + xuekeCode + "&textBookCode=" + banbenCode + "&gradeLevelCode=" + jiaocaiCode + "&pointCode=" + zhishidianId + "&shareTag=" + shareTag + "&teacherId=" + MyApplication.username;
+            initalTime = false;
+        } else {
+            mRequestUrl += "?channelCode=" + xueduanMap.get(xueduan) + "&subjectCode=" + xuekeMap.get(xueke) + "&textBookCode=" + banbenMap.get(banben) + "&gradeLevelCode=" + jiaocaiMap.get(jiaocai) + "&pointCode=" + zhishidianId + "&shareTag=" + shareTag + "&teacherId=" + MyApplication.username;
+        }
         Log.d("wen", "type: " + mRequestUrl);
         typeMap.clear();
         StringRequest request = new StringRequest(mRequestUrl, response -> {
@@ -1205,30 +1276,29 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
         typeMap.forEach((name, id) -> {
             view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_block, fl_resource_type, false);
             TextView tv_name = view.findViewById(R.id.tv_name);
-            tv_name.setTextColor(getResources().getColor(R.color.black));
             tv_name.setText(name);
             if (name.equals(typeSub)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastTypeSub = tv_name;
             }
             tv_name.setOnClickListener(v -> {
                 typeSub = (String) tv_name.getText();
 
                 if (lastTypeSub != null) {
-                    lastTypeSub.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastTypeSub);
                 }
 
                 if (lastTypeSub == tv_name) {
-                    typeSub = "";
+                    selectedTv(tv_name);
                     lastTypeSub = null;
                 } else {
                     typeSub = tv_name.getText().toString();
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastTypeSub = tv_name;
                 }
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_resource_type.getWidth() / 3 - PxUtils.dip2px(this, 14);
+            params.width = fl_resource_type.getWidth() / 3 - PxUtils.dip2px(this, 15);
             tv_name.setLayoutParams(params);
             fl_resource_type.addView(view);
         });
@@ -1287,6 +1357,16 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                 "</script>" +
                 "</head><body style=\"color: rgb(117, 117, 117); font-size: 16px; margin: 0px; padding: 0px\">" + str +
                 "</body>";
-        wb.loadData(html_content, "text/html", "utf-8");
+        wb.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
+    }
+
+    private void selectedTv(TextView tv) {
+        tv.setBackgroundResource(R.drawable.t_homework_add_select);
+        tv.setTextColor(getColor(R.color.red));
+    }
+
+    private void unselectedTv(TextView tv) {
+        tv.setBackgroundResource(R.drawable.t_homework_add_unselect);
+        tv.setTextColor(getColor(R.color.default_gray));
     }
 }

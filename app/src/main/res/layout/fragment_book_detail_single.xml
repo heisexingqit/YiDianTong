@@ -53,12 +53,13 @@
             android:layout_height="wrap_content"
             android:text="1"
             android:layout_alignParentLeft="true" />
+
         <TextView
             android:id="@+id/ftv_bd_score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="得分和平均分"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true"
+            android:text="得分和平均分" />
 
     </RelativeLayout>
 

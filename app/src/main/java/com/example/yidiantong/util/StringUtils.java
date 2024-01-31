@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 
 import java.util.Arrays;
 
@@ -31,5 +32,16 @@ public class StringUtils {
         char[] charArray = input.toCharArray();
         Arrays.sort(charArray);
         return new String(charArray);
+    }
+
+    private static final int MAX_LOG_LENGTH = 300;
+
+    public static void longTextLog(String tag, String key, String longText) {
+        int length = longText.length();
+        for (int i = 0; i < length; i += MAX_LOG_LENGTH) {
+            int end = Math.min(i + MAX_LOG_LENGTH, length);
+            String chunk = longText.substring(i, end);
+            Log.e(tag, key + i + ": " + chunk);
+        }
     }
 }

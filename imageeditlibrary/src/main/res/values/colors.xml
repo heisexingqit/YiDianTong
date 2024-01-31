@@ -14,5 +14,8 @@
     <color name="hint_foreground_material_light">#00000000</color>
     <color name="hint_foreground_material_dark">#00000000</color>
     <color name="blue_btn">#2196f3</color>
+    <color name="draw_panel_background">#989898</color>
+    <color name="baby_blue">#5dc4e9</color>
+    <color name="black">#000000</color>
 
 </resources>

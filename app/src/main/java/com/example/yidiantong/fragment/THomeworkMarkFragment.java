@@ -4,16 +4,18 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Message;
 import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,17 +25,24 @@ import androidx.fragment.app.Fragment;
 
 import com.example.yidiantong.R;
 import com.example.yidiantong.bean.THomeworkMarkedEntity;
-import com.example.yidiantong.ui.THomeworkAddActivity;
+import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
 import com.example.yidiantong.util.THomeworkMarkInterface;
 import com.google.android.flexbox.FlexboxLayout;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
-import com.xuexiang.xui.XUI;
-import com.xuexiang.xui.widget.button.SmoothCheckBox;
+import com.yanzhenjie.permission.Action;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.Rationale;
+import com.yanzhenjie.permission.RequestExecutor;
+import com.yanzhenjie.permission.runtime.Permission;
 
 import org.apache.commons.text.StringEscapeUtils;
 
+import java.util.List;
+
 public class THomeworkMarkFragment extends Fragment {
+    private static final String TAG = "THomeworkMarkFragment";
 
     // 接口需要
     private THomeworkMarkedEntity homeworkMarked;
@@ -47,7 +56,7 @@ public class THomeworkMarkFragment extends Fragment {
     private int zero5 = 0;
     private Button[] btnArray;
     private View[] viewArray;
-    private SmoothCheckBox checkBox;
+    private CheckBox checkBox;
     private TextView tv_stu_scores;
 
     private boolean isFirst = true;
@@ -56,6 +65,11 @@ public class THomeworkMarkFragment extends Fragment {
     private String stuStr;
 
     private String oldUrl;
+    private TextView tv_zero5;
+
+    private PopupWindow window;
+    private View popView;
+
 
     public static THomeworkMarkFragment newInstance(THomeworkMarkedEntity homeworkMarked, int position, int size, boolean canMark) {
         THomeworkMarkFragment fragment = new THomeworkMarkFragment();
@@ -78,7 +92,6 @@ public class THomeworkMarkFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        XUI.initTheme(getActivity());
 
         Bundle arg = getArguments();
 //        position = arg.getInt("position") + 1;
@@ -94,7 +107,7 @@ public class THomeworkMarkFragment extends Fragment {
 
         // 获取组件
         FlexboxLayout fl_score = view.findViewById(R.id.fl_score);
-        TextView tv_zero5 = view.findViewById(R.id.tv_zero5);
+        tv_zero5 = view.findViewById(R.id.tv_zero5);
         // 动态加打分按钮
         tv_stu_scores = view.findViewById(R.id.tv_stu_scores);
         checkBox = view.findViewById(R.id.cb_zero5);
@@ -124,8 +137,7 @@ public class THomeworkMarkFragment extends Fragment {
                     @JavascriptInterface
                     @SuppressLint("JavascriptInterface")
                     public void bigPic(String url) {
-                        oldUrl = url;
-                        EditImageActivity.start(getActivity(), THomeworkMarkFragment.this, url, null, 0);
+                        permissionOpenGallery(url);
                     }
                 }
                 , "myInterface");
@@ -160,27 +172,33 @@ public class THomeworkMarkFragment extends Fragment {
 
         // 如果可以批改分数
         if (canMark) {
+            if (zero5 == 1) {
+                checkBox.setChecked(true);
+            }
+
             // 点击事件
             checkBox.setOnClickListener(v -> {
-
-                boolean isChecked = checkBox.isChecked();
-                if (!isChecked) {
+                if (zero5 == 1) {
+                    zero5 = 0;
+                } else {
+                    zero5 = 1;
+                    if (score == -1) {
+                        score = 0;
+                    }
                     double nowScore = score + 0.5;
                     if (nowScore > Double.parseDouble(homeworkMarked.getQuestionScore())) {
                         zero5 = 0;
                         Toast.makeText(getActivity(), "分数超过上限", Toast.LENGTH_SHORT).show();
                         return;
-                    }else{
+                    } else {
                         zero5 = 1;
                     }
-                } else {
-                    zero5 = 0;
                 }
                 showScoreBtn();
                 // 同步修改
                 transmitInterface.setStuAnswer(position - 1, score + (zero5 == 1 ? ".5" : ".0"));
-
             });
+
 
             // 首次创建：初始化
             if (isFirst) {
@@ -216,10 +234,59 @@ public class THomeworkMarkFragment extends Fragment {
 
                         // 同步修改
                         transmitInterface.setStuAnswer(position - 1, score + (zero5 == 1 ? ".5" : ".0"));
+                        if (window != null) {
+                            window.dismiss();
+                        }
                     }
                 });
-                fl_score.addView(viewArray[i]);
             }
+            // ------------------------#
+            //  可伸缩打分按钮设计优化
+            // ------------------------#
+            if (scoreNum > 15) {
+                // 设计伸缩优化
+                for (int i = scoreNum; i > scoreNum - 15; --i) {
+                    fl_score.addView(viewArray[i]);
+                }
+
+                View plusView = LayoutInflater.from(getActivity()).inflate(R.layout.item_t_score_btn, fl_score, false);
+                Button plusBtn = plusView.findViewById(R.id.btn_score);
+                plusBtn.setText("+");
+
+                // 点击事件
+                plusBtn.setOnClickListener(view1 -> {
+                    // popUpWindows弹窗
+                    showBtnPanel();
+                });
+                fl_score.addView(plusView);
+            } else {
+                // 不需要优化
+                for (int i = scoreNum; i >= 0; --i) {
+                    fl_score.addView(viewArray[i]);
+                }
+            }
+
+
+            // 获取ViewTreeObserver
+            ViewTreeObserver viewTreeObserver = fl_score.getViewTreeObserver();
+            // 添加OnGlobalLayoutListener监听器
+            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    // 在布局加载完成后调用此方法
+                    for (int i = 0; i < scoreNum + 1; ++i) {
+                        ViewGroup.LayoutParams params = btnArray[i].getLayoutParams();
+                        params.width = fl_score.getWidth() / 8 - PxUtils.dip2px(view.getContext(), 20);
+                        btnArray[i].setLayoutParams(params);
+                    }
+                    // 在需要的地方使用组件的宽度
+                    // 例如，可以将它用于进行其他操作或调整UI
+                    // ...
+
+                    // 可选：如果你只想监听一次，可以在获取宽度后移除监听器
+                    fl_score.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+            });
 
             // 分数显示+按钮显示
             showScoreBtn();
@@ -237,8 +304,41 @@ public class THomeworkMarkFragment extends Fragment {
         return view;
     }
 
+    private void showBtnPanel() {
+        // 创建一个 FlexboxLayout 实例
+        if (popView == null) {
+            popView = LayoutInflater.from(getActivity()).inflate(R.layout.t_homework_mark_btn_panel, null);
+            FlexboxLayout popwindowView = popView.findViewById(R.id.fl_main);
+            popView.findViewById(R.id.iv_close).setOnClickListener(v -> window.dismiss());
+
+            for (int i = scoreNum - 15; i >= 0; --i) {
+                popwindowView.addView(viewArray[i]);
+            }
+
+            window = new PopupWindow(
+                    popView,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    true
+            );
+        }
+        window.showAsDropDown(tv_stu_scores, 0, 0);
+
+    }
+
+
     // 调整分数按钮显示效果
     private void showScoreBtn() {
+        if (homeworkMarked.getQuestionType().equals("101") || homeworkMarked.getQuestionType().equals("103")) {
+            // 单选和判断，取消中间分数
+            for (int i = 1; i < scoreNum; ++i) {
+                btnArray[i].setVisibility(View.GONE);
+            }
+            checkBox.setVisibility(View.GONE);
+            tv_zero5.setVisibility(View.GONE);
+        }
+
+
         for (int i = 0; i < scoreNum + 1; ++i) {
             if (score == i) {
                 btnArray[i].setBackgroundResource(R.drawable.t_homework_report);
@@ -258,7 +358,6 @@ public class THomeworkMarkFragment extends Fragment {
 
     /**
      * 将HTML内容显示在WebView中，包含转义和样式
-     *
      * @param wb  WebView组件对象
      * @param str 原始HTML数据
      */
@@ -269,6 +368,9 @@ public class THomeworkMarkFragment extends Fragment {
                 "   margin: 0px;" +
                 "   line-height: 30px;" +
                 "   }" +
+                "  body {" +
+                "       line-height: 30px;\n" +
+                "   }" +
                 "</style>" +
                 "<script>\n" +
                 "function bigimage(x) {\n" +
@@ -276,8 +378,59 @@ public class THomeworkMarkFragment extends Fragment {
                 "}\n" +
                 "</script>\n" +
                 "</head><body style=\"color: rgb(117, 117, 117); font-size: 14px; margin: 0px; padding: 0px\">" + str + "</body>";
-        wb.loadData(html_content, "text/html", "utf-8");
+        wb.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
     }
+
+
+    /**
+     * 第三方权限申请包AndPermission: 自带权限组名，可直接在Fragment中回调
+     * 申请读写文件权限
+     */
+    private void permissionOpenGallery(String url) {
+        // 权限请求
+        AndPermission.with(this)
+                .runtime()
+                .permission(Permission.Group.STORAGE)
+                .onGranted(new Action<List<String>>() {
+                    // 获取权限后
+                    @Override
+                    public void onAction(List<String> data) {
+//                        oldUrl = url;
+//                        EditImageActivity.start(getActivity(), THomeworkMarkFragment.this, url, null, 0);
+                    }
+                }).onDenied(new Action<List<String>>() {
+                    @Override
+                    public void onAction(List<String> data) {
+                        // 判断是否点了永远拒绝，不再提示
+//
+                    }
+                })
+                .rationale(rGallery)
+                .start();
+    }
+
+    /**
+     * 第三方权限申请包-自定义权限提示，出现在首次拒绝后。读写文件申请
+     */
+    /**
+     * 第三方权限申请包-自定义权限提示，出现在首次拒绝后。拍照申请
+     */
+    private Rationale rGallery = new Rationale() {
+        @Override
+        public void showRationale(Context context, Object data, RequestExecutor executor) {
+            new MaterialAlertDialogBuilder(getActivity())
+                    .setTitle("提示")
+                    .setMessage("开启读写文件权限才能批改图片！")
+                    .setPositiveButton("知道了", (dialog, which) -> {
+                        executor.execute();
+                    })
+                    .setNegativeButton("拒绝", (dialog, which) -> {
+                        executor.cancel();
+                    })
+                    .show();
+        }
+    };
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -287,6 +440,7 @@ public class THomeworkMarkFragment extends Fragment {
             boolean isImageEdit = data.getBooleanExtra(EditImageActivity.IMAGE_IS_EDIT, false);
             // 图片已修改
             if (isImageEdit) {
+                Log.e(TAG, "onActivityResult: 图片已替换");
                 stuStr = homeworkMarked.getStuAnswer().trim().replace(oldUrl, newUrl);
                 setHtmlOnWebView(wv_content2, stuStr);
             }

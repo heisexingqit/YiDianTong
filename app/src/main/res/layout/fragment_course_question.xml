@@ -8,17 +8,16 @@
         android:id="@+id/fll_w1"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:orientation="horizontal"
         tools:ignore="WebViewLayout">
 
-    <WebView
-        android:id="@+id/fwv_cq"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="3"
-        />
+        <WebView
+            android:id="@+id/fwv_cq"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3" />
 
         <LinearLayout
             android:id="@+id/fll_fcq"
@@ -26,18 +25,19 @@
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:orientation="horizontal">
+
             <LinearLayout
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
-                android:background="@color/black"
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
+                android:background="@color/black"
                 android:orientation="horizontal" />
 
             <WebView
                 android:id="@+id/wv_answer"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
     </LinearLayout>

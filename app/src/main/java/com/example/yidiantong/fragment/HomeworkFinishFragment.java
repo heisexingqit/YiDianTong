@@ -3,6 +3,7 @@ package com.example.yidiantong.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.SpannableString;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,15 +74,28 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
         WebView wv_content3 = view.findViewById(R.id.wv_content3);
         WebView wv_content4 = view.findViewById(R.id.wv_content4);
         setHtmlOnWebView(wv_content, homeworkMarked.getTiMian());
-        setHtmlOnWebView(wv_content2, homeworkMarked.getStandardAnswer());
-        setHtmlOnWebView(wv_content3, homeworkMarked.getAnalysis());
         setHtmlOnWebView(wv_content4, homeworkMarked.getStuAnswer());
+
+        String answerString = homeworkMarked.getStandardAnswer();
+        String analysisString = homeworkMarked.getAnalysis();
+
 
         /**
          * 简单判断答案是否为不可见
          */
         boolean isWatch = !"******".equals(homeworkMarked.getStandardAnswer());
+        if(homeworkMarked.getShowAnswerFlag().equals("0")){
+            isWatch = false;
+            answerString = "******";
+            analysisString = "******";
+        }
+
+        setHtmlOnWebView(wv_content2, answerString);
+        setHtmlOnWebView(wv_content3, analysisString);
+
+
         if(isWatch){
+            // 显示底部一栏
             LinearLayout ll_watch = view.findViewById(R.id.ll_watch);
             ll_watch.setVisibility(View.VISIBLE);
             TextView tv_total_scores = view.findViewById(R.id.tv_total_scores);
@@ -97,8 +111,6 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
                 iv_stu_scores.setImageResource(R.drawable.error);
             }
         }
-
-
 
         //题目类型
         TextView tv_question_type = view.findViewById(R.id.tv_question_type);
@@ -141,6 +153,6 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
                 "   }" +
                 "</style>" +
                 "</head><body style=\"color: rgb(117, 117, 117); font-size: 14px; margin: 0px; padding: 0px\">" + str + "</body>";
-        wb.loadData(html_content, "text/html", "utf-8");
+        wb.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
     }
 }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -89,8 +90,9 @@ public class TMainBellFragment extends Fragment implements View.OnClickListener 
     private String searchStr = "";
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
@@ -114,7 +116,7 @@ public class TMainBellFragment extends Fragment implements View.OnClickListener 
 
         //获取登录传递的参数
         if (username == null) {
-            username = getActivity().getIntent().getStringExtra("username");
+            username = MyApplication.username;
         }
 
         //加载页
@@ -372,7 +374,8 @@ public class TMainBellFragment extends Fragment implements View.OnClickListener 
             }
 
         }, error -> {
-            Log.d("wen", "Volley_Error: " + error.toString());
+            Log.e("volley", "Volley_Error: " + error.toString());
+
             rl_loading.setVisibility(View.GONE);
             adapter.fail();
         });

@@ -1,14 +1,13 @@
 package com.example.yidiantong.fragment;
 
 import android.annotation.SuppressLint;
-import static com.example.yidiantong.MyApplication.username;
-
 import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,7 +15,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -27,7 +25,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,19 +36,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
-
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.PswDialog;
 import com.example.yidiantong.View.TouxiangDialog;
-import com.example.yidiantong.adapter.HomeRecyclerAdapter;
-
 import com.example.yidiantong.ui.LoginActivity;
-
+import com.example.yidiantong.ui.MyIntroductionActivity;
 import com.example.yidiantong.ui.SelectCourseActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.ImageUtils;
@@ -64,17 +56,16 @@ import com.yanzhenjie.permission.RequestExecutor;
 import com.yanzhenjie.permission.runtime.Permission;
 
 import org.jetbrains.annotations.Nullable;
-
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainMyFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "MainMyFragment";
@@ -108,6 +99,10 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
 
     private String imageBase64;
 
+    private String newPW;
+
+    private SharedPreferences preferences;
+
 
     // 创建实例（空参数）
     public static MainMyFragment newInstance() {
@@ -116,6 +111,13 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         fragment.setArguments(args);
         return fragment;
     }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -132,6 +134,10 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         fbtn_exit = view.findViewById(R.id.fbtn_exit);
         fbtn_cancel = view.findViewById(R.id.fbtn_cancel);
         fbtn_confirm = view.findViewById(R.id.fbtn_confirm);
+
+        TextView tv_version = view.findViewById(R.id.tv_version);
+        tv_version.setText(MyApplication.versionName);
+
 
         // 点击头像
         fiv_my = view.findViewById(R.id.fiv_my);
@@ -206,27 +212,6 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        /**
-         * 注册通用裁切回调：与通用裁切方法对应。
-         */
-        mResultLauncherCrop = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-            @Override
-            public void onActivityResult(ActivityResult result) {
-                if (result.getResultCode() == getActivity().RESULT_OK) {
-                    try {
-                        // decodeStream()可以将output_image.jpg解析成Bitmap对象。
-
-                        Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(cropUri));
-                        imageBase64 = ImageUtils.Bitmap2StrByBase64(bitmap);
-                        imageBase64 = imageBase64.replace("+", "%2b");
-                        uploadImage();
-
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
 
         // 注册Camera回调组件
         mResultLauncher2 = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -234,6 +219,21 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
             public void onActivityResult(ActivityResult result) {
                 if (result.getResultCode() == getActivity().RESULT_OK) {
                     Crop(imageUri); // 裁剪图片
+                }
+            }
+        });
+
+        /**
+         * 注册通用裁切回调：与通用裁切方法对应。
+         */
+        mResultLauncherCrop = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == getActivity().RESULT_OK) {
+                    File Image = new File(getActivity().getExternalCacheDir(), "output_temp.jpg");
+
+                    imageBase64 = ImageUtils.Bitmap2StrByBase64(getActivity(), Image);
+                    uploadImage();
                 }
             }
         });
@@ -248,8 +248,11 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         tv_username.setText(realName + "(" + username + ")");
 
         // 获取图片
-        String picUrl = JsonUtils.clearString(getActivity().getIntent().getStringExtra("picUrl"));
+        String picUrl = MyApplication.picUrl;
         ImageLoader.getInstance().displayImage(picUrl, fiv_my, MyApplication.getLoaderOptions());
+
+        preferences = getActivity().getSharedPreferences("config", Context.MODE_PRIVATE);
+
         return view;
     }
 
@@ -262,18 +265,54 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                 String picUrl = (String) message.obj;
                 MyApplication.picUrl = picUrl;
                 ImageLoader.getInstance().displayImage(picUrl, fiv_my, MyApplication.getLoaderOptions());
-                Toast.makeText(getActivity(), "修改成功！", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "修改头像成功", Toast.LENGTH_SHORT).show();
+            } else if (message.what == 101) {
+                MyApplication.password = (String) message.obj;
             }
         }
     };
 
-    // 上传图片
-    private void uploadImage() {
-        String mRequestUrl = Constant.API + Constant.UPLOAD_IMAGE + "?baseCode=" + imageBase64 + "&userId=" + username;
+    private void changePW() {
+        String mRequestUrl = Constant.API + Constant.CHANGE_PW + "?passWord=" + newPW + "&userName=" + username;
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
+                Boolean isSuccess = json.getBoolean("success");
+                if (isSuccess) {
+                    MyApplication.password = newPW;
+                    Toast.makeText(getActivity(), "修改密码成功", Toast.LENGTH_SHORT).show();
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString("password", newPW);
+                    editor.commit();
+                    fbtn_exit.callOnClick();
+                } else {
+                    Toast.makeText(getActivity(), "修改密码失败", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Log.e("volley", "Volley_Error: " + error.toString());
+
+        });
+        MyApplication.addRequest(request, TAG);
+
+    }
+
+    // 上传图片
+    private void uploadImage() {
+        String mRequestUrl = Constant.API + Constant.UPLOAD_HEAD_PHOTO;
+
+        Map<String, String> params = new HashMap<>();
+        params.put("baseCode", imageBase64);
+        params.put("userId", username);
+
+        Log.e("debug0116", "base64编码长度: " + imageBase64.length());
+
+        StringRequest request = new StringRequest(Request.Method.POST, mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 String url = json.getString("data");
                 Boolean isSuccess = json.getBoolean("success");
                 if (isSuccess) {
@@ -286,15 +325,19 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                     message.what = 100;
                     handler.sendMessage(message);
                 } else {
-                    Log.d(TAG, "uploadImage: " + json);
+                    Toast.makeText(getActivity(), "修改头像失败", Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
-        });
+            Log.e("volley", "Volley_Error: " + error.toString());
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                return params;
+            }
+        };
         MyApplication.addRequest(request, TAG);
     }
 
@@ -305,10 +348,10 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
 
                 break;
             case R.id.f_ll_us:
-
+                startActivity(new Intent(getActivity(), MyIntroductionActivity.class));
                 break;
             case R.id.f_ll_update:
-                // update();
+                checkUpdate();
                 break;
             case R.id.f_ll_psw:
                 // 修改密码弹窗创建和设置
@@ -325,7 +368,12 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                     public void onConfirm(PswDialog dialog) {
                         String old_pw = dialog.old_pw;
                         String new_pw = dialog.new_pw;
-                        Toast.makeText(getActivity(), "修改成功:原密码：" + old_pw + " 新密码：" + new_pw, Toast.LENGTH_SHORT).show();
+                        if (MyApplication.password.equals(old_pw)) {
+                            newPW = new_pw;
+                            changePW();
+                        } else {
+                            Toast.makeText(getActivity(), "原密码错误！", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
                 // 修改密码弹窗弹出
@@ -333,8 +381,8 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.f_ll_center:
                 Intent intent_center = new Intent(getActivity(), SelectCourseActivity.class);
-                intent_center.putExtra("username",username);
-                intent_center.putExtra("userCn",realName);
+                intent_center.putExtra("username", username);
+                intent_center.putExtra("userCn", realName);
                 startActivity(intent_center);
                 break;
             case R.id.fbtn_exit:
@@ -355,7 +403,6 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                 break;
         }
     }
-
 
     // 创建修改头像Dialog
     private void openDialog() {
@@ -424,21 +471,21 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void onAction(List<String> data) {
                         // 判断是否点了永远拒绝，不再提示
-                        if (AndPermission.hasAlwaysDeniedPermission(getActivity(), data)) {
-                            new AlertDialog.Builder(getActivity())
-                                    .setTitle("权限被禁用")
-                                    .setMessage("拍照权限被禁用，请到APP设置页面手动开启！")
-                                    .setPositiveButton("跳转", (dialog, which) -> {
-                                        AndPermission.with(MainMyFragment.this)
-                                                .runtime()
-                                                .setting()
-                                                .start(REQUEST_CODE_CAMERA);
-                                    })
-                                    .setNegativeButton("取消", (dialog, which) -> {
-
-                                    })
-                                    .show();
-                        }
+//                        if (AndPermission.hasAlwaysDeniedPermission(getActivity(), data)) {
+//                            new AlertDialog.Builder(getActivity())
+//                                    .setTitle("权限被禁用")
+//                                    .setMessage("拍照权限被禁用，请到APP设置页面手动开启！")
+//                                    .setPositiveButton("跳转", (dialog, which) -> {
+//                                        AndPermission.with(MainMyFragment.this)
+//                                                .runtime()
+//                                                .setting()
+//                                                .start(REQUEST_CODE_CAMERA);
+//                                    })
+//                                    .setNegativeButton("取消", (dialog, which) -> {
+//
+//                                    })
+//                                    .show();
+//                        }
                     }
                 })
                 .rationale(rCamera)
@@ -503,21 +550,21 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void onAction(List<String> data) {
                         // 判断是否点了永远拒绝，不再提示
-                        if (AndPermission.hasAlwaysDeniedPermission(getActivity(), data)) {
-                            new AlertDialog.Builder(getActivity())
-                                    .setTitle("权限被禁用")
-                                    .setMessage("读写文件权限被禁用，请到APP设置页面手动开启！")
-                                    .setPositiveButton("跳转", (dialog, which) -> {
-                                        AndPermission.with(MainMyFragment.this)
-                                                .runtime()
-                                                .setting()
-                                                .start(REQUEST_CODE_STORAGE);
-                                    })
-                                    .setNegativeButton("取消", (dialog, which) -> {
-
-                                    })
-                                    .show();
-                        }
+//                        if (AndPermission.hasAlwaysDeniedPermission(getActivity(), data)) {
+//                            new AlertDialog.Builder(getActivity())
+//                                    .setTitle("权限被禁用")
+//                                    .setMessage("读写文件权限被禁用，请到APP设置页面手动开启！")
+//                                    .setPositiveButton("跳转", (dialog, which) -> {
+//                                        AndPermission.with(MainMyFragment.this)
+//                                                .runtime()
+//                                                .setting()
+//                                                .start(REQUEST_CODE_STORAGE);
+//                                    })
+//                                    .setNegativeButton("取消", (dialog, which) -> {
+//
+//                                    })
+//                                    .show();
+//                        }
                     }
                 })
                 .rationale(rGallery)
@@ -645,6 +692,74 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                 break;
         }
     }
+
+
+    private void checkUpdate() {
+        // 创建AlertDialog.Builder实例
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        String mRequestUrl = Constant.API + Constant.CHECK_VERSION + "?version=" + MyApplication.versionName + "&type=stu&autoType=noauto" + "&userId=" + username;
+        Log.e("0124", "checkUpdate: " + mRequestUrl);
+
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                JSONObject data = json.getJSONObject("data");
+                Log.e("0124", "检查版本: " + json);
+                if (data.getString("status").equals("0")) {
+                    // 【不需要更新】
+                    // 设置对话框消息内容
+                    builder.setMessage("已是最新版本! 版本号为V" + MyApplication.versionName);
+
+                    // 设置PositiveButton（确定按钮）的点击事件
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // 确定按钮点击事件处理
+                            dialog.dismiss(); // 关闭对话框
+                        }
+                    });
+                    builder.show();
+                } else {
+
+                    String downloadUrl = data.getString("oploadLink");
+                    // 【需要更新】
+                    builder.setMessage("检测到有新版本，是否更新？");
+
+                    // 设置PositiveButton（确定按钮）的点击事件
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            // 启动浏览器
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            // 设置数据（要打开的URL）
+                            intent.setData(Uri.parse(downloadUrl));
+                            startActivity(intent);
+
+                            dialog.dismiss(); // 关闭对话框
+                        }
+                    });
+                    builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // 确定按钮点击事件处理
+                            dialog.dismiss(); // 关闭对话框
+                        }
+                    });
+                    builder.show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }, error -> {
+            Log.e("wen", "Volley_Error: " + error.toString());
+        });
+        MyApplication.addRequest(request, TAG);
+    }
+
 }
 
 

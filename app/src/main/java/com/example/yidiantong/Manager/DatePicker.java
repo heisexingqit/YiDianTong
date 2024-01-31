@@ -207,8 +207,8 @@ public class DatePicker implements View.OnClickListener, PickerView.OnSelectList
         // Calendar.MONTH 值为 0-11
         mBeginMonth = mBeginTime.get(Calendar.MONTH) + 1;
         mBeginDay = mBeginTime.get(Calendar.DAY_OF_MONTH);
-        mBeginHour = 0;
-        mBeginMinute = 0;
+        mBeginHour = mBeginTime.get(Calendar.HOUR_OF_DAY);
+        mBeginMinute = mBeginTime.get(Calendar.MINUTE);
 
         mEndYear = mEndTime.get(Calendar.YEAR);
         mEndMonth = mEndTime.get(Calendar.MONTH) + 1;

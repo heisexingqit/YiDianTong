@@ -255,7 +255,8 @@ public class SelectDetailActivity extends AppCompatActivity implements View.OnCl
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+            Log.e("volley", "Volley_Error: " + error.toString());
+
         });
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(request);
@@ -308,7 +309,8 @@ public class SelectDetailActivity extends AppCompatActivity implements View.OnCl
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+            Log.e("volley", "Volley_Error: " + error.toString());
+
         });
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(request);

@@ -18,15 +18,24 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher_ydt"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round_ydt"
         android:supportsRtl="true"
         android:theme="@style/Theme.YiDianTong"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".ui.TCameraShareActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.BookSelectorActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.MyIntroductionActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.TImageEditActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true" />
         <activity
             android:name=".ui.TLiveEditActivity"
             android:exported="false" />
@@ -43,7 +52,8 @@
             android:name=".ui.CourseQuestionActivity"
             android:exported="false"
             android:launchMode="singleTask"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.CourseLockActivity"
             android:exported="false"
@@ -54,7 +64,7 @@
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".ui.THomeworkAddCameraActivity"
+            android:name=".ui.THomeworkCameraAddActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
@@ -197,6 +207,7 @@
             android:name=".ui.HomeworkPagerFinishActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
+
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" /> <!-- 涂鸦 -->
@@ -209,15 +220,17 @@
             android:windowSoftInputMode="adjustPan" /> <!-- 测试1 -->
         <activity
             android:name=".TestActivity"
-            android:exported="true">
-        </activity><!-- 测试2 -->
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan" >
+
+        </activity> <!-- 测试2 -->
         <activity
             android:name=".Test2Activity"
             android:exported="true" /> <!-- 作业 -->
         <activity
             android:name=".ui.HomeworkPagerActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustPan" /> <!-- 主页 -->
+            android:windowSoftInputMode="" /> <!-- 主页 -->
         <activity
             android:name=".ui.MainPagerActivity"
             android:exported="true"

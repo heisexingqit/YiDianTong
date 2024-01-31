@@ -20,6 +20,7 @@ import android.os.Message;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -61,6 +62,7 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
     private LinearLayout fll_bd_analysis;
     private TextView ftv_br_title;
     private ImageView fiv_bd_mark;
+    private ImageView fiv_de_icon;
     private BookRecyclerEntity bookrecyclerEntity;
     private ImageView fiv_bd_tf;
     private LinearLayout fll_br_model;
@@ -113,18 +115,36 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
         // 知识点栏
         ftv_br_title = view.findViewById(R.id.ftv_br_title);
         ftv_br_title.setText(bookrecyclerEntity.getSourceName());
+        fiv_de_icon = view.findViewById(R.id.fiv_de_icon);
+        //设置图标和类型
+        int icon_id = -1;
+        String SourceType = bookrecyclerEntity.getSourceType();
+        switch (SourceType ) {
+            case "1":
+                icon_id = R.drawable.guide_plan_icon;
+                break;
+            case "2":
+                icon_id = R.drawable.homework_icon;
+                break;
+            case "3":
+                icon_id = R.drawable.class_icon;
+            default:
+                break;
+        }
+        fiv_de_icon.setImageResource(icon_id);
 
         //题面显示
         WebView fwv_bd_content = view.findViewById(R.id.fwv_bd_content);
         String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiShow() + "</body>";
         String html = html_content.replace("#","%23");
-        fwv_bd_content.loadData(html, "text/html", "utf-8");
+        fwv_bd_content.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
+
 
         // 题号和平均分
         ftv_bd_num = view.findViewById(R.id.ftv_bd_num);
         ftv_bd_num.setText(bookrecyclerEntity.getNum());
         ftv_bd_score = view.findViewById(R.id.ftv_bd_score);
-        ftv_bd_score.setText("得分: "+ bookrecyclerEntity.getStuScore()+" 全班平均分:"+ bookrecyclerEntity.getAvgScore());
+        ftv_bd_score.setText("得分: "+ bookrecyclerEntity.getStuScore()+" 全班均分:"+ bookrecyclerEntity.getAvgScore());
 
         //翻页组件
         ImageView iv_pager_last = getActivity().findViewById(R.id.iv_page_last);
@@ -227,7 +247,8 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
         fwv_wb_answer = view.findViewById(R.id.fwv_wb_answer);
         ftv_bd_stuans = view.findViewById(R.id.ftv_bd_stuans);
         String html_analysis = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiAnswer() + "</body>";
-        fwv_wb_answer.loadData(html_analysis, "text/html", "utf-8");
+        fwv_wb_answer.loadDataWithBaseURL(null, html_analysis, "text/html", "utf-8", null);
+
         fiv_bd_tf = view.findViewById(R.id.fiv_bd_tf);
 
         // 修改模式
@@ -250,7 +271,16 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
             mode = 1;
             // 状态-1：json也没数据，也没有练习数据
             if(stuans == -1){
-                ftv_bd_stuans.setText("");
+                // 创建一个 SpannableString 对象
+                String text = "未答";
+                SpannableString spannableString = new SpannableString(text);
+                // 获取文本的长度
+                int textLength = text.length();
+                // 获取文本的后两个字符的起始位置
+                int start = textLength - 2;
+                // 设置后两个字符的颜色为红色
+                spannableString.setSpan(new ForegroundColorSpan(Color.RED), start, textLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ftv_bd_stuans.setText(spannableString);
                 fiv_bd_tf.setVisibility(View.GONE);
             }
             // 状态1：json有数据
@@ -390,7 +420,16 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
                             fll_bd_answer.setVisibility(View.GONE);
                             fll_bd_analysis.setVisibility(View.VISIBLE);
                             if(stuans == -1){
-                                ftv_bd_stuans.setText("");
+                                // 创建一个 SpannableString 对象
+                                String text = "未答";
+                                SpannableString spannableString = new SpannableString(text);
+                                // 获取文本的长度
+                                int textLength = text.length();
+                                // 获取文本的后两个字符的起始位置
+                                int start = textLength - 2;
+                                // 设置后两个字符的颜色为红色
+                                spannableString.setSpan(new ForegroundColorSpan(Color.RED), start, textLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                ftv_bd_stuans.setText(spannableString);
                                 fiv_bd_tf.setVisibility(View.GONE);
                             }else{
                                 if(stuans == 1){

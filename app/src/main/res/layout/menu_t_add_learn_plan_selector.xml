@@ -1,524 +1,566 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/t_homework_add_border_pop"
     android:orientation="vertical">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp">
-
-        <Button
-            android:id="@+id/btn_1"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="5dp"
-            android:layout_weight="1"
-            android:background="@drawable/t_homework_add_pick"
-            android:text="共享内容"
-            android:textColor="@color/white" />
-
-        <Button
-            android:id="@+id/btn_2"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="5dp"
-            android:layout_weight="1"
-            android:background="@drawable/t_homework_add_border"
-            android:text="本校内容"
-            android:textColor="@color/t_blue" />
-
-        <Button
-            android:id="@+id/btn_3"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="5dp"
-            android:layout_weight="1"
-            android:background="@drawable/t_homework_add_border"
-            android:text="私有内容"
-            android:textColor="@color/t_blue" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginBottom="42dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="10dp">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_xd"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="学段:"
-                android:textColor="@color/black"
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/tv_xueduan"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="20dp"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:text=""
-                android:textColor="@color/black"
-                android:textSize="15sp" />
-
-            <com.example.yidiantong.View.ClickableImageView
-                android:id="@+id/iv_xueduan"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:adjustViewBounds="true"
-                android:padding="5dp"
-                android:src="@drawable/down_icon" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/tv_xueduan_null"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginBottom="10dp"
-            android:text="学段列表未获取到或者为空"
-            android:textSize="13sp"
-            android:visibility="gone" />
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.flexbox.FlexboxLayout
-                android:id="@+id/fl_xueduan"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="18dp"
-                android:layout_marginEnd="30dp"
-                app:flexWrap="wrap">
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
 
-            </com.google.android.flexbox.FlexboxLayout>
+                <Button
+                    android:id="@+id/btn_1"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/t_homework_add_pick"
+                    android:text="共享内容"
+                    android:textColor="@color/white" />
 
-        </ScrollView>
-    </LinearLayout>
+                <Button
+                    android:id="@+id/btn_2"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/t_homework_add_border"
+                    android:text="本校内容"
+                    android:textColor="@color/t_blue" />
 
-    <!-- 分割线 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/light_gray" />
+                <Button
+                    android:id="@+id/btn_3"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="30dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/t_homework_add_border"
+                    android:text="私有内容"
+                    android:textColor="@color/t_blue" />
+            </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="10dp">
-
-            <TextView
-                android:id="@+id/tv_xk"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="学科:"
-                android:textColor="@color/black"
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/tv_xueke"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="20dp"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:text=""
-                android:textColor="@color/black"
-                android:textSize="15sp" />
-
-            <com.example.yidiantong.View.ClickableImageView
-                android:id="@+id/iv_xueke"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:adjustViewBounds="true"
-                android:padding="5dp"
-                android:src="@drawable/down_icon" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/tv_xueke_null"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginBottom="10dp"
-            android:text="学科列表未获取到或者为空"
-            android:textSize="13sp"
-            android:visibility="gone" />
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.flexbox.FlexboxLayout
-                android:id="@+id/fl_xueke"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="18dp"
-                android:layout_marginEnd="30dp"
-                app:flexWrap="wrap" />
+                android:orientation="vertical">
 
-        </ScrollView>
-    </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp">
 
-    <!-- 分割线 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/light_gray" />
+                    <TextView
+                        android:id="@+id/tv_xd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="学段:"
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/tv_xueduan"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="20dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text=""
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="10dp">
+                    <com.example.yidiantong.View.ClickableImageView
+                        android:id="@+id/iv_xueduan"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/down_icon" />
+                </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_bb"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="版本:"
-                android:textColor="@color/black"
-                android:textSize="15sp" />
+                <TextView
+                    android:id="@+id/tv_xueduan_null"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="学段列表未获取到或者为空"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/tv_banben"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="20dp"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:text=""
-                android:textColor="@color/black"
-                android:textSize="15sp" />
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-            <com.example.yidiantong.View.ClickableImageView
-                android:id="@+id/iv_banben"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:adjustViewBounds="true"
-                android:padding="5dp"
-                android:src="@drawable/down_icon" />
-        </LinearLayout>
+                    <com.google.android.flexbox.FlexboxLayout
+                        android:id="@+id/fl_xueduan"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        app:flexWrap="wrap">
 
-        <TextView
-            android:id="@+id/tv_banben_null"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginBottom="10dp"
-            android:text="版本列表未获取到或者为空"
-            android:textSize="13sp"
-            android:visibility="gone" />
+                    </com.google.android.flexbox.FlexboxLayout>
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+                </ScrollView>
+            </LinearLayout>
 
-            <com.google.android.flexbox.FlexboxLayout
-                android:id="@+id/fl_banben"
+            <!-- 分割线 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/light_gray" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="18dp"
-                android:layout_marginEnd="30dp"
-                app:flexWrap="wrap" />
+                android:orientation="vertical">
 
-        </ScrollView>
-    </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp">
 
-    <!-- 分割线 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/light_gray" />
+                    <TextView
+                        android:id="@+id/tv_xk"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="学科:"
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/tv_xueke"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="20dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text=""
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="10dp">
+                    <com.example.yidiantong.View.ClickableImageView
+                        android:id="@+id/iv_xueke"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/down_icon" />
+                </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_jc"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="教材:"
-                android:textColor="@color/black"
-                android:textSize="15sp" />
+                <TextView
+                    android:id="@+id/tv_xueke_null"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="学科列表未获取到或者为空"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/tv_jiaocai"
-                android:layout_width="0dp"
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                android:layout_height="match_parent"
-                android:layout_marginStart="20dp"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:text=""
-                android:textColor="@color/black"
-                android:textSize="15sp" />
+                    <com.google.android.flexbox.FlexboxLayout
+                        android:id="@+id/fl_xueke"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        app:flexWrap="wrap" />
 
-            <com.example.yidiantong.View.ClickableImageView
-                android:id="@+id/iv_jiaocai"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:adjustViewBounds="true"
-                android:padding="5dp"
-                android:src="@drawable/down_icon" />
-        </LinearLayout>
+                </ScrollView>
+            </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_jiaocai_null"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="15dp"
-            android:layout_marginBottom="10dp"
-            android:text="教材列表未获取到或者为空"
-            android:textSize="13sp"
-            android:visibility="gone" />
+            <!-- 分割线 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/light_gray" />
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.flexbox.FlexboxLayout
-                android:id="@+id/fl_jiaocai"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="18dp"
-                android:layout_marginEnd="30dp"
-                app:flexWrap="wrap" />
+                android:orientation="vertical">
 
-        </ScrollView>
-    </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp">
 
-    <!-- 分割线 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/light_gray" />
+                    <TextView
+                        android:id="@+id/tv_bb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="版本:"
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/tv_banben"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="20dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text=""
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:orientation="horizontal"
-            android:padding="10dp">
+                    <com.example.yidiantong.View.ClickableImageView
+                        android:id="@+id/iv_banben"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/down_icon" />
+                </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_zsd"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="知识点:"
-                android:textColor="@color/black"
-                android:textSize="15sp" />
+                <TextView
+                    android:id="@+id/tv_banben_null"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="版本列表未获取到或者为空"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/tv_point"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="20dp"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:text=""
-                android:textColor="@color/black"
-                android:textSize="15sp" />
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-        </LinearLayout>
+                    <com.google.android.flexbox.FlexboxLayout
+                        android:id="@+id/fl_banben"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        app:flexWrap="wrap" />
 
-        <TextView
-            android:id="@+id/tv_toPoint"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/t_homework_add_unable"
-            android:padding="10dp"
-            android:text="点击这里选择知识点"
-            android:visibility="gone" />
-    </LinearLayout>
+                </ScrollView>
+            </LinearLayout>
 
-    <!-- 分割线 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/light_gray" />
+            <!-- 分割线 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/light_gray" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="10dp">
-
-            <TextView
-                android:id="@+id/tv_lx"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="类型:"
-                android:textColor="@color/black"
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/tv_type"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="20dp"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:text=""
-                android:textColor="@color/black"
-                android:textSize="15sp" />
-
-            <com.example.yidiantong.View.ClickableImageView
-                android:id="@+id/iv_type"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:adjustViewBounds="true"
-                android:padding="5dp"
-                android:src="@drawable/down_icon" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="18dp"
-            android:layout_marginEnd="30dp"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/tv_type_all"
-                android:layout_width="0dp"
-                android:layout_height="35dp"
-                android:layout_margin="7dp"
-                android:layout_weight="1"
-                android:background="@drawable/t_homework_add_select"
-                android:gravity="center"
-                android:singleLine="true"
-                android:text="全部"
-                android:textColor="@color/black"
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/tv_type_question"
-                android:layout_width="0dp"
-                android:layout_height="35dp"
-                android:layout_margin="7dp"
-                android:layout_weight="1"
-                android:background="@color/light_gray3"
-                android:gravity="center"
-                android:singleLine="true"
-                android:text="试题"
-                android:textColor="@color/black"
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/tv_type_paper"
-                android:layout_width="0dp"
-                android:layout_height="35dp"
-                android:layout_margin="7dp"
-                android:layout_weight="1"
-                android:background="@color/light_gray3"
-                android:gravity="center"
-                android:singleLine="true"
-                android:text="试卷"
-                android:textColor="@color/black"
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/tv_type_resource"
-                android:layout_width="0dp"
-                android:layout_height="35dp"
-                android:layout_margin="7dp"
-                android:layout_weight="1"
-                android:background="@color/light_gray3"
-                android:gravity="center"
-                android:singleLine="true"
-                android:text="资源"
-                android:textColor="@color/black"
-                android:textSize="15sp" />
-
-        </LinearLayout>
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.flexbox.FlexboxLayout
-                android:id="@+id/fl_resource_type"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="18dp"
-                android:layout_marginEnd="30dp"
-                app:flexWrap="wrap" />
+                android:orientation="vertical">
 
-        </ScrollView>
-    </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp">
+
+                    <TextView
+                        android:id="@+id/tv_jc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="教材:"
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tv_jiaocai"
+                        android:layout_width="0dp"
+
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="20dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text=""
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
+
+                    <com.example.yidiantong.View.ClickableImageView
+                        android:id="@+id/iv_jiaocai"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/down_icon" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_jiaocai_null"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="教材列表未获取到或者为空"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.flexbox.FlexboxLayout
+                        android:id="@+id/fl_jiaocai"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        app:flexWrap="wrap" />
+
+                </ScrollView>
+            </LinearLayout>
+
+            <!-- 分割线 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/light_gray" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="horizontal"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp">
+
+                    <TextView
+                        android:id="@+id/tv_zsd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="章节:"
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tv_point"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="2dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text=""
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_toPoint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/t_homework_add_unable"
+                    android:padding="10dp"
+                    android:text="点击这里选择知识点"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <!-- 分割线 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/light_gray" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp">
+
+                    <TextView
+                        android:id="@+id/tv_lx"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="类型:"
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tv_type"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="20dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="全部"
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
+
+                    <com.example.yidiantong.View.ClickableImageView
+                        android:id="@+id/iv_type"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/down_icon" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:id="@+id/tv_type_all"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="7dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/t_homework_add_select"
+                        android:gravity="center"
+                        android:paddingStart="2dp"
+                        android:paddingTop="6dp"
+                        android:paddingEnd="2dp"
+                        android:paddingBottom="6dp"
+                        android:singleLine="true"
+                        android:text="全部"
+                        android:textColor="@color/red"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tv_type_question"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="7dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/t_homework_add_unselect"
+                        android:gravity="center"
+                        android:paddingStart="2dp"
+                        android:paddingTop="6dp"
+                        android:paddingEnd="2dp"
+                        android:paddingBottom="6dp"
+                        android:singleLine="true"
+                        android:text="试题"
+                        android:textColor="@color/default_gray"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tv_type_paper"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="7dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/t_homework_add_unselect"
+                        android:gravity="center"
+                        android:paddingStart="2dp"
+                        android:paddingTop="6dp"
+                        android:paddingEnd="2dp"
+                        android:paddingBottom="6dp"
+                        android:singleLine="true"
+                        android:text="试卷"
+                        android:textColor="@color/default_gray"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tv_type_resource"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="7dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/t_homework_add_unselect"
+                        android:gravity="center"
+                        android:paddingStart="2dp"
+                        android:paddingTop="6dp"
+                        android:paddingEnd="2dp"
+                        android:paddingBottom="6dp"
+                        android:singleLine="true"
+                        android:text="资源"
+                        android:textColor="@color/default_gray"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.flexbox.FlexboxLayout
+                        android:id="@+id/fl_resource_type"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        app:flexWrap="wrap" />
+
+                </ScrollView>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
 
     <LinearLayout
+        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="40dp"
-        android:layout_weight="1"
+        android:layout_height="40dp"
         android:gravity="bottom|center_horizontal">
 
         <TextView
@@ -545,4 +587,4 @@
             android:textColor="@color/white"
             android:textSize="14sp" />
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

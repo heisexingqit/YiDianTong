@@ -1,18 +1,21 @@
 package com.example.yidiantong.ui;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,23 +33,26 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
+import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
+import com.example.yidiantong.adapter.ImagePagerAdapter;
 import com.example.yidiantong.adapter.THomeworkCameraRecyclerAdapter;
 import com.example.yidiantong.bean.THomeworkCameraItem;
 import com.example.yidiantong.bean.THomeworkCameraType;
-import com.example.yidiantong.fragment.THomeworkCameraSingleFragment;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.ImageUtils;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.MyItemDecoration;
+import com.example.yidiantong.util.PxUtils;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -61,11 +67,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -78,7 +89,8 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
     private ActivityResultLauncher<Intent> mResultLauncher;
     private ActivityResultLauncher<Intent> mResultLauncher2;
     private ActivityResultLauncher<Intent> mResultLauncher3;
-    private Uri picUri, imageUri;
+    private ActivityResultLauncher<Intent> mResultLauncherCrop;//NEW
+    private Uri picUri, imageUri, cropUri;
 
     //标识码
     private static final int REQUEST_CODE_STORAGE = 1;
@@ -137,14 +149,22 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
     private LinearLayout ll_divide_hide;
     private EditText et_num;
 
-    private ScrollView sv_main;
+    private NestedScrollView sv_main;
 
     // 类型修改
     private boolean isTypeChange;
     private int typeChangePos;
     private RelativeLayout rl_submitting;
 
-    // 滚动控制器
+    //点击大图
+    private List<String> url_list = new ArrayList<>();
+    private PopupWindow window;
+    private ImagePagerAdapter imageAdapter;
+    private View contentView = null;
+
+
+    private int flexLayoutWidth = -1;
+
     public class CustomLinearLayoutManager extends LinearLayoutManager {
         private boolean isScrollEnabled = true;
 
@@ -268,7 +288,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
             }
 
             @Override
-            public ScrollView getParentScrollView() {
+            public NestedScrollView getParentScrollView() {
                 return sv_main;
             }
 
@@ -279,6 +299,72 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                 typeChangePos = pos;
                 showTypeMenu();
             }
+
+            @Override
+            public void openImage(int pos, String type) {
+                String url = "";
+                switch (type) {
+                    case "Show":
+                        url = itemList.get(pos).getShitiShow();
+                        break;
+                    case "Answer":
+                        url = itemList.get(pos).getShitiAnswer();
+                        break;
+                    case "Analysis":
+                        url = itemList.get(pos).getShitiAnalysis();
+                        break;
+                }
+                if (url == null) {
+                    return;
+                }
+                getPicURl(url);
+                if (url_list.size() == 0) {
+                    return;
+                }
+                if (contentView == null) {
+                    contentView = LayoutInflater.from(THomeworkCameraAddPickActivity.this).inflate(R.layout.picture_menu, null, false);
+                    ViewPager vp_pic = contentView.findViewById(R.id.vp_picture);
+
+                    vp_pic.setAdapter(imageAdapter);
+
+                    //顶部标签
+                    TextView tv = contentView.findViewById(R.id.tv_picNum);
+                    tv.setText("1/" + url_list.size());
+                    window = new PopupWindow(contentView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
+                    window.setTouchable(true);
+                    imageAdapter.setClickListener(new ImagePagerAdapter.MyItemClickListener() {
+                        @Override
+                        public void onItemClick() {
+                            vp_pic.setCurrentItem(0);
+                            window.dismiss();
+                        }
+                    });
+                    vp_pic.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+                        @Override
+                        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                        }
+
+                        @Override
+                        public void onPageSelected(int position) {
+                            tv.setText(position + 1 + "/" + url_list.size());
+                        }
+
+                        @Override
+                        public void onPageScrollStateChanged(int state) {
+
+                        }
+                    });
+                } else {
+                    //顶部标签
+                    TextView tv = contentView.findViewById(R.id.tv_picNum);
+                    tv.setText("1/" + url_list.size());
+                }
+                imageAdapter.notifyDataSetChanged();
+                window.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);
+
+            }
         });
 
         // 注册Gallery回调组件
@@ -288,18 +374,57 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                 if (result.getResultCode() == RESULT_OK) {
                     Intent intent = result.getData();
                     //Uri和path相似，都是定位路径，属于一步到位方式 =》 如果是path 则 Uri.parse(path)
-                    picUri = intent.getData();
-                    if (picUri != null) {
-                        /*Gallery回调执行*/
+                    Uri uri = intent.getData();
+                    if (uri != null) {
+                        /**
+                         * 这里做了统一化操作：创建一个output.jpg文件，并将uri写入新文件，并将picUri赋给新文件（与拍照逻辑相似）
+                         * 一是为了简化方法；
+                         * 二是因为适配问题，有些手机应用不能返回数据，只能与拍照类似的调用方式才行；
+                         * 三是因为获取本地图片只能返回uri，而不像拍照那样可以选择写入，因此需要手动。
+                         */
+                        File Image = new File(getExternalCacheDir(), "output_image.jpg");
+                        if (Image.exists()) {
+                            Image.delete();
+                        }
                         try {
-                            Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(picUri));
-                            imageBase64 = ImageUtils.Bitmap2StrByBase64(bitmap);
-                            imageBase64 = imageBase64.replace("+", "%2b");
-                            uploadImage();
+                            Image.createNewFile();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+
+                        // 兼容方式获取文件Uri
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            picUri = FileProvider.getUriForFile(THomeworkCameraAddPickActivity.this,
+                                    "com.example.yidiantong.fileprovider", Image);
+                        } else {
+                            picUri = Uri.fromFile(Image);
+                        }
+
+                        // uri写入文件Image
+                        FileOutputStream outputStream = null;
+                        FileInputStream inputStream = null;
+                        try {
+                            outputStream = new FileOutputStream(Image);
+                            inputStream = (FileInputStream) getContentResolver().openInputStream(uri);
+
+                            byte[] buffer = new byte[1024];
+                            int length;
+                            while ((length = inputStream.read(buffer)) > 0) {
+                                outputStream.write(buffer, 0, length);
+                            }
+                            inputStream.close();
+                            outputStream.close();
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        /**
+                         * 统一化操作结束++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                         */
+
+                        Crop(picUri); // 裁剪图片
                     }
+
                 }
             }
         });
@@ -309,9 +434,10 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
             @Override
             public void onActivityResult(ActivityResult result) {
                 if (result.getResultCode() == RESULT_OK) {
-                    Intent intent = new Intent(THomeworkCameraAddPickActivity.this, DoodleActivity.class);
-                    intent.putExtra("uri", imageUri.toString());
-                    mResultLauncher3.launch(intent);
+//                    Intent intent = new Intent(getActivity(), DoodleActivity.class);
+//                    intent.putExtra("uri", imageUri.toString());
+//                    mResultLauncher3.launch(intent);
+                    Crop(imageUri); // 裁剪图片
                 }
             }
         });
@@ -330,13 +456,48 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
             }
         });
 
+        /**
+         * 注册通用裁切回调：与通用裁切方法对应。NEW
+         */
+        mResultLauncherCrop = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == RESULT_OK) {
+                    File Image = new File(getExternalCacheDir(), "output_temp.jpg");
+
+                    imageBase64 = ImageUtils.Bitmap2StrByBase64(THomeworkCameraAddPickActivity.this, Image);
+                    uploadImage();
+                }
+            }
+        });
+
+        // 提前创建Adapter
+        imageAdapter = new ImagePagerAdapter(this, url_list);
+
+    }
+
+    private void getPicURl(String html_answer) {
+        url_list.clear();
+        Html.fromHtml(html_answer, new Html.ImageGetter() {
+            @Override
+            public Drawable getDrawable(String s) {
+                url_list.add(s);
+                return null;
+            }
+        }, null);
     }
 
     private void uploadImage() {
 //        transmit.onLoading();
-        String mRequestUrl = Constant.API + Constant.UPLOAD_IMAGE + "?baseCode=" + imageBase64 + "&leanPlanId=" + itemList.get(picUploadPos).getQuestionId() + "&userId=" + MyApplication.username
-                + "&type=" + picUploadType;
-        StringRequest request = new StringRequest(mRequestUrl, response -> {
+        String mRequestUrl = Constant.API + Constant.T_UPLOAD_IMAGE;
+
+        Map<String, String> params = new HashMap<>();
+        params.put("baseCode", imageBase64);
+        params.put("questionId", itemList.get(picUploadPos).getQuestionId());
+        params.put("userName",  MyApplication.username);
+        params.put("type",  picUploadType);
+
+        StringRequest request = new StringRequest(Request.Method.POST, mRequestUrl, response -> {
 
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
@@ -348,39 +509,54 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                 if (isSuccess) {
                     changeFlag = true;
                     THomeworkCameraItem item = itemList.get(picUploadPos);
-                    String addString = "<p><img src=\"" + url + "\"></p>";
+                    Log.e(TAG, "uploadImage: item + " + item.toString());
+                    String addString = "<img onclick='bigimage(this)' src='" + url + "'>";
                     switch (picUploadType) {
                         case "Show":
+                            item.getShitiShowPic().add(url);
                             if (item.getShitiShow() != null) {
+
                                 item.setShitiShow(item.getShitiShow() + addString);
                             } else {
                                 item.setShitiShow(addString);
                             }
+                            item.getShitiShowPic().add(url);  // 图片加入列表
+                            Log.e(TAG, "uploadImage: " + item.getShitiShow());
                             break;
                         case "Answer":
+                            item.getShitiAnswerPic().add(url);
                             if (item.getShitiAnswer() != null) {
                                 item.setShitiAnswer(item.getShitiAnswer() + addString);
                             } else {
                                 item.setShitiAnswer(addString);
                             }
+                            item.getShitiAnswerPic().add(url);  // 图片加入列表
                             break;
                         case "Analysis":
+                            item.getShitiAnalysisPic().add(url);
                             if (item.getShitiAnalysis() != null) {
                                 item.setShitiAnalysis(item.getShitiAnalysis() + addString);
                             } else {
                                 item.setShitiAnalysis(addString);
                             }
+                            item.getShitiAnalysisPic().add(url);  // 图片加入列表
                             break;
                     }
                     adapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
-        });
+        }){
+            @Override
+            protected Map<String, String> getParams() {
+                return params;
+            }
+        };
         MyApplication.addRequest(request, TAG);
     }
 
@@ -398,8 +574,10 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                 Gson gson = new Gson();
                 typeList = gson.fromJson(data, new com.google.gson.reflect.TypeToken<List<THomeworkCameraType>>() {
                 }.getType());
+                Collections.sort(typeList, Comparator.comparing(THomeworkCameraType::getBaseTypeId));
 
-                Log.d("wen", "类型: " + typeList);
+
+                Log.e("wen", "类型: " + typeList);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -677,8 +855,13 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                                 adapter.setShowPos(typeChangePos);
                             }
 
-                            Log.d("wen", "测试2: " + isTypeChange);
                             adapter.notifyDataSetChanged();
+                            sv_main.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    sv_main.fullScroll(ScrollView.FOCUS_DOWN);
+                                }
+                            });
                             typeWindow.dismiss();
                             break;
                     }
@@ -702,7 +885,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                     type = tv_name.getText().toString();
 
                     if (lastType != null) {
-                        lastType.setBackgroundResource(R.color.light_gray3);
+                        lastType.setBackgroundResource(R.drawable.t_homework_add_unselect2);
                     }
 
                     tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
@@ -729,18 +912,43 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                         et_score.setText(item.getScore());
                     }
                 });
+                ViewGroup.LayoutParams params = tv_name.getLayoutParams();
+                if (flexLayoutWidth != -1) {
+                    params.width = flexLayoutWidth / 3 - PxUtils.dip2px(view.getContext(), 15);
+                }
+                tv_name.setLayoutParams(params);
                 fl_type.addView(view);
             }
             typeWindow = new PopupWindow(typeView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, true);
             typeWindow.setTouchable(true);
         }
 
+        typeView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                fl_type = typeView.findViewById(R.id.fl_type);
+                flexLayoutWidth = fl_type.getWidth();
+                int childCount = fl_type.getChildCount();
+
+                for (int i = 0; i < childCount; i++) {
+                    View view = fl_type.getChildAt(i);
+                    TextView tv_name = view.findViewById(R.id.tv_name);
+                    ViewGroup.LayoutParams params = tv_name.getLayoutParams();
+                    params.width = flexLayoutWidth / 3 - PxUtils.dip2px(view.getContext(), 15);
+                    tv_name.setLayoutParams(params);
+                }
+
+                // 可以选择移除监听器，因为它只需要在测量完成时执行一次
+                typeView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+
         ll_score.setVisibility(View.GONE);
         ll_hide.setVisibility(View.GONE);
         ll_divide_hide.setVisibility(View.GONE);
 
         if (lastType != null) {
-            lastType.setBackgroundResource(R.color.light_gray3);
+            lastType.setBackgroundResource(R.drawable.t_homework_add_unselect2);
             if (!isTypeChange) {
                 type = "";
             }
@@ -819,21 +1027,21 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                     @Override
                     public void onAction(List<String> data) {
                         // 判断是否点了永远拒绝，不再提示
-                        if (AndPermission.hasAlwaysDeniedPermission(THomeworkCameraAddPickActivity.this, data)) {
-                            new AlertDialog.Builder(THomeworkCameraAddPickActivity.this)
-                                    .setTitle("权限被禁用")
-                                    .setMessage("拍照权限被禁用，请到APP设置页面手动开启！")
-                                    .setPositiveButton("跳转", (dialog, which) -> {
-                                        AndPermission.with(THomeworkCameraAddPickActivity.this)
-                                                .runtime()
-                                                .setting()
-                                                .start(REQUEST_CODE_CAMERA);
-                                    })
-                                    .setNegativeButton("取消", (dialog, which) -> {
-
-                                    })
-                                    .show();
-                        }
+//                        if (AndPermission.hasAlwaysDeniedPermission(THomeworkCameraAddPickActivity.this, data)) {
+//                            new AlertDialog.Builder(THomeworkCameraAddPickActivity.this)
+//                                    .setTitle("权限被禁用")
+//                                    .setMessage("拍照权限被禁用，请到APP设置页面手动开启！")
+//                                    .setPositiveButton("跳转", (dialog, which) -> {
+//                                        AndPermission.with(THomeworkCameraAddPickActivity.this)
+//                                                .runtime()
+//                                                .setting()
+//                                                .start(REQUEST_CODE_CAMERA);
+//                                    })
+//                                    .setNegativeButton("取消", (dialog, which) -> {
+//
+//                                    })
+//                                    .show();
+//                        }
                     }
                 })
                 .rationale(rCamera)
@@ -898,21 +1106,21 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                     @Override
                     public void onAction(List<String> data) {
                         // 判断是否点了永远拒绝，不再提示
-                        if (AndPermission.hasAlwaysDeniedPermission(THomeworkCameraAddPickActivity.this, data)) {
-                            new AlertDialog.Builder(THomeworkCameraAddPickActivity.this)
-                                    .setTitle("权限被禁用")
-                                    .setMessage("读写文件权限被禁用，请到APP设置页面手动开启！")
-                                    .setPositiveButton("跳转", (dialog, which) -> {
-                                        AndPermission.with(THomeworkCameraAddPickActivity.this)
-                                                .runtime()
-                                                .setting()
-                                                .start(REQUEST_CODE_STORAGE);
-                                    })
-                                    .setNegativeButton("取消", (dialog, which) -> {
-
-                                    })
-                                    .show();
-                        }
+//                        if (AndPermission.hasAlwaysDeniedPermission(THomeworkCameraAddPickActivity.this, data)) {
+//                            new AlertDialog.Builder(THomeworkCameraAddPickActivity.this)
+//                                    .setTitle("权限被禁用")
+//                                    .setMessage("读写文件权限被禁用，请到APP设置页面手动开启！")
+//                                    .setPositiveButton("跳转", (dialog, which) -> {
+//                                        AndPermission.with(THomeworkCameraAddPickActivity.this)
+//                                                .runtime()
+//                                                .setting()
+//                                                .start(REQUEST_CODE_STORAGE);
+//                                    })
+//                                    .setNegativeButton("取消", (dialog, which) -> {
+//
+//                                    })
+//                                    .show();
+//                        }
                     }
                 })
                 .rationale(rGallery)
@@ -986,5 +1194,58 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                 }
                 break;
         }
+    }
+
+    /**
+     * 通用裁切方法。传输、读取文件、裁切、写入文件,最终以cropUri形式显示NEW
+     *
+     * @param uri 裁切前的图片Uri（pic：相册；image：照片）
+     */
+    private void Crop(Uri uri) {
+
+        File Image = new File(getExternalCacheDir(), "output_temp.jpg");
+        if (Image.exists()) {
+            Image.delete();
+        }
+        try {
+            Image.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // 兼容方式获取文件Uri
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            cropUri = FileProvider.getUriForFile(THomeworkCameraAddPickActivity.this,
+                    "com.example.yidiantong.fileprovider", Image);
+        } else {
+            cropUri = Uri.fromFile(Image);
+        }
+
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        // 读写权限：要裁切需要先读取（读），后写入（写）
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        intent.setDataAndType(uri, "image/*");
+        // crop为true是设置在开启的intent中设置显示的view可以剪裁
+        intent.putExtra("crop", "true");
+
+        // <关键>两步：目标URI转换为剪贴板数据 并设置给Intent
+        ClipData clipData = ClipData.newUri(getContentResolver(), "A photo", cropUri);
+        intent.setClipData(clipData);
+
+//        // aspectX aspectY 是宽高的比例
+//        intent.putExtra("aspectX", 1);
+//        intent.putExtra("aspectY", 1);
+//
+//        // outputX,outputY 是剪裁图片的宽高
+//        intent.putExtra("outputX", 300);
+//        intent.putExtra("outputY", 300);
+
+        // 设置输出文件位置和格式
+        intent.putExtra("return-data", false);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, cropUri);
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG);
+        intent.putExtra("noFaceDetection", true);
+
+        mResultLauncherCrop.launch(intent);
     }
 }

@@ -1,6 +1,8 @@
 package com.example.yidiantong.View;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.widget.Toast;
 
 import com.example.yidiantong.R;
 import com.example.yidiantong.fragment.MainCourseFragment;
+import com.example.yidiantong.util.PxUtils;
 
 public class ToastFormat {
     private Context context;
@@ -41,6 +44,15 @@ public class ToastFormat {
     }
     public void setShowTime(int time){
         toast.setDuration(time);
+    }
+    public void setBackgroundColor(int colorId){
+        // 创建一个GradientDrawable
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setShape(GradientDrawable.RECTANGLE); // 设置形状为矩形
+        drawable.setCornerRadius(PxUtils.dip2px(context, 12)); // 设置圆角半径
+        // 在需要时更改颜色
+        drawable.setColor(Color.RED); // 更改颜色为红色
+        tipsText.setBackground(drawable);
     }
     public void setTextColor(int color){
         tipsText.setTextColor(context.getResources().getColor(color));

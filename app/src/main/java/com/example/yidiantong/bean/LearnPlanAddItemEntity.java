@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 public class LearnPlanAddItemEntity implements Serializable {
 
+    private String previewPath;
     private String filePath;
     private String baseTypeId;
     private String shitiAnalysis;
@@ -26,6 +27,14 @@ public class LearnPlanAddItemEntity implements Serializable {
     private String typeId;
     private String selectFlag;
     private int order;
+
+    public String getPreviewPath() {
+        return previewPath;
+    }
+
+    public void setPreviewPath(String previewPath) {
+        this.previewPath = previewPath;
+    }
 
     public String getFilePath() {
         return filePath;
@@ -187,15 +196,15 @@ public class LearnPlanAddItemEntity implements Serializable {
                 ", \"name\":\"" + (type.equals("question") ? "" :name) + '\"' +
                 ", \"type\":\"" + type + '\"' +
                 ", \"format\":\"" + format + '\"' +
-                ", \"shitiShow\":\"" + shitiShow.replaceAll("[\"']", "\\\\$0") + '\"' +
-                ", \"shitiAnswer\":\"" + shitiAnswer.replaceAll("[\"']", "\\\\$0") + '\"' +
-                ", \"shitiAnalysis\":\"" + shitiAnalysis.replaceAll("[\"']", "\\\\$0") + '\"' +
+                ", \"shitiShow\":\"" + '\"' +
+                ", \"shitiAnswer\":\"" + '\"' +
+                ", \"shitiAnalysis\":\"" + '\"' +
                 ", \"baseTypeId\":\"" + baseTypeId + '\"' +
                 ", \"baseTypeName\":\"" + baseTypeName + '\"' +
                 ", \"typeId\":\"" + typeId + '\"' +
                 ", \"typeName\":\"" + typeName + '\"' +
-                ", \"url\":\"" + url + '\"' +
-                ", \"pptList\":" + getPPTListString() +
+                ", \"url\":\"" + (url.length() == 0 ? previewPath : url) + '\"' +
+                ", \"pptList\":\"" + '\"' +
                 ", \"filePath\":\"" + filePath + '\"' +
                 ", \"previewPath\":\"" + filePath + '\"' +
                 ", \"linkName\":\"" + "默认环节" + '\"' +

@@ -1,6 +1,7 @@
 package com.example.yidiantong.adapter;
 
 
+import android.content.res.Configuration;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -26,31 +27,19 @@ public class HomeworkPagerAdapter extends FragmentPagerAdapter {
     private List<HomeworkEntity> itemList = new ArrayList<>();//题面列表
     private List<StuAnswerEntity> itemList2 = new ArrayList<>();//答题情况列表
 
-    public int countReady = 0;
-
     //传递信息
     private String learnPlanId, username;
 
     public HomeworkPagerAdapter(@NonNull FragmentManager fm, String learnPlanId, String username) {
-        super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        super(fm);
         this.learnPlanId = learnPlanId;
         this.username = username;
     }
 
-    public void updateQ(List<HomeworkEntity> itemList) {
+    public void update(List<HomeworkEntity> itemList, List<StuAnswerEntity> itemList2) {
         this.itemList = itemList;
-        countReady += 1;
-        if (countReady >= 2) {
-            this.notifyDataSetChanged();
-        }
-    }
-
-    public void updateA(List<StuAnswerEntity> itemList) {
-        this.itemList2 = itemList;
-        countReady += 1;
-        if (countReady >= 2) {
-            this.notifyDataSetChanged();
-        }
+        this.itemList2 = itemList2;
+        this.notifyDataSetChanged();
     }
 
     @NonNull
@@ -70,18 +59,25 @@ public class HomeworkPagerAdapter extends FragmentPagerAdapter {
                 fragment = HomeworkJudgeFragment.newInstance(itemList.get(position), position, itemList.size(), itemList2.get(position));
                 break;
             case "104":
+            case "105":
+            case "106":
+            case "107":
+            case "109":
+            case "110":
+            case "111":
+            case "112":
                 fragment = HomeworkTranslationFragment.newInstance(itemList.get(position), position, itemList.size(), learnPlanId, username, itemList2.get(position));
                 break;
             case "108":
-                if(item.getQuestionTypeName().equals("七选五")){
+                if (item.getQuestionTypeName().equals("七选五")) {
                     fragment = HomeworkSeven2FiveFragment.newInstance(itemList.get(position), position, itemList.size(), itemList2.get(position));
-                }else{
+                } else {
                     fragment = HomeworkReadingFragment.newInstance(itemList.get(position), position, itemList.size(), itemList2.get(position));
                 }
                 break;
             default:
                 fragment = HomeworkTranslationFragment.newInstance(itemList.get(position), position, itemList.size(), learnPlanId, username, itemList2.get(position));
-                Log.d("wen", "未知题型: " + item.getQuestionTypeName());
+                Log.d("wen", "未知题型: " + item.getBaseTypeId());
                 break;
         }
         return fragment;
@@ -89,7 +85,6 @@ public class HomeworkPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return itemList.size();
+        return itemList2.size();
     }
-
 }

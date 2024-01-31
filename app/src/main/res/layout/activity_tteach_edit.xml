@@ -76,7 +76,8 @@
             android:focusable="true"
             android:paddingStart="10dp"
             android:paddingEnd="5dp"
-            android:src="@drawable/t_homework_add_filter" />
+            android:src="@drawable/t_homework_add_filter"
+            android:visibility="invisible" />
     </LinearLayout>
 
     <FrameLayout
@@ -86,7 +87,9 @@
         android:layout_below="@+id/ll_top" />
 
     <!--遮蔽-->
+    <include layout="@layout/loading_page"/>
+
     <include
         layout="@layout/submitting_page"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 </RelativeLayout>

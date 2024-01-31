@@ -117,6 +117,8 @@ public class TWeikeAddActivity extends AppCompatActivity implements View.OnClick
     private EditText et_conclusion;
     private EditText et_expansion;
 
+    private boolean loadPreference = true; // 自动填写判断，仅第一次执行
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,40 +212,18 @@ public class TWeikeAddActivity extends AppCompatActivity implements View.OnClick
         iv_banben.setOnClickListener(this);
         iv_jiaocai.setOnClickListener(this);
 
-        // 记住选择-本地数据读取
+        // --------------------------------//
+        //  记住选择-本地数据读取
+        //  改进，仅存储id和name
+        //  通过id和name进行逐级判断
+        //  逐级比对： 学段 学科 版本 教材 知识点
+        // --------------------------------//
         preferences = getSharedPreferences("config", Context.MODE_PRIVATE);
-        String json = preferences.getString("xueduanMap", "");
-        if ("".equals(json)) {
-            // 首先load学段
-            loadXueDuan();
-        } else {
-            Gson gson = new Gson();
-            Type type = new TypeToken<LinkedHashMap<String, String>>() {
-            }.getType();
-            xueduanMap = gson.fromJson(json, type);
-            json = preferences.getString("xuekeMap", "");
-            xuekeMap = gson.fromJson(json, type);
-            Log.d(TAG, "onCreate: " + xuekeMap.toString());
-            Log.d(TAG, "onCreate: " + xuekeMap.size());
-
-            json = preferences.getString("banbenMap", "");
-            banbenMap = gson.fromJson(json, type);
-            json = preferences.getString("jiaocaiMap", "");
-            jiaocaiMap = gson.fromJson(json, type);
-            zhishidianData = preferences.getString("zhishidianData", "");
-            zhishidianId = preferences.getString("zhishidianId", "");
-
-            xueduan = preferences.getString("xueduan", "");
-            xueke = preferences.getString("xueke", "");
-            banben = preferences.getString("banben", "");
-            jiaocai = preferences.getString("jiaocai", "");
-            zhishidian = preferences.getString("zhishidian", "");
-            tv_xueduan.setText(xueduan);
-            tv_xueke.setText(xueke);
-            tv_banben.setText(banben);
-            tv_jiaocai.setText(jiaocai);
-            tv_point.setText(zhishidian);
-        }
+        // 这里仅初始化preferences，后面进行判断时再用
+        // ------------------//
+        // 首先加载学段  第1步
+        // ------------------//
+        loadXueDuan();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -292,43 +272,44 @@ public class TWeikeAddActivity extends AppCompatActivity implements View.OnClick
                     dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
                     dialog.show();
                 } else {
-                    // 记住选择-本地写入 + Intent传参
+                    // ----------------------------//
+                    //  记住选择-本地写入 + Intent传参
+                    //  xueduanId, xueduan
+                    //  xuekeId, xueke
+                    //  banbenId, banben
+                    //  jiaocaiId, jiaocai
+                    //  zhishidianId, zhishidian
+                    // ----------------------------//
                     SharedPreferences.Editor editor = preferences.edit();
                     Intent intent = new Intent(this, TWeikeAddPickActivity.class);
-                    Gson gson = new Gson();
+
                     // 学段
-                    String json = gson.toJson(xueduanMap);
-                    editor.putString("xueduanMap", json);
                     editor.putString("xueduan", xueduan);
-                    intent.putExtra("xueduanMap", json);
                     intent.putExtra("xueduan", xueduan);
+                    intent.putExtra("xueduanId", xueduanMap.get(xueduan));
+
                     // 学科
-                    json = gson.toJson(xuekeMap);
-                    editor.putString("xuekeMap", json);
                     editor.putString("xueke", xueke);
-                    intent.putExtra("xuekeMap", json);
                     intent.putExtra("xueke", xueke);
-                    // 学科
-                    json = gson.toJson(banbenMap);
-                    editor.putString("banbenMap", json);
+                    intent.putExtra("xuekeId", xuekeMap.get(xueke));
+
+                    // 版本
                     editor.putString("banben", banben);
-                    intent.putExtra("banbenMap", json);
                     intent.putExtra("banben", banben);
+                    intent.putExtra("banbenId", banbenMap.get(banben));
+
                     // 教材
-                    json = gson.toJson(jiaocaiMap);
-                    editor.putString("jiaocaiMap", json);
                     editor.putString("jiaocai", jiaocai);
-                    intent.putExtra("jiaocaiMap", json);
                     intent.putExtra("jiaocai", jiaocai);
+                    intent.putExtra("jiaocaiId", jiaocaiMap.get(jiaocai));
+
                     // 知识点
-                    editor.putString("zhishidianData", zhishidianData);
                     editor.putString("zhishidian", zhishidian);
-                    editor.putString("zhishidianId", zhishidianId);
-                    intent.putExtra("zhishidianData", zhishidianData);
-                    intent.putExtra("zhishidian", zhishidian);
                     intent.putExtra("zhishidianId", zhishidianId);
+                    intent.putExtra("zhishidian", zhishidian);
                     editor.commit();
 
+                    // 其他
                     intent.putExtra("learnPlanName", et_name.getText().toString());
                     intent.putExtra("learnPlanType", String.valueOf(purposePos));
                     intent.putExtra("classHours", et_study_time.getText().toString());
@@ -499,8 +480,25 @@ public class TWeikeAddActivity extends AppCompatActivity implements View.OnClick
                     JSONObject object = data.getJSONObject(i);
                     xueduanMap.put(object.getString("channelName"), object.getString("channelId"));
                 }
-                Log.d("wen", "学段: " + xueduanMap);
+                Log.e("0102", "学段: " + xueduanMap);
 
+                // --------------------//
+                // 接着比对同步学段  第2步
+                // --------------------//
+                if (loadPreference) {
+                    String xueduanName = preferences.getString("xueduan", "");
+                    if (xueduanMap.getOrDefault(xueduanName, "").length() > 0) {
+                        xueduan = xueduanName;
+                        tv_xueduan.setText(xueduan);
+                        // -----------------------//
+                        // 同步学段完成，加载学科 第3步
+                        // -----------------------//
+                        loadXueKe();
+                    } else {
+                        loadPreference = false;
+                    }
+                }
+                iv_xueduan.callOnClick();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -523,14 +521,14 @@ public class TWeikeAddActivity extends AppCompatActivity implements View.OnClick
             TextView tv_name = view.findViewById(R.id.tv_name);
             tv_name.setText(name);
             if (name.equals(xueduan)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastXueduan = tv_name;
             }
             tv_name.setOnClickListener(v -> {
                 xueduan = (String) tv_name.getText();
 
                 if (lastXueduan != null) {
-                    lastXueduan.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastXueduan);
                 }
 
                 if (lastXueduan == tv_name) {
@@ -539,7 +537,7 @@ public class TWeikeAddActivity extends AppCompatActivity implements View.OnClick
                     refresh(1);
                 } else {
                     xueduan = tv_name.getText().toString();
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastXueduan = tv_name;
                     refresh(1);
                     loadXueKe();
@@ -547,12 +545,13 @@ public class TWeikeAddActivity extends AppCompatActivity implements View.OnClick
                 tv_xueduan.setText(xueduan);
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_xueduan.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 14);
+            params.width = fl_xueduan.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 15);
             tv_name.setLayoutParams(params);
             fl_xueduan.addView(view);
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void loadXueKe() {
         /**
          * 加载学科方法：
@@ -573,10 +572,27 @@ public class TWeikeAddActivity extends AppCompatActivity implements View.OnClick
                 JSONArray data = json.getJSONArray("data");
                 for (int i = 0; i < data.length(); ++i) {
                     JSONObject object = data.getJSONObject(i);
-                    xuekeMap.put(object.getString("subjectName"), object.getString("subjectId"));
+                    xuekeMap.put(object.getString("subjectName").substring(2), object.getString("subjectId"));
                 }
 
                 Log.d("wen", "学科: " + xuekeMap);
+
+                // -----------------//
+                // 判断同步学科 第4步
+                // -----------------//
+                if (loadPreference) {
+                    String xuekeName = preferences.getString("xueke", "");
+                    if (xuekeMap.getOrDefault(xuekeName, "").length() > 0) {
+                        xueke = xuekeName;
+                        tv_xueke.setText(xueke);
+                        // -----------------------//
+                        // 同步学段完成，加载学科 第5步
+                        // -----------------------//
+                        loadBanBen();
+                    } else {
+                        loadPreference = false;
+                    }
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -601,16 +617,16 @@ public class TWeikeAddActivity extends AppCompatActivity implements View.OnClick
             view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_block, fl_xueke, false);
             TextView tv_name = view.findViewById(R.id.tv_name);
             // 按钮显示（不含学段）
-            tv_name.setText(name.substring(2));
+            tv_name.setText(name);
             // xueke（包含学段）
             if (name.equals(xueke)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastXueke = tv_name;
             }
             tv_name.setOnClickListener(v -> {
 
                 if (lastXueke != null) {
-                    lastXueke.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastXueke);
                 }
 
                 if (lastXueke == tv_name) {
@@ -618,9 +634,9 @@ public class TWeikeAddActivity extends AppCompatActivity implements View.OnClick
                     lastXueke = null;
                     refresh(2);
                 } else {
-                    // 点击事件，获取xueke（包含学段）
-                    xueke = xueduan + tv_name.getText().toString();
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    // 点击事件，获取xueke
+                    xueke = tv_name.getText().toString();
+                    selectedTv(tv_name);
                     lastXueke = tv_name;
                     refresh(2);
                     loadBanBen();
@@ -629,12 +645,13 @@ public class TWeikeAddActivity extends AppCompatActivity implements View.OnClick
                 tv_xueke.setText(xueke);
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_xueke.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 14);
+            params.width = fl_xueke.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 15);
             tv_name.setLayoutParams(params);
             fl_xueke.addView(view);
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void loadBanBen() {
         if (xueduanMap.get(xueduan) == null || xuekeMap.get(xueke) == null) {
             return;
@@ -655,7 +672,22 @@ public class TWeikeAddActivity extends AppCompatActivity implements View.OnClick
                 }
 
                 Log.d("wen", "版本: " + banbenMap);
-
+                // -----------------//
+                // 判断同步版本 第6步
+                // -----------------//
+                if (loadPreference) {
+                    String banbenName = preferences.getString("banben", "");
+                    if (banbenMap.getOrDefault(banbenName, "").length() > 0) {
+                        banben = banbenName;
+                        tv_banben.setText(banben);
+                        // -----------------------//
+                        // 同步版本完成，加载教材 第7步
+                        // -----------------------//
+                        loadJiaoCai();
+                    } else {
+                        loadPreference = false;
+                    }
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -677,14 +709,14 @@ public class TWeikeAddActivity extends AppCompatActivity implements View.OnClick
             TextView tv_name = view.findViewById(R.id.tv_name);
             tv_name.setText(name);
             if (name.equals(banben)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastBanben = tv_name;
             }
             tv_name.setOnClickListener(v -> {
                 banben = (String) tv_name.getText();
 
                 if (lastBanben != null) {
-                    lastBanben.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastBanben);
                 }
 
                 if (lastBanben == tv_name) {
@@ -693,7 +725,7 @@ public class TWeikeAddActivity extends AppCompatActivity implements View.OnClick
                     refresh(3);
                 } else {
                     banben = tv_name.getText().toString();
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastBanben = tv_name;
                     refresh(3);
                     loadJiaoCai();
@@ -701,12 +733,13 @@ public class TWeikeAddActivity extends AppCompatActivity implements View.OnClick
                 tv_banben.setText(banben);
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_banben.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 14);
+            params.width = fl_banben.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 15);
             tv_name.setLayoutParams(params);
             fl_banben.addView(view);
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void loadJiaoCai() {
 
         mRequestUrl = Constant.API + Constant.T_HOMEWORK_ADD_JIAOCAI + "?userName=" + MyApplication.username + "&channelCode=" + xueduanMap.get(xueduan) + "&subjectCode=" + xuekeMap.get(xueke) + "&textBookCode=" + banbenMap.get(banben);
@@ -725,7 +758,22 @@ public class TWeikeAddActivity extends AppCompatActivity implements View.OnClick
                 }
 
                 Log.d("wen", "教材: " + jiaocaiMap);
-
+                // -----------------//
+                // 判断同步教材 第8步
+                // -----------------//
+                if (loadPreference) {
+                    String jiaocaiName = preferences.getString("jiaocai", "");
+                    if (jiaocaiMap.getOrDefault(jiaocaiName, "").length() > 0) {
+                        jiaocai = jiaocaiName;
+                        tv_jiaocai.setText(jiaocai);
+                        // -----------------------//
+                        // 同步教材完成，加载知识点 第9步
+                        // -----------------------//
+                        loadZhiShiDian();
+                    } else {
+                        loadPreference = false;
+                    }
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -748,14 +796,14 @@ public class TWeikeAddActivity extends AppCompatActivity implements View.OnClick
             TextView tv_name = view.findViewById(R.id.tv_name);
             tv_name.setText(name);
             if (name.equals(jiaocai)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastJiaocai = tv_name;
             }
             tv_name.setOnClickListener(v -> {
                 jiaocai = (String) tv_name.getText();
 
                 if (lastJiaocai != null) {
-                    lastJiaocai.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastJiaocai);
                 }
 
                 if (lastJiaocai == tv_name) {
@@ -764,7 +812,7 @@ public class TWeikeAddActivity extends AppCompatActivity implements View.OnClick
                     refresh(4);
                 } else {
                     jiaocai = tv_name.getText().toString();
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastJiaocai = tv_name;
                     refresh(4);
                     loadZhiShiDian();
@@ -772,7 +820,7 @@ public class TWeikeAddActivity extends AppCompatActivity implements View.OnClick
                 tv_jiaocai.setText(jiaocai);
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_jiaocai.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 14);
+            params.width = fl_jiaocai.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 15);
             tv_name.setLayoutParams(params);
             fl_jiaocai.addView(view);
         });
@@ -796,6 +844,24 @@ public class TWeikeAddActivity extends AppCompatActivity implements View.OnClick
                 Log.d("wen", "知识点: " + zhishidianData);
                 if (zhishidianData.length() == 0) {
                     zhishidianData = "知识点列表未获取到或者为空";
+                }
+
+                // -----------------//
+                // 判断同步知识点 第10步
+                // -----------------//
+                if (loadPreference) {
+                    String zhishidianId = preferences.getString("zhishidianId", "");
+                    String zhishidianName = preferences.getString("zhishidian", "");
+                    if (zhishidianData.contains(zhishidianId) && zhishidianData.contains(zhishidian)) {
+                        zhishidian = zhishidianName;
+                        this.zhishidianId = zhishidianId;
+                        tv_point.setText(zhishidian);
+                    }
+                    // -------------------------//
+                    //  全同步完成
+                    //  loadPreference = false
+                    // -------------------------//
+                    loadPreference = false;
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -854,6 +920,16 @@ public class TWeikeAddActivity extends AppCompatActivity implements View.OnClick
                 "</script>" +
                 "</head><body style=\"color: rgb(117, 117, 117); font-size: 16px; margin: 0px; padding: 0px\">" + str +
                 "</body>";
-        wb.loadData(html_content, "text/html", "utf-8");
+        wb.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
+    }
+
+    private void selectedTv(TextView tv) {
+        tv.setBackgroundResource(R.drawable.t_homework_add_select);
+        tv.setTextColor(getColor(R.color.red));
+    }
+
+    private void unselectedTv(TextView tv) {
+        tv.setBackgroundResource(R.drawable.t_homework_add_unselect);
+        tv.setTextColor(getColor(R.color.default_gray));
     }
 }

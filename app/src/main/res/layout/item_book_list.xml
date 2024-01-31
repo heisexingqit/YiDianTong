@@ -55,7 +55,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="3dp"
                     android:src="@drawable/red_ball"
-                    android:visibility="visible"/>
+                    android:visibility="invisible"/>
 
             </LinearLayout>
 

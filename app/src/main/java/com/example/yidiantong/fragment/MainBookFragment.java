@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -67,6 +68,12 @@ public class MainBookFragment extends Fragment {
     private String username;
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mian_book, container, false);
@@ -99,7 +106,14 @@ public class MainBookFragment extends Fragment {
             intent.putExtra("subjectId", subjectId);
             intent.putExtra("username", username);
             startActivity(intent);
-            reload();
+
+            if(adapter.itemList.get(pos).getStatus().equals("1")){
+                reload();
+                // 修改UI -红点
+                adapter.itemList.get(pos).setStatus("0");
+                adapter.notifyDataSetChanged();
+            }
+
         });
 
         return view;
@@ -124,7 +138,6 @@ public class MainBookFragment extends Fragment {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 String itemString = json.getString("data");
-
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
                 List<BookInfoEntity> moreList = gson.fromJson(itemString, new TypeToken<List<BookInfoEntity>>() {}.getType());
@@ -140,28 +153,28 @@ public class MainBookFragment extends Fragment {
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
+            Log.e("volley", "Volley_Error: " + error.toString());
         });
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         queue.add(request);
     }
-
-    private final Handler handler2 = new Handler(Looper.getMainLooper()) {
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        @SuppressLint("NotifyDataSetChanged")
-        @Override
-        public void handleMessage(Message message) {
-            super.handleMessage(message);
-            if (message.what == 100) {
-                int f = (int) message.obj;
-                if (f == 0) {
-                    //Toast.makeText(getContext(), "已读状态修改失败", Toast.LENGTH_SHORT).show();
-                }else {
-                    //Toast.makeText(getContext(), "已读状态修改成功", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    };
+//
+//    private final Handler handler2 = new Handler(Looper.getMainLooper()) {
+//        @RequiresApi(api = Build.VERSION_CODES.N)
+//        @SuppressLint("NotifyDataSetChanged")
+//        @Override
+//        public void handleMessage(Message message) {
+//            super.handleMessage(message);
+//            if (message.what == 100) {
+//                int f = (int) message.obj;
+//                if (f == 0) {
+//                    Toast.makeText(getContext(), "已读状态修改失败", Toast.LENGTH_SHORT).show();
+//                }else {
+//                    Toast.makeText(getContext(), "已读状态修改成功", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        }
+//    };
 
     // 修改已读状态
     public void reload() {
@@ -169,21 +182,21 @@ public class MainBookFragment extends Fragment {
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
-                //结果信息
-                Boolean isSuccess = json.getBoolean("success");
-                Message msg = Message.obtain();
-                if (isSuccess) {
-                    msg.obj = 1;
-                } else {
-                    msg.obj = 0;
-                }
-                msg.what = 100;
-                handler2.sendMessage(msg);
+//                //结果信息
+//                Boolean isSuccess = json.getBoolean("success");
+//                Message msg = Message.obtain();
+//                if (isSuccess) {
+//                    msg.obj = 1;
+//                } else {
+//                    msg.obj = 0;
+//                }
+//                msg.what = 100;
+//                handler2.sendMessage(msg);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(getContext(), error.toString(), Toast.LENGTH_SHORT).show();
+            Log.e("volley", "Volley_Error: " + error.toString());
         });
         RequestQueue queue = Volley.newRequestQueue(getContext());
         queue.add(request);

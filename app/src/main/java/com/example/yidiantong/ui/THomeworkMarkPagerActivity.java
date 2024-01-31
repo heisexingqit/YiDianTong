@@ -1,6 +1,7 @@
 package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -22,27 +23,26 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
-import com.example.yidiantong.View.NoScrollViewPager;
 import com.example.yidiantong.adapter.THomeworkMarkPagerAdapter;
 import com.example.yidiantong.bean.THomeworkMarkedEntity;
 import com.example.yidiantong.bean.THomeworkStudentItemEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.FixedSpeedScroller;
 import com.example.yidiantong.util.JsonUtils;
+import com.example.yidiantong.util.MyReadWriteLock;
 import com.example.yidiantong.util.NumberUtils;
 import com.example.yidiantong.util.THomeworkMarkInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,7 +66,7 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
     private String type;
 
     // 页面组件
-    private NoScrollViewPager vp_homework;
+    private ViewPager2 vp_homework;
     private THomeworkMarkPagerAdapter adapter;
     private int currentItem = 0;
     private LinearLayout ll_main;
@@ -91,6 +91,8 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
 
     // ViewPagerAdapter中列表
     List<THomeworkMarkedEntity> moreList;
+
+    private boolean isAll = false; // 标记ViewPager是否已经是全部题目
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +121,8 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
         TextView tv_name = findViewById(R.id.tv_name);
         tv_name.setText(name);
         vp_homework = findViewById(R.id.vp_homework);
+        // 设置用户输入模式为不可触屏
+        vp_homework.setUserInputEnabled(false);
 
         // 提交页面回调
         mResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -129,11 +133,23 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
                     int index = intent.getIntExtra("currentItem", 0);
                     if (index == -1) {
                         Toast.makeText(THomeworkMarkPagerActivity.this, "提交成功！", Toast.LENGTH_SHORT).show();
+                        Intent back = new Intent();
+                        setResult(Activity.RESULT_OK, back);
                         finish();
                     } else if (index == -2) {
                         finish();
                     } else {
-                        adapter.update(moreListAll);
+                        if (mode.equals("1")) {
+                            isAll = true;
+                        }
+                        // 将pager内容改为全部
+                        if (!isAll) {
+                            Log.e(TAG, "onActivityResult: ViewPager刷新了！");
+                            moreList = moreListAll;
+                            adapter.update(moreListAll);
+                        }
+
+                        isAll = true;
                         pageCount = moreListAll.size();
                         currentItem = index;
                         vp_homework.setCurrentItem(currentItem, false);
@@ -183,10 +199,9 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
         }
 
         // 主要的ViewPager组件
-        adapter = new THomeworkMarkPagerAdapter(getSupportFragmentManager(), canMark);
+        adapter = new THomeworkMarkPagerAdapter(this, canMark);
         vp_homework.setAdapter(adapter);
         vp_homework.setCurrentItem(currentItem);
-        vp_homework.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener());
 
         // ViewPager滑动变速
         try {
@@ -235,6 +250,7 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
                 if (currentItem == pageCount - 1) {
                     jumpToSubmit();
                 } else {
+
                     currentItem += 1;
                     vp_homework.setCurrentItem(currentItem);
                     Log.d("wen", "Activity: " + moreList.get(currentItem).getOrder());
@@ -256,7 +272,7 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
         Log.d("wen", "btnShow: " + currentItem + " " + pageCount);
         if (currentItem == pageCount - 1) {
             btn_next.setText("完成批改");
-        }else{
+        } else {
             btn_next.setText("下一题");
         }
     }
@@ -310,7 +326,7 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
                     } else {
                         // 构建状态列表
                         String iconStr = "";
-                        switch (item.getStatus()) {
+                        switch (item.getStatus()) { // 1正确；2错误；3部分答对；4手工未阅
                             case "1":
                                 iconStr += "correct";
                                 break;
@@ -338,20 +354,15 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
                     THomeworkMarkedEntity item = iterator.next();
                     // 模式适配
                     if (mode.equals("2") && itemEntity.getStatus().equals("2")) {
-                        switch (item.getQuestionType()) {
-                            // 客观题删除
-                            case "101":
-                            case "102":
-                            case "103":
-                                break;
-                            default:
-                                moreList.add(item);
+                        if (item.getStatus().equals("4")) {
+                            moreList.add(item);
                         }
                     } else {
                         moreList.add(item);
                     }
                 }
 
+                // 两种模式，mode1是全部，mode2是只给未批改
                 adapter.update(moreList);
 
                 pageCount = moreList.size();
@@ -367,7 +378,7 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
      */
     private void loadItems_Net() {
 
-        String mRequestUrl = Constant.API + Constant.T_HOMEWORK_MARK + "?taskId=" + taskId + "&type=" + type  + "&userName=" + stuName;
+        String mRequestUrl = Constant.API + Constant.T_HOMEWORK_MARK + "?taskId=" + taskId + "&type=" + type + "&userName=" + stuName;
         Log.d("wen", "批改总信息: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -381,8 +392,9 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
                 //使用Gson框架转换Json字符串为列表
                 List<THomeworkMarkedEntity> itemList = gson.fromJson(itemString, new TypeToken<List<THomeworkMarkedEntity>>() {
                 }.getType());
-                Log.d("wen", "批改总信息条目: " + itemList);
-
+                for(int i = 0; i < itemList.size(); ++i){
+                    Log.e(TAG, "loadItems_Net: " + itemList.get(i).getStuAnswer());
+                }
                 // 封装消息，传递给主线程
                 Message message = Message.obtain();
 
@@ -399,13 +411,17 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
 
         }, error -> {
             Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());;
+            Log.d("wen", "Volley_Error: " + error.toString());
+
         });
         MyApplication.addRequest(request, TAG);
     }
 
     @Override
     public void setStuAnswer(int pos, String stuScore) {
+        if (stuScoresList.size() <= pos) {
+            return;
+        }
         double socres = Double.parseDouble(stuScore);
         // 同步分数
         stuScoresList.set(pos, socres);
@@ -425,5 +441,12 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
     @Override
     public String getStuScore(int pos) {
         return String.format("%.2f", stuScoresList.get(pos));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 读写解锁
+        MyReadWriteLock.checkoutT(MyApplication.username, this);
     }
 }

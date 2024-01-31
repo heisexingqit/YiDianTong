@@ -74,7 +74,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp">
+                android:paddingStart="15dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/tv_mc"
@@ -82,16 +85,20 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="*  名称:"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/black"
+                    android:textSize="15sp" />
 
                 <EditText
                     android:id="@+id/et_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:layout_marginEnd="10dp"
-                    android:background="@android:drawable/editbox_background_normal"
-                    android:padding="20dp"
+                    android:layout_marginEnd="2dp"
+                    android:background="@drawable/default_edit_text"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
                     android:singleLine="true"
                     android:textSize="14sp" />
 
@@ -113,7 +120,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp">
 
                     <TextView
                         android:id="@+id/tv_xd"
@@ -137,8 +147,8 @@
 
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/iv_xueduan"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:src="@drawable/down_icon" />
                 </LinearLayout>
 
@@ -184,7 +194,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp">
 
                     <TextView
                         android:id="@+id/tv_xk"
@@ -208,8 +221,8 @@
 
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/iv_xueke"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:src="@drawable/down_icon" />
                 </LinearLayout>
 
@@ -253,7 +266,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp">
 
                     <TextView
                         android:id="@+id/tv_bb"
@@ -277,8 +293,8 @@
 
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/iv_banben"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:src="@drawable/down_icon" />
                 </LinearLayout>
 
@@ -322,7 +338,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp">
 
                     <TextView
                         android:id="@+id/tv_jc"
@@ -347,8 +366,8 @@
 
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/iv_jiaocai"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:src="@drawable/down_icon" />
                 </LinearLayout>
 
@@ -394,7 +413,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp">
 
                     <TextView
                         android:id="@+id/tv_zsd"
@@ -410,6 +432,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="20dp"
+                        android:layout_marginEnd="2dp"
                         android:layout_weight="1"
                         android:gravity="center_vertical"
                         android:text=""
@@ -443,8 +466,10 @@
                 android:layout_height="55dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="10dp"
-                android:paddingEnd="60dp">
+                android:paddingStart="15dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/tv_symd"
@@ -456,69 +481,54 @@
                     android:textColor="@color/black"
                     android:textSize="15sp" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="1"
-                    android:gravity="center">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp">
 
                     <com.example.yidiantong.View.ClickableTextView
                         android:id="@+id/tv_all"
-                        android:layout_width="match_parent"
+                        android:layout_width="60dp"
                         android:layout_height="match_parent"
                         android:background="@drawable/t_homework_add_pick"
                         android:gravity="center"
                         android:text="全部"
-                        android:textColor="@color/white" />
-                </LinearLayout>
+                        android:textColor="@color/white"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_before"
+                        app:layout_constraintStart_toStartOf="parent" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_weight="1"
-                    android:gravity="center">
 
                     <com.example.yidiantong.View.ClickableTextView
                         android:id="@+id/tv_before"
-                        android:layout_width="match_parent"
+                        android:layout_width="60dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="课前"
-                        android:textColor="@color/black" />
-                </LinearLayout>
+                        android:textColor="@color/black"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_middle"
+                        app:layout_constraintStart_toEndOf="@+id/tv_all" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_weight="1"
-                    android:gravity="center">
 
                     <com.example.yidiantong.View.ClickableTextView
                         android:id="@+id/tv_middle"
-                        android:layout_width="match_parent"
+                        android:layout_width="60dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="课中"
-                        android:textColor="@color/black" />
-                </LinearLayout>
+                        android:textColor="@color/black"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_after"
+                        app:layout_constraintStart_toEndOf="@+id/tv_before" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="1"
-                    android:gravity="center">
 
                     <com.example.yidiantong.View.ClickableTextView
                         android:id="@+id/tv_after"
-                        android:layout_width="match_parent"
+                        android:layout_width="60dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="课后"
-                        android:textColor="@color/black" />
-                </LinearLayout>
+                        android:textColor="@color/black"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_middle" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
 
             <!-- 分割线 -->
@@ -531,7 +541,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp">
+                android:paddingStart="15dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="10dp">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -554,9 +567,12 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="20dp"
-                        android:background="@android:drawable/editbox_background_normal"
+                        android:background="@drawable/default_edit_text"
                         android:inputType="number"
-                        android:padding="18dp"
+                        android:paddingStart="15dp"
+                        android:paddingTop="10dp"
+                        android:paddingEnd="15dp"
+                        android:paddingBottom="10dp"
                         android:singleLine="true"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -582,9 +598,12 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="20dp"
-                        android:background="@android:drawable/editbox_background_normal"
+                        android:background="@drawable/default_edit_text"
                         android:inputType="number"
-                        android:padding="18dp"
+                        android:paddingStart="15dp"
+                        android:paddingTop="10dp"
+                        android:paddingEnd="15dp"
+                        android:paddingBottom="10dp"
                         android:singleLine="true"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -599,7 +618,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp">
+                android:paddingStart="15dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/tv_nrjs"
@@ -615,9 +637,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:layout_marginEnd="10dp"
-                    android:background="@android:drawable/editbox_background_normal"
-                    android:padding="20dp"
+                    android:layout_marginEnd="2dp"
+                    android:background="@drawable/default_edit_text"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
                     android:singleLine="true"
                     android:textSize="14sp" />
 
@@ -632,7 +657,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp">
+                android:paddingStart="15dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/tv_xxmb"
@@ -648,9 +676,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:layout_marginEnd="10dp"
-                    android:background="@android:drawable/editbox_background_normal"
-                    android:padding="20dp"
+                    android:layout_marginEnd="2dp"
+                    android:background="@drawable/default_edit_text"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
                     android:singleLine="true"
                     android:textSize="14sp" />
 
@@ -665,7 +696,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp">
+                android:paddingStart="15dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/tv_xxzd"
@@ -673,16 +707,20 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="学习重点:"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/black"
+                    android:textSize="15sp" />
 
                 <EditText
                     android:id="@+id/et_study_key"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:layout_marginEnd="10dp"
-                    android:background="@android:drawable/editbox_background_normal"
-                    android:padding="20dp"
+                    android:layout_marginEnd="2dp"
+                    android:background="@drawable/default_edit_text"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
                     android:singleLine="true"
                     android:textSize="14sp" />
 
@@ -697,7 +735,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp">
+                android:paddingStart="15dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/tv_xxnd"
@@ -713,9 +754,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:layout_marginEnd="10dp"
-                    android:background="@android:drawable/editbox_background_normal"
-                    android:padding="20dp"
+                    android:layout_marginEnd="2dp"
+                    android:background="@drawable/default_edit_text"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
                     android:singleLine="true"
                     android:textSize="14sp" />
 
@@ -730,7 +774,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp">
+                android:paddingStart="15dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/tv_ktzj"
@@ -746,9 +793,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:layout_marginEnd="10dp"
-                    android:background="@android:drawable/editbox_background_normal"
-                    android:padding="20dp"
+                    android:layout_marginEnd="2dp"
+                    android:background="@drawable/default_edit_text"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:paddingEnd="15dp"
                     android:singleLine="true"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -762,7 +812,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp">
+                android:paddingStart="15dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/tv_kwtz"
@@ -778,12 +831,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:layout_marginEnd="10dp"
-                    android:background="@android:drawable/editbox_background_normal"
-                    android:padding="20dp"
+                    android:layout_marginEnd="2dp"
+                    android:background="@drawable/default_edit_text"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
                     android:singleLine="true"
                     android:textSize="14sp" />
             </LinearLayout>
+
 
         </LinearLayout>
     </ScrollView>

@@ -25,7 +25,7 @@
         <!--可滑动ViewPager-->
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/vp_homework"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" />
         <!--加载-->

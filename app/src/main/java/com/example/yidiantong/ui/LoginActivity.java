@@ -31,6 +31,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, View.OnFocusChangeListener {
@@ -141,7 +142,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
                 break;
             case R.id.btn_login:
-                username = et_username.getText().toString();
+                username = et_username.getText().toString().trim();
                 password = et_pw.getText().toString();
                 login();
                 break;
@@ -234,7 +235,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void login() {
         ll_loading.setVisibility(View.VISIBLE);
         String url = Constant.API + Constant.LOGIN + "?userName=" + username + "&passWord=" + password;
-        Log.d(TAG, "login: " + url);
         StringRequest request = new StringRequest(url, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
@@ -265,7 +265,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     String typeName = null;
                     if (keysList.contains("STUDENT")) {
                         typeName = "STUDENT";
-
                         intent = new Intent(this, MainPagerActivity.class);
                     } else if (keysList.contains("COMMON_TEACHER")) {
                         typeName = "COMMON_TEACHER";
@@ -280,8 +279,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     // 全局变量
                     // 角色变量
-                    MyApplication.typeName = typeName;
-                    Log.d("wen", "login: " + typeName);
                     MyApplication.username = username;
                     MyApplication.password = password;
                     MyApplication.userId = userInfo.getString("userId");
@@ -289,9 +286,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     MyApplication.token = obj.getString("token");
                     MyApplication.picUrl = userInfo.getString("userPhoto");
 
-                    Log.d("wen", "login: " + MyApplication.token);
 
-                    Log.d("wen", "login: userId: " + MyApplication.userId);
                     intent.putExtra("userId", MyApplication.userId);
                     intent.putExtra("realName", MyApplication.cnName);
 
@@ -315,8 +310,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }, error -> {
             // 及时解除loading效果
             ll_loading.setVisibility(View.GONE);
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
+            Log.e("volley", "Volley_Error: " + error.toString());
+
         });
         MyApplication.addRequest(request, TAG);
     }

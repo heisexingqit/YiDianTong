@@ -1,6 +1,8 @@
 package com.example.yidiantong.adapter;
 
 
+import android.annotation.SuppressLint;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -15,6 +17,7 @@ public class THomeworkAddPickPagerAdapter extends FragmentStatePagerAdapter {
 
     public List<THomeworkAddEntity> itemList; // 试题内容
 
+    @SuppressLint("WrongConstant")
     public THomeworkAddPickPagerAdapter(@NonNull FragmentManager fm, List<THomeworkAddEntity> list) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         itemList = list;

@@ -1,16 +1,20 @@
 package com.example.yidiantong.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -32,12 +36,16 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
-import com.bumptech.glide.Glide;
+import com.android.volley.Request;
+import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.PswDialog;
 import com.example.yidiantong.View.TouxiangDialog;
 import com.example.yidiantong.ui.LoginActivity;
+import com.example.yidiantong.ui.MyIntroductionActivity;
+import com.example.yidiantong.util.Constant;
+import com.example.yidiantong.util.ImageUtils;
 import com.example.yidiantong.util.JsonUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yanzhenjie.permission.Action;
@@ -47,16 +55,19 @@ import com.yanzhenjie.permission.RequestExecutor;
 import com.yanzhenjie.permission.runtime.Permission;
 
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TMainMyFragment extends Fragment implements View.OnClickListener {
-
+    private static final String TAG = "TMainMyFragment";
     private LinearLayout f_ll_info;
     private LinearLayout f_ll_us;
     private LinearLayout f_ll_update;
@@ -81,6 +92,13 @@ public class TMainMyFragment extends Fragment implements View.OnClickListener {
     // 标识码（与权限对应）
     private static final int REQUEST_CODE_STORAGE = 1;
     private static final int REQUEST_CODE_CAMERA = 2;
+    private String username;
+    private String realName;
+
+    private String imageBase64;
+
+    private String newPW;
+    private SharedPreferences preferences;
 
     // 创建实例（空参数）
     public static TMainMyFragment newInstance() {
@@ -89,6 +107,13 @@ public class TMainMyFragment extends Fragment implements View.OnClickListener {
         fragment.setArguments(args);
         return fragment;
     }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -105,6 +130,9 @@ public class TMainMyFragment extends Fragment implements View.OnClickListener {
         fbtn_exit = view.findViewById(R.id.fbtn_exit);
         fbtn_cancel = view.findViewById(R.id.fbtn_cancel);
         fbtn_confirm = view.findViewById(R.id.fbtn_confirm);
+
+        TextView tv_version = view.findViewById(R.id.tv_version);
+        tv_version.setText(MyApplication.versionName);
 
         // 点击头像
         fiv_my = view.findViewById(R.id.fiv_my);
@@ -186,14 +214,10 @@ public class TMainMyFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onActivityResult(ActivityResult result) {
                 if (result.getResultCode() == getActivity().RESULT_OK) {
-                    try {
-                        // decodeStream()可以将output_image.jpg解析成Bitmap对象。
-                        Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(cropUri));
-                        fiv_my.setImageBitmap(bitmap);
-                        Toast.makeText(getActivity(), "修改成功！", Toast.LENGTH_SHORT).show();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
+                    File Image = new File(getActivity().getExternalCacheDir(), "output_temp.jpg");
+
+                    imageBase64 = ImageUtils.Bitmap2StrByBase64(getActivity(), Image);
+                    uploadImage();
                 }
             }
         });
@@ -212,29 +236,120 @@ public class TMainMyFragment extends Fragment implements View.OnClickListener {
          * 真实用户数据设置
          */
         TextView tv_username = view.findViewById(R.id.tv_username);
-        String username = MyApplication.username;
-
-        String realName = MyApplication.cnName;
+        username = MyApplication.username;
+        realName = MyApplication.cnName;
         tv_username.setText(realName + "(" + username + ")");
+
 
         // 获取图片
         String picUrl = MyApplication.picUrl;
-        Log.d("wen", "onCreateView: " + picUrl);
         ImageLoader.getInstance().displayImage(picUrl, fiv_my, MyApplication.getLoaderOptions());
+
+        preferences = getActivity().getSharedPreferences("config", Context.MODE_PRIVATE);
+
         return view;
+    }
+
+    private Handler handler = new Handler(Looper.getMainLooper()) {
+        @SuppressLint("NotifyDataSetChanged")
+        @Override
+        public void handleMessage(Message message) {
+            super.handleMessage(message);
+            if (message.what == 100) {
+                String picUrl = (String) message.obj;
+                MyApplication.picUrl = picUrl;
+                ImageLoader.getInstance().displayImage(picUrl, fiv_my, MyApplication.getLoaderOptions());
+                Toast.makeText(getActivity(), "修改头像成功", Toast.LENGTH_SHORT).show();
+            } else if (message.what == 101) {
+                MyApplication.password = (String) message.obj;
+            }
+        }
+    };
+
+    private void changePW() {
+        String mRequestUrl = Constant.API + Constant.CHANGE_PW + "?passWord=" + newPW + "&userName=" + username;
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+
+                Boolean isSuccess = json.getBoolean("success");
+                if (isSuccess) {
+                    //封装消息，传递给主线程
+                    MyApplication.password = newPW;
+                    Toast.makeText(getActivity(), "修改密码成功!", Toast.LENGTH_SHORT).show();
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString("password", newPW);
+                    editor.commit();
+                    fbtn_exit.callOnClick();
+                } else {
+
+                    Toast.makeText(getActivity(), "修改密码失败", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Log.e("volley", "Volley_Error: " + error.toString());
+
+        });
+        MyApplication.addRequest(request, TAG);
+
+    }
+
+
+    // 上传图片
+    private void uploadImage() {
+
+        String mRequestUrl = Constant.API + Constant.UPLOAD_HEAD_PHOTO;
+
+        Map<String, String> params = new HashMap<>();
+        params.put("baseCode", imageBase64);
+        params.put("userId", username);
+
+        Log.e("debug0116", "base64编码长度: " + imageBase64.length());
+
+        StringRequest request = new StringRequest(Request.Method.POST, mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String url = json.getString("data");
+                Boolean isSuccess = json.getBoolean("success");
+                if (isSuccess) {
+                    //封装消息，传递给主线程
+                    Message message = Message.obtain();
+
+                    message.obj = url;
+                    // 发送消息给主线程
+                    //标识线程
+                    message.what = 100;
+                    handler.sendMessage(message);
+                } else {
+                    Toast.makeText(getActivity(), "修改头像失败", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Log.e("volley", "Volley_Error: " + error.toString());
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                return params;
+            }
+        };
+        MyApplication.addRequest(request, TAG);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.f_ll_info:
-
                 break;
             case R.id.f_ll_us:
+                startActivity(new Intent(getActivity(), MyIntroductionActivity.class));
 
                 break;
             case R.id.f_ll_update:
-
+                checkUpdate();
                 break;
             case R.id.f_ll_psw:
                 // 修改密码弹窗创建和设置
@@ -251,14 +366,19 @@ public class TMainMyFragment extends Fragment implements View.OnClickListener {
                     public void onConfirm(PswDialog dialog) {
                         String old_pw = dialog.old_pw;
                         String new_pw = dialog.new_pw;
-                        Toast.makeText(getActivity(), "修改成功:原密码：" + old_pw + " 新密码：" + new_pw, Toast.LENGTH_SHORT).show();
+                        if (MyApplication.password.equals(old_pw)) {
+                            newPW = new_pw;
+                            changePW();
+                        } else {
+                            Toast.makeText(getActivity(), "原密码错误！", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
                 // 修改密码弹窗弹出
                 builder.show();
                 break;
             case R.id.f_ll_center:
-                break;
+
             case R.id.fbtn_exit:
                 // 关闭自动登录
                 MyApplication.autoLogin = false;
@@ -537,6 +657,7 @@ public class TMainMyFragment extends Fragment implements View.OnClickListener {
 
     /**
      * 处理最后从Setting返回后的提示
+     *
      * @param requestCode 权限码
      */
     @Override
@@ -561,6 +682,73 @@ public class TMainMyFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
         }
+    }
+
+
+    private void checkUpdate() {
+        // 创建AlertDialog.Builder实例
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        String mRequestUrl = Constant.API + Constant.CHECK_VERSION + "?version=" + MyApplication.versionName + "&type=tea&autoType=noauto" + "&userId=" + username;
+        Log.e("0124", "checkUpdate: " + mRequestUrl);
+
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                JSONObject data = json.getJSONObject("data");
+                Log.e("0124", "检查版本: " + json);
+                if (data.getString("status").equals("0")) {
+                    // 【不需要更新】
+                    // 设置对话框消息内容
+                    builder.setMessage("已是最新版本! 版本号为V" + MyApplication.versionName);
+
+                    // 设置PositiveButton（确定按钮）的点击事件
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // 确定按钮点击事件处理
+                            dialog.dismiss(); // 关闭对话框
+                        }
+                    });
+                    builder.show();
+                } else {
+
+                    String downloadUrl = data.getString("oploadLink");
+                    // 【需要更新】
+                    builder.setMessage("检测到有新版本，是否更新？");
+
+                    // 设置PositiveButton（确定按钮）的点击事件
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            // 启动浏览器
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            // 设置数据（要打开的URL）
+                            intent.setData(Uri.parse(downloadUrl));
+                            startActivity(intent);
+
+                            dialog.dismiss(); // 关闭对话框
+                        }
+                    });
+                    builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // 确定按钮点击事件处理
+                            dialog.dismiss(); // 关闭对话框
+                        }
+                    });
+                    builder.show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }, error -> {
+            Log.e("wen", "Volley_Error: " + error.toString());
+        });
+        MyApplication.addRequest(request, TAG);
     }
 }
 

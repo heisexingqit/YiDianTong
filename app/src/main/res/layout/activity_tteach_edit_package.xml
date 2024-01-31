@@ -66,6 +66,7 @@
         </LinearLayout>
 
         <com.example.yidiantong.View.ClickableImageView
+            android:visibility="invisible"
             android:id="@+id/iv_search_select"
             android:layout_width="45dp"
             android:layout_height="match_parent"
@@ -85,6 +86,7 @@
         android:layout_below="@+id/ll_top" />
 
     <!--遮蔽-->
+    <include layout="@layout/loading_page"/>
     <include
         layout="@layout/submitting_page"
         android:visibility="gone"/>

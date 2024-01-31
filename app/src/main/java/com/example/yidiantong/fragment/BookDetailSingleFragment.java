@@ -19,6 +19,7 @@ import android.os.Message;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -117,6 +118,8 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
             case "2":
                 icon_id = R.drawable.homework_icon;
                 break;
+            case "3":
+                icon_id = R.drawable.class_icon;
             default:
                 break;
         }
@@ -126,13 +129,14 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
         WebView fwv_bd_content = view.findViewById(R.id.fwv_bd_content);
         String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiShow() + "</body>";
         String html = html_content.replace("#","%23");
-        fwv_bd_content.loadData(html, "text/html", "utf-8");
+        fwv_bd_content.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
+
 
         // 题号和平均分
         ftv_bd_num = view.findViewById(R.id.ftv_bd_num);
         ftv_bd_num.setText(bookrecyclerEntity.getNum());
         ftv_bd_score = view.findViewById(R.id.ftv_bd_score);
-        ftv_bd_score.setText("得分: "+ bookrecyclerEntity.getStuScore()+" 全班平均分:"+ bookrecyclerEntity.getAvgScore());
+        ftv_bd_score.setText("得分: "+ bookrecyclerEntity.getStuScore()+" 全班均分:"+ bookrecyclerEntity.getAvgScore());
 
         //翻页组件
         ImageView iv_pager_last = getActivity().findViewById(R.id.iv_page_last);
@@ -192,27 +196,47 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
 
         String html_analysis = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiAnalysis() + "</body>";
         String html1 = html_analysis.replace("#","%23");
-        fwv_bd_analysis1.loadData(html1, "text/html", "utf-8");
+        fwv_bd_analysis1.loadDataWithBaseURL(null, html1, "text/html", "utf-8", null);
+
         // 修改模式
         fll_br_model = getActivity().findViewById(R.id.fll_br_model);
         fll_br_model.setOnClickListener(this);
         ftv_br_mode = getActivity().findViewById(R.id.ftv_br_mode);
         String modename = ftv_br_mode.getText().toString();
+
+        // 解析原本学生作答
+        if(bookrecyclerEntity.getStuAnswer().length() != 0){
+            stuans = (int) (bookrecyclerEntity.getStuAnswer().charAt(0) - 'A');
+        }
         if(modename.equals("练习模式")){
             fll_bd_analysis.setVisibility(View.GONE);
             fll_bd_answer.setVisibility(View.VISIBLE);
-
             mode = 0;
         }else {
             fll_bd_answer.setVisibility(View.GONE);
             fll_bd_analysis.setVisibility(View.VISIBLE);
             mode = 1;
             if(stuans == -1){
-                ftv_bd_stuans.setText("【你的作答】");
+                // 创建一个 SpannableString 对象
+                String text = "【你的作答】 未答";
+                SpannableString spannableString = new SpannableString(text);
+                // 获取文本的长度
+                int textLength = text.length();
+                // 获取文本的后两个字符的起始位置
+                int start = textLength - 2;
+                // 设置后两个字符的颜色为红色
+                spannableString.setSpan(new ForegroundColorSpan(Color.RED), start, textLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ftv_bd_stuans.setText(spannableString);
                 fiv_bd_tf.setVisibility(View.GONE);
             }else{
                 ftv_bd_stuans.setText("【你的作答】"+option[stuans]);
                 fiv_bd_tf.setVisibility(View.VISIBLE);
+                // 判断答案是否相等
+                if(option[stuans].equals(bookrecyclerEntity.getShitiAnswer())){
+                    fiv_bd_tf.setImageResource(R.drawable.ansright);
+                }else {
+                    fiv_bd_tf.setImageResource(R.drawable.answrong);
+                }
             }
         }
         return view;
@@ -317,16 +341,33 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
                             fll_bd_answer.setVisibility(View.GONE);
                             fll_bd_analysis.setVisibility(View.VISIBLE);
                             if(stuans == -1){
-                                ftv_bd_stuans.setText("【你的作答】");
+                                // 创建一个 SpannableString 对象
+                                String text = "【你的作答】 未答";
+                                SpannableString spannableString = new SpannableString(text);
+                                // 获取文本的长度
+                                int textLength = text.length();
+                                // 获取文本的后两个字符的起始位置
+                                int start = textLength - 2;
+                                // 设置后两个字符的颜色为红色
+                                spannableString.setSpan(new ForegroundColorSpan(Color.RED), start, textLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                ftv_bd_stuans.setText(spannableString);
                                 fiv_bd_tf.setVisibility(View.GONE);
                             }else{
                                 ftv_bd_stuans.setText("【你的作答】"+option[stuans]);
                                 fiv_bd_tf.setVisibility(View.VISIBLE);
+                                // 判断答案是否相等
+                                if(option[stuans].equals(bookrecyclerEntity.getShitiAnswer())){
+                                    fiv_bd_tf.setImageResource(R.drawable.ansright);
+                                }else {
+                                    fiv_bd_tf.setImageResource(R.drawable.answrong);
+                                }
                             }
                             ftv_br_mode.setText("复习模式");
                             mode = 1;
                             dialog_model.dismiss();
                         }
+                        Log.e("0123", "onClick: " + bookrecyclerEntity.getStuAnswer());
+                        Log.e("0123", "onClick: " + stuans);
                     }
                 });
                 dialog_model = builder_model.create();

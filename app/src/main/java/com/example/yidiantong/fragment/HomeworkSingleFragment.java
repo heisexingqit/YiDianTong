@@ -110,11 +110,13 @@ public class HomeworkSingleFragment extends Fragment implements View.OnClickList
         }
 
         /** 转义数据中的字符实体 */
+        Log.d("wenbb", "转换前的: " + homeworkEntity.getQuestionContent());
         homeworkEntity.setQuestionContent(StringEscapeUtils.unescapeHtml4(homeworkEntity.getQuestionContent()));
+        Log.d("wenbb", "转换后的: " + homeworkEntity.getQuestionContent());
 
         WebView wv_content = view.findViewById(R.id.wv_content);
         String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + homeworkEntity.getQuestionContent() + "</body>";
-        wv_content.loadData(html_content, "text/html", "utf-8");
+        wv_content.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
 
         //题目类型
         TextView tv_question_type = view.findViewById(R.id.tv_question_type);

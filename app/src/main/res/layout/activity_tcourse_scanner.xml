@@ -56,6 +56,13 @@
                 android:textColor="@color/black"
                 android:textColorHint="#8F9BB3"
                 android:textSize="17sp" />
+            <com.example.yidiantong.View.ClickableTextView
+                android:id="@+id/tv_log"
+                android:layout_marginStart="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="•••"/>
         </LinearLayout>
 
         <Button

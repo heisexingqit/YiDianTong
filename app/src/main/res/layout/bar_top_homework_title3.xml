@@ -31,6 +31,6 @@
             android:adjustViewBounds="true"
             android:paddingStart="6dp"
             android:paddingEnd="6dp"
-            android:src="@drawable/t_set_icon" />
+            android:src="@drawable/publish_answers" />
 
 </LinearLayout>

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -43,6 +44,8 @@ public class PswDialog extends Dialog implements View.OnClickListener {
     public String old_pw;
     public String new_pw;
 
+    private Context mContext;
+
     public void setCancel(String cancel, IOnCancelListener cancelListener) {
         this.cancel = cancel;
         this.cancelListener = cancelListener;
@@ -55,6 +58,7 @@ public class PswDialog extends Dialog implements View.OnClickListener {
 
     public PswDialog(@NonNull Context context) {
         super(context);
+        mContext = context;
     }
 
     public PswDialog(@NonNull Context context, int themeResId) {
@@ -99,6 +103,11 @@ public class PswDialog extends Dialog implements View.OnClickListener {
                 if (confirmListener != null) {
                     old_pw = fet_old_psw.getText().toString();
                     new_pw = fet_new1_psw.getText().toString();
+                    String new_pw2 = fet_new2_psw.getText().toString();
+                    if(!new_pw.equals(new_pw2)){
+                        Toast.makeText(mContext, "两次输入的密码不一致!", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
                     confirmListener.onConfirm(this);
                 }
                 dismiss();

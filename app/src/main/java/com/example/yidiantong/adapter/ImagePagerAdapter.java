@@ -62,13 +62,13 @@ public class ImagePagerAdapter extends PagerAdapter {
             }
         });
 
-        pv_content.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                clickListener.onLongItemClick(position);
-                return false;
-            }
-        });
+//        pv_content.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View view) {
+//                clickListener.onLongItemClick(position);
+//                return false;
+//            }
+//        });
 
 
         container.addView(v);
@@ -105,6 +105,6 @@ public class ImagePagerAdapter extends PagerAdapter {
     //点击dismiss
     public interface MyItemClickListener {
         void onItemClick();
-        void onLongItemClick(int pos);
+//        void onLongItemClick(int pos);
     }
 }

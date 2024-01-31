@@ -1,5 +1,6 @@
 package com.example.yidiantong.adapter;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -31,6 +32,7 @@ public class TBellSubmitAdapter extends FragmentStatePagerAdapter {
 
     List<Fragment> mFragments = new ArrayList<>();
 
+    @SuppressLint("WrongConstant")
     public TBellSubmitAdapter(@NonNull FragmentManager fm) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         mFragments.add(TBellNoticeSubmitFragment.newInstance());

@@ -26,8 +26,11 @@ import com.example.yidiantong.adapter.THomeworkAddPickPagerAdapter;
 import com.example.yidiantong.bean.THomeworkAddEntity;
 import com.example.yidiantong.util.PxUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class THomeworkPickChangeFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "THomeworkPickChangeFragment";
@@ -77,6 +80,7 @@ public class THomeworkPickChangeFragment extends Fragment implements View.OnClic
 
         view.findViewById(R.id.iv_minus).setOnClickListener(this);
         tv_count.setText((nowPos + 1) + "/" + pickList.size());
+
         return view;
     }
 
@@ -106,22 +110,35 @@ public class THomeworkPickChangeFragment extends Fragment implements View.OnClic
         switch (view.getId()) {
             case R.id.iv_left_ex:
                 if (nowPos != 0) {
+                    if(!pickList.get(nowPos).getBaseTypeId().equals(pickList.get(nowPos-1).getBaseTypeId())){
+                        Toast.makeText(getActivity(), "该试题不能前移到上一道大题中!", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
                     Collections.swap(pickList, nowPos - 1, nowPos);
                     adapter.notifyDataSetChanged();
                     nowPos -= 1;
                     vp_main.setCurrentItem(nowPos, false);
                     tv_count.setText((nowPos + 1) + "/" + pickList.size());
                     showQuestionBlock(pickList);
+                }else{
+                    Toast.makeText(getActivity(), "第一道试题不能进行前移操作!", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.iv_right_ex:
                 if (nowPos != pickList.size() - 1) {
+                    if(!pickList.get(nowPos).getBaseTypeId().equals(pickList.get(nowPos+1).getBaseTypeId())){
+                        Toast.makeText(getActivity(), "该试题不能后移到下一道大题中!", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
+
                     Collections.swap(pickList, nowPos + 1, nowPos);
                     adapter.notifyDataSetChanged();
                     nowPos += 1;
                     vp_main.setCurrentItem(nowPos, false);
                     tv_count.setText((nowPos + 1) + "/" + pickList.size());
                     showQuestionBlock(pickList);
+                }else{
+                    Toast.makeText(getActivity(), "最后一道试题不能进行后移操作!", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.iv_minus:

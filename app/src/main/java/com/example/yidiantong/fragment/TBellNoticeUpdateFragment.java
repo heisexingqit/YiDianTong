@@ -3,7 +3,9 @@ package com.example.yidiantong.fragment;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -26,6 +28,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.Manager.CustomDatePicker;
@@ -33,9 +36,11 @@ import com.example.yidiantong.Manager.DatePicker;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.bean.TBellUpdateEntity;
+import com.example.yidiantong.ui.TMainPagerActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.DateFormatUtils;
 import com.example.yidiantong.util.JsonUtils;
+import com.example.yidiantong.util.PxUtils;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -44,13 +49,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
-    private static final Object TAG = "TBellNoticeUpdateFragment";
+    private static final String TAG = "TBellNoticeUpdateFragme";
     private EditText fet_bell_name;
     private TextView ftv_bell_class_name;
     private TextView ftv_bellclass_null;
@@ -68,7 +77,7 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
     // 日期和时间
     private TextView mTvSelectedDate, mTvSelectedTime;
     private CustomDatePicker mDatePicker;
-    private DatePicker  mTimerPicker;
+    private DatePicker mTimerPicker;
     private String endTime;
     private String endDatestamp;
     private String newDate;
@@ -77,7 +86,7 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
     private Button fb_bell_cancle;
     private Button fb_bell_confirm;
 
-    private String bellclass;
+    private List<String> bellclass;
     private TextView lastbellclass;
 
     // 判断内容在那里为空，-1均不为空，0标题，1班级，2内容
@@ -85,7 +94,7 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
     // 判断对象，0全部，1全部老师，2全部学生
     private int all_tea_stu = -1;
     // 1为选中，2为未选中
-    private int[] allmode = {0,0} ;
+    private int[] allmode = {0, 0};
     // 判断时间，1为即时，2为定时
     private int timemode;
     private EditText fet_bell_content;
@@ -94,7 +103,6 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
     private RelativeLayout frl_bell_0;
     private RelativeLayout frl_bell_1;
     private String setDate1;
-    private String classId;
     private int namefirst;
 
 
@@ -121,7 +129,7 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_t_bell_notice_update, container, false);
-        Log.e("进如修改页面","");
+        Log.e("进如修改页面", "");
         fet_bell_name = view.findViewById(R.id.fet_bell_name);
         ftv_bell_class_name = view.findViewById(R.id.ftv_bell_class_name);
         ftv_bellclass_null = view.findViewById(R.id.ftv_bellclass_null);
@@ -149,7 +157,11 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
         frg_bell.setOnCheckedChangeListener(this);
 
         // 初始化
-        loadClass();
+        // ------------------------------------ //
+        //  先将修改的info获取到，之后再更新class选项
+        //  因为class更新需要info
+        // ------------------------------------ //
+
         loadItems_Net();
 
         return view;
@@ -157,9 +169,9 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
-        switch (checkedId){
+        switch (checkedId) {
             case R.id.frb_bell_now:
-                Log.e("选择即时","");
+                Log.e("选择即时", "");
                 frb_bell_now.setButtonDrawable(R.drawable.bell_time_select);
                 frb_bell_scheduled.setButtonDrawable(R.drawable.bell_time_unselect);
                 fll_bell_time.setBackgroundResource(R.drawable.bell_time_unfocus);
@@ -168,7 +180,7 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
                 timemode = 1;
                 break;
             case R.id.frb_bell_scheduled:
-                Log.e("选择定时","");
+                Log.e("选择定时", "");
                 frb_bell_now.setButtonDrawable(R.drawable.bell_time_unselect);
                 frb_bell_scheduled.setButtonDrawable(R.drawable.bell_time_select);
                 fll_bell_time.setBackgroundResource(R.drawable.bell_time_focus);
@@ -189,7 +201,8 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
             if (message.what == 100) {
                 tBellNoticeUpdateEntity = (List<TBellUpdateEntity.TBellNoticeUpdateEntity>) message.obj;
                 showView(tBellNoticeUpdateEntity);
-            }else if(message.what == 101){
+                loadClass();
+            } else if (message.what == 101) {
                 showClass((Map<String, String>) message.obj);
             }
         }
@@ -207,7 +220,7 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
                 JSONArray data = json.getJSONArray("data");
-                for (int i = data.length()-1; i >=0; i--) {
+                for (int i = data.length() - 1; i >= 0; i--) {
                     JSONObject object = data.getJSONObject(i);
                     classMap.put(object.getString("name"), object.getString("id"));
                 }
@@ -233,43 +246,37 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
     private void showClass(Map<String, String> obj) {
 
         classMap = obj;
-        Log.e("classMap",""+classMap);
         if (classMap.size() == 0) {
             ftv_bellclass_null.setVisibility(View.VISIBLE);
         }
         // 初始化
         ftv_bell_class_name.setText(tBellNoticeUpdateEntity.get(0).getClassName());
+        bellclass = new ArrayList<>(Arrays.asList(tBellNoticeUpdateEntity.get(0).getClassName().split(",")));
+
         classMap.forEach((name, id) -> {
-            view = LayoutInflater.from(getActivity()).inflate(R.layout.bell_class, ffl_bellclass, false);
-            TextView ftv_bell_class = view.findViewById(R.id.ftv_bell_class);
+            view = LayoutInflater.from(getActivity()).inflate(R.layout.item_t_homework_add_block, ffl_bellclass, false);
+            TextView ftv_bell_class = view.findViewById(R.id.tv_name);
             ftv_bell_class.setText(name);
-            if(name.equals(tBellNoticeUpdateEntity.get(0).getClassName())){
-                classId = id;
-                bellclass = name;
-                lastbellclass = ftv_bell_class;
+            if (bellclass.contains(name)) {
+                selectedTv(ftv_bell_class);
             }
-            if (name.equals(bellclass)) {
-                ftv_bell_class.setBackgroundResource(R.color.f_blue);
-            }
+
             ftv_bell_class.setOnClickListener(v -> {
-                bellclass = (String) ftv_bell_class.getText();
-                Log.e("bellclass",""+bellclass);
+                String className = (String) ftv_bell_class.getText().toString();
 
-                if (lastbellclass != null) {
-                    lastbellclass.setBackgroundResource(R.color.f_light_gray);
-                }
-                if (lastbellclass == ftv_bell_class) {
-                    bellclass = "";
-                    lastbellclass = null;
+                if (bellclass.contains(className)) {
+                    bellclass.remove(className);
+                    unselectedTv(ftv_bell_class);
                 } else {
-                    bellclass = ftv_bell_class.getText().toString();
-                    ftv_bell_class.setBackgroundResource(R.color.f_blue);
-                    lastbellclass = ftv_bell_class;
+                    bellclass.add(className);
+                    selectedTv(ftv_bell_class);
                 }
-                ftv_bell_class_name.setText(bellclass);
-                classId = id;
-            });
 
+                ftv_bell_class_name.setText(String.join(",", bellclass));
+            });
+            ViewGroup.LayoutParams params = ftv_bell_class.getLayoutParams();
+            params.width = ffl_bellclass.getWidth() / 2 - PxUtils.dip2px(view.getContext(), 15);
+            ftv_bell_class.setLayoutParams(params);
             ffl_bellclass.addView(view);
         });
     }
@@ -278,10 +285,10 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
         fet_bell_name.setText(tBellNoticeUpdateEntity.get(0).getTitle());
 
         setDate1 = tBellNoticeUpdateEntity.get(0).getSetDate();
-        if(setDate1.equals("null")){
+        if (setDate1.equals("null")) {
             timemode = 1;
             frb_bell_now.setButtonDrawable(R.drawable.bell_time_select);
-        }else{
+        } else {
             timemode = 2;
             frb_bell_now.setButtonDrawable(R.drawable.bell_time_unselect);
             frb_bell_scheduled.setButtonDrawable(R.drawable.bell_time_select);
@@ -304,12 +311,13 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
                 String data = json.getString("data");
-                String data1 = "["+data+"]";
-                Log.e("data2",""+data1);
+                String data1 = "[" + data + "]";
+                Log.e("data2", "" + data1);
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
-                List<TBellUpdateEntity.TBellNoticeUpdateEntity> updateList =gson.fromJson(data1, new TypeToken<List<TBellUpdateEntity.TBellNoticeUpdateEntity>>() {}.getType());
-                Log.e("updateList",""+updateList);
+                List<TBellUpdateEntity.TBellNoticeUpdateEntity> updateList = gson.fromJson(data1, new TypeToken<List<TBellUpdateEntity.TBellNoticeUpdateEntity>>() {
+                }.getType());
+                Log.e("updateList", "" + updateList);
 
                 //封装消息，传递给主线程
                 Message message = Message.obtain();
@@ -337,7 +345,7 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.fev_bell_time:
                 // 日期和时间弹框
                 //mTimerPicker.show(endTime);
@@ -348,33 +356,33 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
                 break;
             case R.id.fb_bell_confirm:
                 //判断信息是否为空
-                Log.e("timemode",""+timemode);
-                Log.e("fev_bell_time.length()",""+fev_bell_time.length());
-                if(fet_bell_name.length() == 0){
+                Log.e("timemode", "" + timemode);
+                Log.e("fev_bell_time.length()", "" + fev_bell_time.length());
+                if (fet_bell_name.length() == 0) {
                     nullmode = 0;
-                }else if(ftv_bell_class_name.length() == 0){
+                } else if (ftv_bell_class_name.length() == 0) {
                     nullmode = 1;
-                }else if(fet_bell_content.length() == 0){
+                } else if (fet_bell_content.length() == 0) {
                     nullmode = 2;
-                }else if(timemode == 2 && fev_bell_time.length() == 0){
+                } else if (timemode == 2 && fev_bell_time.length() == 0) {
                     nullmode = 3;
-                }else{
+                } else {
                     nullmode = -1;
                 }
                 //建立对话框
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), AlertDialog.THEME_HOLO_LIGHT);
                 //自定义title样式
                 TextView tv = new TextView(getActivity());
-                if(nullmode == 0){
-                    Log.e("fet_bell_name" ,""+fet_bell_name.getText().toString());
+                if (nullmode == 0) {
+                    Log.e("fet_bell_name", "" + fet_bell_name.getText().toString());
                     tv.setText("请输入标题！");    //内容
-                }else if(nullmode == 1){
+                } else if (nullmode == 1) {
                     tv.setText("请选择班级！");    //内容
-                }else if(nullmode == 2){
+                } else if (nullmode == 2) {
                     tv.setText("请先输入内容！");    //内容
-                }else if(nullmode == 3){
+                } else if (nullmode == 3) {
                     tv.setText("请设置定时发布时间！");
-                }else{
+                } else {
                     tv.setText("发布成功");    //内容
                 }
                 tv.setTextSize(17);//字体大小
@@ -383,9 +391,9 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
                 //设置title组件
                 builder.setCustomTitle(tv);
                 AlertDialog dialog = builder.create();
-                if(nullmode != -1){
+                if (nullmode != -1) {
                     builder.setNegativeButton("确定", null);
-                }else{
+                } else {
                     builder.setNegativeButton("确定", new DialogInterface.OnClickListener() {
                         @RequiresApi(api = Build.VERSION_CODES.N)
                         @Override
@@ -404,20 +412,43 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
     }
 
     private void gotolast() {
-        getActivity().finish();
+        Intent toHome = new Intent(getActivity(), TMainPagerActivity.class);
+        toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(toHome);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void submit() {
-        String className = bellclass;
-        String content = fet_bell_content.getText().toString();
-        String title = fet_bell_name.getText().toString();
+        String className = null;
+        String content = null;
+        String title = null;
+        String userCn = null;
+        try {
+            className = URLEncoder.encode(ftv_bell_class_name.getText().toString(), "UTF-8");
+            content = URLEncoder.encode(fet_bell_content.getText().toString(), "UTF-8");
+            title = URLEncoder.encode(fet_bell_name.getText().toString(), "UTF-8");
+            userCn = URLEncoder.encode(MyApplication.cnName, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         Integer setDateFlag = timemode;
         String noticeId = getActivity().getIntent().getStringExtra("noticeId");
-        if(setDateFlag == 2){
+        if (setDateFlag == 2) {
             setDate = fev_bell_time.getText().toString();
         }
-        mRequestUrl1 = Constant.API + Constant.T_BELL_SAVE_MANAGE_NOTICE + "?classId=" + classId + "&className=" + className + "&userName=" + MyApplication.username + "&userCN=" + MyApplication.cnName + "&content=" + content + "&title=" + title + "&setDateFlag=" + setDateFlag + "&setDate=" + setDate + "&saveOrUpdate=" + "update" + "&noticeId=" + noticeId;
-        Log.d("", "submitno: " + mRequestUrl1);
+        // ------------------------
+        //  通过nameList获取idList
+        // ------------------------
+        StringBuilder result = new StringBuilder();
+        bellclass.forEach(item -> {
+            if (result.length() > 0) {
+                result.append(",");
+            }
+            result.append(classMap.get(item));
+        });
+
+        mRequestUrl1 = Constant.API + Constant.T_BELL_SAVE_MANAGE_NOTICE + "?classId=" + result + "&className=" + className + "&userName=" + MyApplication.username + "&userCN=" + userCn + "&content=" + content + "&title=" + title + "&setDateFlag=" + setDateFlag + "&setDate=" + setDate + "&saveOrUpdate=" + "update" + "&noticeId=" + noticeId;
+        Log.e("", "submitno: " + mRequestUrl1);
 
         StringRequest request = new StringRequest(mRequestUrl1, response -> {
 
@@ -426,14 +457,15 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
                 //结果信息
                 Boolean isSuccess = json.getBoolean("success");
                 Message message = Message.obtain();
-                if(isSuccess){
-                    message.obj = 1;
-                }else{
-                    message.obj = 0;
+                if (isSuccess) {
+                    Toast.makeText(getActivity(), "发布成功", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "发布失败", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "submit: " + json.getString("message"));
                 }
                 //标识线程
-                message.what = 102;
-                handler.sendMessage(message);
+//                message.what = 102;
+//                handler.sendMessage(message);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -457,7 +489,7 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
             @Override
             public void onTimeSelected(long timestamp) {
                 newDate = DateFormatUtils.long2Str(timestamp, false);
-                mTimerPicker.show(endTime);
+                mTimerPicker.show(System.currentTimeMillis());
             }
         }, endTimestamp, beginTimestamp);
         // 允许点击屏幕或物理返回键关闭
@@ -472,14 +504,14 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
     private void initTimerPicker() {
 
         long beginTimestamp = DateFormatUtils.str2Long("2009-01-01 00:00:00", true);
-        long endTimestamp = DateFormatUtils.str2Long(endTime, true);
+        long endTimestamp = System.currentTimeMillis();
 
         // 通过日期字符串初始化日期，格式请用：yyyy-MM-dd HH:mm
         mTimerPicker = new DatePicker(getActivity(), new DatePicker.Callback() {
             @Override
             public void onTimeSelected(long timestamp) {
-                String newtime = DateFormatUtils.long2Str(timestamp, true).substring(0,5);
-                fev_bell_time.setText(newDate + " " +newtime);
+                String newtime = DateFormatUtils.long2Str(timestamp, true).substring(0, 5);
+                fev_bell_time.setText(newDate + " " + newtime);
             }
         }, beginTimestamp, endTimestamp);
         // 允许点击屏幕或物理返回键关闭
@@ -492,4 +524,14 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
         mTimerPicker.setCanShowAnim(true);
     }
 
+
+    private void selectedTv(TextView tv) {
+        tv.setBackgroundResource(R.drawable.t_homework_add_select);
+        tv.setTextColor(getActivity().getColor(R.color.red));
+    }
+
+    private void unselectedTv(TextView tv) {
+        tv.setBackgroundResource(R.drawable.t_homework_add_unselect);
+        tv.setTextColor(getActivity().getColor(R.color.default_gray));
+    }
 }

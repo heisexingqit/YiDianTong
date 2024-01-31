@@ -68,7 +68,7 @@
                 android:src="@drawable/t_empty_homework"
                 android:translationY="-100dp" />
 
-            <ScrollView
+            <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/sv_main">
@@ -77,7 +77,7 @@
                     android:id="@+id/rv_main"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
-            </ScrollView>
+            </androidx.core.widget.NestedScrollView>
 
         </RelativeLayout>
     </LinearLayout>

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -40,7 +41,7 @@ import com.example.yidiantong.View.ClickableTextView;
 import com.example.yidiantong.adapter.TTeachRecyclerAdapter;
 import com.example.yidiantong.bean.TTeachItemEntity;
 import com.example.yidiantong.ui.THomeworkAddActivity;
-import com.example.yidiantong.ui.THomeworkAddCameraActivity;
+import com.example.yidiantong.ui.THomeworkCameraAddActivity;
 import com.example.yidiantong.ui.TLearnPlanAddActivity;
 import com.example.yidiantong.ui.TPackageAddActivity;
 import com.example.yidiantong.ui.TTeachAssginActivity;
@@ -114,8 +115,9 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
     private EditText et_expansion;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
@@ -127,6 +129,7 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.e(TAG, "onCreateView: ");
         View view = inflater.inflate(R.layout.fragment_t_main_teach, container, false);
 
         //获取组件
@@ -258,7 +261,7 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
                 if (item.getIconUrl().contains("paper")) {
                     if (item.getPaperType().equals("6")) {
                         intent = new Intent(getActivity(), TTeachEditHomeworkCameraActivity.class);
-                    }else{
+                    } else {
                         intent = new Intent(getActivity(), TTeachEditHomeworkActivity.class);
                     }
                 } else if (item.getIconUrl().contains("learnPlan")) {
@@ -277,16 +280,12 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
                 intent.putExtra("xueduanCode", item.getChannelCode());
                 intent.putExtra("xueke", item.getSubject());
                 intent.putExtra("xuekeCode", item.getSubjectId());
-                intent.putExtra("jiaocaiCode", item.getGradeBook());
-                intent.putExtra("jiaocai", item.getGradeBookCode());
+                intent.putExtra("jiaocai", item.getGradeBook());
+                intent.putExtra("jiaocaiCode", item.getGradeBookCode());
                 intent.putExtra("banben", item.getTextBook());
                 intent.putExtra("banbenCode", item.getTextBookId());
+                Log.e("0103", "onItemClickEdit: " + item);
                 String zhishidian = item.getKnowledge();
-
-                if (item.getIconUrl().contains("paper")) {
-                    intent.putExtra("jiaocai", item.getGradeBook());
-                    intent.putExtra("jiaocaiCode", item.getGradeBookCode());
-                }
 
                 int lastIndex = zhishidian.lastIndexOf("/");
                 int secondLastIndex = -1;
@@ -337,8 +336,8 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
                             }
 
                         }, error -> {
-                            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
-                            Log.d("wen", "Volley_Error: " + error.toString());
+                            Log.e("volley", "Volley_Error: " + error.toString());
+
                         });
 
                         MyApplication.addRequest(request, TAG);
@@ -421,8 +420,8 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
                                 }
 
                             }, error -> {
-                                Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
-                                Log.d("wen", "Volley_Error: " + error.toString());
+                                Log.e("volley", "Volley_Error: " + error.toString());
+
                             });
                             MyApplication.addRequest(request, TAG);
 
@@ -569,10 +568,11 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
                 addMenuWindow.dismiss();
                 break;
             case R.id.tv_camera_homework:
-                startActivity(new Intent(getActivity(), THomeworkAddCameraActivity.class));
+                startActivity(new Intent(getActivity(), THomeworkCameraAddActivity.class));
                 addMenuWindow.dismiss();
                 break;
         }
+        Log.e(TAG, "refreshByType: ");
     }
 
     private Handler handler = new Handler(Looper.getMainLooper()) {
@@ -627,6 +627,7 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
                 String itemString = json.getString("data");
+                Log.e("0103", ": 批改页面对象:" + itemString);
                 Gson gson = new Gson();
 
                 // 使用Goson框架转换Json字符串为列表
@@ -661,5 +662,12 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
             adapter.fail();
         });
         MyApplication.addRequest(request, TAG);
+    }
+
+    public void refreshByType(String type) {
+        this.type = type;
+        if (adapter != null) {
+            refreshList();
+        }
     }
 }

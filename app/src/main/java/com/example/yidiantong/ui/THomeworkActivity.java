@@ -20,6 +20,10 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -37,6 +41,7 @@ import com.example.yidiantong.bean.THomeworkStudentItemEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.MyItemDecoration;
+import com.example.yidiantong.util.MyReadWriteLock;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -54,9 +59,9 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
     private String taskId;
     private String teacherId;
     private String type;
-    private String status = "0";
+    private String status = "0";    // 批改状态，2未批改；4以批改，空或者0代表全部
     private String searchStr = "";
-    private String mode = "2";
+    private String mode = "2";      // 模式：1逐题批阅；2只显示需手工批阅试题
 
     // 页面组件
     private Button btn_report;
@@ -76,8 +81,18 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
     private ClickableImageView iv_select;
     private ClickableImageView iv_setting;
 
+    private TextView[] _tv = new TextView[3];
+
+    private ActivityResultLauncher<Intent> mResultLauncher;
+
+    // -------------------
+    //  checkIn点击后标记
+    // -------------------
+    private int checkInPos = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thomework);
         Intent intent = getIntent();
@@ -130,17 +145,28 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
 
         // 设置item点击事件
         adapter.setmItemClickListener((v, pos) -> {
-            Intent intent2 = new Intent(this, THomeworkMarkPagerActivity.class);
-            intent2.putExtra("item", adapter.itemList.get(pos));
-            intent2.putExtra("stuName", adapter.itemList.get(pos).getUserName());
-            intent2.putExtra("taskId", taskId);
-            intent2.putExtra("name", adapter.itemList.get(pos).getUserCn());
-            intent2.putExtra("stuScore", adapter.itemList.get(pos).getScore());
-            intent2.putExtra("scoreCount", adapter.itemList.get(pos).getScoreCount());
-            intent2.putExtra("canMark", !adapter.itemList.get(pos).getStatus().equals("5"));
-            intent2.putExtra("type", type);
-            intent2.putExtra("mode", mode);
-            startActivity(intent2);
+            // ----------------------
+            // 需要读写锁
+            // 判断对未批改部分进行判断
+            // ----------------------
+            if (adapter.itemList.get(pos).getStatus().equals("2")) {
+                // 未批改
+                checkInPos = pos;
+                MyReadWriteLock.checkin(taskId, adapter.itemList.get(pos).getUserName(), "teacher", teacherId, handler, this);
+            } else {
+                // 已批改
+                Intent intent2 = new Intent(this, THomeworkMarkPagerActivity.class);
+                intent2.putExtra("item", adapter.itemList.get(pos));
+                intent2.putExtra("stuName", adapter.itemList.get(pos).getUserName());
+                intent2.putExtra("taskId", taskId);
+                intent2.putExtra("name", adapter.itemList.get(pos).getUserCn());
+                intent2.putExtra("stuScore", adapter.itemList.get(pos).getScore());
+                intent2.putExtra("scoreCount", adapter.itemList.get(pos).getScoreCount());
+                intent2.putExtra("canMark", !adapter.itemList.get(pos).getStatus().equals("5"));
+                intent2.putExtra("type", type);
+                intent2.putExtra("mode", mode);
+                mResultLauncher.launch(intent2);
+            }
         });
 
         //下拉刷新
@@ -175,6 +201,16 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
                 return false;
             }
         });
+
+        // 提交页面回调
+        mResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == HomeworkPagerActivity.RESULT_OK) {
+                    refreshList();
+                }
+            }
+        });
     }
 
     //刷新列表
@@ -201,6 +237,7 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
                     //绑定点击事件
                     contentView.findViewById(R.id.tv_marked).setOnClickListener(this);
                     contentView.findViewById(R.id.tv_unmarked).setOnClickListener(this);
+                    contentView.findViewById(R.id.tv_all_mark).setOnClickListener(this);
                     window = new PopupWindow(contentView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
                     window.setTouchable(true);
                 }
@@ -210,11 +247,20 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
                 if (contentViewSetting == null) {
                     contentViewSetting = LayoutInflater.from(this).inflate(R.layout.menu_t_setting_select, null, false);
                     //绑定点击事件
-                    contentViewSetting.findViewById(R.id.tv_all).setOnClickListener(this);
-                    contentViewSetting.findViewById(R.id.tv_manual).setOnClickListener(this);
-                    windowSetting = new PopupWindow(contentViewSetting, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
-                    windowSetting.setTouchable(true);
+                    _tv[1] = contentViewSetting.findViewById(R.id.tv_all);
+                    _tv[2] = contentViewSetting.findViewById(R.id.tv_manual);
+                    _tv[1].setOnClickListener(this);
+                    _tv[2].setOnClickListener(this);
+
+                    // 初始化染色
+                    _tv[Integer.parseInt(mode)].setBackgroundResource(R.color.main_bg);
+                    _tv[Integer.parseInt(mode)].setTextColor(Color.WHITE);
+
                 }
+
+                windowSetting = new PopupWindow(contentViewSetting, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
+                windowSetting.setTouchable(true);
+
                 windowSetting.showAsDropDown(iv_setting, -200, -20);
                 break;
             case R.id.tv_marked:
@@ -233,6 +279,13 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
                 }
                 window.dismiss();
                 break;
+            case R.id.tv_all_mark:
+                if (!status.equals("0")) {
+                    status = "0";
+                    refreshList();
+                }
+                window.dismiss();
+                break;
             case R.id.tv_all:
                 changeMode("1");
                 windowSetting.dismiss();
@@ -241,7 +294,10 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
                 changeMode("2");
                 windowSetting.dismiss();
                 break;
+
+
         }
+
     }
 
 
@@ -258,6 +314,25 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
                     isButtonClick = true;
                 }
                 adapter.loadData(moreList);
+            } else if (message.what == 110) {
+                boolean canCheckIn = (Boolean) message.obj;
+                if (!canCheckIn) {
+                    Toast.makeText(THomeworkActivity.this, "学生正在修改中，无法进行批改!", Toast.LENGTH_SHORT).show();
+                } else {
+                    int pos = checkInPos;
+                    // 已批改
+                    Intent intent2 = new Intent(THomeworkActivity.this, THomeworkMarkPagerActivity.class);
+                    intent2.putExtra("item", adapter.itemList.get(pos));
+                    intent2.putExtra("stuName", adapter.itemList.get(pos).getUserName());
+                    intent2.putExtra("taskId", taskId);
+                    intent2.putExtra("name", adapter.itemList.get(pos).getUserCn());
+                    intent2.putExtra("stuScore", adapter.itemList.get(pos).getScore());
+                    intent2.putExtra("scoreCount", adapter.itemList.get(pos).getScoreCount());
+                    intent2.putExtra("canMark", !adapter.itemList.get(pos).getStatus().equals("5"));
+                    intent2.putExtra("type", type);
+                    intent2.putExtra("mode", mode);
+                    mResultLauncher.launch(intent2);
+                }
             }
         }
     };
@@ -272,7 +347,7 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
         mRequestUrl = Constant.API + Constant.T_HOMEWORK_STUDENT_LIST + "?taskId=" + taskId + "&teacherId="
                 + teacherId + "&type=" + type + "&status=" + status + "&searchStr=" + searchStr;
 
-        Log.d("wen", "loadItems_Net: " + mRequestUrl);
+        Log.e(TAG, "loadItems_Net: 请求学生列表");
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
 
@@ -280,6 +355,8 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
                 String itemString = json.getString("data");
+                Log.e(TAG, "loadItems_Net: 请求学生列表" + itemString);
+
                 Gson gson = new Gson();
 
                 // 使用Goson框架转换Json字符串为列表
@@ -302,8 +379,8 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
                 e.printStackTrace();
             }
         }, error -> {
-            Log.d("wen", "loadItems_Net: " + error.toString());
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.e("volley", "Volley_Error: " + error.toString());
+
             adapter.fail();
         });
         MyApplication.addRequest(request, TAG);
@@ -334,6 +411,7 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
 //                    message.what = 101;
 //                    handler.sendMessage(message);
                     mode = mod;
+
                 } else {
                     Toast.makeText(this, "模式获取失败", Toast.LENGTH_SHORT).show();
                 }
@@ -362,6 +440,12 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
 
                 if (isSuccess) {
                     mode = tMode;
+                    int last = Integer.parseInt(mode) % 2 + 1;
+                    _tv[last].setBackgroundResource(0);
+                    _tv[last].setTextColor(getColor(R.color.gray_text));
+                    _tv[Integer.parseInt(mode)].setBackgroundResource(R.color.main_bg);
+                    _tv[Integer.parseInt(mode)].setTextColor(Color.WHITE);
+
 //                    // 封装消息，传递给主线程
 //                    Message message = Message.obtain();
 //
@@ -371,12 +455,11 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
 //                    // 标识线程
 //                    message.what = 101;
 //                    handler.sendMessage(message);
-
                     AlertDialog.Builder builder = new AlertDialog.Builder(THomeworkActivity.this);
                     if (mode.equals("2")) {
-                        builder.setTitle("设置批改模式为:只显示需手工批阅的试题");
+                        builder.setTitle("设置批改模式为:只显示需要手工批阅的试题");
                     } else {
-                        builder.setTitle("设置批改模式为:逐题批阅");
+                        builder.setTitle("设置批改模式为:显示全部试题");
                     }
                     builder.setPositiveButton("OK", null);
                     AlertDialog dialog = builder.create();

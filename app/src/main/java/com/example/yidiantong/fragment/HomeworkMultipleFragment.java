@@ -42,6 +42,8 @@ public class HomeworkMultipleFragment extends Fragment implements View.OnClickLi
     private HomeworkEntity homeworkEntity;
     private StuAnswerEntity stuAnswerEntity;
 
+    private boolean unTransmit = false;
+
     public static HomeworkMultipleFragment newInstance(HomeworkEntity homeworkEntity, int position, int size, StuAnswerEntity stuAnswerEntity) {
         HomeworkMultipleFragment fragment = new HomeworkMultipleFragment();
 
@@ -99,7 +101,7 @@ public class HomeworkMultipleFragment extends Fragment implements View.OnClickLi
         float deviceAspectRatio = (float) screenHeight / screenWidth;
         // 获取底部布局
         RelativeLayout block = view.findViewById(R.id.rl_bottom_block);
-        if(deviceAspectRatio > 2.0){
+        if (deviceAspectRatio > 2.0) {
             ViewGroup.LayoutParams params = block.getLayoutParams();
             params.height = PxUtils.dip2px(getActivity(), 80);
             block.setLayoutParams(params);
@@ -108,7 +110,7 @@ public class HomeworkMultipleFragment extends Fragment implements View.OnClickLi
         //题面显示
         WebView wv_content = view.findViewById(R.id.wv_content);
         String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + homeworkEntity.getQuestionContent() + "</body>";
-        wv_content.loadData(html_content, "text/html", "utf-8");
+        wv_content.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
 
 
         //题目类型
@@ -142,7 +144,7 @@ public class HomeworkMultipleFragment extends Fragment implements View.OnClickLi
         iv_b.setOnClickListener(this);
         iv_c.setOnClickListener(this);
         iv_d.setOnClickListener(this);
-
+        unTransmit = true;
         //初始化多选按钮
         showRadioBtn();
         return view;
@@ -160,22 +162,18 @@ public class HomeworkMultipleFragment extends Fragment implements View.OnClickLi
             case R.id.iv_a:
                 answer[0] ^= 1;
                 showRadioBtn();
-//                uploadAnswer();
                 break;
             case R.id.iv_b:
                 answer[1] ^= 1;
                 showRadioBtn();
-//                uploadAnswer();
                 break;
             case R.id.iv_c:
                 answer[2] ^= 1;
                 showRadioBtn();
-//                uploadAnswer();
                 break;
             case R.id.iv_d:
                 answer[3] ^= 1;
                 showRadioBtn();
-//                uploadAnswer();
                 break;
         }
     }
@@ -183,6 +181,7 @@ public class HomeworkMultipleFragment extends Fragment implements View.OnClickLi
 
     //展示底部按钮
     private void showRadioBtn() {
+        // 未答就是 空 ""
         String myAnswer = "";
         boolean f = false;
         for (int i = 0; i < 4; ++i) {
@@ -195,8 +194,6 @@ public class HomeworkMultipleFragment extends Fragment implements View.OnClickLi
                 myAnswer += (char) ('A' + i);
             }
         }
-        //同步答案给Activity
-        transmit.setStuAnswer(stuAnswerEntity.getOrder(), myAnswer);
 
         for (int i = 0; i < 4; ++i) {
             if (answer[i] == 0) {
@@ -206,5 +203,11 @@ public class HomeworkMultipleFragment extends Fragment implements View.OnClickLi
             }
         }
 
+        if(unTransmit){
+            unTransmit = false;
+            return;
+        }
+        //同步答案给Activity
+        transmit.setStuAnswer(stuAnswerEntity.getOrder(), myAnswer);
     }
 }

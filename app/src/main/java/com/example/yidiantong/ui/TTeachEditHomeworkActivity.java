@@ -154,11 +154,11 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
     private THomeworkPickChangeFragment changeFragment;
     private THomeworkPickAssignFragment assignFragment;
 
+    private RelativeLayout rl_submitting;
+
     private String name;
     private String introduce;
     private String paperId;
-
-    private RelativeLayout rl_submitting;
 
     private String xueduanCode;
     private String xuekeCode;
@@ -167,19 +167,20 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
     private String learnPlanType;
 
     private String jsonString;
+    private boolean initalTime = true;
+    private RelativeLayout rl_loading;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_thomework_add_pick);
         setContentView(R.layout.activity_tteach_edit_homework);
 
         paperId = getIntent().getStringExtra("learnPlanId");
         name = getIntent().getStringExtra("learnPlanName");
 
         findViewById(R.id.iv_back).setOnClickListener(v -> finish());
-
+        rl_loading = findViewById(R.id.rl_loading); // 遮蔽
         iv_search_select = findViewById(R.id.iv_search_select);
         iv_search_select.setOnClickListener(this);
 
@@ -213,7 +214,10 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
         jiaocaiCode = intent.getStringExtra("jiaocaiCode");
         zhishidian = intent.getStringExtra("zhishidian");
         zhishidianId = intent.getStringExtra("zhishidianId");
-
+        // ----------------//
+        //  第1步，加载学段
+        // ----------------//
+        loadXueDuan();
         loadType();
 
         // Fragment写入
@@ -349,6 +353,7 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
         getSupportFragmentManager().beginTransaction().replace(R.id.fl_main, changeFragment).commit();
         changeFragment.updateItem(addFragment.pickList);
         iv_search_select.setVisibility(View.INVISIBLE);
+        rl_loading.setVisibility(View.GONE);
     }
 
     // 挑选试题页面
@@ -435,11 +440,7 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
         tv_point.setText(zhishidian);
         tv_type.setText(type);
         tv_type = contentView.findViewById(R.id.tv_type);
-        loadXueDuan();
-        loadXueKe();
-        loadBanBen();
-        loadJiaoCai();
-        loadZhiShiDian();
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -503,8 +504,8 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
                             Intent toHome = new Intent(TTeachEditHomeworkActivity.this, TMainPagerActivity.class);
                             toHome.putExtra("pos", 2);
                             //两个一起用
-                            toHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            toHome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
                             startActivity(toHome);
                         }
                     });
@@ -517,8 +518,8 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
                             Intent toHome = new Intent(TTeachEditHomeworkActivity.this, TMainPagerActivity.class);
                             toHome.putExtra("pos", 2);
                             //两个一起用
-                            toHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            toHome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
                             startActivity(toHome);
                         }
                     });
@@ -533,7 +534,7 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
             }
         }, error -> {
             Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
+            Log.e("volley", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
         rl_submitting.setVisibility(View.VISIBLE);
@@ -668,6 +669,8 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
     // 获取选题信息
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void loadPickList() {
+
+        rl_loading.setVisibility(View.VISIBLE);
         // 获取试卷内容
         mRequestUrl = Constant.API + Constant.T_GET_PAPER_PICKLIST + "?paperId=" + paperId;
 
@@ -688,8 +691,9 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
                 e.printStackTrace();
             }
         }, error -> {
+            rl_loading.setVisibility(View.GONE);
             Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
+            Log.e("volley", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
     }
@@ -714,13 +718,19 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
                     xueduanMap.put(object.getString("channelName"), object.getString("channelId"));
                 }
                 Log.d("wen", "学段: " + xueduanMap);
+                // ----------------//
+                //  第2步，加载学科
+                // ----------------//
+                if (xueduan.length() > 0) {
+                    loadXueKe();
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }, error -> {
             Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
+            Log.e("volley", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
     }
@@ -737,14 +747,14 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
             TextView tv_name = view.findViewById(R.id.tv_name);
             tv_name.setText(name);
             if (name.equals(xueduan)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastXueduan = tv_name;
             }
             tv_name.setOnClickListener(v -> {
                 xueduan = (String) tv_name.getText();
 
                 if (lastXueduan != null) {
-                    lastXueduan.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastXueduan);
                 }
 
                 if (lastXueduan == tv_name) {
@@ -755,7 +765,7 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
                 } else {
                     xueduan = tv_name.getText().toString();
                     xueduanCode = xueduanMap.get(xueduan);
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastXueduan = tv_name;
                     refresh(1);
                     loadXueKe();
@@ -764,7 +774,7 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
 
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_xueduan.getWidth() / 3 - PxUtils.dip2px(this, 14);
+            params.width = fl_xueduan.getWidth() / 3 - PxUtils.dip2px(this, 15);
             tv_name.setLayoutParams(params);
             fl_xueduan.addView(view);
         });
@@ -785,11 +795,16 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
                 JSONArray data = json.getJSONArray("data");
                 for (int i = 0; i < data.length(); ++i) {
                     JSONObject object = data.getJSONObject(i);
-                    xuekeMap.put(object.getString("subjectName"), object.getString("subjectId"));
+                    xuekeMap.put(object.getString("subjectName").substring(2), object.getString("subjectId"));
                 }
 
                 Log.d("wen", "学科: " + xuekeMap);
-
+                // ----------------//
+                //  第3步，加载版本
+                // ----------------//
+                if (xueke.length() > 0) {
+                    loadBanBen();
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -807,33 +822,26 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
         }
         lastXueke = null;
         xuekeMap.forEach((name, id) -> {
-            // name（包含学段）
             view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_block, fl_xueke, false);
             TextView tv_name = view.findViewById(R.id.tv_name);
-            // 按钮显示（不含学段）
-            tv_name.setText(name.substring(2));
-            // xueke（包含学段）
+            tv_name.setText(name);
             if (name.equals(xueke)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastXueke = tv_name;
             }
             tv_name.setOnClickListener(v -> {
+                xueke = (String) tv_name.getText();
 
                 if (lastXueke != null) {
-                    lastXueke.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastXueke);
                 }
 
                 if (lastXueke == tv_name) {
                     xueke = "";
-                    xuekeCode = "";
                     lastXueke = null;
                     refresh(2);
                 } else {
-                    // 点击事件，获取xueke（包含学段）
-                    xueke = xueduan + tv_name.getText().toString();
-                    xuekeCode = xuekeMap.get(xueke);
-
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastXueke = tv_name;
                     refresh(2);
                     loadBanBen();
@@ -842,7 +850,7 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
                 tv_xueke.setText(xueke);
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_xueke.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 14);
+            params.width = fl_xueke.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 15);
             tv_name.setLayoutParams(params);
             fl_xueke.addView(view);
         });
@@ -867,6 +875,12 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
                 }
 
                 Log.d("wen", "版本: " + banbenMap);
+                // ----------------//
+                //  第4步，加载教材
+                // ----------------//
+                if (banben.length() > 0) {
+                    loadJiaoCai();
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -889,14 +903,14 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
             TextView tv_name = view.findViewById(R.id.tv_name);
             tv_name.setText(name);
             if (name.equals(banben)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastBanben = tv_name;
             }
             tv_name.setOnClickListener(v -> {
                 banben = (String) tv_name.getText();
 
                 if (lastBanben != null) {
-                    lastBanben.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastBanben);
                 }
 
                 if (lastBanben == tv_name) {
@@ -907,7 +921,7 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
                 } else {
                     banben = tv_name.getText().toString();
                     banbenCode = banbenMap.get(banben);
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastBanben = tv_name;
                     refresh(3);
                     loadJiaoCai();
@@ -915,7 +929,7 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
                 tv_banben.setText(banben);
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_banben.getWidth() / 3 - PxUtils.dip2px(this, 14);
+            params.width = fl_banben.getWidth() / 3 - PxUtils.dip2px(this, 15);
             tv_name.setLayoutParams(params);
             fl_banben.addView(view);
         });
@@ -940,6 +954,13 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
                 for (int i = 0; i < data.length(); ++i) {
                     JSONObject object = data.getJSONObject(i);
                     jiaocaiMap.put(object.getString("gradeLevelName"), object.getString("gradeLevelCode"));
+                }
+                // ----------------//
+                //  第5步，加载知识点
+                // ----------------//
+                Log.d("wen", "教材: " + jiaocaiMap);
+                if (jiaocai.length() > 0) {
+                    loadZhiShiDian();
                 }
 
                 Log.d("wen", "教材: " + jiaocaiMap);
@@ -966,13 +987,13 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
             TextView tv_name = view.findViewById(R.id.tv_name);
             tv_name.setText(name);
             if (name.equals(jiaocai)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastJiaocai = tv_name;
             }
             tv_name.setOnClickListener(v -> {
                 jiaocai = (String) tv_name.getText();
                 if (lastJiaocai != null) {
-                    lastJiaocai.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastJiaocai);
                 }
 
                 if (lastJiaocai == tv_name) {
@@ -983,7 +1004,7 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
                 } else {
                     jiaocai = tv_name.getText().toString();
                     jiaocaiCode = jiaocaiMap.get(jiaocai);
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastJiaocai = tv_name;
                     refresh(4);
                     loadZhiShiDian();
@@ -991,7 +1012,7 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
                 tv_jiaocai.setText(jiaocai);
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_jiaocai.getWidth() / 3 - PxUtils.dip2px(this, 14);
+            params.width = fl_jiaocai.getWidth() / 3 - PxUtils.dip2px(this, 15);
             tv_name.setLayoutParams(params);
             fl_jiaocai.addView(view);
         });
@@ -1036,8 +1057,13 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
         if (StringUtils.hasEmptyString(xueduan, xueke, banben, jiaocai, zhishidian)) {
             return;
         }
-        mRequestUrl = Constant.API + Constant.T_GET_QUESTION_TYPE + "?channelCode=" + xueduanCode + "&subjectCode=" + xuekeCode + "&textBookCode=" + banbenCode + "&gradeLevelCode=" +
-                jiaocaiCode + "&pointCode=" + zhishidianId + "&shareTag=" + shareTag + "&teacherId" + MyApplication.username;
+        if (initalTime) {
+            mRequestUrl = Constant.API + Constant.T_GET_QUESTION_TYPE + "?channelCode=" + xueduanCode + "&subjectCode=" + xuekeCode + "&textBookCode=" + banbenCode + "&gradeLevelCode=" + jiaocaiCode + "&pointCode=" + zhishidianId + "&shareTag=" + shareTag + "&teacherId=" + MyApplication.username;
+            initalTime = false;
+        } else {
+            mRequestUrl = Constant.API + Constant.T_GET_QUESTION_TYPE + "?channelCode=" + xueduanMap.get(xueduan) + "&subjectCode=" + xuekeMap.get(xueke) + "&textBookCode=" + banbenMap.get(banben) + "&gradeLevelCode=" + jiaocaiMap.get(jiaocai) + "&pointCode=" + zhishidianId + "&shareTag=" + shareTag + "&teacherId=" + MyApplication.username;
+
+        }
         Log.d("wen", "type: " + mRequestUrl);
         typeMap.clear();
         StringRequest request = new StringRequest(mRequestUrl, response -> {
@@ -1078,14 +1104,14 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
             TextView tv_name = view.findViewById(R.id.tv_name);
             tv_name.setText(name);
             if (name.equals(type)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastType = tv_name;
             }
             tv_name.setOnClickListener(v -> {
                 type = (String) tv_name.getText();
 
                 if (lastType != null) {
-                    lastType.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastType);
                 }
 
                 if (lastType == tv_name) {
@@ -1093,13 +1119,13 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
                     lastType = null;
                 } else {
                     type = tv_name.getText().toString();
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastType = tv_name;
                 }
                 tv_type.setText(type);
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_type.getWidth() / 3 - PxUtils.dip2px(this, 14);
+            params.width = fl_type.getWidth() / 3 - PxUtils.dip2px(this, 15);
             tv_name.setLayoutParams(params);
             fl_type.addView(view);
         });
@@ -1158,7 +1184,17 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
                 "</script>" +
                 "</head><body style=\"color: rgb(117, 117, 117); font-size: 16px; margin: 0px; padding: 0px\">" + str +
                 "</body>";
-        wb.loadData(html_content, "text/html", "utf-8");
+        wb.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
+    }
+
+    private void selectedTv(TextView tv) {
+        tv.setBackgroundResource(R.drawable.t_homework_add_select);
+        tv.setTextColor(getColor(R.color.red));
+    }
+
+    private void unselectedTv(TextView tv) {
+        tv.setBackgroundResource(R.drawable.t_homework_add_unselect);
+        tv.setTextColor(getColor(R.color.default_gray));
     }
 
 }

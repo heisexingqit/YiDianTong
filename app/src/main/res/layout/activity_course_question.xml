@@ -58,7 +58,7 @@
     <!--可滑动ViewPager-->
     <LinearLayout
         android:id="@+id/fll_acq"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="horizontal" >
@@ -67,6 +67,7 @@
 
 
     <RelativeLayout
+        android:id="@+id/lr_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <LinearLayout
@@ -84,10 +85,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="4dp"
+                android:layout_marginBottom="5dp"
                 android:orientation="vertical"
                 android:gravity="bottom">
-
 
             </LinearLayout>
 

@@ -29,6 +29,7 @@ import com.example.yidiantong.bean.THomeItemEntity;
 import com.example.yidiantong.bean.THomeworkReportEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
+import com.example.yidiantong.util.PxUtils;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -166,8 +167,8 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
             }
 
         }, error -> {
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
+            Log.e("volley", "Volley_Error: " + error.toString());
+
         });
         MyApplication.addRequest(request, TAG);
     }
@@ -194,20 +195,21 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                 showList(5);
                 break;
             case R.id.iv_setting:
+
                 int un_submit = Integer.parseInt(homeworkReport.getNoSubmit());
                 int all_num = Integer.parseInt(homeworkReport.getCorrecting());
                 all_num += Integer.parseInt(homeworkReport.getNoCorrecting());
                 all_num += un_submit;
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 if (homeworkReport.getStatus().equals("show")) {
 
-                    builder.setMessage("答案已经公布");
+                    builder.setMessage("该作业答案已经公布");
                     builder.setPositiveButton("确定", null);
                     AlertDialog dialog = builder.create();
                     dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
                     dialog.show();
-
-                } else if (un_submit / all_num > 0.2) {
+                } else if (un_submit * 1.0 / all_num > 0.2) {
                     builder.setMessage("提交率不足80%，确定要公布答案吗？");
                     builder.setNegativeButton("取消", null);
                     builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -228,7 +230,6 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
 
     private void publishAnswer() {
         String mRequestUrl = Constant.API + Constant.PUBLISH_ANSWER + "?userName=" + MyApplication.username + "&taskId=" + taskId;
-        Log.d("wen", "publishAnswer: " + mRequestUrl);
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -244,8 +245,8 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
+            Log.e("volley", "Volley_Error: " + error.toString());
+
         });
 
         MyApplication.addRequest(request, TAG);
@@ -292,9 +293,13 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                     len = homeworkReport.getMaxList().size();
                     for (int i = 0; i < len; ++i) {
                         String name = homeworkReport.getMaxList().get(i);
-                        view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_report_student, fb_max, false);
+                        view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_block, fb_max, false);
                         TextView tv_name = view.findViewById(R.id.tv_name);
                         tv_name.setText(name);
+
+                        ViewGroup.LayoutParams params = tv_name.getLayoutParams();
+                        params.width = fb_max.getWidth() / 4 - PxUtils.dip2px(view.getContext(), 15);
+                        tv_name.setLayoutParams(params);
                         fb_max.addView(view);
                     }
                     iv_max.setImageResource(R.drawable.up_icon);
@@ -303,9 +308,12 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                     len = homeworkReport.getMinList().size();
                     for (int i = 0; i < len; ++i) {
                         String name = homeworkReport.getMinList().get(i);
-                        view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_report_student, fb_min, false);
+                        view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_block, fb_min, false);
                         TextView tv_name = view.findViewById(R.id.tv_name);
                         tv_name.setText(name);
+                        ViewGroup.LayoutParams params = tv_name.getLayoutParams();
+                        params.width = fb_min.getWidth() / 4 - PxUtils.dip2px(view.getContext(), 15);
+                        tv_name.setLayoutParams(params);
                         fb_min.addView(view);
                     }
                     iv_min.setImageResource(R.drawable.up_icon);
@@ -314,9 +322,13 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                     len = homeworkReport.getCorrectingList().size();
                     for (int i = 0; i < len; ++i) {
                         String name = homeworkReport.getCorrectingList().get(i);
-                        view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_report_student, fb_correcting, false);
+                        view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_block, fb_correcting, false);
                         TextView tv_name = view.findViewById(R.id.tv_name);
                         tv_name.setText(name);
+                        ViewGroup.LayoutParams params = tv_name.getLayoutParams();
+                        params.width = fb_correcting.getWidth() / 4 - PxUtils.dip2px(view.getContext(), 15);
+                        tv_name.setLayoutParams(params);
+
                         fb_correcting.addView(view);
                     }
                     iv_correcting.setImageResource(R.drawable.up_icon);
@@ -326,9 +338,12 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                     for (int i = 0; i < len; ++i) {
                         String name = homeworkReport.getNoCorrectingList().get(i);
 
-                        view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_report_student, fb_noCorrecting, false);
+                        view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_block, fb_noCorrecting, false);
                         TextView tv_name = view.findViewById(R.id.tv_name);
                         tv_name.setText(name);
+                        ViewGroup.LayoutParams params = tv_name.getLayoutParams();
+                        params.width = fb_noCorrecting.getWidth() / 4 - PxUtils.dip2px(view.getContext(), 15);
+                        tv_name.setLayoutParams(params);
                         fb_noCorrecting.addView(view);
                     }
                     iv_noCorrecting.setImageResource(R.drawable.up_icon);
@@ -339,9 +354,12 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                     for (int i = 0; i < len; ++i) {
                         String name = homeworkReport.getNoSubmitList().get(i);
                         Log.d(TAG, "showList: " + i + " " + name);
-                        view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_report_student, fb_noSubmit, false);
+                        view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_block, fb_noSubmit, false);
                         TextView tv_name = view.findViewById(R.id.tv_name);
                         tv_name.setText(name);
+                        ViewGroup.LayoutParams params = tv_name.getLayoutParams();
+                        params.width = fb_noSubmit.getWidth() / 4 - PxUtils.dip2px(view.getContext(), 15);
+                        tv_name.setLayoutParams(params);
                         fb_noSubmit.addView(view);
                     }
                     iv_noSubmit.setImageResource(R.drawable.up_icon);

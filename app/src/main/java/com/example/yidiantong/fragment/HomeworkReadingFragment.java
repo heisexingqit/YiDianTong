@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -92,13 +93,13 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
             String[] parts = stuAnswerEntity.getStuAnswer().split(",");
             for (int i = 0; i < parts.length; ++i) {
                 String part = parts[i];
-                if (part.length() > 0) {
+                if (part.length() > 0 && !part.equals("未答")) {
                     answer[i] = part.charAt(0) - 'A';
-                }else{
+                } else {
                     answer[i] = -1;
                 }
             }
-        }else{
+        } else {
             for (int i = 0; i < choiceLen; ++i) {
                 answer[i] = -1;
             }
@@ -120,7 +121,7 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
         float deviceAspectRatio = (float) screenHeight / screenWidth;
         // 获取底部布局
         RelativeLayout block = view.findViewById(R.id.rl_bottom_block);
-        if(deviceAspectRatio > 2.0){
+        if (deviceAspectRatio > 2.0) {
             ViewGroup.LayoutParams params = block.getLayoutParams();
             params.height = PxUtils.dip2px(getActivity(), 80);
             block.setLayoutParams(params);
@@ -128,7 +129,7 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
 
         WebView wv_content = view.findViewById(R.id.wv_content);
         String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + homeworkEntity.getQuestionContent() + "</body>";
-        wv_content.loadData(html_content, "text/html", "utf-8");
+        wv_content.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
 
         //题目类型
         TextView tv_question_type = view.findViewById(R.id.tv_question_type);
@@ -218,7 +219,7 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
                 }
                 break;
             case R.id.iv_quesiton_next:
-                if (questionId == choiceLen-1) {
+                if (questionId == choiceLen - 1) {
                     Toast.makeText(getActivity(), "已经是最后一道小题", Toast.LENGTH_SHORT).show();
                 } else {
                     questionId += 1;
@@ -244,7 +245,7 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
         for (int i = 0; i < choiceLen; ++i) {
             View v = LayoutInflater.from(getActivity()).inflate(R.layout.my_component, ll_parent, false);
             TextView tv_num = v.findViewById(R.id.tv_num);
-            tv_num.setText(String.valueOf(i+1));
+            tv_num.setText(String.valueOf(i + 1));
             iv_answer_drawer[i][0] = v.findViewById(R.id.iv_a);
             iv_answer_drawer[i][1] = v.findViewById(R.id.iv_b);
             iv_answer_drawer[i][2] = v.findViewById(R.id.iv_c);
@@ -293,15 +294,24 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
         //同步答案给Activity
         String myAnswer = "";
         boolean f = false;
+        boolean isEmpty = true; // 空答案判断
         for (int i = 0; i < choiceLen; ++i) {
             if (f) {
                 myAnswer += ',';
             } else {
                 f = !f;
             }
-            if(answer[i] != -1)
+            if (answer[i] != -1) {
+                isEmpty = false;
                 myAnswer += (char) ('A' + answer[i]);
+            } else {
+                myAnswer += "未答";
+            }
         }
+        if (isEmpty) {
+            myAnswer = "";
+        }
+        Log.e(TAG, "showRadioBtnDrawer: 是我吗");
         transmit.setStuAnswer(stuAnswerEntity.getOrder(), myAnswer);
 
         for (int i = 0; i < choiceLen; ++i) {
@@ -328,14 +338,22 @@ public class HomeworkReadingFragment extends Fragment implements View.OnClickLis
         //同步答案给Activity
         String myAnswer = "";
         boolean f = false;
+        boolean isEmpty = true; // 空答案判断
         for (int i = 0; i < choiceLen; ++i) {
             if (f) {
                 myAnswer += ',';
             } else {
                 f = !f;
             }
-            if(answer[i] != -1)
+            if (answer[i] != -1) {
+                isEmpty = false;
                 myAnswer += (char) ('A' + answer[i]);
+            } else {
+                myAnswer += "未答";
+            }
+        }
+        if (isEmpty) {
+            myAnswer = "";
         }
         transmit.setStuAnswer(stuAnswerEntity.getOrder(), myAnswer);
 

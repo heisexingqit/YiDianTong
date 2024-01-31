@@ -101,7 +101,7 @@ public class HomeworkJudgeFragment extends Fragment implements View.OnClickListe
         //题面显示
         WebView wv_content = view.findViewById(R.id.wv_content);
         String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + homeworkEntity.getQuestionContent() + "</body>";
-        wv_content.loadData(html_content, "text/html", "utf-8");
+        wv_content.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
 
         //题目类型
         TextView tv_question_type = view.findViewById(R.id.tv_question_type);
@@ -124,8 +124,8 @@ public class HomeworkJudgeFragment extends Fragment implements View.OnClickListe
         //显示答案选项
         ClickableImageView iv_r = view.findViewById(R.id.iv_r);
         ClickableImageView iv_e = view.findViewById(R.id.iv_e);
-        iv_answer[0] = iv_r;
-        iv_answer[1] = iv_e;
+        iv_answer[0] = iv_e;
+        iv_answer[1] = iv_r;
         iv_r.setOnClickListener(this);
         iv_e.setOnClickListener(this);
 
@@ -157,11 +157,15 @@ public class HomeworkJudgeFragment extends Fragment implements View.OnClickListe
         //同步答案给Activity
         transmit.setStuAnswer(stuAnswerEntity.getOrder(), answer == 1 ? "对" : "错");
 
+        // --------------------------#
+        //  这里注意，answer=1表示”对“
+        //  但是iv_answer中0是“错”
+        // --------------------------#
         for (int i = 0; i < 2; ++i) {
-            if (answer != i) {
-                iv_answer[i].setImageResource(unselectIcons[i]);
-            } else {
+            if (answer == i) {
                 iv_answer[i].setImageResource(selectIcons[i]);
+            } else {
+                iv_answer[i].setImageResource(unselectIcons[i]);
             }
         }
     }

@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -30,6 +31,8 @@ import com.example.yidiantong.util.ImageUtils;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TLearnPlanAddPPTFragment extends Fragment {
@@ -40,7 +43,7 @@ public class TLearnPlanAddPPTFragment extends Fragment {
     private LearnPlanAddItemEntity learnPlanEntity;
     private LinearLayout ll_bottom_tab;
     private HorizontalScrollView sv_bottom_tab;
-    private PhotoView pv_content;
+    private ImageView pv_content;
 
     private int nowPos = 0;
     private ClickableImageView lastImageView;
@@ -61,6 +64,9 @@ public class TLearnPlanAddPPTFragment extends Fragment {
         if (getArguments() != null) {
             learnPlanEntity = (LearnPlanAddItemEntity)getArguments().getSerializable("learnPlanEntity");
             picUrlList = learnPlanEntity.getPptList();
+            if(picUrlList == null || picUrlList.size() == 0){
+                picUrlList = new ArrayList<>(Arrays.asList("https://img2.baidu.com/it/u=1372562264,221197454&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=461"));
+            }
         }
 
         // 获取View
@@ -76,16 +82,9 @@ public class TLearnPlanAddPPTFragment extends Fragment {
         sv_bottom_tab = view.findViewById(R.id.sv_bottom_tab);
         pv_content = view.findViewById(R.id.pv_content);
 
-        // 延迟初始化获取组件宽度
-        ViewTreeObserver vto = sv_bottom_tab.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onGlobalLayout() {
-                ImageLoader.getInstance().displayImage(picUrlList.get(nowPos), pv_content, MyApplication.getLoaderOptions());
-                sv_bottom_tab.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            }
-        });
+        Glide.with(this).load(picUrlList.get(nowPos)).into(pv_content);
+
+
         showBottomBar();
 
         return view;

@@ -291,6 +291,7 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
             canvas.scale(scale_x, scale_y);
 
             if (mPaintView.getPaintBit() != null) {
+
                 canvas.drawBitmap(mPaintView.getPaintBit(), 0, 0, null);
             }
             canvas.restore();

@@ -81,7 +81,7 @@ public class LearnPlanSeven2FiveFragment extends Fragment implements View.OnClic
             String[] parts = stuAnswerEntity.getStuAnswer().split(",");
             for (int i = 0; i < parts.length; ++i) {
                 String part = parts[i];
-                if (part.length() == 1) {
+                if (part.length() > 0 && !part.equals("未答")) {
                     answer[i] = part.charAt(0) - 'A';
                 }
             }
@@ -104,7 +104,7 @@ public class LearnPlanSeven2FiveFragment extends Fragment implements View.OnClic
 
         WebView wv_content = view.findViewById(R.id.wv_content);
         String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + learnPlanEntity.getQuestion() + "</body>";
-        wv_content.loadData(html_content, "text/html", "utf-8");
+        wv_content.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
 
         //题目类型
         TextView tv_question_type = view.findViewById(R.id.tv_question_type);
@@ -215,6 +215,7 @@ public class LearnPlanSeven2FiveFragment extends Fragment implements View.OnClic
         if(!inital){
             String myAnswer = "";
             boolean f = false;
+            boolean isEmpty = true; // 空答案判断
             for (int i = 0; i < 5; ++i) {
                 if (f) {
                     myAnswer += ',';
@@ -222,13 +223,19 @@ public class LearnPlanSeven2FiveFragment extends Fragment implements View.OnClic
                     f = !f;
                 }
                 if(answer[i] != -1){
+                    isEmpty = false;
                     myAnswer += (char) ('A' + answer[i]);
                 }else{
                     myAnswer += "未答";
                 }
             }
+
+            if(isEmpty){
+                myAnswer = "";
+            }
             transmit.setStuAnswer(stuAnswerEntity.getOrder(), myAnswer);
         }
+
 
         for (int i = 0; i < 5; ++i) {
             for (int j = 0; j < 7; ++j) {

@@ -74,8 +74,9 @@
 
                 <TextView
                     android:id="@+id/tv_date"
-                    android:layout_width="wrap_content"
+                    android:layout_width="80dp"
                     android:layout_height="wrap_content"
+                    android:gravity="end"
                     android:layout_marginRight="50dp"
                     android:text="3月29日" />
             </LinearLayout>

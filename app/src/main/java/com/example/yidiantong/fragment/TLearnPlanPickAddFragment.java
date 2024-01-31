@@ -33,9 +33,11 @@ import com.example.yidiantong.bean.LearnPlanAddItemEntity;
 import com.example.yidiantong.bean.THomeworkAddEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
+import com.example.yidiantong.util.LogUtils;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
 import com.example.yidiantong.util.TLearnPlanAddInterface;
+import com.google.firebase.crashlytics.buildtools.log.MultiLogger;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -109,6 +111,8 @@ public class TLearnPlanPickAddFragment extends Fragment implements View.OnClickL
     private String typeValue = "";
 
     private TLearnPlanAddInterface transmit;
+    private LinearLayout ll_loading;
+    private LinearLayout ll_loading2;
 
 
     public TLearnPlanPickAddFragment(String xd, String xdCode, String xk, String xkCode, String bb, String bbCode, String jc, String jcCode, String zsd, String zsdCode, String type, String typeValue, String shareTag) {
@@ -133,11 +137,15 @@ public class TLearnPlanPickAddFragment extends Fragment implements View.OnClickL
         transmit = (TLearnPlanAddInterface) context;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_t_learn_plan_pick_add, container, false);
+        ll_loading = view.findViewById(R.id.ll_loading);
+        ll_loading2 = view.findViewById(R.id.ll_loading2);
+
         ll_bottom_tab = view.findViewById(R.id.ll_bottom_tab);
         sv_bottom_tab = view.findViewById(R.id.sv_bottom_tab);
         tv_hide = view.findViewById(R.id.tv_hide);
@@ -161,9 +169,12 @@ public class TLearnPlanPickAddFragment extends Fragment implements View.OnClickL
 
         if (adapter.itemList.size() == 0) {
             loadItems_Net();
+        } else {
+            tv_hide.setVisibility(View.GONE);
         }
 
         tv_count.setText("(已选择" + pickList.size() + ")");
+
         return view;
     }
 
@@ -187,6 +198,7 @@ public class TLearnPlanPickAddFragment extends Fragment implements View.OnClickL
     }
 
     // 更新试题内容方法
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void updateItem(String xd, String xdCode, String xk, String xkCode, String bb, String bbCode, String jc, String jcCode, String zsd, String zsdCode, String type, String typeValue, String shareTag) {
         xueduan = xd;
         xueke = xk;
@@ -366,15 +378,20 @@ public class TLearnPlanPickAddFragment extends Fragment implements View.OnClickL
                 nowPos = 0;
                 vp_main.setCurrentItem(nowPos, false);
                 showQuestionBlock(moreList);
+                ll_loading.setVisibility(View.GONE);// 解除遮挡
+                ll_loading2.setVisibility(View.GONE);// 解除遮挡
             }
         }
     };
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void loadItems_Net() {
 
         if (StringUtils.hasEmptyString(xueduan, xueke, zhishidian, banben, jiaocai, type, shareTag)) {
             return;
         }
+        ll_loading.setVisibility(View.VISIBLE);// 遮挡
+        ll_loading2.setVisibility(View.VISIBLE);// 遮挡
         String xd = "";
         String xk = "";
         String zsd = "";
@@ -408,11 +425,12 @@ public class TLearnPlanPickAddFragment extends Fragment implements View.OnClickL
                 Gson gson = new Gson();
                 List<LearnPlanAddItemEntity> moreList = gson.fromJson(itemString, new TypeToken<List<LearnPlanAddItemEntity>>() {
                 }.getType());
+
                 learnPlanId = json.getJSONObject("data").getString("learnPlanId");
                 transmit.setLearnPlanId(learnPlanId);
 
                 // 到头了
-                if(moreList.size() < 5){
+                if (moreList.size() < 5) {
                     isAll = true;
                 }
 
@@ -421,13 +439,16 @@ public class TLearnPlanPickAddFragment extends Fragment implements View.OnClickL
                         tv_hide.setVisibility(View.VISIBLE);
                     } else {
                         Toast.makeText(getActivity(), "已经是最后一页", Toast.LENGTH_SHORT).show();
+                        currentpage -= 1;
                     }
-                    tv_hide.setVisibility(View.VISIBLE);
-                } else{
+                    isAll = true;
+                    ll_loading.setVisibility(View.GONE);// 解除遮挡
+                    ll_loading2.setVisibility(View.GONE);// 解除遮挡
+                    return;
+                } else {
                     tv_hide.setVisibility(View.GONE);
                 }
 
-                Log.d(TAG, "loadItems_Net: " + moreList);
                 adapter.update(moreList);
 
                 Message message = Message.obtain();
@@ -436,6 +457,8 @@ public class TLearnPlanPickAddFragment extends Fragment implements View.OnClickL
                 handler.sendMessage(message);
 
             } catch (JSONException e) {
+                ll_loading.setVisibility(View.GONE);// 解除遮挡
+                ll_loading2.setVisibility(View.GONE);// 解除遮挡
                 e.printStackTrace();
             }
         }, error -> {

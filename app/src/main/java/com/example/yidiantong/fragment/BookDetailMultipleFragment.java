@@ -19,6 +19,7 @@ import android.os.Message;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -61,6 +62,7 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
     private LinearLayout fll_bd_analysis;
     private TextView ftv_br_title;
     private ImageView fiv_bd_mark;
+    private ImageView fiv_de_icon;
     private AlertDialog dialog_model;
 
     private String currentpage;
@@ -111,17 +113,34 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
         // 知识点栏
         ftv_br_title = view.findViewById(R.id.ftv_br_title);
         ftv_br_title.setText(bookrecyclerEntity.getSourceName());
+        fiv_de_icon = view.findViewById(R.id.fiv_de_icon);
+        //设置图标和类型
+        int icon_id = -1;
+        String SourceType = bookrecyclerEntity.getSourceType();
+        switch (SourceType ) {
+            case "1":
+                icon_id = R.drawable.guide_plan_icon;
+                break;
+            case "2":
+                icon_id = R.drawable.homework_icon;
+                break;
+            case "3":
+                icon_id = R.drawable.class_icon;
+            default:
+                break;
+        }
+        fiv_de_icon.setImageResource(icon_id);
 
         //题面显示
         WebView fwv_bd_content = view.findViewById(R.id.fwv_bd_content);
         String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiShow() + "</body>";
-        fwv_bd_content.loadData(html_content, "text/html", "utf-8");
+        fwv_bd_content.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
 
         // 题号和平均分
         ftv_bd_num = view.findViewById(R.id.ftv_bd_num);
         ftv_bd_num.setText(bookrecyclerEntity.getNum());
         ftv_bd_score = view.findViewById(R.id.ftv_bd_score);
-        ftv_bd_score.setText("得分: "+ bookrecyclerEntity.getStuScore()+" 全班平均分:"+ bookrecyclerEntity.getAvgScore());
+        ftv_bd_score.setText("得分: "+ bookrecyclerEntity.getStuScore()+" 全班均分:"+ bookrecyclerEntity.getAvgScore());
 
         //翻页组件
         ImageView iv_pager_last = getActivity().findViewById(R.id.iv_page_last);
@@ -158,7 +177,7 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
         ftv_bd_stuans = view.findViewById(R.id.ftv_bd_stuans);
         fwv_bd_analysis1 = view.findViewById(R.id.fwv_bd_analysis);
         String html_analysis = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiAnalysis() + "</body>";
-        fwv_bd_analysis1.loadData(html_analysis, "text/html", "utf-8");
+        fwv_bd_analysis1.loadDataWithBaseURL(null, html_analysis, "text/html", "utf-8", null);
         fiv_bd_tf = view.findViewById(R.id.fiv_bd_tf);
         // 题目数量
         int positionLen = String.valueOf(bookrecyclerEntity.getCurrentPage()).length();
@@ -193,6 +212,24 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
             fll_bd_answer.setVisibility(View.GONE);
             fll_bd_analysis.setVisibility(View.VISIBLE);
             mode = 1;
+            if(bookrecyclerEntity.getStuAnswer().length() == 0){
+                // 创建一个 SpannableString 对象
+                String text = "【你的作答】 未答";
+                SpannableString spannableString = new SpannableString(text);
+                // 获取文本的长度
+                int textLength = text.length();
+                // 获取文本的后两个字符的起始位置
+                int start = textLength - 2;
+                // 设置后两个字符的颜色为红色
+                spannableString.setSpan(new ForegroundColorSpan(Color.RED), start, textLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ftv_bd_stuans.setText(spannableString);
+                fiv_bd_tf.setVisibility(View.GONE); // 隐藏对错图标
+
+            }else{
+                ftv_bd_stuans.setText(bookrecyclerEntity.getStuAnswer());
+                fiv_bd_tf.setVisibility(View.VISIBLE); // 显示对错图标
+            }
+
         }
 
         return  view;
@@ -312,7 +349,25 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
                         }else{
                             fll_bd_answer.setVisibility(View.GONE);
                             fll_bd_analysis.setVisibility(View.VISIBLE);
-                            ftv_bd_stuans.setText("【你的作答】");
+
+                            if(bookrecyclerEntity.getStuAnswer().length() == 0){
+                                // 创建一个 SpannableString 对象
+                                String text = "【你的作答】 未答";
+                                SpannableString spannableString = new SpannableString(text);
+                                // 获取文本的长度
+                                int textLength = text.length();
+                                // 获取文本的后两个字符的起始位置
+                                int start = textLength - 2;
+                                // 设置后两个字符的颜色为红色
+                                spannableString.setSpan(new ForegroundColorSpan(Color.RED), start, textLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                ftv_bd_stuans.setText(spannableString);
+                                fiv_bd_tf.setVisibility(View.GONE); // 隐藏对错图标
+
+                            }else{
+                                ftv_bd_stuans.setText(bookrecyclerEntity.getStuAnswer());
+                                fiv_bd_tf.setVisibility(View.VISIBLE); // 显示对错图标
+                            }
+
                             ftv_br_mode.setText("复习模式");
                             mode = 1;
                             dialog_model.dismiss();
@@ -394,4 +449,6 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         queue.add(request);
     }
+    //复习模式你的作答
+
 }

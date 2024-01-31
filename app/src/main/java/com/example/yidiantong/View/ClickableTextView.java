@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
+import com.example.yidiantong.ui.TCameraShareActivity;
+
 public class ClickableTextView extends AppCompatTextView {
     public ClickableTextView(@NonNull Context context) {
         super(context);
@@ -33,6 +35,5 @@ public class ClickableTextView extends AppCompatTextView {
             this.setAlpha(1.0f);
         }
     }
-
 
 }

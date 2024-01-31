@@ -35,7 +35,6 @@ import androidx.viewpager.widget.ViewPager;
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
-import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.adapter.LearnPlanPagerAdapter;
 import com.example.yidiantong.adapter.MyArrayAdapter;
 import com.example.yidiantong.bean.LearnPlanActivityEntity;
@@ -46,10 +45,10 @@ import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.FixedSpeedScroller;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.LearnPlanInterface;
+import com.example.yidiantong.util.MyReadWriteLock;
 import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
-import com.example.yidiantong.util.HomeworkInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -60,9 +59,7 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -385,8 +382,8 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
             }
 
         }, error -> {
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
+            Log.e("volley", "Volley_Error: " + error.toString());
+
         });
         MyApplication.addRequest(request, TAG);
 
@@ -487,7 +484,11 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
     //pos是接口的order属性（1...n）因此要
     @Override
     public void setStuAnswer(int pos, String stuStr) {
-        stuAnswer[pos - 1] = stuStr;
+
+        if(stuAnswer != null && stuAnswer.length >= pos){
+            stuAnswer[pos - 1] = stuStr;
+        }
+
     }
 
     @Override
@@ -502,13 +503,11 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
 
     @Override
     public void uploadTime(long timeLong) {
-        Log.d("wen", "uploadTime:ssssssssssssssssssss" + timeLong / 60);
         int pos = vp_homework.getCurrentItem();
         String mRequestUrl = null;
 
         mRequestUrl = Constant.API + Constant.LEARNPLAN_SUBMIT_TIME + "?learnPlanId=" + learnPlanId + "&contentId=" + adapter.itemList.get(pos).getResourceId() +
                 "&userName=" + username + "&useTime=" + timeLong;
-        Log.d(TAG, "submit: " + mRequestUrl);
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -564,5 +563,12 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
     public void onBackPressed() {
         uploadQuestion();
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 读写解锁
+        MyReadWriteLock.checkout(username, this);
     }
 }

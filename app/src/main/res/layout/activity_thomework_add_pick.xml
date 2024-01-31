@@ -9,8 +9,9 @@
     <LinearLayout
         android:id="@+id/ll_top"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white">
+        android:layout_height="60dp"
+        android:background="@color/white"
+        android:gravity="center">
 
         <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/iv_back"
@@ -88,5 +89,5 @@
     <!--遮蔽-->
     <include
         layout="@layout/submitting_page"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 </RelativeLayout>

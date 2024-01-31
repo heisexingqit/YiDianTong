@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,22 +33,33 @@ import com.example.yidiantong.Manager.CustomDatePicker;
 import com.example.yidiantong.Manager.DatePicker;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
+import com.example.yidiantong.ui.HomeworkPagerActivity;
+import com.example.yidiantong.ui.MainPagerActivity;
 import com.example.yidiantong.ui.TBellNoticeSubmitActivity;
+import com.example.yidiantong.ui.TMainPagerActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.DateFormatUtils;
 import com.example.yidiantong.util.JsonUtils;
+import com.example.yidiantong.util.PxUtils;
 import com.google.android.flexbox.FlexboxLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TBellNoticeSubmitFragment extends Fragment implements View.OnClickListener {
 
-    private static final Object TAG = "TBellNoticeSubmitFragment";
+    private static final String TAG = "TBellNoticeSubmitFragme";
 
     private EditText fet_bell_name;
     private TextView ftv_bell_class_name;
@@ -62,13 +74,13 @@ public class TBellNoticeSubmitFragment extends Fragment implements View.OnClickL
 
     private Map<String, String> classMap = new HashMap<>();
     private View view;
-    private String bellclass;
+    private List<String> bellclass = new ArrayList<>();
     private TextView lastbellclass;
 
     // 日期和时间
     private TextView mTvSelectedDate, mTvSelectedTime;
     private CustomDatePicker mDatePicker;
-    private DatePicker  mTimerPicker;
+    private DatePicker mTimerPicker;
     private String endTime;
     private String endDatestamp;
     private String newDate;
@@ -88,7 +100,6 @@ public class TBellNoticeSubmitFragment extends Fragment implements View.OnClickL
     private Button fb_bell_confirm;
     private RelativeLayout frl_bell_0;
     private RelativeLayout frl_bell_1;
-    private String classId;
 
     public TBellNoticeSubmitFragment() {
         // Required empty public constructor
@@ -224,30 +235,29 @@ public class TBellNoticeSubmitFragment extends Fragment implements View.OnClickL
             ftv_bellclass_null.setVisibility(View.VISIBLE);
         }
         classMap.forEach((name, id) -> {
-            view = LayoutInflater.from(getActivity()).inflate(R.layout.bell_class, ffl_bellclass, false);
-            TextView ftv_bell_class = view.findViewById(R.id.ftv_bell_class);
+            view = LayoutInflater.from(getActivity()).inflate(R.layout.item_t_homework_add_block, ffl_bellclass, false);
+            TextView ftv_bell_class = view.findViewById(R.id.tv_name);
             ftv_bell_class.setText(name);
-            if (name.equals(bellclass)) {
-                ftv_bell_class.setBackgroundResource(R.color.f_blue);
+            if (bellclass.contains(name)) {
+                selectedTv(ftv_bell_class);
             }
             ftv_bell_class.setOnClickListener(v -> {
-                bellclass = (String) ftv_bell_class.getText();
+                String className = (String) ftv_bell_class.getText().toString();
 
-                if (lastbellclass != null) {
-                    lastbellclass.setBackgroundResource(R.color.f_light_gray);
-                }
-
-                if (lastbellclass == ftv_bell_class) {
-                    bellclass = "";
-                    lastbellclass = null;
+                if (bellclass.contains(className)) {
+                    bellclass.remove(className);
+                    unselectedTv(ftv_bell_class);
                 } else {
-                    bellclass = ftv_bell_class.getText().toString();
-                    ftv_bell_class.setBackgroundResource(R.color.f_blue);
-                    lastbellclass = ftv_bell_class;
+                    bellclass.add(className);
+                    selectedTv(ftv_bell_class);
                 }
-                ftv_bell_class_name.setText(bellclass);
-                classId = id;
+
+                ftv_bell_class_name.setText(String.join(",", bellclass));
+
             });
+            ViewGroup.LayoutParams params = ftv_bell_class.getLayoutParams();
+            params.width = ffl_bellclass.getWidth() / 2 - PxUtils.dip2px(view.getContext(), 15);
+            ftv_bell_class.setLayoutParams(params);
             ffl_bellclass.addView(view);
         });
     }
@@ -297,7 +307,6 @@ public class TBellNoticeSubmitFragment extends Fragment implements View.OnClickL
                 tv.setTextColor(Color.parseColor("#000000"));//颜色
                 //设置title组件
                 builder.setCustomTitle(tv);
-                AlertDialog dialog = builder.create();
                 if (nullmode != -1) {
                     builder.setNegativeButton("确定", null);
                 } else {
@@ -319,37 +328,53 @@ public class TBellNoticeSubmitFragment extends Fragment implements View.OnClickL
     }
 
     private void gotolast() {
-        getActivity().finish();
+        Intent toHome = new Intent(getActivity(), TMainPagerActivity.class);
+        toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(toHome);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void submit() {
 
-        String className = bellclass;
-        String content = fet_bell_content.getText().toString();
-        String title = fet_bell_name.getText().toString();
+        String className = null;
+        String content = null;
+        String title = null;
+        String userCn = null;
+        try {
+            className = URLEncoder.encode(ftv_bell_class_name.getText().toString(), "UTF-8");
+            content = URLEncoder.encode(fet_bell_content.getText().toString(), "UTF-8");
+            title = URLEncoder.encode(fet_bell_name.getText().toString(), "UTF-8");
+            userCn = URLEncoder.encode(MyApplication.cnName, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         Integer setDateFlag = timemode;
-
         if (setDateFlag == 2) {
             setDate = fev_bell_time.getText().toString();
         }
+        StringBuilder result = new StringBuilder();
+        bellclass.forEach(item -> {
+            if (result.length() > 0) {
+                result.append(",");
+            }
+            result.append(classMap.get(item));
+        });
 
-        mRequestUrl1 = Constant.API + Constant.T_BELL_SAVE_MANAGE_NOTICE + "?classId=" + classId + "&className=" + className + "&userName=" + MyApplication.username + "&userCN=" + MyApplication.cnName + "&content=" + content + "&title=" + title + "&setDateFlag=" + setDateFlag + "&setDate=" + setDate + "&saveOrUpdate=" + "save";
 
+        mRequestUrl1 = Constant.API + Constant.T_BELL_SAVE_MANAGE_NOTICE + "?classId=" + result + "&className=" + className + "&userName=" + MyApplication.username + "&userCN=" + userCn + "&content=" + content + "&title=" + title + "&setDateFlag=" + setDateFlag + "&setDate=" + setDate + "&saveOrUpdate=" + "save";
+        Log.e("0110", "submit: " + mRequestUrl1);
         StringRequest request = new StringRequest(mRequestUrl1, response -> {
 
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 //结果信息
                 Boolean isSuccess = json.getBoolean("success");
-                Message message = Message.obtain();
                 if (isSuccess) {
-                    message.obj = 1;
+                    Toast.makeText(getActivity(), "发布成功", Toast.LENGTH_SHORT).show();
                 } else {
-                    message.obj = 0;
+                    Toast.makeText(getActivity(), "发布失败", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "submit: " + json.getString("message"));
                 }
-                //标识线程
-                message.what = 101;
-                handler.sendMessage(message);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -371,7 +396,7 @@ public class TBellNoticeSubmitFragment extends Fragment implements View.OnClickL
             @Override
             public void onTimeSelected(long timestamp) {
                 newDate = DateFormatUtils.long2Str(timestamp, false);
-                mTimerPicker.show(endTime);
+                mTimerPicker.show(System.currentTimeMillis());
             }
         }, endTimestamp, beginTimestamp);
         // 允许点击屏幕或物理返回键关闭
@@ -386,14 +411,14 @@ public class TBellNoticeSubmitFragment extends Fragment implements View.OnClickL
     private void initTimerPicker() {
 
         long beginTimestamp = DateFormatUtils.str2Long("2009-01-01 00:00:00", true);
-        long endTimestamp = DateFormatUtils.str2Long(endTime, true);
+        long endTimestamp = System.currentTimeMillis();
 
         // 通过日期字符串初始化日期，格式请用：yyyy-MM-dd HH:mm
         mTimerPicker = new DatePicker(getActivity(), new DatePicker.Callback() {
             @Override
             public void onTimeSelected(long timestamp) {
-                String newtime = DateFormatUtils.long2Str(timestamp, true).substring(0,5);
-                fev_bell_time.setText(newDate + " " +newtime);
+                String newtime = DateFormatUtils.long2Str(timestamp, true).substring(0, 5);
+                fev_bell_time.setText(newDate + " " + newtime + ":00");
             }
         }, beginTimestamp, endTimestamp);
         // 允许点击屏幕或物理返回键关闭
@@ -404,5 +429,15 @@ public class TBellNoticeSubmitFragment extends Fragment implements View.OnClickL
         mTimerPicker.setScrollLoop(true);
         // 允许滚动动画
         mTimerPicker.setCanShowAnim(true);
+    }
+
+    private void selectedTv(TextView tv) {
+        tv.setBackgroundResource(R.drawable.t_homework_add_select);
+        tv.setTextColor(getActivity().getColor(R.color.red));
+    }
+
+    private void unselectedTv(TextView tv) {
+        tv.setBackgroundResource(R.drawable.t_homework_add_unselect);
+        tv.setTextColor(getActivity().getColor(R.color.default_gray));
     }
 }

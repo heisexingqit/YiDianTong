@@ -12,6 +12,15 @@ public class HomeworkMarkedEntity implements Serializable {
     private String tiMian;
     private String analysis;
     private String stuAnswer;
+    private String showAnswerFlag;
+
+    public String getShowAnswerFlag() {
+        return showAnswerFlag;
+    }
+
+    public void setShowAnswerFlag(String showAnswerFlag) {
+        this.showAnswerFlag = showAnswerFlag;
+    }
 
     public String getStandardAnswer() {
         return standardAnswer;

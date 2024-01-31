@@ -53,7 +53,6 @@ public class TLearnPlanAddQuestionFragment extends Fragment {
      */
     private void setHtmlOnWebView(WebView wb, String str){
         str = StringEscapeUtils.unescapeHtml4(str);
-        str = str.replace("<img", "<img style=\"max-width:100%;height:auto\"");
         String html_content = "<head><style>" +
                 " p {\n" +
                 "   margin: 0px;" +
@@ -61,6 +60,6 @@ public class TLearnPlanAddQuestionFragment extends Fragment {
                 "   }" +
                 "</style>" +
                 "</head><body style=\"color: rgb(117, 117, 117); font-size: 14px; margin: 0px; padding: 0px\">" + str + "</body>";
-        wb.loadData(html_content, "text/html", "utf-8");
+        wb.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
     }
 }

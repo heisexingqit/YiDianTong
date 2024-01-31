@@ -21,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -28,9 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.HomeRecyclerAdapter;
@@ -41,6 +40,7 @@ import com.example.yidiantong.ui.LearnPlanPagerActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.MyItemDecoration;
+import com.example.yidiantong.util.MyReadWriteLock;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -83,9 +83,20 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
     private EditText et_search;
     private String searchStr = "";
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+    // -------------------
+    //  checkIn点击后标记
+    // -------------------
+    private int checkInPos = -1;
+    private String checkInType = "";
+
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main_study, container, false);
@@ -105,7 +116,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
         rv_study.addItemDecoration(divider);
 
         //获取登录传递的参数
-        if(username == null){
+        if (username == null) {
             username = MyApplication.username;
         }
 
@@ -113,7 +124,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
         rl_loading = view.findViewById(R.id.rl_loading);
 
         //设置RecyclerViewAdapter
-        if(adapter == null) {
+        if (adapter == null) {
             adapter = new HomeRecyclerAdapter(getContext(), itemList);
 
             //设置item点击事件
@@ -121,38 +132,39 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
                 Intent intent = null;
                 switch (adapter.itemList.get(pos).getType()) {
                     case "作业":
-                        if(Integer.parseInt(adapter.itemList.get(pos).getStatus()) != 2){
-                            // 未批改的
-                            intent = new Intent(getActivity(), HomeworkPagerActivity.class);
-                        }else{
+                        if (Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 2) {
                             intent = new Intent(getActivity(), HomeworkPagerFinishActivity.class);
+                            intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
+                            intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
+                            intent.putExtra("username", username);
+                            intent.putExtra("type", "paper");
+                            intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
+                            startActivity(intent);
+                        } else {
+                            checkInPos = pos;
+                            checkInType = "作业";
+                            MyReadWriteLock.checkin(adapter.itemList.get(pos).getLearnId(), username, "student", "", handler, getActivity());
                         }
-
-                        intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
-                        intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
-                        intent.putExtra("username", username);
-                        intent.putExtra("type", "paper");
-                        intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
-                        startActivity(intent);
                         break;
                     case "导学案":
                     case "微课":
-                        if(Integer.parseInt(adapter.itemList.get(pos).getStatus()) != 2){
-                            // 未批改的
-                            intent = new Intent(getActivity(), LearnPlanPagerActivity.class);
-                        }else{
+                        if (Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 2) {
                             intent = new Intent(getActivity(), HomeworkPagerFinishActivity.class);
+                            intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
+                            intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
+                            intent.putExtra("username", username);
+                            intent.putExtra("type", "learnPlan");
+                            intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
+                            startActivity(intent);
+                        } else {
+                            checkInPos = pos;
+                            checkInType = "导学案";
+                            MyReadWriteLock.checkin(adapter.itemList.get(pos).getLearnId(), username, "student", "", handler, getActivity());
                         }
-                        intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
-                        intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
-                        intent.putExtra("username", username);
-                        intent.putExtra("type", "learnPlan");
-                        intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
-                        startActivity(intent);
                         break;
                 }
             });
-        }else{
+        } else {
             rl_loading.setVisibility(View.GONE);
         }
 
@@ -192,8 +204,8 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
             }
         });
 
-        //请求数据放后面
-        if(adapter.itemList.size() == 0){
+        // 请求数据放后面
+        if (adapter.itemList.size() == 0) {
             loadItems_Net();
         }
 
@@ -308,6 +320,37 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
                 /**
                  * 假0判断移至adapter中，根据refresh一起判断
                  */
+            }else if(message.what == 110){
+                boolean canCheckIn = (Boolean) message.obj;
+                if (!canCheckIn) {
+                    Toast.makeText(getActivity(), "老师正在批改中，无法进行修改!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent intent;
+                    int pos = checkInPos;
+
+                    if (checkInType.equals("作业")) {
+
+                        // 未批改的
+                        intent = new Intent(getActivity(), HomeworkPagerActivity.class);
+
+                        intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
+                        intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
+                        intent.putExtra("username", username);
+                        intent.putExtra("type", "paper");
+                        intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
+                        startActivity(intent);
+                    } else {
+                        // 未批改的
+                        intent = new Intent(getActivity(), LearnPlanPagerActivity.class);
+
+                        intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
+                        intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
+                        intent.putExtra("username", username);
+                        intent.putExtra("type", "learnPlan");
+                        intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
+                        startActivity(intent);
+                    }
+                }
             }
         }
     };

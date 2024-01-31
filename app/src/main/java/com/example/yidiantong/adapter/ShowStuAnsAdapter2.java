@@ -71,7 +71,8 @@ public class ShowStuAnsAdapter2 extends BaseAdapter {
         } else {
             showAns = ansArray[i];
         }
-        wv.loadData(" (" + (questionIdx.get(i) + 1) + ") " + html_answer_head + showAns + html_answer_tail, "text/html", "utf-8");
+        wv.loadDataWithBaseURL(null, " (" + (questionIdx.get(i) + 1) + ") " + html_answer_head + showAns + html_answer_tail, "text/html", "utf-8", null);
+
         return v;
     }
 }

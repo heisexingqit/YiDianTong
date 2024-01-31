@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,16 +39,17 @@ import com.example.yidiantong.adapter.HomeworkPagerAdapter;
 import com.example.yidiantong.adapter.MyArrayAdapter;
 import com.example.yidiantong.bean.HomeworkEntity;
 import com.example.yidiantong.bean.StuAnswerEntity;
+import com.example.yidiantong.entity.HomeworkStuAnswerInfo;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.FixedSpeedScroller;
 import com.example.yidiantong.util.JsonUtils;
+import com.example.yidiantong.util.MyReadWriteLock;
 import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.HomeworkInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -94,6 +96,8 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
     // 老答案
     private String[] oldStuAnswer;
 
+    private int count = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +105,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
 
         //获取Intent参数
         learnPlanId = getIntent().getStringExtra("learnPlanId");
+        Log.e(TAG, "onCreate: " + learnPlanId);
         TextView tv_title = findViewById(R.id.tv_title);
         title = getIntent().getStringExtra("title");
         tv_title.setText(title);
@@ -122,7 +127,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
             public void onPageSelected(int position) {
                 //翻页同步下标
                 currentItem = position;
-                Log.e("currentItem", ":" + currentItem);
+                MyApplication.currentItem = currentItem;
             }
 
             @Override
@@ -130,6 +135,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
             }
         });
 
+        Log.e(TAG, "currentItem: " + MyApplication.currentItem);
         vp_homework.setCurrentItem(currentItem);
 
         // 顶栏返回按钮
@@ -138,7 +144,18 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
             this.finish();
         });
 
+        countReady = 0;
         // 双数据请求
+
+        List<HomeworkStuAnswerInfo> homeworkStuAnswerInfos = MyApplication.database.homeworkStuAnswerDao().queryByUserAndHomework(username, learnPlanId);
+        stuAnswerList.clear();
+        for(HomeworkStuAnswerInfo info:homeworkStuAnswerInfos){
+            StuAnswerEntity i = new StuAnswerEntity();
+            i.setOrder(info.order);
+            i.setQuestionId(info.questionId);
+            i.setStuAnswer(info.stuAnswer);
+            stuAnswerList.add(i);
+        }
         loadItems_Net();
 
         // ViewPager滑动变速
@@ -169,11 +186,12 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                     int index = intent.getIntExtra("currentItem", 0);
                     if (index == -1) {
                         Toast.makeText(HomeworkPagerActivity.this, "提交成功！", Toast.LENGTH_SHORT).show();
-                        finish();
+                        Intent toHome = new Intent(HomeworkPagerActivity.this, MainPagerActivity.class);
+                        toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(toHome);
                     } else {
                         currentItem = index;
                         vp_homework.setCurrentItem(currentItem);
-
                     }
                 }
             }
@@ -186,6 +204,8 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
 
         // 加载
         rl_loading = findViewById(R.id.rl_loading);
+        count += 1;
+        Log.e(TAG, "onCreate: " + count);
     }
 
     @Override
@@ -246,7 +266,9 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
         intent.putExtra("isNew", isNew);
         mResultLauncher.launch(intent);
     }
-
+    List<HomeworkEntity> timianList = new ArrayList<>();
+    List<StuAnswerEntity> stuAnswerList = new ArrayList<>();
+    private int countReady = 0;
     private final Handler handler = new Handler(Looper.getMainLooper()) {
         @RequiresApi(api = Build.VERSION_CODES.N)
         @SuppressLint("NotifyDataSetChanged")
@@ -270,12 +292,8 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                     // 题目ID
                     questionIds[i] = list.get(i).getQuestionId();
                 }
-
-                adapter.updateQ(list);
-                if (adapter.countReady >= 2) {
-                    rl_loading.setVisibility(View.GONE);
-                }
-
+                timianList = list;
+                countReady += 1;
             } else if (message.what == 101) {
                 /**
                  * 学生作答信息
@@ -283,24 +301,43 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                 List<StuAnswerEntity> list2 = (List<StuAnswerEntity>) message.obj;
                 stuAnswer = new String[list2.size()];
                 oldStuAnswer = new String[list2.size()];
+                Log.e(TAG, "handleMessage: 获取信息");
 
                 for (int i = 0; i < list2.size(); ++i) {
                     // 学生作答内容
                     stuAnswer[i] = list2.get(i).getStuAnswer();
                     oldStuAnswer[i] = list2.get(i).getStuAnswer();
-                }
 
-                adapter.updateA(list2);
-                if (adapter.countReady >= 2) {
-                    rl_loading.setVisibility(View.GONE);
+                    // 数据库同步
+                    Log.e("0130", "handleMessage: 数据库同步");
+                    java.util.Date day = new Date();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String date = sdf.format(day);
+                    HomeworkStuAnswerInfo info = new HomeworkStuAnswerInfo();
+                    info.userId = username;
+                    info.homeworkId = learnPlanId;
+                    info.questionId = list2.get(i).getQuestionId();
+                    info.userName = MyApplication.cnName;
+                    info.updateDate = date;
+                    info.stuAnswer = stuAnswer[i];
+                    info.order = i + 1;
+                    MyApplication.database.homeworkStuAnswerDao().insert(info);
                 }
-            } else if (message.what == 102) {
-                /**
-                 * 作答信息保存
-                 */
+                stuAnswerList = list2;
+                countReady += 1;
 
             }
+            // 页面显示
+            if (countReady >= 2) {
+                adapter.update(timianList, stuAnswerList);
+                rl_loading.setVisibility(View.GONE);
+                if(MyApplication.isRotate){
+                    vp_homework.setCurrentItem(MyApplication.currentItem, false);
+                    MyApplication.isRotate = false;
+                }
+            }
         }
+
     };
 
     // 加载作业条目，进行ViewPager渲染；同时加载学生答题情况
@@ -325,12 +362,19 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
         }, error -> {
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
+            Log.e("volley", "Volley_Error: " + error.toString());
+
         });
         MyApplication.addRequest(request, TAG);
+
+
+        if(stuAnswerList.size() > 0){
+            Log.e("0130", "loadItems_Net: 数据库读取");
+            return;
+        }
+
+        Log.e("0130", "loadItems_Net: 请求读取");
 
         //学生答题情况
         mRequestUrl = Constant.API + Constant.ANSWER_ITEM + "?paperId=" + learnPlanId + "&userName=" + username;
@@ -345,7 +389,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                 //使用Gson框架转换Json字符串为列表
                 List<StuAnswerEntity> itemList = gson.fromJson(itemString, new TypeToken<List<StuAnswerEntity>>() {
                 }.getType());
-
+                Log.e(TAG, "loadItems_Net: 学生作答" + itemList.toString());
                 //封装消息，传递给主线程
                 Message message = Message.obtain();
 
@@ -425,7 +469,11 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
     //pos是接口的order属性（1...n）因此要
     @Override
     public void setStuAnswer(int pos, String stuStr) {
-        stuAnswer[pos - 1] = stuStr;
+        if(stuAnswer != null && stuAnswer.length >= pos) {
+            stuAnswer[pos - 1] = stuStr;
+            Log.e(TAG, "setStuAnswer: pos" + (pos - 1));
+            Log.e(TAG, "setStuAnswer: 新答案" + stuStr);
+        }
     }
 
     @Override
@@ -445,32 +493,45 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
         if (stuAnswer[pos].equals(oldStuAnswer[pos])) {
             return;
         }
+        Log.e(TAG, "uploadQuestion: 老答案" + oldStuAnswer[pos]);
+        Log.e(TAG, "uploadQuestion: 新答案" + stuAnswer[pos]);
         Log.d("wen", "uploadQuestion: " + stuAnswer[pos]);
 
         java.util.Date day = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String date = sdf.format(day);
 
-        String mRequestUrl = null;
-        try {
-            mRequestUrl = Constant.API + Constant.SUBMIT_ANSWER + "?learnPlanId=" + learnPlanId +
-                    "&stuId=" + username + "&questionId=" + questionIds[pos] + "&answer=" + URLEncoder.encode(stuAnswer[pos], "UTF-8") + "&answerTime=" + date;
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        StringRequest request = new StringRequest(mRequestUrl, response -> {
-            try {
-                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+        HomeworkStuAnswerInfo info = new HomeworkStuAnswerInfo();
+        info.userId = username;
+        info.homeworkId = learnPlanId;
+        info.questionId = stuAnswerList.get(pos).getQuestionId();
+        info.userName = MyApplication.cnName;
+        info.updateDate = date;
+        info.stuAnswer = stuAnswer[pos];
+        info.order = pos + 1;
+        MyApplication.database.homeworkStuAnswerDao().insert(info);
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }, error -> {
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
-        });
 
-        MyApplication.addRequest(request, TAG);
+//        String mRequestUrl = null;
+//        try {
+//            mRequestUrl = Constant.API + Constant.SUBMIT_ANSWER + "?learnPlanId=" + learnPlanId +
+//                    "&stuId=" + username + "&questionId=" + questionIds[pos] + "&answer=" + URLEncoder.encode(stuAnswer[pos], "UTF-8") + "&answerTime=" + date;
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+//        StringRequest request = new StringRequest(mRequestUrl, response -> {
+//            try {
+//                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+//
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }, error -> {
+//            Log.e("volley", "Volley_Error: " + error.toString());
+//
+//        });
+//
+//        MyApplication.addRequest(request, TAG);
 
         // 同步更新
         oldStuAnswer[pos] = stuAnswer[pos];
@@ -482,4 +543,25 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
         super.onBackPressed();
     }
 
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // 在屏幕方向变化时，确保ViewPager的项位置不变
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // 处理横向屏幕方向
+            MyApplication.isRotate = true;
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // 处理纵向屏幕方向
+            MyApplication.isRotate = true;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 读写解锁
+        MyReadWriteLock.checkout(username, this);
+    }
 }

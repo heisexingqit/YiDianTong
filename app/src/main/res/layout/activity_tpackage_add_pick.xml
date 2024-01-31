@@ -9,7 +9,8 @@
     <LinearLayout
         android:id="@+id/ll_top"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
+        android:gravity="center"
         android:background="@color/white">
 
         <com.example.yidiantong.View.ClickableImageView

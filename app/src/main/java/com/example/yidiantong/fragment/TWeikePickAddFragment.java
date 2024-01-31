@@ -401,7 +401,7 @@ public class TWeikePickAddFragment extends Fragment implements View.OnClickListe
                 + "&pointCode=" + zhishidianCode + "&learnPlanId=" + learnPlanId + "&currentPage=" + currentpage + "&searchPage=" + searchPage + "&deviceType=" + deviceType
                 + "&channelName=" + xd + "&subjectName=" + xk + "&textBookName=" + bb + "&gradeLevelName=" + jc
                 + "&pointName=" + zsd;
-        Log.d("wen", "导学案题面获取Url:" + mRequestUrl);
+        Log.e("0103", "导学案题面获取Url:" + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);

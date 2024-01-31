@@ -36,12 +36,11 @@ import com.example.yidiantong.fragment.TLearnPlanPickAssignFragment;
 import com.example.yidiantong.fragment.TLearnPlanPickChangeFragment;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
+import com.example.yidiantong.util.LogUtils;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
 import com.example.yidiantong.util.TLearnPlanAddInterface;
 import com.google.android.flexbox.FlexboxLayout;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONArray;
@@ -49,8 +48,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -172,6 +172,12 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
 
     private String learnPlanId;
 
+    private boolean initalTime = true;
+    private String xueduanId;
+    private String xuekeId;
+    private String banbenId;
+    private String jiaocaiId;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,7 +186,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
 
         iv_search_select = findViewById(R.id.iv_search_select);
         iv_search_select.setOnClickListener(this);
-        findViewById(R.id.iv_back).setOnClickListener(v->finish());
+        findViewById(R.id.iv_back).setOnClickListener(v -> finish());
 
         // 顶部按钮动画
         btn_add = findViewById(R.id.btn_add);
@@ -199,33 +205,32 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
         /**
          * pop1预备代码
          */
-        // 获取上级添加页面数据
+        // 记住选择-本地数据读取
+        // 获取本地数据
+        // ---------------------//
+        //  新版，只给name，无map
+        // ---------------------//
         Intent intent = getIntent();
-        Gson gson = new Gson();
-        Type type = new TypeToken<LinkedHashMap<String, String>>() {
-        }.getType();
-        String json = intent.getStringExtra("xueduanMap");
-        xueduanMap = gson.fromJson(json, type);
-        json = intent.getStringExtra("xuekeMap");
-        xuekeMap = gson.fromJson(json, type);
-        json = intent.getStringExtra("banbenMap");
-        banbenMap = gson.fromJson(json, type);
-        json = intent.getStringExtra("jiaocaiMap");
-        jiaocaiMap = gson.fromJson(json, type);
-        zhishidianData = intent.getStringExtra("zhishidianData");
-        zhishidianId = intent.getStringExtra("zhishidianId");
-
         xueduan = intent.getStringExtra("xueduan");
         xueke = intent.getStringExtra("xueke");
         banben = intent.getStringExtra("banben");
         jiaocai = intent.getStringExtra("jiaocai");
         zhishidian = intent.getStringExtra("zhishidian");
+        zhishidianId = intent.getStringExtra("zhishidianId");
+        xueduanId = intent.getStringExtra("xueduanId");
+        xuekeId = intent.getStringExtra("xuekeId");
+        banbenId = intent.getStringExtra("banbenId");
+        jiaocaiId = intent.getStringExtra("jiaocaiId");
+        // ----------------//
+        //  第1步，加载学段
+        // ----------------//
+        loadXueDuan();
 
         // 添加子页面Fragment
         // 默认参数
-        this.type = "0";
+        this.type = "resource";
         shareTag = "99";
-        addFragment = new TLearnPlanPickAddFragment(xueduan, xueduanMap.get(xueduan), xueke, xuekeMap.get(xueke), banben, banbenMap.get(banben), jiaocai, jiaocaiMap.get(jiaocai), zhishidian, zhishidianId, this.type, typeSub, shareTag);
+        addFragment = new TLearnPlanPickAddFragment(xueduan, xueduanId, xueke, xuekeId, banben, banbenId, jiaocai, jiaocaiId, zhishidian, zhishidianId, this.type, typeSub, shareTag);
         changeFragment = new TLearnPlanPickChangeFragment();
         assignFragment = new TLearnPlanPickAssignFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.fl_main, addFragment).commit();
@@ -271,7 +276,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                     window = new PopupWindow(contentView, PxUtils.dip2px(this, 400), PxUtils.dip2px(this, 640), true);
                     window.setTouchable(true);
                 }
-                window.showAsDropDown(iv_search_select, 0, 10);
+                window.showAsDropDown(iv_search_select, 0, 25);
                 break;
             /**
              * 下面是pop1相关组件点击事件
@@ -343,9 +348,8 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
             // 固定type
             case R.id.tv_type_all:
                 if (lastType != view) {
-                    Log.d(TAG, "onClick: 不同");
-                    lastType.setBackgroundResource(R.color.light_gray3);
-                    tv_type_all.setBackgroundResource(R.drawable.t_homework_add_select);
+                    unselectedTv(lastType);
+                    selectedTv(tv_type_all);
                     lastType = (TextView) view;
                     type = "0";
                     fl_resource_type.removeAllViews();
@@ -354,8 +358,8 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                 break;
             case R.id.tv_type_question:
                 if (lastType != view) {
-                    lastType.setBackgroundResource(R.color.light_gray3);
-                    tv_type_question.setBackgroundResource(R.drawable.t_homework_add_select);
+                    unselectedTv(lastType);
+                    selectedTv(tv_type_question);
                     lastType = (TextView) view;
                     type = "question";
                     loadType();
@@ -364,8 +368,8 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                 break;
             case R.id.tv_type_paper:
                 if (lastType != view) {
-                    lastType.setBackgroundResource(R.color.light_gray3);
-                    tv_type_paper.setBackgroundResource(R.drawable.t_homework_add_select);
+                    unselectedTv(lastType);
+                    selectedTv(tv_type_paper);
                     lastType = (TextView) view;
                     type = "paper";
                     typeSub = "";
@@ -375,8 +379,8 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                 break;
             case R.id.tv_type_resource:
                 if (lastType != view) {
-                    lastType.setBackgroundResource(R.color.light_gray3);
-                    tv_type_resource.setBackgroundResource(R.drawable.t_homework_add_select);
+                    unselectedTv(lastType);
+                    selectedTv(tv_type_resource);
                     lastType = (TextView) view;
                     type = "resource";
                     typeSub = "";
@@ -498,161 +502,226 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
         tv_banben.setText(banben);
         tv_jiaocai.setText(jiaocai);
         tv_point.setText(zhishidian);
-        String typeName = "全部";
-        switch (type) {
-            case "paper":
-                typeName = "试卷";
-                break;
-            case "question":
-                typeName = "试题";
-                break;
-            case "resource":
-                typeName = "全部";
-                break;
-        }
-        tv_type.setText(typeName);
     }
+
+    int count = 0; // 成功请求计数
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag) throws UnsupportedEncodingException {
-        Intent intent = getIntent();
-        Gson gson = new Gson();
-        Type type = new TypeToken<LinkedHashMap<String, String>>() {
-        }.getType();
-        String jsonStr = intent.getStringExtra("xueduanMap");
-        LinkedHashMap xueduanMap = gson.fromJson(jsonStr, type);
-        jsonStr = intent.getStringExtra("xuekeMap");
-        LinkedHashMap xuekeMap = gson.fromJson(jsonStr, type);
-        jsonStr = intent.getStringExtra("banbenMap");
-        LinkedHashMap banbenMap = gson.fromJson(jsonStr, type);
-        jsonStr = intent.getStringExtra("jiaocaiMap");
-        LinkedHashMap jiaocaiMap = gson.fromJson(jsonStr, type);
-        String zhishidianId = intent.getStringExtra("zhishidianId");
+    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag) {
 
-        String xueduan = intent.getStringExtra("xueduan");
-        String xueke = intent.getStringExtra("xueke");
-        String banben = intent.getStringExtra("banben");
-        String jiaocai = intent.getStringExtra("jiaocai");
-        String zhishidian = intent.getStringExtra("zhishidian");
-
-        // 导学案专属参数
-        String learnPlanName = intent.getStringExtra("learnPlanName");
-        String lpn = learnPlanName;
-        String learnPlanType = intent.getStringExtra("learnPlanType");
-        String classHours = intent.getStringExtra("classHours");
-        String studyHours = intent.getStringExtra("studyHours");
-        String Introduce = intent.getStringExtra("Introduce");
-        String Goal = intent.getStringExtra("Goal");
-        String Emphasis = intent.getStringExtra("Emphasis");
-        String Difficulty = intent.getStringExtra("Difficulty");
-        String Extension = intent.getStringExtra("Extension");
-        String Summary = intent.getStringExtra("Summary");
-
-        StringBuilder jsonStringBuilder = new StringBuilder();
-        String jsonString = "[";
-        List<LearnPlanAddItemEntity> pickList = addFragment.pickList;
-        for(int i = 0; i < pickList.size(); ++i){
-            LearnPlanAddItemEntity item = pickList.get(i);
-            item.setOrder(i+1);
-            if (jsonStringBuilder.length() > 0) {
-                jsonStringBuilder.append(", ");
+        List<String> ketangNameList = new ArrayList<>(Arrays.asList(ketang.split(", ")));
+        List<String> ketangIdList = new ArrayList<>(Arrays.asList(ketangId.split(", ")));
+        List<String> clasList = new ArrayList<>(Arrays.asList(clas.split(", ")));
+        List<String> classIdList = new ArrayList<>(Arrays.asList(classId.split(", ")));
+        List<String> stuIdsList = new ArrayList<>(Arrays.asList(stuIds.split(", ")));
+        List<String> stuNamesList = new ArrayList<>(Arrays.asList(stuNames.split(", ")));
+        count = 0;
+        String assignType_ = assignType;
+        for (int i = 0; i < ketangNameList.size(); ++i) {
+            // 第一次保存+布置，后面直接布置即可
+            if (i > 0 && assignType.equals("1")) {
+                assignType_ = "2";
             }
-            jsonStringBuilder.append(item.toData());
-        }
-        jsonString += jsonStringBuilder.toString();
-        jsonString += "]";
+            ketang = ketangNameList.get(i);
+            ketangId = ketangIdList.get(i);
+            clas = clasList.get(i);
+            classId = classIdList.get(i);
+            stuIds = stuIdsList.get(i);
+            stuNames = stuNamesList.get(i);
 
-        Log.d("wen", "内容串: " + jsonString);
+            // --------------------------------//
+            //  这部分是从AddActivity获取的属性值，
+            //  与PopUpWindow中的数值不同
+            //  必须从intent中直接获取
+            // --------------------------------//
+            Intent intent = getIntent();
 
-        ketang = URLEncoder.encode(ketang, "UTF-8");
-        clas = URLEncoder.encode(clas, "UTF-8");
-        stuNames = URLEncoder.encode(stuNames, "UTF-8");
-        jsonString = URLEncoder.encode(jsonString, "UTF-8");
-        learnPlanName = URLEncoder.encode(learnPlanName, "UTF-8");
-        Introduce = URLEncoder.encode(Introduce, "UTF-8");
-        Goal = URLEncoder.encode(Goal, "UTF-8");
-        Emphasis = URLEncoder.encode(Emphasis, "UTF-8");
-        Difficulty = URLEncoder.encode(Difficulty, "UTF-8");
-        Extension = URLEncoder.encode(Extension, "UTF-8");
+            String xueduan = intent.getStringExtra("xueduan");
+            String xueduanId = intent.getStringExtra("xueduanId");
+            String xueke = intent.getStringExtra("xueke");
+            String xuekeId = intent.getStringExtra("xuekeId");
+            String banben = intent.getStringExtra("banben");
+            String banbenId = intent.getStringExtra("banbenId");
+            String jiaocai = intent.getStringExtra("jiaocai");
+            String jiaocaiId = intent.getStringExtra("jiaocaiId");
+            String zhishidian = intent.getStringExtra("zhishidian");
+            String zhishidianId = intent.getStringExtra("zhishidianId");
 
-        mRequestUrl = Constant.API + Constant.T_LEARN_PLAN_ASSIGN_SAVE + "?assignType=" + assignType +
-                "&channelCode=" + xueduanMap.get(xueduan) + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") +
-                "&subjectCode=" + xuekeMap.get(xueke) + "&subjectName=" + URLEncoder.encode(xueke, "UTF-8") +
-                "&textBookCode=" + banbenMap.get(banben) + "&textBookName=" + URLEncoder.encode(banben, "UTF-8") +
-                "&gradeLevelCode=" + jiaocaiMap.get(jiaocai) + "&gradeLevelName=" + URLEncoder.encode(jiaocai, "UTF-8") +
-                "&pointCode=" + zhishidianId + "&pointName=" + URLEncoder.encode(zhishidian, "UTF-8") +
+            // 导学案专属参数
+            String learnPlanName = intent.getStringExtra("learnPlanName");
+            String lpn = learnPlanName;
+            String learnPlanType = intent.getStringExtra("learnPlanType");
+            String classHours = intent.getStringExtra("classHours");
+            String studyHours = intent.getStringExtra("studyHours");
+            String Introduce = intent.getStringExtra("Introduce");
+            String Goal = intent.getStringExtra("Goal");
+            String Emphasis = intent.getStringExtra("Emphasis");
+            String Difficulty = intent.getStringExtra("Difficulty");
+            String Extension = intent.getStringExtra("Extension");
+            String Summary = intent.getStringExtra("Summary");
 
-                "&type=1" + "&learnPlanType=" + learnPlanType + "&classHours=" + classHours +
-                "&studyHours=" + studyHours + "&Introduce=" + Introduce + "&Goal=" + Goal +
-                "&Emphasis=" + Emphasis + "&Difficulty=" + Difficulty + "&Summary=" + Summary + "&Extension=" + Extension +
-
-                "&startTime=" + startTime + "&endTime=" + endTime +
-                "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classIds=" + classId +
-                "&className=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
-                "&roomType=" + learnType +
-
-                "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                "&learnPlanName=" + learnPlanName + "&flag=" + flag + "&jsonStr=" + jsonString;
-
-        Log.d("wen", "URL: " + mRequestUrl);
-
-        StringRequest request = new StringRequest(mRequestUrl, response -> {
-            try {
-                JSONObject json = JsonUtils.getJsonObjectFromString(response);
-                Log.d(TAG, "submit: " + json);
-                boolean success = json.getBoolean("success");
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(lpn);
-
-                if (success) {
-                    if (assignType.equals("3")) {
-                        builder.setMessage("导学案保存成功");
-                    } else {
-                        builder.setMessage("导学案布置成功");
-                    }
-                    builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            rl_submitting.setVisibility(View.GONE);
-                            Intent toHome = new Intent(TLearnPlanAddPickActivity.this, TMainPagerActivity.class);
-                            toHome.putExtra("pos", 2);
-                            //两个一起用
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(toHome);
-                        }
-                    });
-                } else {
-                    builder.setMessage("数据提交失败，请稍后重试");
-                    builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            rl_submitting.setVisibility(View.GONE);
-                            Intent toHome = new Intent(TLearnPlanAddPickActivity.this, TMainPagerActivity.class);
-                            toHome.putExtra("pos", 2);
-                            //两个一起用
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(toHome);
-                        }
-                    });
+            StringBuilder jsonStringBuilder = new StringBuilder();
+            String jsonString = "[";
+            List<LearnPlanAddItemEntity> pickList = addFragment.pickList;
+            for (int j = 0; j < pickList.size(); ++j) {
+                LearnPlanAddItemEntity item = pickList.get(j);
+                item.setOrder(j + 1);
+                if (jsonStringBuilder.length() > 0) {
+                    jsonStringBuilder.append(", ");
                 }
+                jsonStringBuilder.append(item.toData());
+            }
+            jsonString += jsonStringBuilder.toString();
+            jsonString += "]";
 
-                AlertDialog dialog = builder.create();
-                dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
-                dialog.show();
+            Log.e(TAG, "start   : ===========================================================================================");
+            Log.e(TAG, "assignType:" + assignType);
+            Log.e(TAG, "channelCode:" + xueduanId);
+            Log.e(TAG, "subjectCode:" + xuekeId);
+            Log.e(TAG, "textBookCode:" + banbenId);
+            Log.e(TAG, "gradeLevelCode:" + jiaocaiId);
+            Log.e(TAG, "pointCode:" + zhishidianId);
+            Log.e(TAG, "channelName:" + xueduan);
+            Log.e(TAG, "subjectName:" + xueke);
+            Log.e(TAG, "textBookName:" + banben);
+            Log.e(TAG, "gradeLevelName:" + jiaocai);
+            Log.e(TAG, "pointName:" + zhishidian);
+            Log.e(TAG, " : ==================================");
+            Log.e(TAG, "type:" + 1);
+            Log.e(TAG, "learnPlanType:" + learnPlanType);
+            Log.e(TAG, "classHours:" + classHours);
+            Log.e(TAG, "studyHours:" + studyHours);
+            Log.e(TAG, " : ==================================");
 
-            } catch (JSONException e) {
+            Log.e(TAG, "Introduce:" + Introduce);
+            Log.e(TAG, "Emphasis:" + Emphasis);
+            Log.e(TAG, "Difficulty:" + Difficulty);
+            Log.e(TAG, "Summary:" + Summary);
+            Log.e(TAG, "Extension:" + Extension);
+
+            Log.e(TAG, " : ==================================");
+            Log.e(TAG, "keTangId:" + ketangId);
+            Log.e(TAG, "keTangName:" + ketang);
+            Log.e(TAG, "roomType:" + learnType);
+            Log.e(TAG, "stuIds:" + stuIds);
+            Log.e(TAG, "stuNames:" + stuNames);
+            Log.e(TAG, "classIds:" + classId);
+            Log.e(TAG, "className:" + clas);
+            Log.e(TAG, "startTime:" + startTime);
+            Log.e(TAG, "endTime:" + endTime);
+
+            Log.e(TAG, " : ==================================");
+
+            Log.e(TAG, "userName:" + MyApplication.username);
+            Log.e(TAG, "learnPlanId:" + learnPlanId);
+            Log.e(TAG, "learnPlanName:" + learnPlanName);
+            Log.e(TAG, "flag:" + flag);
+
+            Log.e(TAG, "end     : ======================================================================================================");
+//            LogUtils.writeLogToFile("json.txt", jsonString, false, this);
+
+
+            try {
+                ketang = URLEncoder.encode(ketang, "UTF-8");
+                clas = URLEncoder.encode(clas, "UTF-8");
+                stuNames = URLEncoder.encode(stuNames, "UTF-8");
+                jsonString = URLEncoder.encode(jsonString, "UTF-8");
+                StringUtils.longTextLog(TAG, "submit: jsonString", jsonString);
+                learnPlanName = URLEncoder.encode(learnPlanName, "UTF-8");
+                Introduce = URLEncoder.encode(Introduce, "UTF-8");
+                Goal = URLEncoder.encode(Goal, "UTF-8");
+                Emphasis = URLEncoder.encode(Emphasis, "UTF-8");
+                Difficulty = URLEncoder.encode(Difficulty, "UTF-8");
+                Extension = URLEncoder.encode(Extension, "UTF-8");
+
+                mRequestUrl = Constant.API + Constant.T_LEARN_PLAN_ASSIGN_SAVE + "?assignType=" + assignType_ +
+                        "&channelCode=" + xueduanId + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") +
+                        "&subjectCode=" + xuekeId + "&subjectName=" + URLEncoder.encode(xueke, "UTF-8") +
+                        "&textBookCode=" + banbenId + "&textBookName=" + URLEncoder.encode(banben, "UTF-8") +
+                        "&gradeLevelCode=" + jiaocaiId + "&gradeLevelName=" + URLEncoder.encode(jiaocai, "UTF-8") +
+                        "&pointCode=" + zhishidianId + "&pointName=" + URLEncoder.encode(zhishidian, "UTF-8") +
+
+                        "&type=1" + "&learnPlanType=" + learnPlanType + "&classHours=" + classHours +
+                        "&studyHours=" + studyHours + "&Introduce=" + Introduce + "&Goal=" + Goal +
+                        "&Emphasis=" + Emphasis + "&Difficulty=" + Difficulty + "&Summary=" + Summary + "&Extension=" + Extension +
+
+                        "&startTime=" + startTime + "&endTime=" + endTime +
+                        "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classIds=" + classId +
+                        "&className=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
+                        "&roomType=" + learnType +
+
+                        "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
+                        "&learnPlanName=" + learnPlanName + "&flag=" + flag + "&jsonStr=" + jsonString;
+            } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-        }, error -> {
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
-        });
-        MyApplication.addRequest(request, TAG);
-        rl_submitting.setVisibility(View.VISIBLE);
+
+//            LogUtils.writeLogToFile("mylog.txt", mRequestUrl, false, this);
+
+            StringRequest request = new StringRequest(mRequestUrl, response -> {
+                try {
+                    JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                    count++;
+                    Log.e(TAG, "submit: " + json);
+                    boolean success = json.getBoolean("success");
+                    if (count == ketangNameList.size()) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.setTitle(lpn);
+
+                        if (success) {
+                            if (assignType.equals("3")) {
+                                builder.setMessage("导学案保存成功");
+                            } else {
+                                builder.setMessage("导学案布置成功");
+                            }
+                            builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    rl_submitting.setVisibility(View.GONE);
+                                    Intent toHome = new Intent(TLearnPlanAddPickActivity.this, TMainPagerActivity.class);
+                                    toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                    startActivity(toHome);
+                                }
+                            });
+                        } else {
+                            builder.setMessage("数据提交失败，请稍后重试");
+                            builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    rl_submitting.setVisibility(View.GONE);
+                                    Intent toHome = new Intent(TLearnPlanAddPickActivity.this, TMainPagerActivity.class);
+                                    toHome.putExtra("pos", 2);
+                                    //两个一起用
+                                    toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+                                    startActivity(toHome);
+                                }
+                            });
+                        }
+
+                        AlertDialog dialog = builder.create();
+                        dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+                        dialog.show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }, error -> {
+                Log.e("volley", "Volley_Error: " + error.toString());
+
+            });
+            MyApplication.addRequest(request, TAG);
+            rl_submitting.setVisibility(View.VISIBLE);
+            try {
+                // 休眠2秒钟，避免请求过快被丢弃
+                Thread.sleep(100);
+
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -673,8 +742,8 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
+            Log.e("volley", "Volley_Error: " + error.toString());
+
         });
         MyApplication.addRequest(request, TAG);
     }
@@ -825,7 +894,12 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                     xueduanMap.put(object.getString("channelName"), object.getString("channelId"));
                 }
                 Log.d("wen", "学段: " + xueduanMap);
-
+                // ----------------//
+                //  第2步，加载学科
+                // ----------------//
+                if (xueduan.length() > 0) {
+                    loadXueKe();
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -848,14 +922,14 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
             TextView tv_name = view.findViewById(R.id.tv_name);
             tv_name.setText(name);
             if (name.equals(xueduan)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastXueduan = tv_name;
             }
             tv_name.setOnClickListener(v -> {
                 xueduan = (String) tv_name.getText();
 
                 if (lastXueduan != null) {
-                    lastXueduan.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastXueduan);
                 }
 
                 if (lastXueduan == tv_name) {
@@ -864,7 +938,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                     refresh(1);
                 } else {
                     xueduan = tv_name.getText().toString();
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastXueduan = tv_name;
                     refresh(1);
                     loadXueKe();
@@ -872,7 +946,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                 tv_xueduan.setText(xueduan);
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_xueduan.getWidth() / 3 - PxUtils.dip2px(this, 14);
+            params.width = fl_xueduan.getWidth() / 3 - PxUtils.dip2px(this, 15);
             tv_name.setLayoutParams(params);
             fl_xueduan.addView(view);
         });
@@ -898,6 +972,13 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
 
                 Log.d("wen", "学科: " + xuekeMap);
 
+                // ----------------//
+                //  第3步，加载版本
+                // ----------------//
+                if (xueke.length() > 0) {
+                    loadBanBen();
+                }
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -918,17 +999,17 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
             // name（包含学段）
             view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_block, fl_xueke, false);
             TextView tv_name = view.findViewById(R.id.tv_name);
-            // 按钮显示（不含学段）
-            tv_name.setText(name.substring(2));
+            tv_name.setText(name);
             // xueke（包含学段）
             if (name.equals(xueke)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastXueke = tv_name;
             }
             tv_name.setOnClickListener(v -> {
+                xueke = (String) tv_name.getText();
 
                 if (lastXueke != null) {
-                    lastXueke.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastXueke);
                 }
 
                 if (lastXueke == tv_name) {
@@ -936,9 +1017,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                     lastXueke = null;
                     refresh(2);
                 } else {
-                    // 点击事件，获取xueke（包含学段）
-                    xueke = xueduan + tv_name.getText().toString();
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastXueke = tv_name;
                     refresh(2);
                     loadBanBen();
@@ -947,7 +1026,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                 tv_xueke.setText(xueke);
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_xueke.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 14);
+            params.width = fl_xueke.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 15);
             tv_name.setLayoutParams(params);
             fl_xueke.addView(view);
         });
@@ -972,6 +1051,12 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                 }
 
                 Log.d("wen", "版本: " + banbenMap);
+                // ----------------//
+                //  第4步，加载教材
+                // ----------------//
+                if (banben.length() > 0) {
+                    loadJiaoCai();
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -994,14 +1079,14 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
             TextView tv_name = view.findViewById(R.id.tv_name);
             tv_name.setText(name);
             if (name.equals(banben)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastBanben = tv_name;
             }
             tv_name.setOnClickListener(v -> {
                 banben = (String) tv_name.getText();
 
                 if (lastBanben != null) {
-                    lastBanben.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastBanben);
                 }
 
                 if (lastBanben == tv_name) {
@@ -1010,7 +1095,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                     refresh(3);
                 } else {
                     banben = tv_name.getText().toString();
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastBanben = tv_name;
                     refresh(3);
                     loadJiaoCai();
@@ -1018,7 +1103,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                 tv_banben.setText(banben);
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_banben.getWidth() / 3 - PxUtils.dip2px(this, 14);
+            params.width = fl_banben.getWidth() / 3 - PxUtils.dip2px(this, 15);
             tv_name.setLayoutParams(params);
             fl_banben.addView(view);
         });
@@ -1046,6 +1131,13 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                 }
 
                 Log.d("wen", "教材: " + jiaocaiMap);
+                // ----------------//
+                //  第5步，加载知识点
+                // ----------------//
+                Log.d("wen", "教材: " + jiaocaiMap);
+                if (jiaocai.length() > 0) {
+                    loadZhiShiDian();
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -1069,14 +1161,14 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
             TextView tv_name = view.findViewById(R.id.tv_name);
             tv_name.setText(name);
             if (name.equals(jiaocai)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastJiaocai = tv_name;
             }
             tv_name.setOnClickListener(v -> {
                 jiaocai = (String) tv_name.getText();
 
                 if (lastJiaocai != null) {
-                    lastJiaocai.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastJiaocai);
                 }
 
                 if (lastJiaocai == tv_name) {
@@ -1085,7 +1177,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                     refresh(4);
                 } else {
                     jiaocai = tv_name.getText().toString();
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastJiaocai = tv_name;
                     refresh(4);
                     loadZhiShiDian();
@@ -1093,7 +1185,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                 tv_jiaocai.setText(jiaocai);
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_jiaocai.getWidth() / 3 - PxUtils.dip2px(this, 14);
+            params.width = fl_jiaocai.getWidth() / 3 - PxUtils.dip2px(this, 15);
             tv_name.setLayoutParams(params);
             fl_jiaocai.addView(view);
         });
@@ -1152,17 +1244,19 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                 break;
         }
 
-        mRequestUrl += "?channelCode=" + xueduanMap.get(xueduan) + "&subjectCode=" + xuekeMap.get(xueke) + "&textBookCode=" + banbenMap.get(banben) + "&gradeLevelCode=" +
-                jiaocaiMap.get(jiaocai) + "&pointCode=" + zhishidianId + "&shareTag=" + shareTag + "&teacherId=" + MyApplication.username;
+        if (initalTime) {
+            mRequestUrl += "?channelCode=" + xueduanId + "&subjectCode=" + xuekeId + "&textBookCode=" + banbenId + "&gradeLevelCode=" + jiaocaiId + "&pointCode=" + zhishidianId + "&shareTag=" + shareTag + "&teacherId=" + MyApplication.username;
+            initalTime = false;
+        } else {
+            mRequestUrl += "?channelCode=" + xueduanMap.get(xueduan) + "&subjectCode=" + xuekeMap.get(xueke) + "&textBookCode=" + banbenMap.get(banben) + "&gradeLevelCode=" + jiaocaiMap.get(jiaocai) + "&pointCode=" + zhishidianId + "&shareTag=" + shareTag + "&teacherId=" + MyApplication.username;
+        }
         Log.d("wen", "type: " + mRequestUrl);
         typeMap.clear();
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
-                Log.d(TAG, "loadType: " + json);
                 String data = json.getString("data");
-                Log.d(TAG, "loadType: " + data);
 
                 if (!data.equals("null") && data.length() > 0 && !data.equals("[]")) {
                     for (String row : data.split("\\],\\[")) {
@@ -1189,17 +1283,16 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
         typeMap.forEach((name, id) -> {
             view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_block, fl_resource_type, false);
             TextView tv_name = view.findViewById(R.id.tv_name);
-            tv_name.setTextColor(getResources().getColor(R.color.black));
             tv_name.setText(name);
             if (name.equals(typeSub)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastTypeSub = tv_name;
             }
             tv_name.setOnClickListener(v -> {
                 typeSub = (String) tv_name.getText();
 
                 if (lastTypeSub != null) {
-                    lastTypeSub.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastTypeSub);
                 }
 
                 if (lastTypeSub == tv_name) {
@@ -1207,12 +1300,12 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                     lastTypeSub = null;
                 } else {
                     typeSub = tv_name.getText().toString();
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastTypeSub = tv_name;
                 }
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_resource_type.getWidth() / 3 - PxUtils.dip2px(this, 14);
+            params.width = fl_resource_type.getWidth() / 3 - PxUtils.dip2px(this, 15);
             tv_name.setLayoutParams(params);
             fl_resource_type.addView(view);
         });
@@ -1271,6 +1364,17 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                 "</script>" +
                 "</head><body style=\"color: rgb(117, 117, 117); font-size: 16px; margin: 0px; padding: 0px\">" + str +
                 "</body>";
-        wb.loadData(html_content, "text/html", "utf-8");
+        wb.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
     }
+
+    private void selectedTv(TextView tv) {
+        tv.setBackgroundResource(R.drawable.t_homework_add_select);
+        tv.setTextColor(getColor(R.color.red));
+    }
+
+    private void unselectedTv(TextView tv) {
+        tv.setBackgroundResource(R.drawable.t_homework_add_unselect);
+        tv.setTextColor(getColor(R.color.default_gray));
+    }
+
 }

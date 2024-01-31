@@ -3,8 +3,17 @@ package com.example.yidiantong.util;
 public class Constant {
     // 服务器地址
     public static final String API = "http://www.cn901.net:8111";
+//    public static final String API = "http://www.cn901.com:8181";
     // 直播课服务器地址
     public static final String API_LIVE = "http://www.cn901.com";
+
+    // 教师或学生进行批改或查看时，判断作业或导学案状态
+    public static final String CHECK_IN = "/AppServer/ajax/studentApp_checkTaskStatus.do";
+    // 人促清除操作
+    public static final String CHECK_OUT = "/AppServer/ajax/studentApp_deleteAccessControl.do";
+    public static final String T_CHECK_OUT = "/AppServer/ajax/teacherApp_deleteAccessControl.do";
+
+    public static final String CHANGE_PW = "/AppServer/ajax/userManage_updatePassword.do";
     // 登录接口
     public static final String LOGIN = "/AppServer/ajax/userManage_login.do";
     // 获取最新信息
@@ -13,6 +22,8 @@ public class Constant {
     public static final String HOMEWORK_ITEM = "/AppServer/ajax/studentApp_getJobDetails.do";
     //获取“我的”版本更新信息
     public static final String CHECK_VERSION = "/AppServer/ajax/teacherApp_checkAppVersion.do";
+    //记录忽略更新
+    public static final String CHECK_VERSION_SAVE = "/AppServer/ajax/teacherApp_saveAppVersionUpdateRecord.do";
     //获取错题本学科信息
     public static final String ERROR_QUE_SUBJECT = "/AppServer/ajax/studentApp_ErrorQueGetSubject.do";
     //修改错题已读状态
@@ -21,6 +32,9 @@ public class Constant {
     public static final String ERROR_QUE_GET_QUESTION = "/AppServer/ajax/studentApp_ErrorQueGetQuestion.do";
     //获取错题详情信息
     public static final String ERROR_QUE_ANSWER_QUESTION = "/AppServer/ajax/studentApp_ErrorQueAnswerQuestion.do";
+    // 错题本训练模式-提交答案判对错
+    public static final String ERROR_QUE_ANSWER_SUBMIT = "/AppServer/ajax/studentApp_ErrorQueAnswer.do";
+    public static final String ERROR_QUE_SELECTOR = "/AppServer/ajax/studentApp_ErrorQueGetSelectList.do";
     // 标记错题，将其移入错题回收站
     public static final String ERROR_QUE_BIAOJI = "/AppServer/ajax/studentApp_ErrorQueBiaoji.do";
     // 获取错题回收站
@@ -107,6 +121,8 @@ public class Constant {
     public static final String RESPONDER_FROM_APP = "/KeTangServer/ajax/ketang_responderFromApp.do";
     //学生端提交答案到服务器（客）
     public static final String SAVE_STU_ANSWER_FROM_APP = "/KeTangServer/ajax/ketang_saveStuAnswerFromApp.do";
+    //学生端提交答案到服务器（主）
+    public static final String SAVE_STU_SUB_ANSWER_FROM_APP = "/KeTangServer/ajax/ketang_saveStuSubjectiveAnswerFromApp.do";
     // 学生端保存图片到服务器
     public static final String SAVE_BASE64_IMAGE = "/KeTangServer/ajax/ketang_saveBase64Image.do";
     // 教师端最新信息
@@ -115,8 +131,21 @@ public class Constant {
     // 教师授课资料信息
     public static final String T_TEACH_ITEM = "/AppServer/ajax/teacherApp_getLearnPlanOrPaperList.do";
 
-    // 教师端统计顶部信息
+    // 教师端统计第一模块信息
     public static final String T_REPORT_TOP = "/AppServer/ajax/teacherApp_anayGetSunNum.do";
+
+    // 教师端统计第一模块学期信息
+    public static final String T_REPORT_SEMESTER = "/AppServer/ajax/teacherApp_anayGetSchoolYearTerm.do";
+
+    // 教师端统计第二模块课堂信息
+    public static final String T_REPORT_CLASS = "/AppServer/ajax/teacherApp_anayGetKTNum.do";
+
+    // 教师端统计第三模块作业信息
+    public static final String T_REPORT_HW = "/AppServer/ajax/teacherApp_anayGetBZZYNum.do";
+
+    // 教师端统计第四模块试题信息
+    public static final String T_REPORT_QU = "/AppServer/ajax/teacherApp_anayGetPGQueNum.do";
+
 
     // 教师端获取作业和导学案学生list
     public static final String T_HOMEWORK_STUDENT_LIST = "/AppServer/ajax/teacherApp_getSubmitHomeworkStuList.do";
@@ -193,6 +222,9 @@ public class Constant {
     // 教师端-拍照发布作业-获取作业
     public static final String T_HOMEWORK_CAMARA_GET = "/AppServer/ajax/teacherApp_phoneEditZY.do";
 
+    // 教师端-拍照布置作业-图片上传
+    public static final String T_UPLOAD_IMAGE = "/AppServer/ajax/teacherApp_saveBase64Image.do";
+
     // 教师端发布通知获取班级列表
     public static final String T_BELL_ADD_CLASS= "/AppServer/ajax/teacherApp_publishNotice.do";
 
@@ -247,4 +279,6 @@ public class Constant {
     // 教师端向授课一点通发消息
     public static final String T_SEND_MESSAGE = "/KeTangServer/ajax/ketang_sendMessage.do";
 
+    // 教师端向授课一点通上传图片
+    public static final String T_YDT_UPLOAD_IMAGE = "/KeTangServer/ajax/ketang_saveBase64Image.do";
 }

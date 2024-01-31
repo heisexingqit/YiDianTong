@@ -133,7 +133,7 @@ public class LearnPlanReadingFragment extends Fragment implements View.OnClickLi
 
         WebView wv_content = view.findViewById(R.id.wv_content);
         String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + learnPlanEntity.getQuestion() + "</body>";
-        wv_content.loadData(html_content, "text/html", "utf-8");
+        wv_content.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
 
         //题目类型
         TextView tv_question_type = view.findViewById(R.id.tv_question_type);
@@ -338,6 +338,7 @@ public class LearnPlanReadingFragment extends Fragment implements View.OnClickLi
         //同步答案给Activity
         String myAnswer = "";
         boolean f = false;
+        boolean isEmpty = true; // 空答案判断
         for (int i = 0; i < choiceLen; ++i) {
             if (f) {
                 myAnswer += ',';
@@ -345,11 +346,14 @@ public class LearnPlanReadingFragment extends Fragment implements View.OnClickLi
                 f = !f;
             }
             if(answer[i] != -1) {
+                isEmpty = false;
                 myAnswer += (char) ('A' + answer[i]);
             }else{
                 myAnswer += "未答";
             }
-
+        }
+        if(isEmpty){
+            myAnswer = "";
         }
         transmit.setStuAnswer(stuAnswerEntity.getOrder(), myAnswer);
 

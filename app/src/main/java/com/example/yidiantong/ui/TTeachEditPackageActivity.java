@@ -171,18 +171,21 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
     private String xuekeCode;
     private String banbenCode;
     private String jiaocaiCode;
+    private boolean initalTime = true;
+    private RelativeLayout rl_loading;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_tteach_edit_package);
 
         learnPlanId = getIntent().getStringExtra("learnPlanId");
         learnPlanName = getIntent().getStringExtra("learnPlanName");
 
-        setContentView(R.layout.activity_tteach_edit_package);
 
         findViewById(R.id.iv_back).setOnClickListener(v -> finish());
+        rl_loading = findViewById(R.id.rl_loading); // 遮蔽
 
         iv_search_select = findViewById(R.id.iv_search_select);
         iv_search_select.setOnClickListener(this);
@@ -216,10 +219,18 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
         jiaocaiCode = intent.getStringExtra("jiaocaiCode");
         zhishidian = intent.getStringExtra("zhishidian");
         zhishidianId = intent.getStringExtra("zhishidianId");
+        Log.e("0103", "onCreate: 数据：" + xueduan);
+        Log.e("0103", "onCreate: 数据：" + xueduanCode);
+        Log.e("0103", "onCreate: 数据：" + zhishidian);
+        Log.e("0103", "onCreate: 数据：" + zhishidianId);
+        // ----------------//
+        //  第1步，加载学段
+        // ----------------//
+        loadXueDuan();
 
         // 添加子页面Fragment
         // 默认参数
-        this.type = "0";
+        this.type = "resource";
         shareTag = "99";
         addFragment = new TPackagePickAddFragment(xueduan, xueduanCode, xueke, xuekeCode, banben, banbenCode, jiaocai, jiaocaiCode, zhishidian, zhishidianId, this.type, typeSub, shareTag);
         changeFragment = new TPackagePickChangeFragment();
@@ -335,8 +346,8 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
             case R.id.tv_type_all:
                 if (lastType != view) {
                     Log.d(TAG, "onClick: 不同");
-                    lastType.setBackgroundResource(R.color.light_gray3);
-                    tv_type_all.setBackgroundResource(R.drawable.t_homework_add_select);
+                    unselectedTv(lastType);
+                    selectedTv(tv_type_all);
                     lastType = (TextView) view;
                     type = "0";
                     fl_resource_type.removeAllViews();
@@ -345,8 +356,8 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 break;
             case R.id.tv_type_question:
                 if (lastType != view) {
-                    lastType.setBackgroundResource(R.color.light_gray3);
-                    tv_type_question.setBackgroundResource(R.drawable.t_homework_add_select);
+                    unselectedTv(lastType);
+                    selectedTv(tv_type_question);
                     lastType = (TextView) view;
                     type = "question";
                     loadType();
@@ -355,8 +366,8 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 break;
             case R.id.tv_type_paper:
                 if (lastType != view) {
-                    lastType.setBackgroundResource(R.color.light_gray3);
-                    tv_type_paper.setBackgroundResource(R.drawable.t_homework_add_select);
+                    unselectedTv(lastType);
+                    selectedTv(tv_type_paper);
                     lastType = (TextView) view;
                     type = "paper";
                     typeSub = "";
@@ -366,8 +377,8 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 break;
             case R.id.tv_type_resource:
                 if (lastType != view) {
-                    lastType.setBackgroundResource(R.color.light_gray3);
-                    tv_type_resource.setBackgroundResource(R.drawable.t_homework_add_select);
+                    unselectedTv(lastType);
+                    selectedTv(tv_type_resource);
                     lastType = (TextView) view;
                     type = "resource";
                     typeSub = "";
@@ -395,6 +406,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
         getSupportFragmentManager().beginTransaction().replace(R.id.fl_main, changeFragment).commit();
         changeFragment.updateItem(addFragment.pickList);
         iv_search_select.setVisibility(View.INVISIBLE);
+        rl_loading.setVisibility(View.GONE);
     }
 
     // 挑选试题页面
@@ -417,11 +429,9 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
             dialog.show();
             return;
         }
-        try {
-            submit("", "", "", "", "", "", "3", "", "", "", "edit");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+
+        submit("", "", "", "", "", "", "3", "", "", "", "edit");
+
     }
 
     /**
@@ -516,7 +526,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag) throws UnsupportedEncodingException {
+    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag) {
         Intent intent = getIntent();
 
         // 导学案专属参数
@@ -559,33 +569,35 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
         jsonString += "]";
 
         Log.d("wen", "内容串: " + jsonString);
+        try {
+            ketang = URLEncoder.encode(ketang, "UTF-8");
+            clas = URLEncoder.encode(clas, "UTF-8");
+            stuNames = URLEncoder.encode(stuNames, "UTF-8");
+            jsonString = URLEncoder.encode(jsonString, "UTF-8");
 
-        ketang = URLEncoder.encode(ketang, "UTF-8");
-        clas = URLEncoder.encode(clas, "UTF-8");
-        stuNames = URLEncoder.encode(stuNames, "UTF-8");
-        jsonString = URLEncoder.encode(jsonString, "UTF-8");
+            mRequestUrl = Constant.API + Constant.T_LEARN_PLAN_ASSIGN_SAVE + "?assignType=" + assignType +
+                    "&channelCode=" + xueduanCode + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") +
+                    "&subjectCode=" + xuekeCode + "&subjectName=" + URLEncoder.encode(xueke, "UTF-8") +
+                    "&textBookCode=" + banbenCode + "&textBookName=" + URLEncoder.encode(banben, "UTF-8") +
+                    "&gradeLevelCode=" + jiaocaiCode + "&gradeLevelName=" + URLEncoder.encode(jiaocai, "UTF-8") +
+                    "&pointCode=" + zhishidianId + "&pointName=" + URLEncoder.encode(zhishidian, "UTF-8") +
 
-        mRequestUrl = Constant.API + Constant.T_LEARN_PLAN_ASSIGN_SAVE + "?assignType=" + assignType +
-                "&channelCode=" + xueduanCode + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") +
-                "&subjectCode=" + xuekeCode + "&subjectName=" + URLEncoder.encode(xueke, "UTF-8") +
-                "&textBookCode=" + banbenCode + "&textBookName=" + URLEncoder.encode(banben, "UTF-8") +
-                "&gradeLevelCode=" + jiaocaiCode + "&gradeLevelName=" + URLEncoder.encode(jiaocai, "UTF-8") +
-                "&pointCode=" + zhishidianId + "&pointName=" + URLEncoder.encode(zhishidian, "UTF-8") +
+                    "&type=3" + "&learnPlanType=" + "&classHours=" + classHours +
+                    "&studyHours=" + studyHours + "&Introduce=" + URLEncoder.encode(Introduce, "UTF-8") + "&Goal=" + URLEncoder.encode(Goal, "UTF-8") +
+                    "&Emphasis=" + URLEncoder.encode(Emphasis, "UTF-8") + "&Difficulty=" + URLEncoder.encode(Difficulty, "UTF-8") + "&Summary=" + URLEncoder.encode(Summary, "UTF-8") + "&Extension=" + URLEncoder.encode(Extension, "UTF-8") +
 
-                "&type=3" + "&learnPlanType=" + "&classHours=" + classHours +
-                "&studyHours=" + studyHours + "&Introduce=" + URLEncoder.encode(Introduce, "UTF-8") + "&Goal=" + URLEncoder.encode(Goal, "UTF-8") +
-                "&Emphasis=" + URLEncoder.encode(Emphasis, "UTF-8") + "&Difficulty=" + URLEncoder.encode(Difficulty, "UTF-8") + "&Summary=" + URLEncoder.encode(Summary, "UTF-8") + "&Extension=" + URLEncoder.encode(Extension, "UTF-8") +
+                    "&startTime=" + startTime + "&endTime=" + endTime +
+                    "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classIds=" + classId +
+                    "&className=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
+                    "&roomType=" + learnType +
 
-                "&startTime=" + startTime + "&endTime=" + endTime +
-                "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classIds=" + classId +
-                "&className=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
-                "&roomType=" + learnType +
+                    "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
+                    "&learnPlanName=" + URLEncoder.encode(learnPlanName, "UTF-8") + "&flag=edit" + "&jsonStr=" + jsonString;
 
-                "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                "&learnPlanName=" + URLEncoder.encode(learnPlanName, "UTF-8") + "&flag=edit" + "&jsonStr=" + jsonString;
-
-        Log.d("wen", "URL: " + mRequestUrl);
-
+            Log.d("wen", "URL: " + mRequestUrl);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
@@ -610,8 +622,8 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                             Intent toHome = new Intent(TTeachEditPackageActivity.this, TMainPagerActivity.class);
                             toHome.putExtra("pos", 2);
                             //两个一起用
-                            toHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            toHome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
                             startActivity(toHome);
                         }
                     });
@@ -624,8 +636,8 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                             Intent toHome = new Intent(TTeachEditPackageActivity.this, TMainPagerActivity.class);
                             toHome.putExtra("pos", 2);
                             //两个一起用
-                            toHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            toHome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
                             startActivity(toHome);
                         }
                     });
@@ -639,8 +651,8 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
+            Log.e("volley", "Volley_Error: " + error.toString());
+
         });
         MyApplication.addRequest(request, TAG);
         rl_submitting.setVisibility(View.VISIBLE);
@@ -672,6 +684,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
             message.what = 100;
             handler.sendMessage(message);
         }
+
     }
 
     /**
@@ -779,6 +792,8 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
     // 获取选题信息
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void loadPickList() {
+        rl_loading.setVisibility(View.VISIBLE);
+
         mRequestUrl = Constant.API + Constant.T_GET_LEARN_PLAN_PICKLIST + "?learnPlanId=" + learnPlanId + "&deviceType=PAD";
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
@@ -798,6 +813,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 e.printStackTrace();
             }
         }, error -> {
+            rl_loading.setVisibility(View.GONE);
             Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
@@ -824,13 +840,19 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                     xueduanMap.put(object.getString("channelName"), object.getString("channelId"));
                 }
                 Log.d("wen", "学段: " + xueduanMap);
+                // ----------------//
+                //  第2步，加载学科
+                // ----------------//
+                if (xueduan.length() > 0) {
+                    loadXueKe();
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
+            Log.e("volley", "Volley_Error: " + error.toString());
+
         });
         MyApplication.addRequest(request, TAG);
     }
@@ -847,14 +869,14 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
             TextView tv_name = view.findViewById(R.id.tv_name);
             tv_name.setText(name);
             if (name.equals(xueduan)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastXueduan = tv_name;
             }
             tv_name.setOnClickListener(v -> {
                 xueduan = (String) tv_name.getText();
 
                 if (lastXueduan != null) {
-                    lastXueduan.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastXueduan);
                 }
 
                 if (lastXueduan == tv_name) {
@@ -865,7 +887,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 } else {
                     xueduan = tv_name.getText().toString();
                     xueduanCode = xueduanMap.get(xueduan);
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastXueduan = tv_name;
                     refresh(1);
                     loadXueKe();
@@ -874,7 +896,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
 
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_xueduan.getWidth() / 3 - PxUtils.dip2px(this, 14);
+            params.width = fl_xueduan.getWidth() / 3 - PxUtils.dip2px(this, 15);
             tv_name.setLayoutParams(params);
             fl_xueduan.addView(view);
         });
@@ -895,10 +917,16 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 JSONArray data = json.getJSONArray("data");
                 for (int i = 0; i < data.length(); ++i) {
                     JSONObject object = data.getJSONObject(i);
-                    xuekeMap.put(object.getString("subjectName"), object.getString("subjectId"));
+                    xuekeMap.put(object.getString("subjectName").substring(2), object.getString("subjectId"));
                 }
 
                 Log.d("wen", "学科: " + xuekeMap);
+                // ----------------//
+                //  第3步，加载版本
+                // ----------------//
+                if (xueke.length() > 0) {
+                    loadBanBen();
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -917,33 +945,26 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
         }
         lastXueke = null;
         xuekeMap.forEach((name, id) -> {
-            // name（包含学段）
             view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_block, fl_xueke, false);
             TextView tv_name = view.findViewById(R.id.tv_name);
-            // 按钮显示（不含学段）
-            tv_name.setText(name.substring(2));
-            // xueke（包含学段）
+            tv_name.setText(name);
             if (name.equals(xueke)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastXueke = tv_name;
             }
             tv_name.setOnClickListener(v -> {
+                xueke = (String) tv_name.getText();
 
                 if (lastXueke != null) {
-                    lastXueke.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastXueke);
                 }
 
                 if (lastXueke == tv_name) {
                     xueke = "";
-                    xuekeCode = "";
                     lastXueke = null;
                     refresh(2);
                 } else {
-                    // 点击事件，获取xueke（包含学段）
-                    xueke = xueduan + tv_name.getText().toString();
-                    xuekeCode = xuekeMap.get(xueke);
-
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastXueke = tv_name;
                     refresh(2);
                     loadBanBen();
@@ -952,7 +973,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 tv_xueke.setText(xueke);
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_xueke.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 14);
+            params.width = fl_xueke.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 15);
             tv_name.setLayoutParams(params);
             fl_xueke.addView(view);
         });
@@ -977,6 +998,12 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 }
 
                 Log.d("wen", "版本: " + banbenMap);
+                // ----------------//
+                //  第4步，加载教材
+                // ----------------//
+                if (banben.length() > 0) {
+                    loadJiaoCai();
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -999,14 +1026,14 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
             TextView tv_name = view.findViewById(R.id.tv_name);
             tv_name.setText(name);
             if (name.equals(banben)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastBanben = tv_name;
             }
             tv_name.setOnClickListener(v -> {
                 banben = (String) tv_name.getText();
 
                 if (lastBanben != null) {
-                    lastBanben.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastBanben);
                 }
 
                 if (lastBanben == tv_name) {
@@ -1017,7 +1044,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 } else {
                     banben = tv_name.getText().toString();
                     banbenCode = banbenMap.get(banben);
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastBanben = tv_name;
                     refresh(3);
                     loadJiaoCai();
@@ -1025,7 +1052,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 tv_banben.setText(banben);
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_banben.getWidth() / 3 - PxUtils.dip2px(this, 14);
+            params.width = fl_banben.getWidth() / 3 - PxUtils.dip2px(this, 15);
             tv_name.setLayoutParams(params);
             fl_banben.addView(view);
         });
@@ -1053,6 +1080,12 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 }
 
                 Log.d("wen", "教材: " + jiaocaiMap);
+                // ----------------//
+                //  第5步，加载知识点
+                // ----------------//
+                if (jiaocai.length() > 0) {
+                    loadZhiShiDian();
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -1076,13 +1109,13 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
             TextView tv_name = view.findViewById(R.id.tv_name);
             tv_name.setText(name);
             if (name.equals(jiaocai)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastJiaocai = tv_name;
             }
             tv_name.setOnClickListener(v -> {
                 jiaocai = (String) tv_name.getText();
                 if (lastJiaocai != null) {
-                    lastJiaocai.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastJiaocai);
                 }
 
                 if (lastJiaocai == tv_name) {
@@ -1093,7 +1126,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 } else {
                     jiaocai = tv_name.getText().toString();
                     jiaocaiCode = jiaocaiMap.get(jiaocai);
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastJiaocai = tv_name;
                     refresh(4);
                     loadZhiShiDian();
@@ -1101,7 +1134,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 tv_jiaocai.setText(jiaocai);
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_jiaocai.getWidth() / 3 - PxUtils.dip2px(this, 14);
+            params.width = fl_jiaocai.getWidth() / 3 - PxUtils.dip2px(this, 15);
             tv_name.setLayoutParams(params);
             fl_jiaocai.addView(view);
         });
@@ -1163,8 +1196,12 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 break;
         }
 
-        mRequestUrl += "channelCode=" + xueduanMap.get(xueduan) + "&subjectCode=" + xuekeMap.get(xueke) + "&textBookCode=" + banbenMap.get(banben) + "&gradeLevelCode=" +
-                jiaocaiMap.get(jiaocai) + "&pointCode=" + zhishidianId + "&shareTag=" + shareTag + "&teacherId=" + MyApplication.username;
+        if (initalTime) {
+            mRequestUrl += "?channelCode=" + xueduanCode + "&subjectCode=" + xuekeCode + "&textBookCode=" + banbenCode + "&gradeLevelCode=" + jiaocaiCode + "&pointCode=" + zhishidianId + "&shareTag=" + shareTag + "&teacherId=" + MyApplication.username;
+            initalTime = false;
+        } else {
+            mRequestUrl += "?channelCode=" + xueduanMap.get(xueduan) + "&subjectCode=" + xuekeMap.get(xueke) + "&textBookCode=" + banbenMap.get(banben) + "&gradeLevelCode=" + jiaocaiMap.get(jiaocai) + "&pointCode=" + zhishidianId + "&shareTag=" + shareTag + "&teacherId=" + MyApplication.username;
+        }
         Log.d("wen", "type: " + mRequestUrl);
         typeMap.clear();
         StringRequest request = new StringRequest(mRequestUrl, response -> {
@@ -1198,17 +1235,16 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
         typeMap.forEach((name, id) -> {
             view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_block, fl_resource_type, false);
             TextView tv_name = view.findViewById(R.id.tv_name);
-            tv_name.setTextColor(getResources().getColor(R.color.black));
             tv_name.setText(name);
             if (name.equals(typeSub)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                selectedTv(tv_name);
                 lastTypeSub = tv_name;
             }
             tv_name.setOnClickListener(v -> {
                 typeSub = (String) tv_name.getText();
 
                 if (lastTypeSub != null) {
-                    lastTypeSub.setBackgroundResource(R.color.light_gray3);
+                    unselectedTv(lastTypeSub);
                 }
 
                 if (lastTypeSub == tv_name) {
@@ -1216,12 +1252,12 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                     lastTypeSub = null;
                 } else {
                     typeSub = tv_name.getText().toString();
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                    selectedTv(tv_name);
                     lastTypeSub = tv_name;
                 }
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_resource_type.getWidth() / 3 - PxUtils.dip2px(this, 14);
+            params.width = fl_resource_type.getWidth() / 3 - PxUtils.dip2px(this, 15);
             tv_name.setLayoutParams(params);
             fl_resource_type.addView(view);
         });
@@ -1280,6 +1316,17 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                 "</script>" +
                 "</head><body style=\"color: rgb(117, 117, 117); font-size: 16px; margin: 0px; padding: 0px\">" + str +
                 "</body>";
-        wb.loadData(html_content, "text/html", "utf-8");
+        wb.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
+    }
+
+
+    private void selectedTv(TextView tv) {
+        tv.setBackgroundResource(R.drawable.t_homework_add_select);
+        tv.setTextColor(getColor(R.color.red));
+    }
+
+    private void unselectedTv(TextView tv) {
+        tv.setBackgroundResource(R.drawable.t_homework_add_unselect);
+        tv.setTextColor(getColor(R.color.default_gray));
     }
 }

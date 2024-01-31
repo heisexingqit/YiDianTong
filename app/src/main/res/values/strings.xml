@@ -1,5 +1,5 @@
-<resources>
-    <string name="app_name">一点通0821</string>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="app_name">学习一点通</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -144,6 +144,7 @@
     <string name="add_camera_homework">拍照布置作业</string>
     <string name="set_weike_params">设置微课属性</string>
     <string name="set_package_params">设置授课包属性</string>
+    <string name="introduction">简介: \n北京智佳成立于1993年，是国家认定的高新技术企业和双软企业。公司自成立以来始终专注于教育软件、教学资源的研发和服务，长期引领中国教育信息化的技术发展方向。旗下\"一点通\"系列教育软件曾获得教育部、文化部、信息产业部、科技部和国家新闻出版总署的多次奖励，客户遍布20多个省市的大中小学。进入21世纪，智佳以云计算和互联网技术为依托，全力打造\"中国教育知识服务云\"平台，该平台被列为国家火炬计划项目，获得科技部、北京市科委、中关村园区等多部门的资金支持，并在河南、山西等省市获得规模应用。公司已取得计算机软件著作权证书114项、软件产品证书9项，并拥有\"9月1号\" \"淘卷\" \"一点通\" \"点点通\"等注册商标。</string>
     <!--wen-->
 
 </resources>

@@ -10,8 +10,8 @@ android {
         applicationId "com.example.yidiantong"
         minSdk 23
         targetSdk 32
-        versionCode 1
-        versionName "1.0"
+        versionCode 5
+        versionName "6.0.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     android {
@@ -37,7 +37,7 @@ android {
     // 自定义打包名称
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "YiDianTong_${buildType.name}_v${versionName}_${generateTime()}.apk"
+            outputFileName = "learning-${versionName}.apk"
         }
     }
 }
@@ -64,6 +64,19 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    // HTML处理工具
+    implementation 'org.jsoup:jsoup:1.13.1'
+
+    // room数据库管理功绩
+    implementation 'androidx.room:room-runtime:2.2.5'
+    annotationProcessor 'androidx.room:room-compiler:2.2.5'
+
+    // 图片压缩工具
+    implementation 'id.zelory:compressor:2.1.1'
+
+    // 图表
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     // 时间选择器
     implementation 'com.contrarywind:Android-PickerView:4.1.9'

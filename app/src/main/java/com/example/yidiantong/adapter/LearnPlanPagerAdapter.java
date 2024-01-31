@@ -105,6 +105,6 @@ public class LearnPlanPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return itemList.size();
+        return itemList2.size();
     }
 }

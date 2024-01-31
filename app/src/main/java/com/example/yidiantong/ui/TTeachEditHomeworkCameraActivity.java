@@ -1,5 +1,6 @@
 package com.example.yidiantong.ui;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +33,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -62,6 +65,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
@@ -77,7 +82,8 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
     private ActivityResultLauncher<Intent> mResultLauncher;
     private ActivityResultLauncher<Intent> mResultLauncher2;
     private ActivityResultLauncher<Intent> mResultLauncher3;
-    private Uri picUri, imageUri;
+    private ActivityResultLauncher<Intent> mResultLauncherCrop;//NEW
+    private Uri picUri, imageUri, cropUri;
 
     //标识码
     private static final int REQUEST_CODE_STORAGE = 1;
@@ -136,11 +142,13 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
     private LinearLayout ll_divide_hide;
     private EditText et_num;
 
-    private ScrollView sv_main;
+    private NestedScrollView sv_main;
 
     // 类型修改
     private boolean isTypeChange;
     private int typeChangePos;
+
+    private RelativeLayout rl_loading;
 
     // 滚动控制器
     public class CustomLinearLayoutManager extends LinearLayoutManager {
@@ -166,6 +174,8 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tteach_edit_homework_camera);
         findViewById(R.id.iv_back).setOnClickListener(v -> finish());
+        rl_loading = findViewById(R.id.rl_loading); // 遮蔽
+
 
         findViewById(R.id.btn_save).setOnClickListener(this);
         findViewById(R.id.btn_assign).setOnClickListener(this);
@@ -253,7 +263,7 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
             }
 
             @Override
-            public ScrollView getParentScrollView() {
+            public NestedScrollView getParentScrollView() {
                 return sv_main;
             }
 
@@ -264,6 +274,11 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
                 typeChangePos = pos;
                 showTypeMenu();
             }
+
+            @Override
+            public void openImage(int pos, String type) {
+
+            }
         });
 
         // 注册Gallery回调组件
@@ -273,20 +288,60 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
                 if (result.getResultCode() == RESULT_OK) {
                     Intent intent = result.getData();
                     //Uri和path相似，都是定位路径，属于一步到位方式 =》 如果是path 则 Uri.parse(path)
-                    picUri = intent.getData();
-                    if (picUri != null) {
-                        /*Gallery回调执行*/
+                    Uri uri = intent.getData();
+                    if (uri != null) {
+                        /**
+                         * 这里做了统一化操作：创建一个output.jpg文件，并将uri写入新文件，并将picUri赋给新文件（与拍照逻辑相似）
+                         * 一是为了简化方法；
+                         * 二是因为适配问题，有些手机应用不能返回数据，只能与拍照类似的调用方式才行；
+                         * 三是因为获取本地图片只能返回uri，而不像拍照那样可以选择写入，因此需要手动。
+                         */
+                        File Image = new File(getExternalCacheDir(), "output_image.jpg");
+                        if (Image.exists()) {
+                            Image.delete();
+                        }
                         try {
-                            Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(picUri));
-                            imageBase64 = ImageUtils.Bitmap2StrByBase64(bitmap);
-                            imageBase64 = imageBase64.replace("+", "%2b");
-                            uploadImage();
+                            Image.createNewFile();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+
+                        // 兼容方式获取文件Uri
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            picUri = FileProvider.getUriForFile(TTeachEditHomeworkCameraActivity.this,
+                                    "com.example.yidiantong.fileprovider", Image);
+                        } else {
+                            picUri = Uri.fromFile(Image);
+                        }
+
+                        // uri写入文件Image
+                        FileOutputStream outputStream = null;
+                        FileInputStream inputStream = null;
+                        try {
+                            outputStream = new FileOutputStream(Image);
+                            inputStream = (FileInputStream) getContentResolver().openInputStream(uri);
+
+                            byte[] buffer = new byte[1024];
+                            int length;
+                            while ((length = inputStream.read(buffer)) > 0) {
+                                outputStream.write(buffer, 0, length);
+                            }
+                            inputStream.close();
+                            outputStream.close();
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        /**
+                         * 统一化操作结束++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                         */
+
+                        Crop(picUri); // 裁剪图片
                     }
+
                 }
             }
+
         });
 
         // 注册Camera回调组件
@@ -294,9 +349,10 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
             @Override
             public void onActivityResult(ActivityResult result) {
                 if (result.getResultCode() == RESULT_OK) {
-                    Intent intent = new Intent(TTeachEditHomeworkCameraActivity.this, DoodleActivity.class);
-                    intent.putExtra("uri", imageUri.toString());
-                    mResultLauncher3.launch(intent);
+//                    Intent intent = new Intent(getActivity(), DoodleActivity.class);
+//                    intent.putExtra("uri", imageUri.toString());
+//                    mResultLauncher3.launch(intent);
+                    Crop(imageUri); // 裁剪图片
                 }
             }
         });
@@ -315,12 +371,27 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
             }
         });
 
+        /**
+         * 注册通用裁切回调：与通用裁切方法对应。NEW
+         */
+        mResultLauncherCrop = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == RESULT_OK) {
+                    File Image = new File(getExternalCacheDir(), "output_temp.jpg");
+                    imageBase64 = ImageUtils.Bitmap2StrByBase64(TTeachEditHomeworkCameraActivity.this, Image);
+                    imageBase64 = imageBase64.replace("+", "%2b");
+                    uploadImage();
+                }
+            }
+        });
+
         loadListItem();
 
     }
 
-
     private void loadListItem() {
+        rl_loading.setVisibility(View.VISIBLE);
         mRequestUrl = Constant.API + Constant.T_HOMEWORK_CAMARA_GET + "?paperId=" + paperId + "&userName=" + MyApplication.username;
         Log.d("wen", "listItem: " + mRequestUrl);
         typeMap.clear();
@@ -335,15 +406,16 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
 
                 Log.d("wen", "数据: " + itemList);
                 adapter.update(itemList);
+                rl_loading.setVisibility(View.GONE);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }, error -> {
+            rl_loading.setVisibility(View.GONE);
             Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
-
     }
 
     private void uploadImage() {
@@ -599,7 +671,15 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
                             }
 
                             Log.d("wen", "测试2: " + isTypeChange);
+
                             adapter.notifyDataSetChanged();
+                            sv_main.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                sv_main.fullScroll(ScrollView.FOCUS_DOWN);
+                            }
+                        });
+
                             typeWindow.dismiss();
                             break;
                     }
@@ -912,5 +992,58 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
                 }
                 break;
         }
+    }
+
+    /**
+     * 通用裁切方法。传输、读取文件、裁切、写入文件,最终以cropUri形式显示NEW
+     *
+     * @param uri 裁切前的图片Uri（pic：相册；image：照片）
+     */
+    private void Crop(Uri uri) {
+
+        File Image = new File(getExternalCacheDir(), "output_temp.jpg");
+        if (Image.exists()) {
+            Image.delete();
+        }
+        try {
+            Image.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // 兼容方式获取文件Uri
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            cropUri = FileProvider.getUriForFile(TTeachEditHomeworkCameraActivity.this,
+                    "com.example.yidiantong.fileprovider", Image);
+        } else {
+            cropUri = Uri.fromFile(Image);
+        }
+
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        // 读写权限：要裁切需要先读取（读），后写入（写）
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        intent.setDataAndType(uri, "image/*");
+        // crop为true是设置在开启的intent中设置显示的view可以剪裁
+        intent.putExtra("crop", "true");
+
+        // <关键>两步：目标URI转换为剪贴板数据 并设置给Intent
+        ClipData clipData = ClipData.newUri(getContentResolver(), "A photo", cropUri);
+        intent.setClipData(clipData);
+
+//        // aspectX aspectY 是宽高的比例
+//        intent.putExtra("aspectX", 1);
+//        intent.putExtra("aspectY", 1);
+//
+//        // outputX,outputY 是剪裁图片的宽高
+//        intent.putExtra("outputX", 300);
+//        intent.putExtra("outputY", 300);
+
+        // 设置输出文件位置和格式
+        intent.putExtra("return-data", false);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, cropUri);
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG);
+        intent.putExtra("noFaceDetection", true);
+
+        mResultLauncherCrop.launch(intent);
     }
 }

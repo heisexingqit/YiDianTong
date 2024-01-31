@@ -1,13 +1,18 @@
 package com.example.yidiantong.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -24,25 +29,50 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.HuDongDialog;
 import com.example.yidiantong.bean.TKeTangListEntity;
 import com.example.yidiantong.util.Constant;
+import com.example.yidiantong.util.ImageUtils;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.THuDongInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.yanzhenjie.permission.Action;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.Rationale;
+import com.yanzhenjie.permission.RequestExecutor;
+import com.yanzhenjie.permission.runtime.Permission;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLClassLoader;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TRemoveControlActivity extends AppCompatActivity implements THuDongInterface, View.OnClickListener {
+    private static final String TAG = "TRemoveControlActivity";
 
     private ImageView fiv_dianming;
     private ImageView fiv_rc_xueqing;
@@ -61,8 +91,9 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
     private Runnable runnable = new Runnable() {
         public void run() {
             this.update();
-            handler.postDelayed(this, 200 );
+            handler.postDelayed(this, 200);
         }
+
         void update() {
             loadItems_Net();
         }
@@ -157,6 +188,16 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
         loadItems_Net();
         handler.postDelayed(runnable, 200);
 
+        // -----------------------#
+        //  签到功能封装
+        //  接口调用+APP自触发
+        // -----------------------#
+        View inflater = LayoutInflater.from(this).inflate(R.layout.t_dialog_sign, null);
+        popupWindow = new PopupWindow(inflater,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT, false);
+        fiv_action = inflater.findViewById(R.id.fiv_action);
+
     }
 
 
@@ -173,47 +214,36 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
 
     private void changePage(List<TKeTangListEntity> messageList) {
 
-        switch (messageList.get(0).getActionType()){
+        switch (messageList.get(0).getActionType()) {
             case "sign":
-                View inflater = LayoutInflater.from(this).inflate(R.layout.t_dialog_sign, null);
-                popupWindow = new PopupWindow(inflater,
-                        ViewGroup.LayoutParams.WRAP_CONTENT ,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,false);
-
-                if(messageList.get(0).getAction().equals("openSign")){
+                if (messageList.get(0).getAction().equals("openSign")) {
+                    Log.e("0126", "changePage: 可以的");
                     //对话框弹出
-                    popupWindow.showAtLocation(fiv_rc_six, Gravity.CENTER,0,0);
-                    WindowManager.LayoutParams lp = getWindow().getAttributes();
-                    lp.alpha = 0.5f; //0.0-1.0
-                    getWindow().setAttributes(lp);
-                    fiv_action = inflater.findViewById(R.id.fiv_action);
+                    popupWindow.showAtLocation(fiv_rc_six, Gravity.CENTER, 0, 0);
+
                     fiv_action.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             popupWindow.dismiss();
-                            WindowManager.LayoutParams lp = getWindow().getAttributes();
-                            lp.alpha = 1.0f; //0.0-1.0
-                            getWindow().setAttributes(lp);
+
                             // 从手机端向电脑端传关闭点名消息
-                            doAction(messageList,"closeSign");
+                            doAction(messageList, "closeSign");
                         }
                     });
-                }else if(messageList.get(0).getAction().equals("closeSign")){
-                    fiv_action.setVisibility(View.GONE);
-                    WindowManager.LayoutParams lp = getWindow().getAttributes();
-                    lp.alpha = 1.0f; //0.0-1.0
-                    getWindow().setAttributes(lp);
+                } else if (messageList.get(0).getAction().equals("closeSign")) {
+                    popupWindow.dismiss();
+
                 }
                 break;
             case "allAnalysis":
                 View inflater1 = LayoutInflater.from(this).inflate(R.layout.t_dialog_allanalysis, null);
                 popupWindow1 = new PopupWindow(inflater1,
-                        ViewGroup.LayoutParams.WRAP_CONTENT ,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,false);
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT, false);
                 fll_allanalysis = inflater1.findViewById(R.id.fll_allanalysis);
-                if(messageList.get(0).getAction().equals("openAllAnalysis")){
+                if (messageList.get(0).getAction().equals("openAllAnalysis")) {
                     //对话框弹出
-                    popupWindow1.showAtLocation(fiv_rc_six, Gravity.CENTER,0,0);
+                    popupWindow1.showAtLocation(fiv_rc_six, Gravity.CENTER, 0, 0);
                     WindowManager.LayoutParams lp = getWindow().getAttributes();
                     lp.alpha = 0.5f; //0.0-1.0
                     getWindow().setAttributes(lp);
@@ -224,14 +254,14 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                         @Override
                         public void onClick(View v) {
                             // 整体学情
-                            doAction(messageList,"allQuestionAnalysis");
+                            doAction(messageList, "allQuestionAnalysis");
                         }
                     });
                     fiv_qsfx.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             // 趋势学情
-                            doAction(messageList,"allQuestionAnalysisLine");
+                            doAction(messageList, "allQuestionAnalysisLine");
                         }
                     });
                     fiv_tcxq.setOnClickListener(new View.OnClickListener() {
@@ -242,13 +272,14 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                             lp.alpha = 1.0f; //0.0-1.0
                             getWindow().setAttributes(lp);
                             // 从手机端向电脑端传关闭学情消息
-                            doAction(messageList,"closeAllAnalysis");
+                            doAction(messageList, "closeAllAnalysis");
                         }
                     });
-                }else if(messageList.get(0).getAction().equals("closeAllAnalysis")){
+                } else if (messageList.get(0).getAction().equals("closeAllAnalysis")) {
                     fiv_ztfx.setVisibility(View.GONE);
                     fiv_qsfx.setVisibility(View.GONE);
-                    fiv_tcxq.setVisibility(View.GONE);;
+                    fiv_tcxq.setVisibility(View.GONE);
+                    ;
                     WindowManager.LayoutParams lp = getWindow().getAttributes();
                     lp.alpha = 1.0f; //0.0-1.0
                     getWindow().setAttributes(lp);
@@ -256,7 +287,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                 break;
 
             case "word":
-                if(messageList.get(0).getAction().equals("openWord")){
+                if (messageList.get(0).getAction().equals("openWord")) {
                     button_black();
                     fiv_rc_four.setImageResource(R.drawable.four_b);
                     fiv_rc_five.setImageResource(R.drawable.five_b);
@@ -264,41 +295,41 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     fiv_rc_seven.setImageResource(R.drawable.seven_b);
                     fiv_rc_nine.setImageResource(R.drawable.nine_c);
                     fiv_rc_ten.setImageResource(R.drawable.ten_b);
-                }else {
+                } else {
                     button_white();
                     // 按钮不可点击
                 }
-                 //点击事件
-                View.OnClickListener listener_word = new View.OnClickListener(){
+                //点击事件
+                View.OnClickListener listener_word = new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        switch (v.getId()){
+                        switch (v.getId()) {
                             case R.id.fiv_rc_one:
-                                doAction(messageList,"wordresUp");
+                                doAction(messageList, "wordresUp");
                                 break;
                             case R.id.fiv_rc_two:
-                                doAction(messageList,"wordclose");
+                                doAction(messageList, "wordclose");
                                 break;
                             case R.id.fiv_rc_three:
-                                doAction(messageList,"wordresDown");
+                                doAction(messageList, "wordresDown");
                                 break;
                             case R.id.fiv_rc_four:
-                                doAction(messageList,"wordchangeSizeUp");
+                                doAction(messageList, "wordchangeSizeUp");
                                 break;
                             case R.id.fiv_rc_five:
-                                doAction(messageList,"wordchangeSizeDown");
+                                doAction(messageList, "wordchangeSizeDown");
                                 break;
                             case R.id.fiv_rc_six:
-                                doAction(messageList,"wordprePage");
+                                doAction(messageList, "wordprePage");
                                 break;
                             case R.id.fiv_rc_seven:
-                                doAction(messageList,"wordpre");
+                                doAction(messageList, "wordpre");
                                 break;
                             case R.id.fiv_rc_nine:
-                                doAction(messageList,"wordnext");
+                                doAction(messageList, "wordnext");
                                 break;
                             case R.id.fiv_rc_ten:
-                                doAction(messageList,"wordnextPage");
+                                doAction(messageList, "wordnextPage");
                                 break;
                         }
                     }
@@ -315,13 +346,13 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                 break;
 
             case "ppt":
-                if(messageList.get(0).getAction().equals("openPPT")){
+                if (messageList.get(0).getAction().equals("openPPT")) {
                     button_black();
                     fiv_rc_six.setImageResource(R.drawable.six_b);
                     fiv_rc_ten.setImageResource(R.drawable.ten_b);
                     fiv_rc_eight.setImageResource(R.drawable.eight_c);
                     mode = 1;
-                }else if(messageList.get(0).getAction().equals("playPPT")){
+                } else if (messageList.get(0).getAction().equals("playPPT")) {
                     button_black();
                     fiv_rc_six.setImageResource(R.drawable.six_b);
                     fiv_rc_ten.setImageResource(R.drawable.ten_b);
@@ -331,42 +362,42 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     fiv_rc_seven.setOnClickListener(listener_ppt);
                     fiv_rc_nine.setOnClickListener(listener_ppt);
                     mode = 2;
-                }else {
+                } else {
                     mode = -1;
                     button_white();
                 }
 
-                listener_ppt = new View.OnClickListener(){
+                listener_ppt = new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        switch (v.getId()){
+                        switch (v.getId()) {
                             case R.id.fiv_rc_one:
-                                doAction(messageList,"pptresUp");
+                                doAction(messageList, "pptresUp");
                                 break;
                             case R.id.fiv_rc_two:
-                                doAction(messageList,"pptclose");
+                                doAction(messageList, "pptclose");
                                 break;
                             case R.id.fiv_rc_three:
-                                doAction(messageList,"pptresDown");
+                                doAction(messageList, "pptresDown");
                                 break;
                             case R.id.fiv_rc_six:
-                                doAction(messageList,"pptprePage");
+                                doAction(messageList, "pptprePage");
                                 break;
                             case R.id.fiv_rc_seven:
-                                doAction(messageList,"pptpre");
+                                doAction(messageList, "pptpre");
                                 break;
                             case R.id.fiv_rc_eight:
-                                if(mode == 1){
-                                    doAction(messageList,"pptplay");
-                                }else if(mode == 2){
-                                    doAction(messageList,"pptexit");
+                                if (mode == 1) {
+                                    doAction(messageList, "pptplay");
+                                } else if (mode == 2) {
+                                    doAction(messageList, "pptexit");
                                 }
                                 break;
                             case R.id.fiv_rc_nine:
-                                doAction(messageList,"pptnext");
+                                doAction(messageList, "pptnext");
                                 break;
                             case R.id.fiv_rc_ten:
-                                doAction(messageList,"pptnextPage");
+                                doAction(messageList, "pptnextPage");
                                 break;
 
                         }
@@ -380,9 +411,9 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                 fiv_rc_ten.setOnClickListener(listener_ppt);
                 break;
             case "resourceWeb":
-                if(messageList.get(0).getAction().equals("openResourceWeb")){
+                if (messageList.get(0).getAction().equals("openResourceWeb")) {
                     button_black();
-                }else {
+                } else {
                     button_white();
                 }
 
@@ -407,35 +438,35 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                 fiv_rc_three.setOnClickListener(listener_web);
                 break;
             case "videoAndSound":
-                if(messageList.get(0).getAction().equals("play")){
+                if (messageList.get(0).getAction().equals("play")) {
                     button_black();
                     fiv_rc_eight.setImageResource(R.drawable.eight_c);
                     fiv_rc_seven.setImageResource(R.drawable.seven_d);
                     fiv_rc_nine.setImageResource(R.drawable.nine_d);
                     mode = 1;
-                }else if(messageList.get(0).getAction().equals("pause")){
+                } else if (messageList.get(0).getAction().equals("pause")) {
                     button_black();
                     fiv_rc_eight.setImageResource(R.drawable.eight_d);
                     fiv_rc_seven.setImageResource(R.drawable.seven_d);
                     fiv_rc_nine.setImageResource(R.drawable.nine_d);
                     mode = 2;
-                }else {
+                } else {
                     mode = -1;
                     button_white();
                 }
-                View.OnClickListener listener_vas = new View.OnClickListener(){
+                View.OnClickListener listener_vas = new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
-                        switch (v.getId()){
+                        switch (v.getId()) {
                             case R.id.fiv_rc_one:
-                                doAction(messageList,"vasresUp");
+                                doAction(messageList, "vasresUp");
                                 break;
                             case R.id.fiv_rc_two:
-                                doAction(messageList,"vasclose");
+                                doAction(messageList, "vasclose");
                                 break;
                             case R.id.fiv_rc_three:
-                                doAction(messageList,"vasresDown");
+                                doAction(messageList, "vasresDown");
                                 break;
                             case R.id.fiv_rc_seven:
                                 doAction(messageList, "webgo");
@@ -444,9 +475,9 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                                 doAction(messageList, "webback");
                                 break;
                             case R.id.fiv_rc_eight:
-                                if(mode == 1){
+                                if (mode == 1) {
                                     doAction(messageList, "webstart");
-                                }else if(mode ==2){
+                                } else if (mode == 2) {
                                     doAction(messageList, "webstop");
                                 }
                         }
@@ -460,37 +491,37 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                 fiv_rc_eight.setOnClickListener(listener_vas);
                 break;
             case "question":
-                if(messageList.get(0).getAction().equals("openQuestion")){
+                if (messageList.get(0).getAction().equals("openQuestion")) {
                     button_black();
                     fiv_rc_four.setImageResource(R.drawable.four_b);
                     fiv_rc_five.setImageResource(R.drawable.five_b);
                     fiv_rc_eight.setImageResource(R.drawable.eight_e);
-                }else if(messageList.get(0).getAction().equals("showQuestionAnswer")){
+                } else if (messageList.get(0).getAction().equals("showQuestionAnswer")) {
                     button_black();
                     fiv_rc_four.setImageResource(R.drawable.four_b);
                     fiv_rc_five.setImageResource(R.drawable.five_b);
                     fiv_rc_eight.setImageResource(R.drawable.eight_f);
-                }else if(messageList.get(0).getAction().equals("closeRes")){
+                } else if (messageList.get(0).getAction().equals("closeRes")) {
                     fib_rc_tiwen.setImageResource(R.drawable.tiwen1);
                     fib_rc_suiji.setImageResource(R.drawable.suiji1);
                     fib_rc_qiangda.setImageResource(R.drawable.qiangda1);
                     ftv_rc_text.setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     button_white();
                 }
 
-                View.OnClickListener listener_que = new View.OnClickListener(){
+                View.OnClickListener listener_que = new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        switch (v.getId()){
+                        switch (v.getId()) {
                             case R.id.fiv_rc_one:
-                                doAction(messageList,"queresUp");
+                                doAction(messageList, "queresUp");
                                 break;
                             case R.id.fiv_rc_two:
-                                doAction(messageList,"queclose");
+                                doAction(messageList, "queclose");
                                 break;
                             case R.id.fiv_rc_three:
-                                doAction(messageList,"queresDown");
+                                doAction(messageList, "queresDown");
                                 break;
 
                         }
@@ -501,34 +532,34 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                 fiv_rc_three.setOnClickListener(listener_que);
                 break;
             case "questionAnswer":
-                int light[] = {-1,-1,-1,-1};
+                int light[] = {-1, -1, -1, -1};
                 listener_hudong = new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        switch (v.getId()){
+                        switch (v.getId()) {
                             case R.id.fiv_rc_left1:
-                                Log.e("点击左一","");
-                                if(typehd.equals("正在作答中")){
+                                Log.e("点击左一", "");
+                                if (typehd.equals("正在作答中")) {
                                     doActionFour(messageList, "stopAnswer");
-                                }else if(typehd.equals("作答结束")){
+                                } else if (typehd.equals("作答结束")) {
                                     doActionFour(messageList, "answerAgain");
-                                }else if(typehd.equals("随机作答") | typehd.equals("随机答案")){
+                                } else if (typehd.equals("随机作答") | typehd.equals("随机答案")) {
                                     doActionFour(messageList, "randomAgain");
-                                }else if(typehd.equals("抢答学生") | typehd.equals("抢答答案")){
+                                } else if (typehd.equals("抢答学生") | typehd.equals("抢答答案")) {
                                     doActionFour(messageList, "responderAgain");
                                 }
                                 break;
                             case R.id.fiv_rc_left2:
-                                if(typehd.equals("正在作答中") | typehd.equals("作答结束")){
+                                if (typehd.equals("正在作答中") | typehd.equals("作答结束")) {
                                     doActionFour(messageList, "dtfx");
-                                }else {
+                                } else {
                                     // 设置答案
                                 }
                                 break;
                             case R.id.fiv_rc_right1:
-                                if(typehd.equals("正在作答中") | typehd.equals("作答结束")){
+                                if (typehd.equals("正在作答中") | typehd.equals("作答结束")) {
                                     doActionFour(messageList, "dtxq");
-                                }else {
+                                } else {
                                     doActionFour(messageList, "dz");
                                 }
                                 break;
@@ -539,7 +570,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     }
                 };
                 // 一起作答 一点通→教师端
-                if(messageList.get(0).getAction().equals("AnswerTogetherStartObjective")){
+                if (messageList.get(0).getAction().equals("AnswerTogetherStartObjective")) {
                     ftv_rc_text.setVisibility(View.GONE);
                     fib_rc_tiwen.setImageResource(R.drawable.tiwen2);
                     fiv_rc_left1.setImageResource(R.drawable.jszd);
@@ -549,11 +580,11 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     fib_rc_tiwen.setImageResource(R.drawable.tiwen2);
                     ftv_rc_bottom.setText("正在作答中");
                     typehd = "正在作答中";
-                    for(int i=0;i<4;i++){
+                    for (int i = 0; i < 4; i++) {
                         light[i] = 1;
                     }
                     button_light(light);
-                }else if(messageList.get(0).getAction().equals("AnswerTogetherStopObjective")){
+                } else if (messageList.get(0).getAction().equals("AnswerTogetherStopObjective")) {
                     ftv_rc_text.setVisibility(View.GONE);
                     fiv_rc_left1.setImageResource(R.drawable.cxzd);
                     fiv_rc_left2.setImageResource(R.drawable.dtfx);
@@ -562,14 +593,14 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     ftv_rc_bottom.setText("作答结束");
                     fib_rc_tiwen.setImageResource(R.drawable.tiwen2);
                     typehd = "作答结束";
-                    for(int i=0;i<4;i++){
+                    for (int i = 0; i < 4; i++) {
                         light[i] = 1;
                     }
                     button_light(light);
                 }
 
                 // 随机  一点通→教师端
-                if(messageList.get(0).getAction().equals("RandomObjective")){
+                if (messageList.get(0).getAction().equals("RandomObjective")) {
                     ftv_rc_text.setVisibility(View.GONE);
                     fiv_rc_left1.setImageResource(R.drawable.cxsj_a);
                     fiv_rc_left2.setImageResource(R.drawable.dz_a);
@@ -578,7 +609,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     fib_rc_suiji.setImageResource(R.drawable.suiji2);
                     ftv_rc_bottom.setText("正在随机...");
                     button_light(light);
-                }else if(messageList.get(0).getAction().equals("RandomPeopleObjective")) {
+                } else if (messageList.get(0).getAction().equals("RandomPeopleObjective")) {
                     ftv_rc_text.setVisibility(View.GONE);
                     fib_rc_suiji.setImageResource(R.drawable.suiji2);
                     fiv_rc_left1.setImageResource(R.drawable.cxsj_b);
@@ -586,12 +617,12 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     fiv_rc_right1.setImageResource(R.drawable.szda_a);
                     fiv_rc_right2.setImageResource(R.drawable.closesj);
                     stuname = messageList.get(0).getDesc();
-                    ftv_rc_bottom.setText( stuname );
+                    ftv_rc_bottom.setText(stuname);
                     light[0] = 1;
                     light[3] = 1;
                     button_light(light);
                     typehd = "随机作答";
-                }else if(messageList.get(0).getAction().equals("RandomAnswerObjective")){
+                } else if (messageList.get(0).getAction().equals("RandomAnswerObjective")) {
                     ftv_rc_text.setVisibility(View.GONE);
                     fib_rc_suiji.setImageResource(R.drawable.suiji2);
                     fiv_rc_left1.setImageResource(R.drawable.cxsj_b);
@@ -599,14 +630,14 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     fiv_rc_right1.setImageResource(R.drawable.szda_b);
                     fiv_rc_right2.setImageResource(R.drawable.closesj);
                     ftv_rc_bottom.setText("回显学生答案" + messageList.get(0).getDesc());
-                    for(int i=0;i<4;i++){
+                    for (int i = 0; i < 4; i++) {
                         light[i] = 1;
                     }
                     button_light(light);
                     typehd = "随机答案";
                 }
                 // 抢答  一点通→教师端
-                if(messageList.get(0).getAction().equals("ResponderReadyObjective")){
+                if (messageList.get(0).getAction().equals("ResponderReadyObjective")) {
                     ftv_rc_text.setVisibility(View.GONE);
                     fib_rc_qiangda.setImageResource(R.drawable.qiangda2);
                     fiv_rc_left1.setImageResource(R.drawable.cxqd_a);
@@ -614,7 +645,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     fiv_rc_right1.setImageResource(R.drawable.szda_a);
                     fiv_rc_right2.setImageResource(R.drawable.closeqd_0);
                     ftv_rc_bottom.setText("正在抢答");
-                }else if(messageList.get(0).getAction().equals("ResponderObjective")){
+                } else if (messageList.get(0).getAction().equals("ResponderObjective")) {
                     ftv_rc_text.setVisibility(View.GONE);
                     fib_rc_qiangda.setImageResource(R.drawable.qiangda2);
                     fiv_rc_left1.setImageResource(R.drawable.cxqd_a);
@@ -625,7 +656,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     light[3] = 1;
                     button_light(light);
                     typehd = "正在抢答";
-                }else if(messageList.get(0).getAction().equals("ResponderPeopleObjective")){
+                } else if (messageList.get(0).getAction().equals("ResponderPeopleObjective")) {
                     ftv_rc_text.setVisibility(View.GONE);
                     fib_rc_qiangda.setImageResource(R.drawable.qiangda2);
                     fiv_rc_left1.setImageResource(R.drawable.cxqd_b);
@@ -633,29 +664,29 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     fiv_rc_right1.setImageResource(R.drawable.szda_a);
                     fiv_rc_right2.setImageResource(R.drawable.closeqd);
                     stuname = messageList.get(0).getDesc();
-                    ftv_rc_bottom.setText( stuname );
+                    ftv_rc_bottom.setText(stuname);
                     light[0] = 1;
                     light[3] = 1;
                     button_light(light);
                     typehd = "抢答学生";
-                }else if(messageList.get(0).getAction().equals("ResponderAnswerObjective")){
+                } else if (messageList.get(0).getAction().equals("ResponderAnswerObjective")) {
                     ftv_rc_text.setVisibility(View.GONE);
                     fib_rc_qiangda.setImageResource(R.drawable.qiangda2);
                     fiv_rc_left1.setImageResource(R.drawable.cxqd_b);
                     fiv_rc_left2.setImageResource(R.drawable.dz_b);
                     fiv_rc_right1.setImageResource(R.drawable.szda_b);
                     fiv_rc_right2.setImageResource(R.drawable.closeqd);
-                    ftv_rc_bottom.setText("回显学生答案" + messageList.get(0).getDesc() );
-                    for(int i=0;i<4;i++){
+                    ftv_rc_bottom.setText("回显学生答案" + messageList.get(0).getDesc());
+                    for (int i = 0; i < 4; i++) {
                         light[i] = 1;
                     }
                     button_light(light);
                     typehd = "抢答答案";
                 }
                 break;
-             //下课
+            //下课
             case "toScan":
-                if(messageList.get(0).getAction().equals("toScan")){
+                if (messageList.get(0).getAction().equals("toScan")) {
                     this.finish();
                 }
                 break;
@@ -665,12 +696,12 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
 
     // 右上四个按钮是否可被点击
     private void button_light(int light[]) {
-        ImageView iv[] = {fiv_rc_left1,fiv_rc_left2,fiv_rc_right1,fiv_rc_right2};
-        for(int i=0;i<4;i++){
-            if(light[i] == 1){
+        ImageView iv[] = {fiv_rc_left1, fiv_rc_left2, fiv_rc_right1, fiv_rc_right2};
+        for (int i = 0; i < 4; i++) {
+            if (light[i] == 1) {
                 iv[i].setEnabled(true);
                 iv[i].setOnClickListener(listener_hudong);
-            }else {
+            } else {
                 iv[i].setEnabled(false);
             }
         }
@@ -678,7 +709,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
 
 
     // 遥控器 教师端→一点通
-    private void doAction(List<TKeTangListEntity> messageList, String action){
+    private void doAction(List<TKeTangListEntity> messageList, String action) {
 
         String ip = getIntent().getStringExtra("ip");
         String teacherId = getIntent().getStringExtra("teacherId");
@@ -687,6 +718,9 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
         String resId = messageList.get(0).getResId();
         String resPath = messageList.get(0).getResPath();
         String learnPlanId = messageList.get(0).getLearnPlanId();
+        if (learnPlanId == null || learnPlanId.length() == 0) {
+            learnPlanId = getIntent().getStringExtra("learnPlanId");
+        }
         String resRootPath = messageList.get(0).getResRootPath();
         String desc = messageList.get(0).getDesc();
 
@@ -694,176 +728,168 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                 "&source=" + teacherId + "&target=0" + "&messageType=0" + "action" + "&resId=" + resId + "&resPath=" + resPath + "&learnPlanId=" +
                 learnPlanId + "&resRootPath=" + resRootPath + "&desc=" + desc;
         // 关闭点名
-        if(action.equals("closeSign")){
-            mRequestUrl0 =  "&action=do:goBackFromSign" + "&actionType=sign" ;
+        if (action.equals("closeSign")) {
+            mRequestUrl0 = "&action=do:goBackFromSign" + "&actionType=sign";
 
-        }else if(action.equals("closeAllAnalysis")){
+        } else if (action.equals("closeAllAnalysis")) {
             // 关闭学情
-            mRequestUrl0 =  "&action=do:goBackFromAllAnalysis" + "&actionType=allAnalysis";
+            mRequestUrl0 = "&action=do:goBackFromAllAnalysis" + "&actionType=allAnalysis";
 
-        }else if(action.equals("allQuestionAnalysis")){
+        } else if (action.equals("allQuestionAnalysis")) {
             // 整体分析
             mRequestUrl0 = "&action=allQuestionAnalysis" + "&actionType=allAnalysis";
 
-        }else if(action.equals("allQuestionAnalysisLine")){
+        } else if (action.equals("allQuestionAnalysisLine")) {
             // 趋势分析
             mRequestUrl0 = "&action=allQuestionAnalysisLine" + "&actionType=allAnalysis";
-        }else if(action.equals("webresUp")){
+        } else if (action.equals("webresUp")) {
             // web上一资源
             mRequestUrl0 = "&action=resUp" + "&actionType=resourceWeb";
-        }else if(action.equals("webclose")){
+        } else if (action.equals("webclose")) {
             // web关闭资源
-            mRequestUrl0 = "&action=close" + "&actionType=resourceWeb" ;
-        }
-        else if(action.equals("webresDown")){
+            mRequestUrl0 = "&action=close" + "&actionType=resourceWeb";
+        } else if (action.equals("webresDown")) {
             // web下一资源
             mRequestUrl0 = "&action=resDown" + "&actionType=resourceWeb";
-        }else if(action.equals("wordresUp")){
+        } else if (action.equals("wordresUp")) {
             // word上一资源
             mRequestUrl0 = "&action=resUp" + "&actionType=word";
-        }else if(action.equals("wordclose")){
+        } else if (action.equals("wordclose")) {
             // word关闭资源
-            mRequestUrl0 = "&action=close" + "&actionType=word" ;
-        }else if(action.equals("wordresDown")){
+            mRequestUrl0 = "&action=close" + "&actionType=word";
+        } else if (action.equals("wordresDown")) {
             // word下一资源
             mRequestUrl0 = "&action=resDown" + "&actionType=word";
-        }else if(action.equals("wordpre")){
+        } else if (action.equals("wordpre")) {
             // word光标上移
             mRequestUrl0 = "&action=pre" + "&actionType=word";
-        }else if(action.equals("wordnext")){
+        } else if (action.equals("wordnext")) {
             // word光标下移
             mRequestUrl0 = "&action=next" + "&actionType=word";
-        }else if(action.equals("wordprePage")){
+        } else if (action.equals("wordprePage")) {
             // word上一页
-            mRequestUrl0 = "&action=prePage" + "&actionType=word" ;
-        }else if(action.equals("wordnextPage")){
+            mRequestUrl0 = "&action=prePage" + "&actionType=word";
+        } else if (action.equals("wordnextPage")) {
             // word下一页
             mRequestUrl0 = "&action=nextPage" + "&actionType=word";
-        }else if(action.equals("wordchangeSizeUp")){
+        } else if (action.equals("wordchangeSizeUp")) {
             // word放大
             mRequestUrl0 = "&action=changeSizeUp" + "&actionType=word";
-        }else if(action.equals("wordchangeSizeDown")){
+        } else if (action.equals("wordchangeSizeDown")) {
             // word缩小
             mRequestUrl0 = "&action=changeSizeDown" + "&actionType=word";
-        }else if(action.equals("pptresUp")){
+        } else if (action.equals("pptresUp")) {
             // ppt上一资源
             mRequestUrl0 = "&action=resUp" + "&actionType=ppt";
-        }else if(action.equals("pptclose")){
+        } else if (action.equals("pptclose")) {
             // ppt关闭资源
             mRequestUrl0 = "&action=close" + "&actionType=ppt";
-        }
-        else if(action.equals("pptresDown")){
+        } else if (action.equals("pptresDown")) {
             // ppt下一资源
             mRequestUrl0 = "&action=resDown" + "&actionType=ppt";
-        }else if(action.equals("pptprePage")){
+        } else if (action.equals("pptprePage")) {
             // ppt上一页
             mRequestUrl0 = "&action=prePage" + "&actionType=ppt";
-        }else if(action.equals("pptnextPage")){
+        } else if (action.equals("pptnextPage")) {
             // ppt下一页
             mRequestUrl0 = "&action=nextPage" + "&actionType=ppt";
-        }
-        else if(action.equals("pptpre")){
+        } else if (action.equals("pptpre")) {
             // ppt上一动画
-            mRequestUrl0 = "&action=pre" + "&actionType=ppt" ;
-        }else if(action.equals("pptnext")){
+            mRequestUrl0 = "&action=pre" + "&actionType=ppt";
+        } else if (action.equals("pptnext")) {
             // ppt上一动画
             mRequestUrl0 = "&action=next" + "&actionType=ppt";
-        }else if(action.equals("pptplay")){
+        } else if (action.equals("pptplay")) {
             // ppt预览
             mRequestUrl0 = "&action=play" + "&actionType=ppt";
-        }else if(action.equals("pptexit")){
+        } else if (action.equals("pptexit")) {
             // ppt关闭预览
             mRequestUrl0 = "&action=exit" + "&actionType=ppt";
-        }else if(action.equals("vasresUp")){
+        } else if (action.equals("vasresUp")) {
             // vas上一资源
             mRequestUrl0 = "&action=resUp" + "&actionType=videoAndSound";
-        }else if(action.equals("vasclose")){
+        } else if (action.equals("vasclose")) {
             // vas关闭资源
             mRequestUrl0 = "&action=close" + "&actionType=videoAndSound";
-        }else if(action.equals("vasresDown")){
+        } else if (action.equals("vasresDown")) {
             // vas下一资源
-            mRequestUrl0 = "&action=resDown" + "&actionType=videoAndSound" ;
-        }
-        else if(action.equals("vasstart")){
+            mRequestUrl0 = "&action=resDown" + "&actionType=videoAndSound";
+        } else if (action.equals("vasstart")) {
             // vas开始
             mRequestUrl0 = "&action=start" + "&actionType=videoAndSound";
-        }
-        else if(action.equals("vasstop")){
+        } else if (action.equals("vasstop")) {
             // vas暂停
-            mRequestUrl0 = "&action=stop" + "&actionType=videoAndSound" ;
-        }
-        else if(action.equals("vasgo")){
+            mRequestUrl0 = "&action=stop" + "&actionType=videoAndSound";
+        } else if (action.equals("vasgo")) {
             // vas快进
-            mRequestUrl0 = "&action=go" + "&actionType=videoAndSound" ;
-        }
-        else if(action.equals("vasback")){
+            mRequestUrl0 = "&action=go" + "&actionType=videoAndSound";
+        } else if (action.equals("vasback")) {
             // vas后退
             mRequestUrl0 = "&action=back" + "&actionType=videoAndSound";
-        }else if(action.equals("queresUp")){
+        } else if (action.equals("queresUp")) {
             // question上一资源
-            mRequestUrl0 = "&action=resUp" + "&actionType=question" ;
-        }else if(action.equals("queclose")){
+            mRequestUrl0 = "&action=resUp" + "&actionType=question";
+        } else if (action.equals("queclose")) {
             // question关闭资源
             mRequestUrl0 = "&action=close" + "&actionType=question";
-        }
-        else if(action.equals("queresDown")){
+        } else if (action.equals("queresDown")) {
             // question下一资源
-            mRequestUrl0 = "&action=resDown" + "&actionType=videoAndSound" ;
+            mRequestUrl0 = "&action=resDown" + "&actionType=videoAndSound";
+        } else if (action.equals("shareImage")) {
+            // 分享图片
+            mRequestUrl0 = "&action=do:ShareStuAnswer" + "&actionType=shareImage";
         }
         mRequestUrl = mRequestUrl_origin.replace("action", mRequestUrl0);
-        mRequestUrl = mRequestUrl.replace("&","&messageBean.");
-        mRequestUrl = mRequestUrl.replace("?","?messageBean.");
-        Log.e("mRequestUrl",""+ mRequestUrl);
+        mRequestUrl = mRequestUrl.replace("&", "&messageBean.");
+        mRequestUrl = mRequestUrl.replace("?", "?messageBean.");
+        Log.e("0129", "关键的请求" + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
-            try {
-                JSONObject json = JsonUtils.getJsonObjectFromString(response);
-
-            }catch (JSONException e) {
-                e.printStackTrace();
-            }
+                Log.e("0129", "doAction: " + action);
+                if (action.equals("shareImage")) {
+                    Log.e("0129", "doActionClick: 成功！");
+                }
         }, error -> {
             Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
         });
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(request);
+      MyApplication.addRequest(request, TAG);
     }
 
     // 互动开始答题按钮  教师端→一点通
     @Override
-    public void doActionHuDong(int answer, int size){
+    public void doActionHuDong(int answer, int size) {
         String ip = getIntent().getStringExtra("ip");
         String teacherId = getIntent().getStringExtra("teacherId");
         String hou;
-        if(answer == 0 | answer == 1){
+        if (answer == 0 | answer == 1) {
             hou = String.valueOf(size);
-        }else{
+        } else {
             hou = "0";
         }
-        answer = answer +1;
+        answer = answer + 1;
         desc_num = String.valueOf(answer) + "_" + hou;
         String mRequestUrl_origin = "http://" + ip + ":8901" + Constant.T_SEND_MESSAGE + "?type=0" + "&userType=teacher" +
-                "&source=" + teacherId + "&target=0" + "&messageType=0" + "actioncontent" + "&actionType=questionAnswer"  + "&desc=" + desc_num;
+                "&source=" + teacherId + "&target=0" + "&messageType=0" + "actioncontent" + "&actionType=questionAnswer" + "&desc=" + desc_num;
 
-        if(hdmode.equals("answerTogether") ){
+        if (hdmode.equals("answerTogether")) {
             // 一起作答
-            mRequestUrl0 = "&action=answerTogether" ;
-        }else if(hdmode.equals("answerRandom")){
+            mRequestUrl0 = "&action=answerTogether";
+        } else if (hdmode.equals("answerRandom")) {
             // 随机
-            mRequestUrl0 = "&action=answerRandom" ;
-        }else if(hdmode.equals("answerResponder")){
+            mRequestUrl0 = "&action=answerRandom";
+        } else if (hdmode.equals("answerResponder")) {
             // 抢答
-            mRequestUrl0 = "&action=answerResponder" ;
+            mRequestUrl0 = "&action=answerResponder";
         }
 
         mRequestUrl = mRequestUrl_origin.replace("actioncontent", mRequestUrl0);
-        mRequestUrl = mRequestUrl.replace("&","&messageBean.");
-        mRequestUrl = mRequestUrl.replace("?","?messageBean.");
-        Log.e("mRequestUrl111",""+ mRequestUrl);
+        mRequestUrl = mRequestUrl.replace("&", "&messageBean.");
+        mRequestUrl = mRequestUrl.replace("?", "?messageBean.");
+        Log.e("mRequestUrl111", "" + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
-            }catch (JSONException e) {
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }, error -> {
@@ -879,41 +905,39 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
         String ip = getIntent().getStringExtra("ip");
         String teacherId = getIntent().getStringExtra("teacherId");
         String mRequestUrl_origin = "http://" + ip + ":8901" + Constant.T_SEND_MESSAGE + "?type=0" + "&userType=teacher" +
-                "&source=" + teacherId + "&target=0" + "&messageType=0" + "actioncontext" + "&actionType=questionAnswer"  + "&desc=" + desc_num;
-        if(action.equals("stopAnswer")){
+                "&source=" + teacherId + "&target=0" + "&messageType=0" + "actioncontext" + "&actionType=questionAnswer" + "&desc=" + desc_num;
+        if (action.equals("stopAnswer")) {
             // 结束作答
-            mRequestUrl0 = "&action=stopAnswer" ;
-        }else if(action.equals("answerAgain")){
+            mRequestUrl0 = "&action=stopAnswer";
+        } else if (action.equals("answerAgain")) {
             // 重新作答
-            mRequestUrl0 = "&action=answerAgain" ;
-        }else if(action.equals("dtfx")){
+            mRequestUrl0 = "&action=answerAgain";
+        } else if (action.equals("dtfx")) {
             // 单题分析
-            mRequestUrl0 = "&action=dtfx" ;
-        }
-        else if(action.equals("closeAnswerWindow")){
+            mRequestUrl0 = "&action=dtfx";
+        } else if (action.equals("closeAnswerWindow")) {
             // 关闭互动窗口
-            mRequestUrl0 = "&action=closeAnswerWindow" ;
-        }
-        else if(action.equals("randomAgain")){
+            mRequestUrl0 = "&action=closeAnswerWindow";
+        } else if (action.equals("randomAgain")) {
             // 重新选人
-            mRequestUrl0 = "&action=randomAgain" ;
-        }else if(action.equals("dz")){
+            mRequestUrl0 = "&action=randomAgain";
+        } else if (action.equals("dz")) {
             // 点赞
-            mRequestUrl0 = "&action=dz" ;
-        } else if(action.equals("responderAgain")){
+            mRequestUrl0 = "&action=dz";
+        } else if (action.equals("responderAgain")) {
             // 重新抢答
-            mRequestUrl0 = "&action=responderAgain" ;
+            mRequestUrl0 = "&action=responderAgain";
         }
 
         mRequestUrl = mRequestUrl_origin.replace("actioncontext", mRequestUrl0);
-        mRequestUrl = mRequestUrl.replace("&","&messageBean.");
-        mRequestUrl = mRequestUrl.replace("?","?messageBean.");
-        Log.e("mRequestUrl111",""+ mRequestUrl);
+        mRequestUrl = mRequestUrl.replace("&", "&messageBean.");
+        mRequestUrl = mRequestUrl.replace("?", "?messageBean.");
+        Log.e("mRequestUrl111", "" + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
-            }catch (JSONException e) {
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }, error -> {
@@ -970,47 +994,46 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
 
         String ip = getIntent().getStringExtra("ip");
         String teacherId = getIntent().getStringExtra("teacherId");
-        String mRequestUrl =  "http://" + ip + ":8901" + Constant.T_GET_MESSAGE_LIST_BY_TEA + "?userId=" + teacherId;
-        Log.e("mReq",""+mRequestUrl);
+        String mRequestUrl = "http://" + ip + ":8901" + Constant.T_GET_MESSAGE_LIST_BY_TEA + "?userId=" + teacherId;
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 JSONArray item = json.getJSONArray("messageList");
-                Log.e("",""+item);
-                Log.e("",""+item.get(0));
-                String itemList = item.get(0).toString();
-                itemList = "["+itemList+"]";
+
+                String itemList = item.get(item.length() - 1).toString();
+                itemList = "[" + itemList + "]";
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
-                List<TKeTangListEntity> messageList =gson.fromJson(itemList, new TypeToken<List<TKeTangListEntity>>() {}.getType());
-                Log.e("messageList",""+messageList);
+                List<TKeTangListEntity> messageList = gson.fromJson(itemList, new TypeToken<List<TKeTangListEntity>>() {
+                }.getType());
+                Log.e("0126", "loadItems_Net: " + messageList.size());
+                Log.e("messageList", "" + messageList);
                 //封装消息，传递给主线程
                 Message message = Message.obtain();
                 message.obj = messageList;
 
                 //标识线程
                 message.what = 100;
-                if(messageList.size() != 0){
+                if (messageList.size() != 0) {
                     handler1.sendMessage(message);
-                }else {
+                } else {
                     return;
                 }
 
 
-            }catch (JSONException e) {
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }, error -> {
 
         });
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(request);
-        queue.getCache().clear();
+
+        MyApplication.addRequest(request, TAG);
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.fib_rc_tiwen:
                 hdmode = "answerTogether";
                 hudongdialog();
@@ -1023,17 +1046,18 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                 hdmode = "answerResponder";
                 hudongdialog();
                 break;
-                // 点名
+            // 点名
             case R.id.fiv_rc_jrdm:
+                Log.e("0126", "onClick: 点名");
                 doActionClick("openSign");
                 break;
-                // 学情
+            // 学情
             case R.id.fiv_rc_ckxq:
                 doActionClick("openAllAnalysis");
                 break;
-                // 拍照
+            // 拍照
             case R.id.fiv_rc_stpz:
-
+                permissionOpenCamera();
                 break;
             // 下课
             case R.id.ftv_rc_break:
@@ -1074,7 +1098,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                 break;
             case R.id.fiv_rc_skbcd:
                 View inflater2 = LayoutInflater.from(this).inflate(R.layout.t_dialog_right, null, false);
-                window1 = new PopupWindow( inflater2, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, false);
+                window1 = new PopupWindow(inflater2, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, false);
                 window1.setOutsideTouchable(true);
                 window1.showAsDropDown(fiv_rc_skbcd, -150, 0);
                 break;
@@ -1086,31 +1110,37 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
     private void doActionClick(String action) {
         String ip = getIntent().getStringExtra("ip");
         String teacherId = getIntent().getStringExtra("teacherId");
-        if(action.equals("openSign")){
+        if (action.equals("openSign")) {
             mRequestUrl0 = "http://" + ip + ":8901" + Constant.T_SEND_MESSAGE + "?type=0" + "&userType=teacher" +
                     "&source=" + teacherId + "&target=0" + "&messageType=0" + "&action=openSign" + "&actionType=sign";
-        }else if(action.equals("openAllAnalysis")){
+        } else if (action.equals("openAllAnalysis")) {
             mRequestUrl0 = "http://" + ip + ":8901" + Constant.T_SEND_MESSAGE + "?type=0" + "&userType=teacher" +
                     "&source=" + teacherId + "&target=0" + "&messageType=0" + "&action=openAllAnalysis" + "&actionType=allAnalysis";
-        }else if(action.equals("toScan")){
+        } else if (action.equals("toScan")) {
             mRequestUrl0 = "http://" + ip + ":8901" + Constant.T_SEND_MESSAGE + "?type=0" + "&userType=teacher" +
                     "&source=" + teacherId + "&target=0" + "&messageType=0" + "&action=toScan" + "&actionType=toScan";
-        }
-        mRequestUrl = mRequestUrl0.replace("&","&messageBean.");
-        mRequestUrl = mRequestUrl.replace("?","?messageBean.");
-        Log.e("上课",""+ mRequestUrl);
-        StringRequest request = new StringRequest(mRequestUrl, response -> {
-            try {
-                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+        } else if (action.equals("uploadImage")) {
 
-            }catch (JSONException e) {
-                e.printStackTrace();
+        }
+        mRequestUrl = mRequestUrl0.replace("&", "&messageBean.");
+        mRequestUrl = mRequestUrl.replace("?", "?messageBean.");
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+//                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+            // 返回值是null
+            if (action.equals("openSign")) {
+                TKeTangListEntity entity = new TKeTangListEntity();
+                entity.setAction("openSign");
+                entity.setActionType("sign");
+                entity.setUserNum("one");
+                List<TKeTangListEntity> messageList = new ArrayList<>(Arrays.asList(entity));
+                changePage(messageList);
             }
         }, error -> {
             Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
         });
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(request);
+        Log.e("0126", "请求URL：" + mRequestUrl);
+
+        MyApplication.addRequest(request, TAG);
     }
 
     // 左栏
@@ -1130,6 +1160,15 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
     }
 
 
+    private void permissionOpenCamera(){
+        Intent intent = new Intent(this, TCameraShareActivity.class);
+        intent.putExtra("learnPlanId", getIntent().getStringExtra("learnPlanId"));
+        intent.putExtra("userId", getIntent().getStringExtra("teacherId"));
+        intent.putExtra("ip", getIntent().getStringExtra("ip"));
+
+        startActivity(intent);
+    }
+
     @Override
     protected void onDestroy() {
         handler.removeCallbacks(runnable); //停止刷新
@@ -1142,5 +1181,4 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
         }
         super.onDestroy();
     }
-
 }

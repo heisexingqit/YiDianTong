@@ -93,6 +93,5 @@ public class NoticeLookActivity extends AppCompatActivity {
         ftv_nl_title.setText(noticeTitle);
         ftv_nl_user.setText(noticeAuthor);
         ftv_nl_content.setText(noticecotent);
-
     }
 }

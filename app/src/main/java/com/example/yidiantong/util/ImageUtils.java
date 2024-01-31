@@ -1,56 +1,46 @@
 package com.example.yidiantong.util;
 
+import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.PixelFormat;
-import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.util.Base64;
+import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import id.zelory.compressor.Compressor;
 
 public class ImageUtils {
+    private static final String TAG = "ImageUtils";
 
-    public static Bitmap drawableToBitmap(Drawable drawable) {// drawable 转换成bitmap
-        int width = drawable.getIntrinsicWidth();// 取drawable的长宽
-        int height = drawable.getIntrinsicHeight();
-        Bitmap.Config config = drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565;// 取drawable的颜色格式
-        Bitmap bitmap = Bitmap.createBitmap(width, height, config);// 建立对应bitmap
-        Canvas canvas = new Canvas(bitmap);// 建立对应bitmap的画布
-        drawable.setBounds(0, 0, width, height);
-        drawable.draw(canvas);// 把drawable内容画到画布中
-        return bitmap;
+    public static String fileToBase64(File file) throws IOException {
+        byte[] fileContent = new byte[(int) file.length()];
+        FileInputStream fileInputStream = new FileInputStream(file);
+        fileInputStream.read(fileContent);
+        fileInputStream.close();
+        String base64Encoder = Base64.encodeToString(fileContent, Base64.DEFAULT);
+
+        return base64Encoder;
     }
 
-    public static String Bitmap2StrByBase64(Bitmap image) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        int q = 100;
-        int maxSize = 120;
-        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        while (baos.toByteArray().length / 1024 > maxSize) {
-            baos.reset(); // 重置baos即清空baos
-            q -= 5;
-            image.compress(Bitmap.CompressFormat.JPEG, q, baos);
+    public static String Bitmap2StrByBase64(Context mContext, File image) {
+        try {
+            File compressedImage = new Compressor(mContext)
+                    .setQuality(80)
+                    .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                    .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_PICTURES).getAbsolutePath())
+                    .compressToFile(image);
+
+            // 将压缩后的图片文件转换为Base64编码
+            return fileToBase64(compressedImage);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
-        byte[] bytes = baos.toByteArray();
-        return Base64.encodeToString(bytes, Base64.DEFAULT);
-    }
-
-    public static Bitmap compressBitmap(Bitmap bitmap, float scale) {
-        // 获取原始图片的宽度和高度
-        final int width = bitmap.getWidth();
-        final int height = bitmap.getHeight();
-
-        // 创建Matrix对象，并设置缩放比例
-        final Matrix matrix = new Matrix();
-        matrix.postScale(scale, scale);
-
-        // 使用Matrix对象对原始图片进行缩放
-        Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
-
-        // 回收原始图片
-        bitmap.recycle();
-
-        return resizedBitmap;
     }
 }

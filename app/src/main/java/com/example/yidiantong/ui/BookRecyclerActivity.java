@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.BooksRecyclerAdapter;
 import com.example.yidiantong.bean.BookRecyclerEntity;
@@ -41,7 +42,7 @@ import org.json.JSONObject;
 
 
 public class BookRecyclerActivity extends AppCompatActivity implements RecyclerInterface {
-
+    private static final String TAG = "BookRecyclerActivity";
     private String course_name;
     private ViewPager fvp_book_recycle;
     private BooksRecyclerAdapter adapter;
@@ -79,6 +80,7 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
         tv_title.setText(course_name + "错题详情");
         subjectId = getIntent().getStringExtra("subjectId");
         questionId = getIntent().getStringExtra("questionId");
+        sourceId = getIntent().getStringExtra("sourceId");
         userName = getIntent().getStringExtra("username");
         pos = getIntent().getStringExtra("pos");
 
@@ -188,18 +190,21 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
 
     // 获取错题详情信息
     private void loadItems_Net(int pos) {
-        String mRequestUrl = Constant.API + Constant.ERROR_QUE_ANSWER_QUESTION + "?sourceId=" + sourceId +"&userName=" +userName +"&subjectId=" + subjectId +"&currentPage=" + pos;
-        Log.e("详细mRequestUrl",""+mRequestUrl);
+        String mRequestUrl = Constant.API + Constant.ERROR_QUE_ANSWER_QUESTION + "?sourceId=" + sourceId +"&userName=" +userName +"&subjectId=" + subjectId +"&currentPage=" + pos + "&questionId=" + questionId;
+
+        Log.e("0123", "详细信息单题请求" + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
                 String itemString = json.getString("data");
+
                 itemString = "["+itemString+"]";
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
                 List<BookRecyclerEntity> itemList = gson.fromJson(itemString, new TypeToken<List<BookRecyclerEntity>>() {}.getType());
 
+                Log.e("0124", "loadItems_Net: " + itemList);
                 //封装消息，传递给主线程
                 Message message = Message.obtain();
                 message.obj = itemList;
@@ -215,9 +220,7 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
         }, error -> {
             Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
         });
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(request);
-        queue.getCache().clear();
+        MyApplication.addRequest(request, TAG);
     }
 
     //Activity中将权限结果回传给Fragment

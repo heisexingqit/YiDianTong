@@ -21,16 +21,35 @@
     <TextView
         android:id="@+id/ftv_title"
         android:layout_width="150dp"
-        android:gravity="center_horizontal"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="null"
+        android:gravity="center_horizontal"
         android:singleLine="true"
+        android:text="null"
         android:textColor="@color/main_bg"
         android:textSize="17sp" />
 
     <!--右-->
     <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/ll_fiv_recycle"
+        android:gravity="center_vertical">
+
+        <com.example.yidiantong.View.ClickableImageView
+            android:id="@+id/fiv_selector"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginEnd="15dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/main_blue_selector" />
+
+    </LinearLayout>
+    <!--右-->
+    <LinearLayout
+        android:id="@+id/ll_fiv_recycle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

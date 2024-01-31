@@ -8,13 +8,13 @@
         android:id="@+id/ll_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white_transparent"
+        android:background="@color/half8_transparent"
         android:paddingBottom="150dp">
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="170dp">
+            android:layout_marginTop="180dp">
             <LinearLayout
                 android:id="@+id/ll_content"
                 android:layout_width="match_parent"
@@ -31,15 +31,23 @@
                     android:layout_marginBottom="10dp"
                     android:gravity="center"
                     android:text="请选择题型"
+                    android:textStyle="bold"
                     android:textSize="20sp" />
-
-                <com.google.android.flexbox.FlexboxLayout
-                    android:id="@+id/fl_type"
+                <LinearLayout
+                    android:layout_marginTop="20dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:flexWrap="wrap">
+                    android:minHeight="200dp">
+                    <com.google.android.flexbox.FlexboxLayout
+                        android:id="@+id/fl_type"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="300dp"
+                        app:flexWrap="wrap">
 
-                </com.google.android.flexbox.FlexboxLayout>
+                    </com.google.android.flexbox.FlexboxLayout>
+                </LinearLayout>
+
 
                 <LinearLayout
                     android:id="@+id/ll_score"
@@ -65,7 +73,8 @@
 
                         <TextView
                             android:id="@+id/tv_score"
-                            android:layout_width="160dp"
+                            android:layout_width="wrap_content"
+                            android:layout_marginEnd="30dp"
                             android:layout_height="wrap_content"
                             android:text="每道子题面预设分值"
                             android:textSize="16sp" />
@@ -100,7 +109,8 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="160dp"
+                            android:layout_width="wrap_content"
+                            android:layout_marginEnd="30dp"
                             android:layout_height="wrap_content"
                             android:text="子题数量"
                             android:textSize="16sp" />

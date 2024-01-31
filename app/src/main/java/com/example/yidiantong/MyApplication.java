@@ -3,23 +3,24 @@ package com.example.yidiantong;
 
 import android.app.Application;
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.util.Log;
 import android.view.WindowManager;
+
+import androidx.room.Room;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-
+import com.example.yidiantong.database.YDTDatabase;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
-
-import java.util.List;
 
 public class MyApplication extends Application {
     private static final String TAG = "MyApplication";
@@ -32,13 +33,22 @@ public class MyApplication extends Application {
     public static String picUrl;
     public static String password;
     public static Boolean autoLogin;
-    public static String typeName;
+
+    // 旋转屏幕处理
+    public static int currentItem = 0;
+    public static boolean isRotate = false;
 
     private static RequestQueue mQueue;
     //ImageLoader显示图片过程中的参数
     private static DisplayImageOptions mLoaderOptions;
     private static String lastRequestUrl;
     private static long lastRequestTime;
+
+    // 当前版本号
+    public static String versionName;
+
+    // 数据库
+    public static YDTDatabase database;
 
     //初始化ImageLoader
     public static void initImageLoader(Context context) {
@@ -112,13 +122,31 @@ public class MyApplication extends Application {
         initImageLoader(getApplicationContext());
 
         // 初始化Volley的请求队列，使用okhttp替代volley底层链接
-        mQueue = Volley.newRequestQueue(getApplicationContext(), new OkHttpStack(),  -1);
+        mQueue = Volley.newRequestQueue(getApplicationContext(), new OkHttpStack(), -1);
 
+        // 获取包管理器
+        PackageManager packageManager = getPackageManager();
+        // 获取应用的包信息
+        PackageInfo packageInfo = null;
+        try {
+            packageInfo = packageManager.getPackageInfo(getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        // 获取版本号和版本名
+        versionName = packageInfo.versionName;
+
+        // 数据库对象
+        // 1. 学生作答数据表
+        database = Room.databaseBuilder(this, YDTDatabase.class, "ydt_db")
+                .addMigrations()
+                .allowMainThreadQueries()
+                .build();
     }
 
-    private WindowManager.LayoutParams wmParams=new WindowManager.LayoutParams();
+    private WindowManager.LayoutParams wmParams = new WindowManager.LayoutParams();
 
-    public WindowManager.LayoutParams getMywmParams(){
+    public WindowManager.LayoutParams getMywmParams() {
         return wmParams;
     }
 

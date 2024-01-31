@@ -61,8 +61,8 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
     private Map<String, String> groupMapStuNames = new LinkedHashMap<>();
     private Map<String, String> groupMapStuIds = new LinkedHashMap<>();
     private Map<String, String> personMap = new LinkedHashMap<>();
-    private TextView lastKetang;
-    private String ketang = "";
+    private List<TextView> lastKetang = new ArrayList<>();
+    private List<String> ketang = new ArrayList<>(); // 课堂数据
     private List<String> clas = new ArrayList<>();
     private List<String> group = new ArrayList<>();
     private List<String> person = new ArrayList<>();
@@ -89,6 +89,8 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
 
     private THomeworkAddInterface transmit;
 
+    private boolean isFirst = true;
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -108,8 +110,8 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
         tv_ketang_null = view.findViewById(R.id.tv_ketang_null);
         tv_ketang = view.findViewById(R.id.tv_ketang);
         tv_ketang.setOnClickListener(this);
-        iv_ketang = view.findViewById(R.id.iv_ketang);
-        iv_ketang.setOnClickListener(this);
+//        iv_ketang = view.findViewById(R.id.iv_ketang);
+//        iv_ketang.setOnClickListener(this);
         tv_class = view.findViewById(R.id.tv_class);
         tv_group = view.findViewById(R.id.tv_group);
         tv_person = view.findViewById(R.id.tv_person);
@@ -155,44 +157,57 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
                 // 时间选择器
                 timePickerShow(string2Calendar(tv_start.getText().toString()), string2Calendar(tv_end.getText().toString()), tv_end);
                 break;
-            case R.id.iv_ketang:
-                if (isShow) {
-                    fl_ketang.removeAllViews();
-                    iv_ketang.setImageResource(R.drawable.down_icon);
-                    isShow = false;
-                } else {
-                    showKeTang();
-                    iv_ketang.setImageResource(R.drawable.up_icon);
-                    isShow = true;
-                }
+//            case R.id.iv_ketang:
+//                if (isShow) {
+//                    fl_ketang.removeAllViews();
+//                    iv_ketang.setImageResource(R.drawable.down_icon);
+//                    isShow = false;
+//                } else {
+//                    showKeTang();
+//                    iv_ketang.setImageResource(R.drawable.up_icon);
+//                    isShow = true;
+//                }
 
-                break;
+//                break;
             case R.id.tv_class:
+
                 changePopBtn(tv_class);
+
                 pos = 0;
                 showClass();
                 break;
             case R.id.tv_group:
+                if (ketang.size() > 1) {
+                    Toast.makeText(getActivity(), "按小组布置时，只能选择一个课堂!", Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 changePopBtn(tv_group);
                 pos = 1;
                 showClass();
                 break;
             case R.id.tv_person:
+                if (ketang.size() > 1) {
+                    Toast.makeText(getActivity(), "按个人布置时，只能选择一个课堂!", Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 changePopBtn(tv_person);
+
                 pos = 2;
                 showClass();
                 break;
             case R.id.tv_ketang:
-                iv_ketang.callOnClick();
+//                iv_ketang.callOnClick();
                 break;
             case R.id.btn_reset:
                 tv_start.setText("");
                 tv_end.setText("");
-                ketang = "";
-                tv_ketang_null.setVisibility(View.GONE);
-                iv_ketang.setImageResource(R.drawable.down_icon);
-                fl_ketang.removeAllViews();
-                tv_ketang.setText("");
+                ketang.clear();
+                isFirst = true;
+                showKeTang();
+//                tv_ketang_null.setVisibility(View.GONE);
+//                iv_ketang.setImageResource(R.drawable.down_icon);
+//                fl_ketang.removeAllViews();
+//                tv_ketang.setText("");
                 changePopBtn(tv_class);
                 pos = 0;
                 showClass();
@@ -210,8 +225,8 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void submit() {
-        if(assignType.equals("1")){
-            if(StringUtils.hasEmptyString(tv_start.getText().toString(), tv_end.getText().toString(), ketang) || (pos == 0 && clas.size() == 0) || (pos == 1 && group.size() == 0) || (pos == 2 && person.size() == 0)){
+        if (assignType.equals("1")) {
+            if (StringUtils.hasEmptyString(tv_start.getText().toString(), tv_end.getText().toString()) || (pos == 0 && clas.size() == 0) || (pos == 1 && group.size() == 0) || (pos == 2 && person.size() == 0) || ketang.size() == 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setMessage("请选择以上属性");
                 builder.setNegativeButton("关闭", null);
@@ -244,12 +259,12 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
                     }
                     result2.append(name);
 
-                    if(result3.length() > 0){
+                    if (result3.length() > 0) {
                         result3.append(", ");
                     }
                     result3.append(classMap.get(key));
 
-                    if(result4.length() > 0){
+                    if (result4.length() > 0) {
                         result4.append(", ");
                     }
                     result4.append(key);
@@ -279,12 +294,12 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
                     }
                     result2.append(name);
 
-                    if(result3.length() > 0){
+                    if (result3.length() > 0) {
                         result3.append(", ");
                     }
                     result3.append(groupMap.get(key));
 
-                    if(result4.length() > 0){
+                    if (result4.length() > 0) {
                         result4.append(", ");
                     }
                     result4.append(key);
@@ -313,7 +328,7 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
                     }
                     result2.append(name);
 
-                    if(result3.length() > 0){
+                    if (result3.length() > 0) {
                         result3.append(", ");
                     }
                 });
@@ -321,7 +336,23 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
                 names = result2.toString();
                 break;
         }
-        transmit.submit(tv_start.getText().toString(), tv_end.getText().toString(), ketang, ketangMap.get(ketang), classGroupNames, classGroupIds, assignType, ids, names, leanType, "save");
+        result.setLength(0);
+        // 处理课堂名和课堂id
+        ketang.forEach(key -> {
+            if (result.length() > 0) {
+                result.append(", ");
+            }
+            result.append(ketangMap.get(key));
+        });
+        String ketangIds = result.toString();
+        String ketangName = String.join(", ", ketang);
+        Log.d("wens", "submit: " + ketangName);
+
+        Log.d("wens", "submit: 班级名称" + classGroupNames);
+        Log.d("wens", "submit: 班级Ids" + classGroupIds);
+        Log.d("wens", "submit: 学生id" + ids);
+        Log.d("wens", "submit: 学生名" + names);
+        transmit.submit(tv_start.getText().toString() + ":00", tv_end.getText().toString() + ":00", ketangName, ketangIds, classGroupNames, classGroupIds, assignType, ids, names, leanType, "save");
     }
 
     public void timePickerShow(Calendar startDate, Calendar setDate, TextView tv) {
@@ -443,7 +474,7 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
                     ketangMap.put(object.getString("keTangName"), object.getString("keTangId"));
                 }
                 Log.d("wen", "课堂: " + ketangMap);
-
+                showKeTang();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -456,49 +487,85 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void showKeTang() {
+        // 清空
+        fl_ketang.removeAllViews();
+        // 判断课堂是被否选择
         if (ketangMap.size() == 0) {
             tv_ketang_null.setVisibility(View.VISIBLE);
+        } else {
+            tv_ketang_null.setVisibility(View.GONE);
         }
-        lastKetang = null;
+        lastKetang.clear();
+        // 绘制课堂块
         ketangMap.forEach((name, id) -> {
             View view = LayoutInflater.from(getActivity()).inflate(R.layout.item_t_homework_add_block, fl_ketang, false);
             TextView tv_name = view.findViewById(R.id.tv_name);
             tv_name.setText(name);
-            if (name.equals(ketang)) {
-                tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
-                lastKetang = tv_name;
+            // 渲染说明渲染
+            if (ketang.contains(name)) {
+                selectedTv(tv_name);
+                lastKetang.add(tv_name);
             }
+            // 点击
             tv_name.setOnClickListener(v -> {
-                ketang = (String) tv_name.getText();
+                switch (pos) {
+                    case 0:
+                        // 清除已选
+                        if (ketang.contains(tv_name.getText().toString())) {
+                            unselectedTv(tv_name);
+                            ketang.remove(tv_name.getText().toString());
+                            lastKetang.remove(tv_name);
+                            // 判空
+                            if (ketang.size() == 0) {
+                                tv_class_null.setText("请先选择课堂");
+                                tv_class_null.setVisibility(View.VISIBLE);
+                            }
+//                    fl_class.removeAllViews();
+                        } else {
+                            // 新选择
+                            ketang.add(tv_name.getText().toString());
+                            selectedTv(tv_name);
+                            lastKetang.add(tv_name);
+                            if (ketang.size() > 0) {
+//                        tv_class_null.setText("请先选择课堂");
+                                tv_class_null.setVisibility(View.GONE);
+                            }
+                        }
+                        break;
+                    case 1:
+                    case 2:
+                        // 清除已选
+//                    fl_class.removeAllViews();
+                        // 列表长度限制为1.
+                        if (!ketang.contains(tv_name.getText().toString())) {
+                            selectedTv(tv_name);
 
-                if (lastKetang != null) {
-                    lastKetang.setBackgroundResource(R.color.light_gray3);
+                            ketang.clear();
+                            ketang.add(tv_name.getText().toString());
+                            // 修改lastKetang组件
+                            if (lastKetang.size() != 0) {
+                                unselectedTv(lastKetang.get(0));
+                                lastKetang.clear();
+                            }
+                            lastKetang.add(tv_name);
+                        }
+                        break;
                 }
+                // 加载班级信息
+                loadClass();
 
-                if (lastKetang == tv_name) {
-                    ketang = "";
-                    lastKetang = null;
-                    // 初始化布置配置
-                    tv_class_null.setText("请先选择课堂");
-                    tv_class_null.setVisibility(View.VISIBLE);
-                    fl_class.removeAllViews();
-
-                } else {
-                    ketang = tv_name.getText().toString();
-                    tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
-                    lastKetang = tv_name;
-                    loadClass();
-                }
-                clas.clear();
-                group.clear();
-                person.clear();
-                tv_ketang.setText(ketang);
+//                tv_ketang.setText(ketang);
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_ketang.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 14);
+            params.width = fl_ketang.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 15);
             tv_name.setLayoutParams(params);
             fl_ketang.addView(view);
+            if(isFirst){
+                tv_name.callOnClick();
+            }
+
         });
+        isFirst = false;
     }
 
     /**
@@ -506,59 +573,68 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void loadClass() {
+        clas.clear();       //记录班级选中项
+        group.clear();      // 记录小组选中项
+        person.clear();     // 记录个人选中项
+        classMap.clear();   // 班级部分数据
+        groupMap.clear();   // 小组部分数据
+        personMap.clear();  // 个人部分数据
+        for (int idx = 0; idx < ketang.size(); ++idx) {
+            String ketang_name = ketang.get(idx);
+            mRequestUrl = Constant.API + Constant.T_HOMEWORK_GET_KETANG_ITEM + "?keTangId=" + ketangMap.get(ketang_name);
+            StringRequest request = new StringRequest(mRequestUrl, response -> {
 
-        mRequestUrl = Constant.API + Constant.T_HOMEWORK_GET_KETANG_ITEM + "?keTangId=" + ketangMap.get(ketang);
-        Log.d("wen", "loadClass: " + mRequestUrl);
-        classMap.clear();
-        groupMap.clear();
-        personMap.clear();
-        StringRequest request = new StringRequest(mRequestUrl, response -> {
+                try {
+                    JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
-            try {
-                JSONObject json = JsonUtils.getJsonObjectFromString(response);
-
-                JSONObject data = json.getJSONObject("data");
-                Log.d("wen", "班级总: " + data);
-                JSONArray classList = data.getJSONArray("classList");
-                for (int i = 0; i < classList.length(); ++i) {
-                    JSONObject object = classList.getJSONObject(i);
-                    classMap.put(object.getString("value"), object.getString("id"));
-                    classMapStuNames.put(object.getString("value"), object.getString("name"));
-                    classMapStuIds.put(object.getString("value"), object.getString("ids"));
-                    String[] idArray = object.getString("ids").split(",");
-                    String[] nameArray = object.getString("name").split(",");
-
-                    for (int j = 0; j < idArray.length; j++) {
-                        personMap.put(nameArray[j], idArray[j]);
+                    JSONObject data = json.getJSONObject("data");
+                    JSONArray classList = data.getJSONArray("classList");
+                    for (int i = 0; i < classList.length(); ++i) {
+                        JSONObject object = classList.getJSONObject(i);
+                        // classMap表示班级名-》班级id
+                        classMap.put(object.getString("value"), object.getString("id"));
+                        clas.add(object.getString("value")); // 班级自动选中
+                        // classMapStuNames表示班级名-》学生名【,】
+                        classMapStuNames.put(object.getString("value"), object.getString("name"));
+                        // classMapStuIds表示班级名-》学生id【,】
+                        classMapStuIds.put(object.getString("value"), object.getString("ids"));
+                        String[] idArray = object.getString("ids").split(",");
+                        String[] nameArray = object.getString("name").split(",");
+                        // personMap表示该班级的学生名-》学生id
+                        for (int j = 0; j < idArray.length; j++) {
+                            personMap.put(nameArray[j], idArray[j]);
+                        }
                     }
+
+                    JSONArray groupList = data.getJSONArray("groupList");
+
+                    for (int i = 0; i < groupList.length(); ++i) {
+                        JSONObject object = groupList.getJSONObject(i);
+                        // 表示小组名-》班级id
+                        groupMap.put(object.getString("value"), object.getString("id"));
+                        // 表示小组名-》学生名【,】
+                        groupMapStuNames.put(object.getString("value"), object.getString("name"));
+                        // 表示小组名-》学生id【,】
+                        groupMapStuIds.put(object.getString("value"), object.getString("ids"));
+                    }
+
+                    showClass();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-
-                JSONArray groupList = data.getJSONArray("groupList");
-
-                for (int i = 0; i < groupList.length(); ++i) {
-                    JSONObject object = groupList.getJSONObject(i);
-                    groupMap.put(object.getString("value"), object.getString("id"));
-                    groupMapStuNames.put(object.getString("value"), object.getString("name"));
-                    groupMapStuIds.put(object.getString("value"), object.getString("ids"));
-                }
-
-                Log.d("wen", "班级: " + classMap);
-                showClass();
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }, error -> {
-            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
-        });
-        MyApplication.addRequest(request, TAG);
+            }, error -> {
+                Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
+                Log.d("wen", "Volley_Error: " + error.toString());
+            });
+            MyApplication.addRequest(request, TAG);
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void showClass() {
         fl_class.removeAllViews();
-        if (ketang.length() == 0) {
+        if (ketang.size() == 0) {
             tv_class_null.setText("请先选择课堂");
             tv_class_null.setVisibility(View.VISIBLE);
             return;
@@ -594,27 +670,28 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
         }
         switch (pos) {
             case 0:
-                classMap.forEach((name, id) -> {
-                    View view = LayoutInflater.from(getActivity()).inflate(R.layout.item_t_homework_add_block, fl_class, false);
-                    TextView tv_name = view.findViewById(R.id.tv_name);
-                    tv_name.setText(name);
-                    if (clas.contains(name)) {
-                        tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
-                    }
-                    tv_name.setOnClickListener(v -> {
-                        if (clas.contains(tv_name.getText().toString())) {
-                            tv_name.setBackgroundResource(R.color.light_gray3);
-                            clas.remove(tv_name.getText().toString());
-                        } else {
-                            tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
-                            clas.add(tv_name.getText().toString());
-                        }
-                    });
-                    ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-                    params.width = fl_class.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 14);
-                    tv_name.setLayoutParams(params);
-                    fl_class.addView(view);
-                });
+
+//                classMap.forEach((name, id) -> {
+//                    View view = LayoutInflater.from(getActivity()).inflate(R.layout.item_t_homework_add_block, fl_class, false);
+//                    TextView tv_name = view.findViewById(R.id.tv_name);
+//                    tv_name.setText(name);
+//                    if (clas.contains(name)) {
+//                        selectedTv(tv_name);
+//                    }
+//                    tv_name.setOnClickListener(v -> {
+//                        if (clas.contains(tv_name.getText().toString())) {
+//                            unselectedTv(tv_name);
+//                            clas.remove(tv_name.getText().toString());
+//                        } else {
+//                            selectedTv(tv_name);
+//                            clas.add(tv_name.getText().toString());
+//                        }
+//                    });
+//                    ViewGroup.LayoutParams params = tv_name.getLayoutParams();
+//                    params.width = fl_class.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 15);
+//                    tv_name.setLayoutParams(params);
+//                    fl_class.addView(view);
+//                });
                 break;
             case 1:
                 groupMap.forEach((name, id) -> {
@@ -622,19 +699,19 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
                     TextView tv_name = view.findViewById(R.id.tv_name);
                     tv_name.setText(name);
                     if (group.contains(name)) {
-                        tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                        selectedTv(tv_name);
                     }
                     tv_name.setOnClickListener(v -> {
                         if (group.contains(tv_name.getText().toString())) {
-                            tv_name.setBackgroundResource(R.color.light_gray3);
+                            unselectedTv(tv_name);
                             group.remove(tv_name.getText().toString());
                         } else {
-                            tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                            selectedTv(tv_name);
                             group.add(tv_name.getText().toString());
                         }
                     });
                     ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-                    params.width = fl_class.getWidth() / 4 - PxUtils.dip2px(view.getContext(), 14);
+                    params.width = fl_class.getWidth() / 4 - PxUtils.dip2px(view.getContext(), 15);
                     tv_name.setLayoutParams(params);
                     fl_class.addView(view);
                 });
@@ -645,23 +722,33 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
                     TextView tv_name = view.findViewById(R.id.tv_name);
                     tv_name.setText(name);
                     if (person.contains(name)) {
-                        tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                        selectedTv(tv_name);
                     }
                     tv_name.setOnClickListener(v -> {
                         if (person.contains(tv_name.getText().toString())) {
-                            tv_name.setBackgroundResource(R.color.light_gray3);
+                            unselectedTv(tv_name);
                             person.remove(tv_name.getText().toString());
                         } else {
-                            tv_name.setBackgroundResource(R.drawable.t_homework_add_select);
+                            selectedTv(tv_name);
                             person.add(tv_name.getText().toString());
                         }
                     });
                     ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-                    params.width = fl_class.getWidth() / 4 - PxUtils.dip2px(view.getContext(), 14);
+                    params.width = fl_class.getWidth() / 5 - PxUtils.dip2px(view.getContext(), 15);
                     tv_name.setLayoutParams(params);
                     fl_class.addView(view);
                 });
                 break;
         }
+    }
+
+    private void selectedTv(TextView tv) {
+        tv.setBackgroundResource(R.drawable.t_homework_add_select);
+        tv.setTextColor(getActivity().getColor(R.color.red));
+    }
+
+    private void unselectedTv(TextView tv) {
+        tv.setBackgroundResource(R.drawable.t_homework_add_unselect);
+        tv.setTextColor(getActivity().getColor(R.color.default_gray));
     }
 }

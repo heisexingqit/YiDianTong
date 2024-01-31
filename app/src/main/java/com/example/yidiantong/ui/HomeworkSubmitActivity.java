@@ -135,7 +135,6 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
                 setResult(Activity.RESULT_OK, intent);
                 rl_submitting.setVisibility(View.GONE);
                 finish();
-
             }
         }
     };
@@ -168,38 +167,44 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
             builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    String mRequestUrl = Constant.API + Constant.SUBMIT_ANSWER_FINAL + "?answerTime=" + date + "&paperId=" + learnPlanId + "&userName=" + username +
-                            "&status=" + (isNew ? 1 : 3) + "&noAnswerQueId=" + submitZero;
-
-                    StringRequest request = new StringRequest(mRequestUrl, response -> {
-                        try {
-                            JSONObject json = JsonUtils.getJsonObjectFromString(response);
-                            //结果信息
-                            Boolean isSuccess = json.getBoolean("success");
-                            Message msg = Message.obtain();
-                            if (isSuccess) {
-                                msg.obj = 1;
-                            } else {
-                                msg.obj = 0;
-                            }
-                            msg.what = 100;
-                            handler.sendMessage(msg);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }, error -> {
-                        Toast.makeText(HomeworkSubmitActivity.this, "网络连接失败", Toast.LENGTH_SHORT).show();
-                        Log.d("wen", "Volley_Error: " + error.toString());
-                    });
-
-                    MyApplication.addRequest(request, TAG);
-                    rl_submitting.setVisibility(View.VISIBLE);
+                    submit_request(date);
                 }
             });
             builder.setNegativeButton("取消", null);
             AlertDialog dialog = builder.create();
             dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
             dialog.show();
+        }else{
+            submit_request(date);
         }
+    }
+
+    private void submit_request(String date) {
+        String mRequestUrl = Constant.API + Constant.SUBMIT_ANSWER_FINAL + "?answerTime=" + date + "&paperId=" + learnPlanId + "&userName=" + username +
+                "&status=" + (isNew ? 1 : 3) + "&noAnswerQueId=" + submitZero;
+
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                //结果信息
+                Boolean isSuccess = json.getBoolean("success");
+                Message msg = Message.obtain();
+                if (isSuccess) {
+                    msg.obj = 1;
+                } else {
+                    msg.obj = 0;
+                }
+                msg.what = 100;
+                handler.sendMessage(msg);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Log.e("volley", "Volley_Error: " + error.toString());
+
+        });
+
+        MyApplication.addRequest(request, TAG);
+        rl_submitting.setVisibility(View.VISIBLE);
     }
 }

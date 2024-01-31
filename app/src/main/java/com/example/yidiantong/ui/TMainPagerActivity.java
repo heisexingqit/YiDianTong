@@ -2,10 +2,12 @@ package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,23 +27,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.CustomeMovebutton;
 import com.example.yidiantong.View.NoScrollViewPager;
-import com.example.yidiantong.adapter.TMainPagerAdapter;
-import com.example.yidiantong.bean.TKeTangListEntity;
-import com.example.yidiantong.fragment.MainBookFragment;
-import com.example.yidiantong.fragment.MainCourseFragment;
-import com.example.yidiantong.fragment.MainHomeFragment;
-import com.example.yidiantong.fragment.MainMyFragment;
-import com.example.yidiantong.fragment.MainStudyFragment;
 import com.example.yidiantong.fragment.TMainBellFragment;
 import com.example.yidiantong.fragment.TMainLatestFragment;
 import com.example.yidiantong.fragment.TMainMyFragment;
@@ -50,11 +44,7 @@ import com.example.yidiantong.fragment.TMainTeachFragment;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.LoadingPageInterface;
-import com.example.yidiantong.util.TMainChangeInterface;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -93,8 +83,9 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
     private Runnable runnable = new Runnable() {
         public void run() {
             this.update();
-            handler_run.postDelayed(this, 200 );
+            handler_run.postDelayed(this, 200);
         }
+
         void update() {
             findClassOpen();
         }
@@ -111,6 +102,9 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tmain_pager);
+        wm = null;
+
+        Log.e("0110", "onCreate: 创建！！！！！！！！！！！！！");
 
         rl_submitting = findViewById(R.id.rl_submitting);
         tv_submitting = findViewById(R.id.tv_submitting);
@@ -157,9 +151,7 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
 
         initalPos = getIntent().getIntExtra("pos", 0);
 
-        Log.d(TAG, "onCreate: " +  getIntent().getIntExtra("pos", 0));
-
-        switch (initalPos){
+        switch (initalPos) {
             case 0:
                 getSupportFragmentManager().beginTransaction().replace(R.id.vp_main, latestFragment).commit();
                 break;
@@ -177,6 +169,8 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
                 break;
         }
         SwitchTabById(initalPos);
+        Log.e("0111", "onCreate: Activity创建并请求 按钮");
+
 
 //        vp_main = findViewById(R.id.vp_main);
 //        TMainPagerAdapter adapter = new TMainPagerAdapter(getSupportFragmentManager());
@@ -184,6 +178,8 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
 //        vp_main.setCurrentItem(0);
         findClassOpen();
         handler_run.postDelayed(runnable, 1000);
+
+        checkUpdate();
     }
 
     private final Handler handler = new Handler(Looper.getMainLooper()) {
@@ -197,7 +193,7 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
                 if (f == 1) {
                     // 显示悬浮按钮
                     perssion();
-                }else{
+                } else {
                     // 关闭按钮
                     showMoveButtonView(2);
                 }
@@ -217,10 +213,9 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    public void findClassOpen(){
-        String username = getIntent().getStringExtra("username");
-        String mRequestUrl =  Constant.API + Constant.GET_SKYDT_STATUS + "?userId=" + username ;
-        Log.e("mReq",""+mRequestUrl);
+    public void findClassOpen() {
+        String username = MyApplication.username;
+        String mRequestUrl = Constant.API + Constant.GET_SKYDT_STATUS + "?userId=" + username;
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
@@ -234,16 +229,14 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
                 }
                 msg.what = 100;
                 handler.sendMessage(msg);
-            }catch (JSONException e) {
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
+            Log.e("volley", "Volley_Error: " + error.toString());
+
         });
-//        RequestQueue queue = Volley.newRequestQueue(this);
         MyApplication.addRequest(request, "noLimited");
-//        queue.getCache().clear();
     }
 
     @Override
@@ -316,7 +309,7 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
     }
 
     @Override
-    public void changePage(int position) {
+    public void changePage(int position, String type) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         switch (position) {
             case 0:
@@ -339,6 +332,8 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
 //                    vp_main.setCurrentItem(2, false);
                     ft.replace(R.id.vp_main, teachFragment);
                 }
+                teachFragment.refreshByType(type);
+                Log.e(TAG, "changePage: 类型" + type);
                 break;
             case 3:
                 if (id_bottom_onclick != 3) {
@@ -361,29 +356,30 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void showMoveButtonView(int mode) {
-        if(mode == 1){
-            if(flag == -1){
+        if (mode == 1) {
+            if (flag == -1) {
                 wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
                 DisplayMetrics dm = getResources().getDisplayMetrics();
                 int widthPixels = dm.widthPixels;
                 int heightPixels = dm.heightPixels;
                 wmParams = ((MyApplication) getApplication()).getMywmParams();
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){//API Level 26
-                    wmParams.type=WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {//API Level 26
+                    wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
                 } else {
-                    wmParams.type=WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
+                    wmParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
                 }
-                wmParams.format= PixelFormat.TRANSLUCENT;//设置透明背景ming
-                wmParams.flags= WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE ;//
-                wmParams.gravity = Gravity.LEFT|Gravity.TOP;//
+                wmParams.format = PixelFormat.TRANSLUCENT;//设置透明背景ming
+                wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;//
+                wmParams.gravity = Gravity.LEFT | Gravity.TOP;//
                 wmParams.x = widthPixels - 30;  //设置位置像素
                 wmParams.y = heightPixels - 500;
-                wmParams.width=200; //设置图片大小
-                wmParams.height=200;
-                customeMovebutton = new CustomeMovebutton(getApplicationContext());
+                wmParams.width = 200; //设置图片大小
+                wmParams.height = 200;
+                customeMovebutton = new CustomeMovebutton(TMainPagerActivity.this);
                 customeMovebutton.setImageResource(R.drawable.sj_bubble);
                 customeMovebutton.setBackgroundResource(R.drawable.move_button_bg_un);
                 flag = 1;
+                Log.e("0111", "视图创建并添加：wm.addView(customeMovebutton, wmParams);");
                 wm.addView(customeMovebutton, wmParams);
                 customeMovebutton.setOnSpeakListener(new CustomeMovebutton.OnSpeakListener() {
                     @Override
@@ -391,17 +387,17 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
                         goScanner();
                     }
                 });
-            }else if(flag == 1){
+            } else if (flag == 1) {
                 return;
             }
 
-        }else{
-            if(flag == 1){
-                if(customeMovebutton != null){
+        } else {
+            if (flag == 1) {
+                if (customeMovebutton != null) {
                     wm.removeView(customeMovebutton);
                 }
                 flag = -1;
-            }else if(flag == -1){
+            } else if (flag == -1) {
                 return;
             }
 
@@ -410,18 +406,22 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
 
     private void goScanner() {
         handler_run.removeCallbacks(runnable); //停止刷新
-        Intent intent= new Intent(this, TCourseScannerActivity.class);
+        Intent intent = new Intent(this, TCourseScannerActivity.class);
         startActivity(intent);
-
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         handler_run.removeCallbacks(runnable); //停止刷新
-        if(customeMovebutton != null && wm != null){
+
+        // 防止内存泄漏
+        if (customeMovebutton != null && wm != null) {
             wm.removeView(customeMovebutton);
         }
+
+        Log.e("0111", "onDestroy: Activity销毁了");
+
+        super.onDestroy();
     }
 
     @Override
@@ -434,10 +434,31 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
     public void onResume() {
         super.onResume();
         handler_run.postDelayed(runnable, 1000);
-        // 普通教师隐藏统计页面
-        if(MyApplication.typeName.equals("COMMON_TEACHER")){
-            ll_bottom_report.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        initalPos = intent.getIntExtra("pos", 0);
+
+        switch (initalPos) {
+            case 0:
+                getSupportFragmentManager().beginTransaction().replace(R.id.vp_main, latestFragment).commit();
+                break;
+            case 1:
+                getSupportFragmentManager().beginTransaction().replace(R.id.vp_main, reportFragment).commit();
+                break;
+            case 2:
+                getSupportFragmentManager().beginTransaction().replace(R.id.vp_main, teachFragment).commit();
+                break;
+            case 3:
+                getSupportFragmentManager().beginTransaction().replace(R.id.vp_main, bellFragment).commit();
+                break;
+            case 4:
+                getSupportFragmentManager().beginTransaction().replace(R.id.vp_main, myFragment).commit();
+                break;
         }
+        SwitchTabById(initalPos);
     }
 
     @Override
@@ -454,4 +475,82 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
         rl_submitting.setVisibility(View.GONE);
     }
 
+    private void checkUpdate() {
+        // 创建AlertDialog.Builder实例
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        String mRequestUrl = Constant.API + Constant.CHECK_VERSION + "?version=" + MyApplication.versionName + "&type=tea&autoType=auto" + "&userId=" + MyApplication.username;
+        Log.e("0124", "checkUpdate: " + mRequestUrl);
+
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                JSONObject data = json.getJSONObject("data");
+                Log.e("0124", "检查版本: " + json);
+                if (data.getString("status").equals("0")) {
+
+                } else {
+
+                    String downloadUrl = data.getString("oploadLink");
+                    String latestVersion = data.getString("version");
+                    // 【需要更新】
+                    builder.setMessage("检测到有新版本，是否更新？");
+
+                    // 设置PositiveButton（确定按钮）的点击事件
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            // 启动浏览器
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            // 设置数据（要打开的URL）
+                            intent.setData(Uri.parse(downloadUrl));
+                            startActivity(intent);
+
+                            dialog.dismiss(); // 关闭对话框
+                        }
+                    });
+                    builder.setNegativeButton("忽略", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // 确定按钮点击事件处理
+                            dialog.dismiss(); // 关闭对话框
+                            saveRecord(latestVersion);
+                        }
+                    });
+                    builder.show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }, error -> {
+            Log.e("wen", "Volley_Error: " + error.toString());
+        });
+        MyApplication.addRequest(request, TAG);
+    }
+
+    private void saveRecord(String latestVersion) {
+
+        String mRequestUrl = Constant.API + Constant.CHECK_VERSION_SAVE + "?version=" + latestVersion + "&userName=" + MyApplication.username;
+        Log.e("0124", "checkUpdate: " + mRequestUrl);
+
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                JSONObject data = json.getJSONObject("data");
+
+                Log.e("0124", "保存忽略: " + data);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }, error -> {
+            Log.e("wen", "Volley_Error: " + error.toString());
+        });
+        MyApplication.addRequest(request, TAG);
+    }
 }

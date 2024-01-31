@@ -1,6 +1,8 @@
 package com.example.yidiantong.bean;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class THomeworkCameraItem implements Serializable {
     private String questionId;
@@ -15,10 +17,16 @@ public class THomeworkCameraItem implements Serializable {
     private String answerNum;
     private String smallQueNum;
     private boolean isShow;
+    private List<String> shitiShowPic;
+    private List<String> shitiAnswerPic;
+    private List<String> shitiAnalysisPic;
 
     public THomeworkCameraItem() {
         answerNum = "-1";
         smallQueNum = "-1";
+        shitiShowPic = new ArrayList<>();
+        shitiAnswerPic = new ArrayList<>();
+        shitiAnalysisPic = new ArrayList<>();
     }
 
     public boolean isShow() {
@@ -133,6 +141,9 @@ public class THomeworkCameraItem implements Serializable {
                 ", answerNum='" + answerNum + '\'' +
                 ", smallQueNum='" + smallQueNum + '\'' +
                 ", isShow=" + isShow +
+                ", shitiShowPic=" + shitiShowPic +
+                ", shitiAnswerPic=" + shitiAnswerPic +
+                ", shitiAnalysisPic=" + shitiAnalysisPic +
                 '}';
     }
 
@@ -154,5 +165,29 @@ public class THomeworkCameraItem implements Serializable {
                 ", answerNum=\"" + answerNum + '\"' +
                 ", smallQueNum=\"" + smallQueNum + '\"' +
                 '}';
+    }
+
+    public List<String> getShitiShowPic() {
+        return shitiShowPic;
+    }
+
+    public void setShitiShowPic(List<String> shitiShowPic) {
+        this.shitiShowPic = shitiShowPic;
+    }
+
+    public List<String> getShitiAnswerPic() {
+        return shitiAnswerPic;
+    }
+
+    public void setShitiAnswerPic(List<String> shitiAnswerPic) {
+        this.shitiAnswerPic = shitiAnswerPic;
+    }
+
+    public List<String> getShitiAnalysisPic() {
+        return shitiAnalysisPic;
+    }
+
+    public void setShitiAnalysisPic(List<String> shitiAnalysisPic) {
+        this.shitiAnalysisPic = shitiAnalysisPic;
     }
 }

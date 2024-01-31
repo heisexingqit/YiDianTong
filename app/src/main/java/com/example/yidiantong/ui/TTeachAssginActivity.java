@@ -469,8 +469,8 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
+            Log.e("volley", "Volley_Error: " + error.toString());
+
         });
         MyApplication.addRequest(request, TAG);
     }
@@ -570,8 +570,8 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
+            Log.e("volley", "Volley_Error: " + error.toString());
+
         });
         MyApplication.addRequest(request, TAG);
     }
@@ -744,8 +744,8 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                                 Intent toHome = new Intent(TTeachAssginActivity.this, TMainPagerActivity.class);
                                 toHome.putExtra("pos", 2);
                                 //两个一起用
-                                toHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                toHome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
                                 startActivity(toHome);
                             }
                         });
@@ -758,8 +758,8 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                                 Intent toHome = new Intent(TTeachAssginActivity.this, TMainPagerActivity.class);
                                 toHome.putExtra("pos", 2);
                                 //两个一起用
-                                toHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                toHome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
                                 startActivity(toHome);
                             }
                         });
@@ -853,8 +853,8 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                                 Intent toHome = new Intent(TTeachAssginActivity.this, TMainPagerActivity.class);
                                 toHome.putExtra("pos", 2);
                                 //两个一起用
-                                toHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                toHome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
                                 startActivity(toHome);
                             }
                         });
@@ -867,8 +867,8 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                                 Intent toHome = new Intent(TTeachAssginActivity.this, TMainPagerActivity.class);
                                 toHome.putExtra("pos", 2);
                                 //两个一起用
-                                toHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                toHome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
                                 startActivity(toHome);
                             }
                         });

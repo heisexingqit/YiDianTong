@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -33,7 +34,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableTextView;
-import com.example.yidiantong.ui.LiveListActivity;
 import com.example.yidiantong.ui.TBellLookNoticeActivity;
 import com.example.yidiantong.ui.TBellNoticeSubmitActivity;
 import com.example.yidiantong.ui.THomeworkAddActivity;
@@ -41,7 +41,7 @@ import com.example.yidiantong.ui.THomeworkActivity;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.adapter.THomeRecyclerAdapter;
 import com.example.yidiantong.bean.THomeItemEntity;
-import com.example.yidiantong.ui.THomeworkAddCameraActivity;
+import com.example.yidiantong.ui.THomeworkCameraAddActivity;
 import com.example.yidiantong.ui.TLearnPlanAddActivity;
 import com.example.yidiantong.ui.TLiveListActivity;
 import com.example.yidiantong.ui.TPackageAddActivity;
@@ -106,6 +106,12 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_t_main_latest, container, false);
@@ -151,6 +157,7 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
                     case "2":
                         intent = new Intent(getActivity(), THomeworkActivity.class);
                         intent.putExtra("teacherId", username);
+
                         intent.putExtra("taskId", adapter.itemList.get(pos).getfId());
                         intent.putExtra("type", "paper");
                         startActivity(intent);
@@ -370,14 +377,23 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
                 window2.dismiss();
                 break;
             case R.id.tv_my_package:
+                window2.dismiss();
+                changePageInterface.changePage(2, "package");
+                break;
             case R.id.tv_select_learnPlan:
+                window2.dismiss();
+                changePageInterface.changePage(2, "learnPlan");
+                break;
             case R.id.tv_select_weike:
+                window2.dismiss();
+                changePageInterface.changePage(2, "weike");
+                break;
             case R.id.tv_select_paper:
                 window2.dismiss();
-                changePageInterface.changePage(2);
+                changePageInterface.changePage(2, "paper");
                 break;
             case R.id.tv_camera_homework:
-                startActivity(new Intent(getActivity(), THomeworkAddCameraActivity.class));
+                startActivity(new Intent(getActivity(), THomeworkCameraAddActivity.class));
                 window2.dismiss();
                 break;
             case R.id.tv_add_notice:
@@ -431,6 +447,8 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
         mRequestUrl = Constant.API + Constant.T_NEW_ITEM + "?userID=" + username + "&resourceType=" + resourceType + "&currentPage=" + currentPage + "&type=" + type + "&searchStr=" + searchStr + "&source=RN";
 
         Log.d("wen", "教师主页: " + mRequestUrl);
+        Log.e(TAG, "loadItems_Net: " + mRequestUrl);
+
         StringRequest request = new StringRequest(mRequestUrl, response -> {
 
             try {
@@ -474,7 +492,7 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
     }
 
     public interface ChangePageInterface {
-        void changePage(int position);
+        void changePage(int position, String type);
     }
 
     @Override

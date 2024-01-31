@@ -44,11 +44,6 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/tabbar_text_unselect" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
@@ -71,11 +66,6 @@
                     android:layout_marginBottom="9dp"
                     tools:ignore="WebViewLayout" />
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/tabbar_text_unselect" />
 
             <LinearLayout
                 android:layout_width="match_parent"

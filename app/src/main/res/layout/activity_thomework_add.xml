@@ -22,7 +22,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp">
+        android:paddingStart="15dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="15dp"
+        android:paddingBottom="10dp">
 
         <TextView
             android:id="@+id/tv_mc"
@@ -30,16 +33,18 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="*  名称:"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="15sp" />
 
         <EditText
             android:id="@+id/et_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="45dp"
             android:layout_marginStart="20dp"
-            android:layout_marginEnd="10dp"
-            android:background="@android:drawable/editbox_background_normal"
-            android:padding="20dp"
+            android:layout_marginEnd="2dp"
+            android:background="@drawable/default_edit_text"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
             android:singleLine="true"
             android:textSize="14sp" />
 
@@ -60,7 +65,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="10dp">
+            android:paddingStart="15dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="15dp"
+            android:paddingBottom="10dp">
 
             <TextView
                 android:id="@+id/tv_xd"
@@ -84,8 +92,8 @@
 
             <com.example.yidiantong.View.ClickableImageView
                 android:id="@+id/iv_xueduan"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/down_icon" />
         </LinearLayout>
 
@@ -107,12 +115,9 @@
                 android:id="@+id/fl_xueduan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="18dp"
-                android:layout_marginEnd="30dp"
-                app:flexWrap="wrap">
-
-            </com.google.android.flexbox.FlexboxLayout>
-
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                app:flexWrap="wrap"/>
         </ScrollView>
     </LinearLayout>
 
@@ -131,7 +136,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="10dp">
+            android:paddingStart="15dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="15dp"
+            android:paddingBottom="10dp">
 
             <TextView
                 android:id="@+id/tv_xk"
@@ -155,8 +163,8 @@
 
             <com.example.yidiantong.View.ClickableImageView
                 android:id="@+id/iv_xueke"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/down_icon" />
         </LinearLayout>
 
@@ -178,8 +186,8 @@
                 android:id="@+id/fl_xueke"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="18dp"
-                android:layout_marginEnd="30dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
                 app:flexWrap="wrap" />
 
         </ScrollView>
@@ -200,7 +208,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="10dp">
+            android:paddingStart="15dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="15dp"
+            android:paddingBottom="10dp">
 
             <TextView
                 android:id="@+id/tv_bb"
@@ -224,8 +235,8 @@
 
             <com.example.yidiantong.View.ClickableImageView
                 android:id="@+id/iv_banben"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/down_icon" />
         </LinearLayout>
 
@@ -247,8 +258,8 @@
                 android:id="@+id/fl_banben"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="18dp"
-                android:layout_marginEnd="30dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
                 app:flexWrap="wrap" />
 
         </ScrollView>
@@ -269,7 +280,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="10dp">
+            android:paddingStart="15dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="15dp"
+            android:paddingBottom="10dp">
 
             <TextView
                 android:id="@+id/tv_jc"
@@ -294,8 +308,8 @@
 
             <com.example.yidiantong.View.ClickableImageView
                 android:id="@+id/iv_jiaocai"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/down_icon" />
         </LinearLayout>
 
@@ -317,8 +331,8 @@
                 android:id="@+id/fl_jiaocai"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="18dp"
-                android:layout_marginEnd="30dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
                 app:flexWrap="wrap" />
 
         </ScrollView>
@@ -340,14 +354,17 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:orientation="horizontal"
-            android:padding="10dp">
+            android:paddingStart="15dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="15dp"
+            android:paddingBottom="10dp">
 
             <TextView
                 android:id="@+id/tv_zsd"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:text="*  知识点:"
+                android:text="*  章节:"
                 android:textColor="@color/black"
                 android:textSize="15sp" />
 
@@ -387,7 +404,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp">
+        android:paddingStart="15dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="15dp"
+        android:paddingBottom="10dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -400,11 +420,12 @@
         <EditText
             android:id="@+id/et_introduce"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="45dp"
             android:layout_marginStart="20dp"
-            android:layout_marginEnd="10dp"
-            android:background="@android:drawable/editbox_background_normal"
-            android:padding="20dp"
+            android:layout_marginEnd="2dp"
+            android:background="@drawable/default_edit_text"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
             android:singleLine="true"
             android:textSize="14sp" />
     </LinearLayout>
@@ -421,7 +442,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="80dp"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal">
 
@@ -429,7 +450,7 @@
                 android:id="@+id/btn_cancel"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="40dp"
                 android:layout_gravity="bottom"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
@@ -444,7 +465,7 @@
                 android:id="@+id/btn_confirm"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="40dp"
                 android:layout_gravity="bottom"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"

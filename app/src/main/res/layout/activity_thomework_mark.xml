@@ -24,10 +24,10 @@
         android:background="@color/white"
         android:orientation="vertical">
 
-        <com.example.yidiantong.View.NoScrollViewPager
+        <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/vp_homework"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent" />
     </LinearLayout>
 
     <LinearLayout

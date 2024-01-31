@@ -3,12 +3,12 @@ package com.example.yidiantong.fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -34,12 +34,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
-
 import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.BuildConfig;
-
 import com.example.yidiantong.MyApplication;
-
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.HomeRecyclerAdapter;
 import com.example.yidiantong.bean.HomeItemEntity;
@@ -49,10 +46,10 @@ import com.example.yidiantong.ui.LearnPlanPagerActivity;
 import com.example.yidiantong.ui.LiveListActivity;
 import com.example.yidiantong.ui.NoticeLookActivity;
 import com.example.yidiantong.ui.ResourceFolderActivity;
-import com.example.yidiantong.ui.TBellLookNoticeActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.MyItemDecoration;
+import com.example.yidiantong.util.MyReadWriteLock;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -97,11 +94,22 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
     private EditText et_search;
     private String searchStr = "";
 
+    // -------------------
+    //  checkIn点击后标记
+    // -------------------
+    private int checkInPos = -1;
+    private String checkInType = "";
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("wen", "onCreateView: XXXXXXXXXXXX");
         View view = inflater.inflate(R.layout.fragment_main_home, container, false);
 
         //获取组件
@@ -135,34 +143,40 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                 Intent intent;
                 switch (adapter.itemList.get(pos).getType()) {
                     case "作业":
-                        if (Integer.parseInt(adapter.itemList.get(pos).getStatus()) != 2) {
-                            // 未批改的
-                            intent = new Intent(getActivity(), HomeworkPagerActivity.class);
-                        } else {
-                            intent = new Intent(getActivity(), HomeworkPagerFinishActivity.class);
-                        }
 
-                        intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
-                        intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
-                        intent.putExtra("username", username);
-                        intent.putExtra("type", "paper");
-                        intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
-                        startActivity(intent);
+                        if (Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 2) {
+                            Log.e(TAG, "onCreateView: 改过的");
+                            intent = new Intent(getActivity(), HomeworkPagerFinishActivity.class);
+                            intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
+                            intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
+                            intent.putExtra("username", username);
+                            intent.putExtra("type", "paper");
+                            intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
+                            startActivity(intent);
+                        } else {
+                            Log.e("0110", "onCreateView: 没改的");
+                            checkInPos = pos;
+                            checkInType = "作业";
+                            MyReadWriteLock.checkin(adapter.itemList.get(pos).getLearnId(), username, "student", "", handler, getActivity());
+                        }
                         break;
                     case "导学案":
                     case "微课":
-                        if (Integer.parseInt(adapter.itemList.get(pos).getStatus()) != 2) {
-                            // 未批改的
-                            intent = new Intent(getActivity(), LearnPlanPagerActivity.class);
-                        } else {
+
+                        if (Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 2) {
                             intent = new Intent(getActivity(), HomeworkPagerFinishActivity.class);
+                            intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
+                            intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
+                            intent.putExtra("username", username);
+                            intent.putExtra("type", "learnPlan");
+                            intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
+                            startActivity(intent);
+                        } else {
+                            checkInPos = pos;
+                            checkInType = "导学案";
+                            MyReadWriteLock.checkin(adapter.itemList.get(pos).getLearnId(), username, "student", "", handler, getActivity());
                         }
-                        intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
-                        intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
-                        intent.putExtra("username", username);
-                        intent.putExtra("type", "learnPlan");
-                        intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
-                        startActivity(intent);
+
                         break;
                     case "直播课消息":
                         intent = new Intent(getActivity(), LiveListActivity.class);
@@ -180,6 +194,8 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                         intent_t.putExtra("noticecotent", adapter.itemList.get(pos).getCourseName()); // 内容
                         startActivity(intent_t);
                         reload(adapter.itemList.get(pos).getType(), adapter.itemList.get(pos).getLearnId());
+                        adapter.itemList.get(pos).setStatus("4");
+                        adapter.notifyDataSetChanged();
                         break;
                     case "公告":
                         Intent intent_g;
@@ -191,6 +207,8 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                         intent_g.putExtra("noticecotent", adapter.itemList.get(pos).getCourseName()); // 内容
                         startActivity(intent_g);
                         reload(adapter.itemList.get(pos).getType(), adapter.itemList.get(pos).getLearnId());
+                        adapter.itemList.get(pos).setStatus("4");
+                        adapter.notifyDataSetChanged();
                         break;
 
                 }
@@ -272,7 +290,6 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
-
     private final Handler handler2 = new Handler(Looper.getMainLooper()) {
         @RequiresApi(api = Build.VERSION_CODES.N)
         @SuppressLint("NotifyDataSetChanged")
@@ -293,7 +310,6 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
         } else {
             type_mode = 4;
         }
-
         String mRequestUrl = Constant.API + Constant.READ_NOTICE + "?userName=" + username + "&type=" + type_mode + "&classTimeId=" + classTimeId + "&callback=ha";
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -419,14 +435,48 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                 /**
                  * 假0判断移至adapter中，根据refresh一起判断
                  */
-            }else if(message.what == 101){
+            } else if (message.what == 101) {
                 iv_folder_ball.setVisibility(View.VISIBLE);
+            } else if (message.what == 110) {
+                boolean canCheckIn = (Boolean) message.obj;
+                Log.e("0110", "学生请求修改结果: " + canCheckIn);
+                if (!canCheckIn) {
+                    Toast.makeText(getActivity(), "老师正在批改中，无法进行修改!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent intent;
+                    int pos = checkInPos;
+
+                    if (checkInType.equals("作业")) {
+
+                        // 未批改的
+                        intent = new Intent(getActivity(), HomeworkPagerActivity.class);
+
+                        intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
+                        intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
+                        intent.putExtra("username", username);
+                        intent.putExtra("type", "paper");
+                        intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
+                        startActivity(intent);
+                    } else {
+                        // 未批改的
+                        intent = new Intent(getActivity(), LearnPlanPagerActivity.class);
+
+                        intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
+                        intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
+                        intent.putExtra("username", username);
+                        intent.putExtra("type", "learnPlan");
+                        intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
+                        startActivity(intent);
+                    }
+                }
+
             }
         }
     };
 
     //加载消息条目，包括刷新和加载，通过upDown标识两种状态
     private void loadItems_Net() {
+        Log.e(TAG, "loadItems_Net: 加载");
 
         if (adapter.isRefresh == 1) {
             rl_loading.setVisibility(View.VISIBLE);
@@ -435,8 +485,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
         String versionName = BuildConfig.VERSION_NAME;
 
         mRequestUrl = Constant.API + Constant.NEW_ITEM + "?currentPage=" + currentPage + "&userId=" + username + "&resourceType=" + type + "&searchStr=" + searchStr + "&source=RN";
-
-        Log.d("wen", "home: " + mRequestUrl);
+        Log.e("wen", "home: " + mRequestUrl);
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
 
@@ -462,7 +511,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                 if (moreList.size() < 12 && moreList.size() > 0) {
                     adapter.isDown = 1;
                 }
-
+                Log.e("wen", "loadItems_Net: " + moreList.toString());
                 //标识线程
                 message.what = 100;
                 handler.sendMessage(message);
@@ -495,7 +544,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
 
                 int unreadCount = json.getInt("data");
                 Boolean isSuccess = json.getBoolean("success");
-                if(unreadCount > 0 && isSuccess){
+                if (unreadCount > 0 && isSuccess) {
                     Message msg = Message.obtain();
                     msg.what = 101;
                     handler.sendMessage(msg);
@@ -517,5 +566,21 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
         super.onStart();
         // 小红点动态修改
         loadIsRead();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // 在屏幕方向变化时，确保ViewPager的项位置不变
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // 处理横向屏幕方向
+//            MyApplication.isRotate = true;
+            Log.e(TAG, "onConfigurationChanged: 横屏");
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // 处理纵向屏幕方向
+//            MyApplication.isRotate = true;
+            Log.e(TAG, "onConfigurationChanged: 竖屏");
+        }
     }
 }

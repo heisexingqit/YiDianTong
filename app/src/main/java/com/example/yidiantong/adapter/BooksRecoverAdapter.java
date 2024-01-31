@@ -175,7 +175,7 @@ public class BooksRecoverAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 //题面显示
                 String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + itemerror.getShitiShow() + "</body>";
                 String html = html_content.replace("#","%23");
-                fwv_content.loadData(html, "text/html", "utf-8");
+                fwv_content.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
             }
         }
 

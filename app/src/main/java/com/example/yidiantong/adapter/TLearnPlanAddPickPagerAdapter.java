@@ -1,5 +1,6 @@
 package com.example.yidiantong.adapter;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ public class TLearnPlanAddPickPagerAdapter extends FragmentStatePagerAdapter {
 
     public List<LearnPlanAddItemEntity> itemList; // 试题内容
 
+    @SuppressLint("WrongConstant")
     public TLearnPlanAddPickPagerAdapter(@NonNull FragmentManager fm, List<LearnPlanAddItemEntity> list) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         itemList = list;

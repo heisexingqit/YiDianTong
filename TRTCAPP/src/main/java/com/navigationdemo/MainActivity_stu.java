@@ -1812,7 +1812,7 @@ public class MainActivity_stu extends AppCompatActivity implements View.OnClickL
             }
 
             @Override
-            public void onTEBH5PPTMediaStatusChanged(String fid, String mediaId, int status) {
+            public void onTEBH5PPTMediaStatusChanged(String fid, String mediaId, int status, double currentTime) {
 
             }
 
@@ -1867,6 +1867,11 @@ public class MainActivity_stu extends AppCompatActivity implements View.OnClickL
 
             @Override
             public void onTEBDrawStatusChanged(int status) {
+
+            }
+
+            @Override
+            public void onTEBH5pptDownGrade(String fileId, int slideIndex) {
 
             }
         };

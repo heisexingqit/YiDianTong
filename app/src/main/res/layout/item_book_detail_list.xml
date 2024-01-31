@@ -26,12 +26,13 @@
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/ftv_detail_num"
             android:src="@drawable/play"/>
+
         <TextView
             android:id="@+id/ftv_detail_score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="得分和平均分"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true"
+            android:text="得分" />
 
     </RelativeLayout>
 

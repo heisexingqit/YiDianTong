@@ -145,10 +145,10 @@ public class BooksAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             //默认隐藏红点标志
             switch (item.getStatus()){
-                case "0":
+                case "1":
                     fiv_book_redball.setVisibility(View.VISIBLE);
                     break;
-                case "1":
+                case "0":
                     fiv_book_redball.setVisibility(View.INVISIBLE);
 
             }

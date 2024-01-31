@@ -47,13 +47,13 @@
 
                 <TextView
                     android:id="@+id/tv_avg"
-                    android:layout_width="30dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="20.0" />
 
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_avg"
-                    android:layout_width="40dp"
+                    android:layout_width="30dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="5dp"
                     android:adjustViewBounds="true"
@@ -86,13 +86,13 @@
 
                 <TextView
                     android:id="@+id/tv_max"
-                    android:layout_width="30dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="20.0" />
 
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_max"
-                    android:layout_width="40dp"
+                    android:layout_width="30dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="5dp"
                     android:adjustViewBounds="true"
@@ -107,8 +107,8 @@
                     android:id="@+id/fb_max"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="18dp"
-                    android:layout_marginEnd="70dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="50dp"
                     app:flexWrap="wrap" />
 
             </ScrollView>
@@ -137,13 +137,13 @@
 
                 <TextView
                     android:id="@+id/tv_min"
-                    android:layout_width="30dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="20.0" />
 
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_min"
-                    android:layout_width="40dp"
+                    android:layout_width="30dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="5dp"
                     android:adjustViewBounds="true"
@@ -158,8 +158,8 @@
                     android:id="@+id/fb_min"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="18dp"
-                    android:layout_marginEnd="70dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="50dp"
                     app:flexWrap="wrap"/>
 
             </ScrollView>
@@ -188,13 +188,13 @@
 
                 <TextView
                     android:id="@+id/tv_correcting"
-                    android:layout_width="30dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="20.0" />
 
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_correcting"
-                    android:layout_width="40dp"
+                    android:layout_width="30dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="5dp"
                     android:adjustViewBounds="true"
@@ -209,8 +209,8 @@
                     android:id="@+id/fb_correcting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="18dp"
-                    android:layout_marginEnd="70dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="50dp"
                     app:flexWrap="wrap" />
 
             </ScrollView>
@@ -239,13 +239,13 @@
 
                 <TextView
                     android:id="@+id/tv_noCorrecting"
-                    android:layout_width="30dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="20.0" />
 
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_noCorrecting"
-                    android:layout_width="40dp"
+                    android:layout_width="30dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="5dp"
                     android:adjustViewBounds="true"
@@ -260,8 +260,8 @@
                     android:id="@+id/fb_noCorrecting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="18dp"
-                    android:layout_marginEnd="70dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="50dp"
                     app:flexWrap="wrap" />
 
             </ScrollView>
@@ -290,13 +290,13 @@
 
                 <TextView
                     android:id="@+id/tv_noSubmit"
-                    android:layout_width="30dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="20.0" />
 
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_noSubmit"
-                    android:layout_width="40dp"
+                    android:layout_width="30dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="5dp"
                     android:adjustViewBounds="true"
@@ -311,8 +311,8 @@
                     android:id="@+id/fb_noSubmit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="18dp"
-                    android:layout_marginEnd="70dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="50dp"
                     app:flexWrap="wrap" />
 
             </ScrollView>

@@ -141,6 +141,7 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private final ImageView iv_top_icon2;
         private final TextView tv_second_line;
         private final TextView tv_date;
+        private final TextView tv_teacher;
 
         private final LinearLayout ll_width;
 
@@ -157,6 +158,7 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             tv_second_line = itemView.findViewById(R.id.tv_second_line);
             tv_date = itemView.findViewById(R.id.tv_date);
             ll_width = itemView.findViewById(R.id.ll_width);
+            tv_teacher = itemView.findViewById(R.id.tv_teacher);
         }
 
         //数据更新放在这里(频繁调用，不能放一次性操作，例如绑定点击事件)
@@ -214,15 +216,19 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             String second_line = item.getCourseName() + item.getTimeStop();
             tv_second_line.setText(second_line);
 
-            //默认隐藏直播标志
-            tv_is_live.setVisibility(View.INVISIBLE);
 
             //学习内容状态
             if (item.getStatus().length() == 0) {
                 iv_top_icon1.setVisibility(View.GONE);
                 iv_top_icon2.setVisibility(View.GONE);
+                // 直播类型
                 tv_is_live.setVisibility(View.VISIBLE);
+                tv_teacher.setVisibility(View.GONE);
             }else{
+                // 非直播类型
+                tv_is_live.setVisibility(View.GONE);
+                tv_teacher.setVisibility(View.VISIBLE);
+                tv_teacher.setText(item.getCreaterName());
                 switch (Integer.parseInt(item.getStatus())) {
                     case 1:
                     case 5:
@@ -246,7 +252,8 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         break;
                     case 4:
                         //已读
-                        iv_top_icon2.setVisibility(View.INVISIBLE);
+                        iv_top_icon1.setVisibility(View.GONE);
+                        iv_top_icon2.setVisibility(View.GONE);
                         break;
                 }
             }

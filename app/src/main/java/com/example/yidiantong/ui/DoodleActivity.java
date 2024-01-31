@@ -284,11 +284,11 @@ public class DoodleActivity extends AppCompatActivity implements View.OnClickLis
                     @Override
                     public void onBitmapReady(Bitmap saveBitmap) {
                         // 跳转
-                        Intent intent = new Intent();
-                        String imageBase64 = ImageUtils.Bitmap2StrByBase64(saveBitmap);
-                        intent.putExtra("data", imageBase64);
-                        setResult(Activity.RESULT_OK, intent);
-                        finish();
+//                        Intent intent = new Intent();
+//                        String imageBase64 = ImageUtils.Bitmap2StrByBase64(saveBitmap);
+//                        intent.putExtra("data", imageBase64);
+//                        setResult(Activity.RESULT_OK, intent);
+//                        finish();
                     }
 
                     @Override
