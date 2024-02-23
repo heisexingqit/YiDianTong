@@ -42,20 +42,18 @@ import com.example.yidiantong.bean.StuAnswerEntity;
 import com.example.yidiantong.entity.HomeworkStuAnswerInfo;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.FixedSpeedScroller;
+import com.example.yidiantong.util.HomeworkInterface;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.MyReadWriteLock;
 import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
-import com.example.yidiantong.util.HomeworkInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -149,7 +147,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
 
         List<HomeworkStuAnswerInfo> homeworkStuAnswerInfos = MyApplication.database.homeworkStuAnswerDao().queryByUserAndHomework(username, learnPlanId);
         stuAnswerList.clear();
-        for(HomeworkStuAnswerInfo info:homeworkStuAnswerInfos){
+        for (HomeworkStuAnswerInfo info : homeworkStuAnswerInfos) {
             StuAnswerEntity i = new StuAnswerEntity();
             i.setOrder(info.order);
             i.setQuestionId(info.questionId);
@@ -187,7 +185,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                     if (index == -1) {
                         Toast.makeText(HomeworkPagerActivity.this, "提交成功！", Toast.LENGTH_SHORT).show();
                         Intent toHome = new Intent(HomeworkPagerActivity.this, MainPagerActivity.class);
-                        toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(toHome);
                     } else {
                         currentItem = index;
@@ -266,6 +264,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
         intent.putExtra("isNew", isNew);
         mResultLauncher.launch(intent);
     }
+
     List<HomeworkEntity> timianList = new ArrayList<>();
     List<StuAnswerEntity> stuAnswerList = new ArrayList<>();
     private int countReady = 0;
@@ -294,6 +293,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                 }
                 timianList = list;
                 countReady += 1;
+                Log.e("wen0221", "handleMessage: " + countReady);
             } else if (message.what == 101) {
                 /**
                  * 学生作答信息
@@ -325,13 +325,13 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                 }
                 stuAnswerList = list2;
                 countReady += 1;
-
+                Log.e("wen0221", "handleMessage2: " + countReady);
             }
             // 页面显示
             if (countReady >= 2) {
                 adapter.update(timianList, stuAnswerList);
                 rl_loading.setVisibility(View.GONE);
-                if(MyApplication.isRotate){
+                if (MyApplication.isRotate) {
                     vp_homework.setCurrentItem(MyApplication.currentItem, false);
                     MyApplication.isRotate = false;
                 }
@@ -369,8 +369,13 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
         MyApplication.addRequest(request, TAG);
 
 
-        if(stuAnswerList.size() > 0){
+        if (stuAnswerList.size() > 0) {
             Log.e("0130", "loadItems_Net: 数据库读取");
+            countReady += 1;
+            Message message = Message.obtain();
+            message.obj = stuAnswerList;
+            message.what = 101;
+            handler.sendMessage(message);
             return;
         }
 
@@ -469,7 +474,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
     //pos是接口的order属性（1...n）因此要
     @Override
     public void setStuAnswer(int pos, String stuStr) {
-        if(stuAnswer != null && stuAnswer.length >= pos) {
+        if (stuAnswer != null && stuAnswer.length >= pos) {
             stuAnswer[pos - 1] = stuStr;
             Log.e(TAG, "setStuAnswer: pos" + (pos - 1));
             Log.e(TAG, "setStuAnswer: 新答案" + stuStr);
@@ -485,7 +490,6 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
     public void offLoading() {
         rl_submitting.setVisibility(View.GONE);
     }
-
 
     // 上传试题
     private void uploadQuestion() {
@@ -542,7 +546,6 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
         uploadQuestion();
         super.onBackPressed();
     }
-
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {

@@ -343,6 +343,7 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
         fev_bell_time.setOnClickListener(this);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -382,38 +383,31 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
                     tv.setText("请先输入内容！");    //内容
                 } else if (nullmode == 3) {
                     tv.setText("请设置定时发布时间！");
-                } else {
-                    tv.setText("发布成功");    //内容
                 }
+//                else {
+//                    tv.setText("发布成功");    //内容
+//                }
                 tv.setTextSize(17);//字体大小
                 tv.setPadding(30, 40, 30, 40);//位置
                 tv.setTextColor(Color.parseColor("#000000"));//颜色
                 //设置title组件
                 builder.setCustomTitle(tv);
-                AlertDialog dialog = builder.create();
                 if (nullmode != -1) {
                     builder.setNegativeButton("确定", null);
+                    //禁止返回和外部点击
+                    builder.setCancelable(false);
+                    //对话框弹出
+                    builder.show();
                 } else {
-                    builder.setNegativeButton("确定", new DialogInterface.OnClickListener() {
-                        @RequiresApi(api = Build.VERSION_CODES.N)
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            submit();
-                            gotolast();
-                        }
-                    });
+                    submit();
                 }
-                //禁止返回和外部点击
-                builder.setCancelable(false);
-                //对话框弹出
-                builder.show();
                 break;
         }
     }
 
     private void gotolast() {
         Intent toHome = new Intent(getActivity(), TMainPagerActivity.class);
-        toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(toHome);
     }
 
@@ -434,7 +428,7 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
         Integer setDateFlag = timemode;
         String noticeId = getActivity().getIntent().getStringExtra("noticeId");
         if (setDateFlag == 2) {
-            setDate = fev_bell_time.getText().toString();
+            setDate = fev_bell_time.getText().toString() + ":00";
         }
         // ------------------------
         //  通过nameList获取idList
@@ -454,15 +448,34 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
 
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                Log.e("wen0220", "submit: " + json);
                 //结果信息
                 Boolean isSuccess = json.getBoolean("success");
-                Message message = Message.obtain();
+                //建立对话框
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), AlertDialog.THEME_HOLO_LIGHT);
+                TextView tv = new TextView(getActivity());
                 if (isSuccess) {
-                    Toast.makeText(getActivity(), "发布成功", Toast.LENGTH_SHORT).show();
+                    tv.setText("修改成功");
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @RequiresApi(api = Build.VERSION_CODES.N)
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            gotolast();
+                        }
+                    });
                 } else {
-                    Toast.makeText(getActivity(), "发布失败", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "submit: " + json.getString("message"));
+                    tv.setText("修改失败");   //内容
+                    builder.setPositiveButton("确定", null);
                 }
+                tv.setTextSize(17);//字体大小
+                tv.setPadding(30, 40, 30, 40);//位置
+                tv.setTextColor(Color.parseColor("#000000"));//颜色
+                //设置title组件
+                builder.setCustomTitle(tv);
+                //禁止返回和外部点击
+                builder.setCancelable(false);
+                //对话框弹出
+                builder.show();
                 //标识线程
 //                message.what = 102;
 //                handler.sendMessage(message);

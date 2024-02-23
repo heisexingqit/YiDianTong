@@ -14,6 +14,9 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -51,6 +54,7 @@ import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.ImageUtils;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.MyItemDecoration;
+import com.example.yidiantong.util.PxUtils;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -150,6 +154,11 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
 
     private RelativeLayout rl_loading;
 
+    // 记录上一次保存的信息
+    private List<THomeworkCameraItem> lastSaveList;
+
+    private int flexLayoutWidth = -1;
+
     // 滚动控制器
     public class CustomLinearLayoutManager extends LinearLayoutManager {
         private boolean isScrollEnabled = true;
@@ -229,7 +238,7 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
 
         adapter.setmItemClickListener(new THomeworkCameraRecyclerAdapter.MyItemClickListener() {
             @Override
-            public void openGallery(View view, int pos, String type) {
+            public void openGallery(View view, int pos, String type, WebView wv) {
                 picUploadPos = pos;
                 picUploadType = type;
                 // 打开本地存储
@@ -237,7 +246,7 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
             }
 
             @Override
-            public void openCamera(View view, int pos, String type) {
+            public void openCamera(View view, int pos, String type, WebView wv) {
                 picUploadPos = pos;
                 picUploadType = type;
                 // 启动相机程序
@@ -255,11 +264,6 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
                 } else {
                     iv_empty.setVisibility(View.VISIBLE);
                 }
-            }
-
-            @Override
-            public void setChangeFlag(boolean isChange) {
-                changeFlag = isChange;
             }
 
             @Override
@@ -357,20 +361,6 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
             }
         });
 
-        // 注册 涂鸦板
-        mResultLauncher3 = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-
-            @Override
-            public void onActivityResult(ActivityResult result) {
-                if (result.getResultCode() == RESULT_OK) {
-                    Intent intent = result.getData();
-                    imageBase64 = intent.getStringExtra("data");
-                    imageBase64 = imageBase64.replace("+", "%2b");
-                    uploadImage();
-                }
-            }
-        });
-
         /**
          * 注册通用裁切回调：与通用裁切方法对应。NEW
          */
@@ -434,7 +424,7 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
                 if (isSuccess) {
                     changeFlag = true;
                     THomeworkCameraItem item = itemList.get(picUploadPos);
-                    String addString = "<p><img src=\"" + url + "\"></p>";
+                    String addString = "<img onclick='bigimage(this)' src='" + url + "'>";
                     switch (picUploadType) {
                         case "Show":
                             if (item.getShitiShow() != null) {
@@ -700,12 +690,11 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
                 tv_name.setText(item.getTypeName());
 
                 tv_name.setOnClickListener(v -> {
+                    type = tv_name.getText().toString();
 
                     if (type.equals(tv_name.getText().toString())) {
                         return;
                     }
-
-                    type = tv_name.getText().toString();
 
                     if (lastType != null) {
                         lastType.setBackgroundResource(R.color.light_gray3);
@@ -734,11 +723,35 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
                         et_score.setText(item.getScore());
                     }
                 });
+                ViewGroup.LayoutParams params = tv_name.getLayoutParams();
+                if (flexLayoutWidth != -1) {
+                    params.width = flexLayoutWidth / 3 - PxUtils.dip2px(view.getContext(), 15);
+                }
+                tv_name.setLayoutParams(params);
                 fl_type.addView(view);
             }
             typeWindow = new PopupWindow(typeView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, true);
             typeWindow.setTouchable(true);
         }
+        typeView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                fl_type = typeView.findViewById(R.id.fl_type);
+                flexLayoutWidth = fl_type.getWidth();
+                int childCount = fl_type.getChildCount();
+
+                for (int i = 0; i < childCount; i++) {
+                    View view = fl_type.getChildAt(i);
+                    TextView tv_name = view.findViewById(R.id.tv_name);
+                    ViewGroup.LayoutParams params = tv_name.getLayoutParams();
+                    params.width = flexLayoutWidth / 3 - PxUtils.dip2px(view.getContext(), 15);
+                    tv_name.setLayoutParams(params);
+                }
+
+                // 可以选择移除监听器，因为它只需要在测量完成时执行一次
+                typeView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
 
         ll_score.setVisibility(View.GONE);
         ll_hide.setVisibility(View.GONE);
@@ -814,7 +827,7 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
         // 权限请求
         AndPermission.with(this)
                 .runtime()
-                .permission(Permission.Group.CAMERA)
+                .permission(Permission.Group.CAMERA, Permission.Group.STORAGE)
                 .onGranted(new Action<List<String>>() {
                     // 获得权限后
                     @Override
@@ -1045,5 +1058,19 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
         intent.putExtra("noFaceDetection", true);
 
         mResultLauncherCrop.launch(intent);
+    }
+
+    // 判断作业内容是否修改 [true:修改了;false:未修改]
+    private boolean changeCheck() {
+        if(lastSaveList == null){
+            return true;
+        }
+        if(lastSaveList.size() != itemList.size())
+            for(int i = 0; i < lastSaveList.size(); ++i){
+                if(!lastSaveList.get(i).toData().equals(itemList.get(i).toData())){
+                    return true;
+                }
+            }
+        return false;
     }
 }

@@ -102,7 +102,7 @@ public class CourseLookActivity extends AppCompatActivity {
     };
 
     private void hudongclass(List<CourseLookEntity.queList> queList) {
-        if (queList.get(0).getType().equals("question")) {
+        if (queList.get(0).getType().contains("question")) {
             String imagePath = null;
             if (queList.get(0).getLinks().contains("bag")) {
                 imagePath = ip + "/html" + queList.get(0).getLinks() + "/" + queList.get(0).getQuestionId() + "Show.html";
@@ -122,6 +122,7 @@ public class CourseLookActivity extends AppCompatActivity {
             intent.putExtra("interactionType", queList.get(0).getQuestionType());
             intent.putExtra("questionAnswer", queList.get(0).getQuestionAnswerStr());
             intent.putExtra("questionTypeName", queList.get(0).getQuestionTypeName());
+            intent.putExtra("questionType", queList.get(0).getQuestionType());
             intent.putExtra("questionValueList", queList.get(0).getQuestionValueList());
             intent.putExtra("learnPlanName", this.getIntent().getStringExtra("classname"));
             intent.putExtra("answerTime", desc);
@@ -141,8 +142,6 @@ public class CourseLookActivity extends AppCompatActivity {
 
             }
         }
-
-
     }
 
     private void listenclass(List<CourseLookEntity> moreList) {
@@ -214,15 +213,13 @@ public class CourseLookActivity extends AppCompatActivity {
         String username = getIntent().getStringExtra("username");
         String ip = getIntent().getStringExtra("ip");
         String mRequestUrl = "http://" + ip + ":8901" + Constant.GET_MESSAGE_LIST_BY_STU + "?userId=" + username;
-        Log.e("mReq_stu", "" + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
-
+                Log.e("0202", "loadItems_Net: " + json.getJSONArray("messageList"));
                 // 主体“messageList”中第一个JsonObject【改为最后一个，因为前面可能是垃圾消息】
                 int length = json.getJSONArray("messageList").length();
                 JSONObject data_obj = json.getJSONArray("messageList").getJSONObject(length - 1);
-                Log.e("0115", "loadItems_Net: " + data_obj.toString());
                 // 定位到“period”列表
                 String courseString = data_obj.getString("period");
                 String newString = ",\"period\":" + courseString;
@@ -258,7 +255,6 @@ public class CourseLookActivity extends AppCompatActivity {
                     // 无效信息返回
                     return;
                 }
-                Log.e(TAG, "loadItems_Net: " + moreList);
 
                 handler.sendMessage(message1); // 动作处理100
                 if (quemode == 1) {

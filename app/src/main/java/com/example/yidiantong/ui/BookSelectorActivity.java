@@ -62,7 +62,7 @@ public class BookSelectorActivity extends AppCompatActivity implements View.OnCl
 
     private LinearLayout ll_time_picker;
     private TextView tv_empty;
-    private String timeType = "";
+    private String timeType = "other";
     private CheckBox cb_learn_plan;
     private CheckBox cb_homework;
     private CheckBox cb_class;
@@ -153,7 +153,11 @@ public class BookSelectorActivity extends AppCompatActivity implements View.OnCl
             }
         });
 
-
+        // 今天时间
+        // 获取当前时间
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        tv_end.setText(sdf.format(new Date()));
+        getListData();
     }
 
     // 自定义的RadioB状态变化监听器
@@ -252,7 +256,6 @@ public class BookSelectorActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void getListData() {
-        Log.e("0125", "getListData: 触发" + timeType);
         if (!cb_learn_plan.isChecked() && !cb_homework.isChecked() && !cb_class.isChecked()) {
             return;
         }

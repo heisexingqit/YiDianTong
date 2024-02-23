@@ -65,6 +65,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:buttonTint="@color/checkbox_color"
+                android:checked="true"
                 android:text="导学案"
 
                 android:textColor="@color/default_gray" />
@@ -75,6 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:buttonTint="@color/checkbox_color"
+                android:checked="true"
                 android:text="作业"
 
                 android:textColor="@color/default_gray" />
@@ -82,9 +84,10 @@
             <CheckBox
                 android:id="@+id/cb_class"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="10dp"
                 android:buttonTint="@color/checkbox_color"
+                android:checked="true"
                 android:text="课堂"
 
                 android:textColor="@color/default_gray" />
@@ -200,7 +203,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:gravity="center"
-                            android:text=""
+                            android:text="2000-01-01"
                             android:textColor="@color/blue_btn2"
                             android:textSize="13dp" />
 

@@ -89,20 +89,20 @@ public class MyApplication extends Application {
                 30000, // 30 seconds timeout
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        /**
-         * 拦截重复请求，时间为1.2s内（降低效率）
-         */
-        long currentTime = System.currentTimeMillis();
-
-        if (!tag.equals("noLimited") && request.getUrl().equals(lastRequestUrl) && currentTime - lastRequestTime < 600) {
-            Log.d(TAG, "Duplicate request, ignored." + request.getUrl());
-            return;
-        }
+//        /**
+//         * 拦截重复请求，时间为1.2s内（降低效率）
+//         */
+//        long currentTime = System.currentTimeMillis();
+//
+//        if (!tag.equals("noLimited") && request.getUrl().equals(lastRequestUrl) && currentTime - lastRequestTime < 600) {
+//            Log.d(TAG, "Duplicate request, ignored." + request.getUrl());
+//            return;
+//        }
         request.setTag(tag);
         mQueue.add(request);
-        // 控制 请求速度
-        lastRequestUrl = request.getUrl();
-        lastRequestTime = currentTime;
+//        // 控制 请求速度
+//        lastRequestUrl = request.getUrl();
+//        lastRequestTime = currentTime;
     }
 
     public static RequestQueue getHttpQueue() {

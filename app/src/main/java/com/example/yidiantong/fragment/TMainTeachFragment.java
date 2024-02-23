@@ -191,7 +191,7 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (newState == RecyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 >= adapter.getItemCount() && adapter.isDown == 0) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 >= adapter.getItemCount()) {
                     loadItems_Net();
                 }
             }
@@ -642,10 +642,6 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
                 message.obj = moreList;
 
                 // 发送消息给主线程
-                Log.d("wen", "一个请求数量（12为界限）：" + moreList.size());
-                if (moreList.size() < 12 && moreList.size() > 0) {
-                    adapter.isDown = 1;
-                }
 
                 //标识线程
                 message.what = 100;

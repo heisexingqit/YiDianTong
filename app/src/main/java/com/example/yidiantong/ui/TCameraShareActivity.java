@@ -172,7 +172,7 @@ public class TCameraShareActivity extends AppCompatActivity implements View.OnCl
         // 权限请求
         AndPermission.with(this)
                 .runtime()
-                .permission(Permission.Group.CAMERA)
+                .permission(Permission.Group.CAMERA, Permission.Group.STORAGE)
                 .onGranted(new Action<List<String>>() {
                     // 获得权限后
                     @Override

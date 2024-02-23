@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -29,11 +28,11 @@
         <TextView
             android:id="@+id/ftv_title"
             android:layout_width="150dp"
-            android:gravity="center_horizontal"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="null"
+            android:gravity="center_horizontal"
             android:singleLine="true"
+            android:text="null"
             android:textColor="@color/main_bg"
             android:textSize="17sp" />
 
@@ -45,26 +44,27 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:background="@drawable/book_detail_bg"
             android:orientation="horizontal"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
             android:paddingLeft="5dp"
+            android:paddingTop="10dp"
             android:paddingRight="3dp"
-            android:background="@drawable/book_detail_bg">
+            android:paddingBottom="10dp">
 
             <TextView
                 android:id="@+id/ftv_br_mode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="练习模式"
-                android:textSize="13sp"
-                android:textColor="@color/f_dark_blue"/>
+                android:textColor="@color/f_dark_blue"
+                android:textSize="13sp" />
+
             <ImageView
                 android:layout_width="10dp"
                 android:layout_height="10dp"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/arrow_down"
-                android:layout_marginLeft="14dp"/>
+                android:layout_marginLeft="14dp"
+                android:src="@drawable/arrow_down" />
 
         </LinearLayout>
 
@@ -72,22 +72,20 @@
     </RelativeLayout>
 
 
-    <!--可滑动ViewPager-->
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/fvp_book_recycle"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <!--可滑动ViewPager-->
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/fvp_book_recycle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
 
         <LinearLayout
-            android:id="@+id/fll_bd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:layout_alignParentBottom="true"
             android:orientation="vertical">
 
             <ImageView
@@ -105,6 +103,21 @@
                 android:layout_gravity="right"
                 android:layout_marginBottom="10dp"
                 android:src="@drawable/mark_icon" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/fll_bd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
 
             <!--分隔线-->
             <LinearLayout

@@ -100,7 +100,7 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
     private ActivityResultLauncher<Intent> mResultLauncher;
     private ActivityResultLauncher<Intent> mResultLauncher2;
     private ActivityResultLauncher<Intent> mResultLauncher3;
-    private ActivityResultLauncher<Intent> mResultLauncherCrop;//NEW
+    private ActivityResultLauncher<Intent> mResultLauncherCrop; //NEW
     private Uri picUri, imageUri, cropUri;//NEW
 
     //接口需要
@@ -414,7 +414,6 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
             public void onActivityResult(ActivityResult result) {
                 if (result.getResultCode() == getActivity().RESULT_OK) {
                     File Image = new File(getActivity().getExternalCacheDir(), "output_temp.jpg");
-
                     imageBase64 = ImageUtils.Bitmap2StrByBase64(getActivity(), Image);
                     uploadImage();
                 }
@@ -516,6 +515,9 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
         String mRequestUrl = Constant.API + Constant.UPLOAD_IMAGE;
 
         Map<String, String> params = new HashMap<>();
+        Log.e("wen0221", "uploadImage: " + imageBase64);
+        Log.e("wen0221", "uploadImage: " + learnPlanId);
+        Log.e("wen0221", "uploadImage: " + username);
         params.put("baseCode", imageBase64);
         params.put("leanPlanId", learnPlanId);
         params.put("userId", username);
@@ -704,7 +706,7 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
         // 权限请求
         AndPermission.with(this)
                 .runtime()
-                .permission(Permission.Group.CAMERA)
+                .permission(Permission.Group.CAMERA, Permission.Group.STORAGE)
                 .onGranted(new Action<List<String>>() {
                     // 获得权限后
                     @Override
@@ -714,22 +716,22 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
                 }).onDenied(new Action<List<String>>() {
                     @Override
                     public void onAction(List<String> data) {
-                        // 判断是否点了永远拒绝，不再提示
-//                        if (AndPermission.hasAlwaysDeniedPermission(getActivity(), data)) {
-//                            new AlertDialog.Builder(getActivity())
-//                                    .setTitle("权限被禁用")
-//                                    .setMessage("拍照权限被禁用，请到APP设置页面手动开启！")
-//                                    .setPositiveButton("跳转", (dialog, which) -> {
-//                                        AndPermission.with(HomeworkTranslationFragment.this)
-//                                                .runtime()
-//                                                .setting()
-//                                                .start(REQUEST_CODE_CAMERA);
-//                                    })
-//                                    .setNegativeButton("取消", (dialog, which) -> {
-//
-//                                    })
-//                                    .show();
-//                        }
+                        //判断是否点了永远拒绝，不再提示
+                        if (AndPermission.hasAlwaysDeniedPermission(getActivity(), data)) {
+                            new AlertDialog.Builder(getActivity())
+                                    .setTitle("权限被禁用")
+                                    .setMessage("拍照权限被禁用，请到APP设置页面手动开启！")
+                                    .setPositiveButton("跳转", (dialog, which) -> {
+                                        AndPermission.with(HomeworkTranslationFragment.this)
+                                                .runtime()
+                                                .setting()
+                                                .start(REQUEST_CODE_CAMERA);
+                                    })
+                                    .setNegativeButton("取消", (dialog, which) -> {
+
+                                    })
+                                    .show();
+                        }
                     }
                 })
                 .rationale(rCamera)
@@ -886,7 +888,6 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
     private void hideInputKB() {
         imm.hideSoftInputFromWindow(et_answer.getWindowToken(), 0);
     }
-
 
     /**
      * 通用裁切方法。传输、读取文件、裁切、写入文件,最终以cropUri形式显示NEW

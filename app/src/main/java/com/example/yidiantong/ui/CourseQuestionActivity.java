@@ -93,6 +93,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
     private String ip;
     private String imagePath;
     private String questionTypeName;
+    private String questionType;
     private String imgSource;
     // 单选
     int[] unselectDan = {R.drawable.a_unselect, R.drawable.b_unselect, R.drawable.c_unselect, R.drawable.d_unselect, R.drawable.e_unselect, R.drawable.f_unselect};
@@ -117,7 +118,6 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
     private static final int REQUEST_CODE_CAMERA = 2;
     private ActivityResultLauncher<Intent> mResultLauncher;
     private ActivityResultLauncher<Intent> mResultLauncher2;
-    private ActivityResultLauncher<Intent> mResultLauncher3;
     private ActivityResultLauncher<Intent> mResultLauncherCrop;
 
     private Uri picUri, imageUri, cropUri;
@@ -180,7 +180,6 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
     private WebView fwv_cq;
     private LinearLayout fll_acq;
     private int viewJudge = -1;
-    private View v;
     private int lockmode = -1;
 
     private BroadcastReceiver finishReceiver;
@@ -189,8 +188,8 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
     private Bitmap imgBitmap = null; // 二维码url解析图片对象
 
     // 软键盘弹出NEW
-    private boolean isKeyboardVisible = false;
     private InputMethodManager imm;
+
 
 
     @Override
@@ -211,6 +210,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
         ip = getIntent().getStringExtra("ip");
         Log.e("0115", "onCreateIPIPIPIPI: " + ip);
         questionTypeName = getIntent().getStringExtra("questionTypeName");
+        questionType = getIntent().getStringExtra("questionType");
         Log.e("tyoe1", "" + questionTypeName);
         questionValueList = getIntent().getStringExtra("questionValueList");
         questionValueList = questionValueList.replace(",", "");
@@ -306,8 +306,6 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
             }
         });
 
-//        fll_cq.addView(v);
-
         // 中间图片
         fll_acq = findViewById(R.id.fll_acq);
         View v1 = LayoutInflater.from(this).inflate(R.layout.fragment_course_question, fll_acq, false);
@@ -376,11 +374,13 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
 
     private void JudgeType(String action) {
         fll_cq.removeAllViews();
-        v = LayoutInflater.from(this).inflate(R.layout.course_btn, fll_cq, false);
+        View v = LayoutInflater.from(this).inflate(R.layout.course_btn, fll_cq, false);
         fll_cq_danxuan = v.findViewById(R.id.fll_cq_danxuan);
         fll_cq_duouan = v.findViewById(R.id.fll_cq_duouan);
         fll_cq_panduan = v.findViewById(R.id.fll_cq_panduan);
         fll_cq_tiankong = v.findViewById(R.id.fll_cq_tiankong);
+        Log.e("0202ee", "JudgeTypeName: " + questionTypeName);
+        Log.e("0202ee", "JudgeType: " + questionType);
         if (questionTypeName.equals("单项选择题")) {
             fll_cq_danxuan.setVisibility(View.VISIBLE);
             fll_cq_duouan.setVisibility(View.GONE);
@@ -471,8 +471,6 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
             wv_answer.loadData(getHtmlAnswer(), "text/html", "utf-8");
             url_list.clear();
             imgadapter.updateData(url_list);
-
-
             imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
             // 隐藏输入框
@@ -487,6 +485,9 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
 
             html_answer = "";
             content = "";
+        }else{
+            Log.e("0202ee", "未知题型名称: " + questionTypeName);
+            Log.e("0202ee", "未知题型编号: " + questionType);
         }
         if (action.equals("lock")) {
             lockmode = 1;
@@ -931,7 +932,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
         // 权限请求
         AndPermission.with(this)
                 .runtime()
-                .permission(Permission.Group.CAMERA)
+                .permission(Permission.Group.CAMERA, Permission.Group.STORAGE)
                 .onGranted(new Action<List<String>>() {
                     // 获得权限后
                     @Override
@@ -1123,6 +1124,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
         setIntent(intent);
         // 页面切换
         questionTypeName = intent.getStringExtra("questionTypeName");
+        questionType = intent.getStringExtra("questionType");
         imagePath = intent.getStringExtra("imagePath");
         imagePath = imagePath.replaceAll("\\\\", "/");
         lockmode = -1;

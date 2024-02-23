@@ -2,7 +2,9 @@ package com.example.yidiantong.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -36,6 +39,8 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.bean.BookDetailEntity;
 import com.example.yidiantong.bean.TBellNoticeEntity;
 import com.example.yidiantong.bean.TBellUpdateEntity;
+import com.example.yidiantong.ui.TMainPagerActivity;
+import com.example.yidiantong.ui.TTeachAssginActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.DateFormatUtils;
 import com.example.yidiantong.util.JsonUtils;
@@ -70,7 +75,7 @@ public class TBellAnnounceUpdateFragment extends Fragment implements View.OnClic
     // 日期和时间
     private TextView mTvSelectedDate, mTvSelectedTime;
     private CustomDatePicker mDatePicker;
-    private DatePicker  mTimerPicker;
+    private DatePicker mTimerPicker;
     private String endTime;
     private String endDatestamp;
     private String newDate;
@@ -84,7 +89,7 @@ public class TBellAnnounceUpdateFragment extends Fragment implements View.OnClic
     // 判断对象，0全部，1全部老师，2全部学生
     private int all_tea_stu = -1;
     // 1为选中，2为未选中
-    private int[] allmode = {0,0} ;
+    private int[] allmode = {0, 0};
     // 判断时间，1为即时，2为定时
     private int timemode = 1;
     private EditText fet_bell_content;
@@ -114,7 +119,6 @@ public class TBellAnnounceUpdateFragment extends Fragment implements View.OnClic
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_t_bell_announce_update, container, false);
         fet_bell_name = view.findViewById(R.id.fet_bell_name);
         ftv_bell_class_name = view.findViewById(R.id.ftv_bell_class_name);
@@ -148,7 +152,7 @@ public class TBellAnnounceUpdateFragment extends Fragment implements View.OnClic
         frg_bell.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId){
+                switch (checkedId) {
                     case R.id.frb_bell_now:
                         frb_bell_now.setButtonDrawable(R.drawable.bell_time_select);
                         frb_bell_scheduled.setButtonDrawable(R.drawable.bell_time_unselect);
@@ -192,29 +196,29 @@ public class TBellAnnounceUpdateFragment extends Fragment implements View.OnClic
     };
 
     private void showView(List<TBellUpdateEntity.TBellAnnounceUpdateEntity> tBellAnnounceUpdateEntity) {
-        Log.e("daozheli","");
-        Log.e("",""+tBellAnnounceUpdateEntity.get(0).getTitle());
+        Log.e("daozheli", "");
+        Log.e("", "" + tBellAnnounceUpdateEntity.get(0).getTitle());
         fet_bell_name.setText(tBellAnnounceUpdateEntity.get(0).getTitle());
         int flag = tBellAnnounceUpdateEntity.get(0).getType();
-        if(flag == 0){
+        if (flag == 0) {
             allmode[0] = 1;
             allmode[1] = 1;
             fcb_bd_tea.setButtonDrawable(R.drawable.muti_select);
             fcb_bd_stu.setButtonDrawable(R.drawable.muti_select);
-        }else if(flag == 1){
+        } else if (flag == 1) {
             allmode[0] = 1;
             allmode[1] = 2;
             fcb_bd_tea.setButtonDrawable(R.drawable.muti_select);
-        }else {
+        } else {
             allmode[0] = 2;
             allmode[1] = 1;
             fcb_bd_stu.setButtonDrawable(R.drawable.muti_select);
         }
         setDate1 = tBellAnnounceUpdateEntity.get(0).getSetDate();
-        if(setDate1.equals("null")){
+        if (setDate1.equals("null")) {
             timemode = 1;
             frb_bell_now.setButtonDrawable(R.drawable.bell_time_select);
-        }else{
+        } else {
             timemode = 2;
             frb_bell_now.setButtonDrawable(R.drawable.bell_time_unselect);
             frb_bell_scheduled.setButtonDrawable(R.drawable.bell_time_select);
@@ -237,12 +241,13 @@ public class TBellAnnounceUpdateFragment extends Fragment implements View.OnClic
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
                 String data = json.getString("data");
-                String data1 = "["+data+"]";
-                Log.e("data2",""+data1);
+                String data1 = "[" + data + "]";
+                Log.e("data2", "" + data1);
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
-                List<TBellUpdateEntity.TBellAnnounceUpdateEntity> updateList =gson.fromJson(data1, new TypeToken<List<TBellUpdateEntity.TBellAnnounceUpdateEntity>>() {}.getType());
-                Log.e("updateList",""+updateList);
+                List<TBellUpdateEntity.TBellAnnounceUpdateEntity> updateList = gson.fromJson(data1, new TypeToken<List<TBellUpdateEntity.TBellAnnounceUpdateEntity>>() {
+                }.getType());
+                Log.e("updateList", "" + updateList);
 
                 //封装消息，传递给主线程
                 Message message = Message.obtain();
@@ -270,7 +275,7 @@ public class TBellAnnounceUpdateFragment extends Fragment implements View.OnClic
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.fev_bell_time:
                 // 日期和时间弹框
                 //mTimerPicker.show(endTime);
@@ -280,74 +285,71 @@ public class TBellAnnounceUpdateFragment extends Fragment implements View.OnClic
                 getActivity().finish();
                 break;
             case R.id.fb_bell_confirm1:
-                Log.e("在公告中的","");
+                Log.e("在公告中的", "");
                 // 判断对象
-                if(allmode[0] == 1 && allmode[1] == 1 ){
+                if (allmode[0] == 1 && allmode[1] == 1) {
                     all_tea_stu = 0;
-                }else if(allmode[0] == 1 && allmode[1] == 2){
+                } else if (allmode[0] == 1 && allmode[1] == 2) {
                     all_tea_stu = 1;
-                }else if(allmode[0] == 2 && allmode[1] == 1){
+                } else if (allmode[0] == 2 && allmode[1] == 1) {
                     all_tea_stu = 2;
-                }else {
+                } else {
                     all_tea_stu = -1;
                 }
-                Log.e("all_tea_stu",""+all_tea_stu);
+                Log.e("all_tea_stu", "" + all_tea_stu);
 
                 // 判断信息是否为空
-                if(fet_bell_name.length() == 0){
+                if (fet_bell_name.length() == 0) {
                     nullmode = 0;
-                }else if(all_tea_stu == -1){
+                } else if (all_tea_stu == -1) {
                     nullmode = 1;
-                }else if(fet_bell_content.length() == 0){
+                } else if (fet_bell_content.length() == 0) {
                     nullmode = 2;
-                }else if(timemode == 2 && fev_bell_time.length() == 0){
+                } else if (timemode == 2 && fev_bell_time.length() == 0) {
                     nullmode = 3;
-                }else {
+                } else {
                     nullmode = -1;
                 }
                 //建立对话框
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), AlertDialog.THEME_HOLO_LIGHT);
                 //自定义title样式
                 TextView tv = new TextView(getActivity());
-                if(nullmode == 0){
+                if (nullmode == 0) {
                     tv.setText("请输入标题！");    //内容
-                }else if(nullmode == 1){
+                } else if (nullmode == 1) {
                     tv.setText("请选择发布对象！");    //内容
-                }else if(nullmode == 2){
+                } else if (nullmode == 2) {
                     tv.setText("请先输入内容！");    //内容
-                }else if(nullmode == 3){
+                } else if (nullmode == 3) {
                     tv.setText("请设置定时发布时间！");
-                }else {
-                    tv.setText("发表成功");    //内容
                 }
+//                }else {
+//                    tv.setText("发表成功");    //内容
+//                }
 
                 tv.setTextSize(17);//字体大小
                 tv.setPadding(30, 40, 30, 40);//位置
                 tv.setTextColor(Color.parseColor("#000000"));//颜色
                 //设置title组件
                 builder.setCustomTitle(tv);
-                AlertDialog dialog = builder.create();
-                if(nullmode != -1){
-                    builder.setNegativeButton("确定", null);
-                }else{
-                    builder.setNegativeButton("确定", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            submit();
-                            gotolast();
-                        }
-                    });
-                }
                 //禁止返回和外部点击
                 builder.setCancelable(false);
-                //对话框弹出
-                builder.show();
+                if(nullmode != -1){
+                    builder.setNegativeButton("确定", null);
+                    //对话框弹出
+                    builder.show();
+                }else{
+                    submit();
+                }
                 break;
         }
     }
 
     private void gotolast() {
-        getActivity().finish();
+        Intent toHome = new Intent(getActivity(), TMainPagerActivity.class);
+        //两个一起用
+        toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(toHome);
     }
 
     private void submit() {
@@ -356,7 +358,7 @@ public class TBellAnnounceUpdateFragment extends Fragment implements View.OnClic
         Integer type = all_tea_stu;
         Integer setDateFlag = timemode;
         String noticeId = getActivity().getIntent().getStringExtra("noticeId");
-        if(setDateFlag == 2){
+        if (setDateFlag == 2) {
             setDate = fev_bell_time.getText().toString();
         }
 
@@ -369,15 +371,21 @@ public class TBellAnnounceUpdateFragment extends Fragment implements View.OnClic
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 //结果信息
                 Boolean isSuccess = json.getBoolean("success");
-                Message message = Message.obtain();
-                if(isSuccess){
-                    message.obj = 1;
-                }else{
-                    message.obj = 0;
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), AlertDialog.THEME_HOLO_LIGHT);
+                if (isSuccess) {
+                    builder.setTitle("修改成功");
+                } else {
+                    builder.setTitle("修改失败，请稍后重试");
                 }
-                //标识线程
-                message.what = 101;
-                handler.sendMessage(message);
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        gotolast();
+                    }
+                });
+                //禁止返回和外部点击
+                builder.setCancelable(false);
+                builder.show();
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -422,8 +430,8 @@ public class TBellAnnounceUpdateFragment extends Fragment implements View.OnClic
         mTimerPicker = new DatePicker(getActivity(), new DatePicker.Callback() {
             @Override
             public void onTimeSelected(long timestamp) {
-                String newtime = DateFormatUtils.long2Str(timestamp, true).substring(0,5);
-                fev_bell_time.setText(newDate + " " +newtime);
+                String newtime = DateFormatUtils.long2Str(timestamp, true).substring(0, 5);
+                fev_bell_time.setText(newDate + " " + newtime);
             }
         }, beginTimestamp, endTimestamp);
         // 允许点击屏幕或物理返回键关闭
@@ -438,45 +446,45 @@ public class TBellAnnounceUpdateFragment extends Fragment implements View.OnClic
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        Log.e("点击了","");
+        Log.e("点击了", "");
         if (buttonView.isChecked()) {
 
             if (buttonView == fcb_bd_tea) {
-                if(allmode[0] == 1){
+                if (allmode[0] == 1) {
                     fcb_bd_tea.setButtonDrawable(R.drawable.muti_unselect);
                     allmode[0] = 2;
-                    Log.e("点教师变白","");
-                }else {
+                    Log.e("点教师变白", "");
+                } else {
                     fcb_bd_tea.setButtonDrawable(R.drawable.muti_select);
                     allmode[0] = 1;
-                    Log.e("点教师变蓝","");
+                    Log.e("点教师变蓝", "");
                 }
             } else {
-                if(allmode[1] == 1){
+                if (allmode[1] == 1) {
                     fcb_bd_stu.setButtonDrawable(R.drawable.muti_unselect);
                     allmode[1] = 2;
-                    Log.e("点学生变白","");
-                }else {
+                    Log.e("点学生变白", "");
+                } else {
                     fcb_bd_stu.setButtonDrawable(R.drawable.muti_select);
                     allmode[1] = 1;
-                    Log.e("点学生变蓝","");
+                    Log.e("点学生变蓝", "");
                 }
             }
         }
-        if(!buttonView.isChecked()){
+        if (!buttonView.isChecked()) {
             if (buttonView == fcb_bd_tea) {
-                if(allmode[0] == 2){
+                if (allmode[0] == 2) {
                     fcb_bd_tea.setButtonDrawable(R.drawable.muti_select);
                     allmode[0] = 1;
-                }else{
+                } else {
                     fcb_bd_tea.setButtonDrawable(R.drawable.muti_unselect);
                     allmode[0] = 2;
                 }
-            }else {
-                if(allmode[1] == 2){
+            } else {
+                if (allmode[1] == 2) {
                     fcb_bd_stu.setButtonDrawable(R.drawable.muti_select);
                     allmode[1] = 1;
-                }else{
+                } else {
                     fcb_bd_stu.setButtonDrawable(R.drawable.muti_unselect);
                     allmode[1] = 2;
                 }

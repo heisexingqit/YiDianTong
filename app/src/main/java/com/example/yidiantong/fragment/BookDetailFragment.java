@@ -212,7 +212,7 @@ public class BookDetailFragment extends Fragment {
         }
         // 获取错题本信息
         String mRequestUrl = Constant.API + Constant.ERROR_QUE_GET_QUESTION + "?userName=" + username + "&subjectId=" + coures_Id + "&currentPage=1&sourceId=" + sourceId;
-        Log.e("0125", "loadItems_Net: " + mRequestUrl);
+        Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 String itemString = "";
@@ -223,7 +223,7 @@ public class BookDetailFragment extends Fragment {
 
                 // 标题+所有题目表 【用于UI渲染】
                 for (int j = 0; j < error.length(); j++) {
-                    Log.e("0123", "sourceId: " + error.getJSONObject(j).getString("sourceId"));
+                    Log.e("wen0223", "sourceId: " + error.getJSONObject(j).getString("sourceId"));
                     String alitre0 = error.get(j).toString();
                     alitre0 = alitre0 + ",";
                     itemString += alitre0;

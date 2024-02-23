@@ -443,6 +443,7 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
 
         switch (initalPos) {
             case 0:
+                latestFragment.isRefresh = true;
                 getSupportFragmentManager().beginTransaction().replace(R.id.vp_main, latestFragment).commit();
                 break;
             case 1:
@@ -459,6 +460,7 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
                 break;
         }
         SwitchTabById(initalPos);
+
     }
 
     @Override
@@ -553,4 +555,5 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
         });
         MyApplication.addRequest(request, TAG);
     }
+
 }

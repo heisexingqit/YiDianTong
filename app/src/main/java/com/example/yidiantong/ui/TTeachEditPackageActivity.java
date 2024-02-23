@@ -615,33 +615,20 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                     } else {
                         builder.setMessage("授课包布置成功");
                     }
-                    builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            rl_submitting.setVisibility(View.GONE);
-                            Intent toHome = new Intent(TTeachEditPackageActivity.this, TMainPagerActivity.class);
-                            toHome.putExtra("pos", 2);
-                            //两个一起用
-                            toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-                            startActivity(toHome);
-                        }
-                    });
                 } else {
                     builder.setMessage(msg);
-                    builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            rl_submitting.setVisibility(View.GONE);
-                            Intent toHome = new Intent(TTeachEditPackageActivity.this, TMainPagerActivity.class);
-                            toHome.putExtra("pos", 2);
-                            //两个一起用
-                            toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-                            startActivity(toHome);
-                        }
-                    });
                 }
+                builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        rl_submitting.setVisibility(View.GONE);
+                        Intent toHome = new Intent(TTeachEditPackageActivity.this, TMainPagerActivity.class);
+                        //两个一起用
+                        toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+                        startActivity(toHome);
+                    }
+                });
 
                 AlertDialog dialog = builder.create();
                 dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框

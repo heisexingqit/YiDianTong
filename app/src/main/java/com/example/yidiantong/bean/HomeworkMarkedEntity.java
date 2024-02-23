@@ -106,6 +106,7 @@ public class HomeworkMarkedEntity implements Serializable {
                 ", tiMian='" + tiMian + '\'' +
                 ", analysis='" + analysis + '\'' +
                 ", stuAnswer='" + stuAnswer + '\'' +
+                ", showAnswerFlag='" + showAnswerFlag + '\'' +
                 '}';
     }
 }

@@ -40,6 +40,7 @@ public class ImageUtils {
 
         } catch (IOException e) {
             e.printStackTrace();
+            Log.e("wen0221", "Bitmap2StrByBase64: " + e);
             return null;
         }
     }

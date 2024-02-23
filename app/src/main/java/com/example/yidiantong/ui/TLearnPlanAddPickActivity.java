@@ -228,7 +228,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
 
         // 添加子页面Fragment
         // 默认参数
-        this.type = "resource";
+        this.type = "0";
         shareTag = "99";
         addFragment = new TLearnPlanPickAddFragment(xueduan, xueduanId, xueke, xuekeId, banben, banbenId, jiaocai, jiaocaiId, zhishidian, zhishidianId, this.type, typeSub, shareTag);
         changeFragment = new TLearnPlanPickChangeFragment();
@@ -276,7 +276,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                     window = new PopupWindow(contentView, PxUtils.dip2px(this, 400), PxUtils.dip2px(this, 640), true);
                     window.setTouchable(true);
                 }
-                window.showAsDropDown(iv_search_select, 0, 25);
+                window.showAsDropDown(iv_search_select, 0, 10);
                 break;
             /**
              * 下面是pop1相关组件点击事件
@@ -675,30 +675,18 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                             } else {
                                 builder.setMessage("导学案布置成功");
                             }
-                            builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    rl_submitting.setVisibility(View.GONE);
-                                    Intent toHome = new Intent(TLearnPlanAddPickActivity.this, TMainPagerActivity.class);
-                                    toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                    startActivity(toHome);
-                                }
-                            });
                         } else {
                             builder.setMessage("数据提交失败，请稍后重试");
-                            builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    rl_submitting.setVisibility(View.GONE);
-                                    Intent toHome = new Intent(TLearnPlanAddPickActivity.this, TMainPagerActivity.class);
-                                    toHome.putExtra("pos", 2);
-                                    //两个一起用
-                                    toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-                                    startActivity(toHome);
-                                }
-                            });
                         }
+                        builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                rl_submitting.setVisibility(View.GONE);
+                                Intent toHome = new Intent(TLearnPlanAddPickActivity.this, TMainPagerActivity.class);
+                                toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                startActivity(toHome);
+                            }
+                        });
 
                         AlertDialog dialog = builder.create();
                         dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框

@@ -107,8 +107,9 @@ public class TPackagePickAddFragment extends Fragment implements View.OnClickLis
     private String typeValue = "";
 
     private TLearnPlanAddInterface transmit;
-
-    private RelativeLayout rl_loading;
+    private LinearLayout ll_loading;
+    private LinearLayout ll_loading2;
+    private RelativeLayout rl_bottom_block;
 
     public TPackagePickAddFragment(String xd, String xdCode, String xk, String xkCode, String bb, String bbCode, String jc, String jcCode, String zsd, String zsdCode, String type, String typeValue, String shareTag) {
         xueduan = xd;
@@ -137,13 +138,14 @@ public class TPackagePickAddFragment extends Fragment implements View.OnClickLis
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_t_package_pick_add, container, false);
+        ll_loading = view.findViewById(R.id.ll_loading);
+        ll_loading2 = view.findViewById(R.id.ll_loading2);
         ll_bottom_tab = view.findViewById(R.id.ll_bottom_tab);
         sv_bottom_tab = view.findViewById(R.id.sv_bottom_tab);
         tv_hide = view.findViewById(R.id.tv_hide);
 
         vp_main = view.findViewById(R.id.vp_main);
 
-        rl_loading = view.findViewById(R.id.rl_loading);
 
         if (adapter == null) {
             adapter = new TLearnPlanAddPickPagerAdapter(getActivity().getSupportFragmentManager(), new ArrayList<>());
@@ -164,7 +166,6 @@ public class TPackagePickAddFragment extends Fragment implements View.OnClickLis
             loadItems_Net();
         }else{
             tv_hide.setVisibility(View.GONE);
-            rl_loading.setVisibility(View.GONE);
         }
 
         tv_count.setText("(已选择" + pickList.size() + ")");
@@ -367,7 +368,8 @@ public class TPackagePickAddFragment extends Fragment implements View.OnClickLis
                 nowPos = 0;
                 vp_main.setCurrentItem(nowPos, false);
                 showQuestionBlock(moreList);
-                rl_loading.setVisibility(View.GONE);
+                ll_loading.setVisibility(View.GONE);// 解除遮挡
+                ll_loading2.setVisibility(View.GONE);// 解除遮挡
             }
         }
     };
@@ -377,6 +379,8 @@ public class TPackagePickAddFragment extends Fragment implements View.OnClickLis
         if (StringUtils.hasEmptyString(xueduan, xueke, zhishidian, banben, jiaocai, type, shareTag)) {
             return;
         }
+        ll_loading.setVisibility(View.VISIBLE);// 遮挡
+        ll_loading2.setVisibility(View.VISIBLE);// 遮挡
         String xd = "";
         String xk = "";
         String zsd = "";
@@ -421,16 +425,22 @@ public class TPackagePickAddFragment extends Fragment implements View.OnClickLis
                 if (moreList.size() == 0) {
                     if (currentpage == 1) {
                         tv_hide.setVisibility(View.VISIBLE);
+                        rl_bottom_block.setVisibility(View.GONE);
+                        adapter.update(moreList);
                     } else {
                         Toast.makeText(getActivity(), "已经是最后一页", Toast.LENGTH_SHORT).show();
+                        currentpage -= 1;
                     }
-                    tv_hide.setVisibility(View.VISIBLE);
-                } else{
-                    tv_hide.setVisibility(View.GONE);
-                }
+                    isAll = true;
+                    ll_loading.setVisibility(View.GONE);// 解除遮挡
+                    ll_loading2.setVisibility(View.GONE);// 解除遮挡
 
-                Log.d(TAG, "loadItems_Net: " + moreList);
-                adapter.update(moreList);
+                    return;
+                } else {
+                    rl_bottom_block.setVisibility(View.VISIBLE);
+                    tv_hide.setVisibility(View.GONE);
+                    adapter.update(moreList);
+                }
 
                 Message message = Message.obtain();
                 message.obj = moreList;
@@ -438,6 +448,8 @@ public class TPackagePickAddFragment extends Fragment implements View.OnClickLis
                 handler.sendMessage(message);
 
             } catch (JSONException e) {
+                ll_loading.setVisibility(View.GONE);// 解除遮挡
+                ll_loading2.setVisibility(View.GONE);// 解除遮挡
                 e.printStackTrace();
             }
         }, error -> {
@@ -445,6 +457,5 @@ public class TPackagePickAddFragment extends Fragment implements View.OnClickLis
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
-        rl_loading.setVisibility(View.VISIBLE);
     }
 }

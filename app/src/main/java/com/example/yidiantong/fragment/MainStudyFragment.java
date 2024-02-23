@@ -191,7 +191,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
 
-                if (newState == recyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 >= adapter.getItemCount() && adapter.isDown == 0) {
+                if (newState == recyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 >= adapter.getItemCount()) {
                     loadItems_Net();
                 }
             }
@@ -238,7 +238,6 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
     private void refreshList() {
         currentPage = 1;
         adapter.isRefresh = 1;
-        adapter.isDown = 0;
         loadItems_Net();
         rv_study.scrollToPosition(0);
     }
@@ -317,9 +316,6 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
                     // 只有非0才翻页，0不算
                     currentPage += 1;
                 }
-                /**
-                 * 假0判断移至adapter中，根据refresh一起判断
-                 */
             }else if(message.what == 110){
                 boolean canCheckIn = (Boolean) message.obj;
                 if (!canCheckIn) {
@@ -385,9 +381,6 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
 
                 // 发送消息给主线程
                 Log.d("wen", "一个请求数量（12为界限）：" + moreList.size());
-                if (moreList.size() < 12 && moreList.size() > 0) {
-                    adapter.isDown = 1;
-                }
 
                 //标识线程
                 message.what = 100;

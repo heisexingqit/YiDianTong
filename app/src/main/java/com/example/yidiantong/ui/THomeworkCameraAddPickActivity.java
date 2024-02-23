@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -86,6 +87,31 @@ import java.util.Set;
 public class THomeworkCameraAddPickActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "THomeworkCameraAddPickActivity";
 
+    //答题区域HTML头
+    private String html_answer_head = "<head>\n" +
+            "    <style>\n" +
+            "        img{\n" +
+            "        vertical-align: middle;" +
+            "        max-width:40px !important;" +
+            "        height:40px !important;" +
+            "        }" +
+            "        body {\n" +
+            "            color: rgb(117, 117, 117);\n" +
+            "            word-wrap: break-word;\n" +
+            "            font-size: 16px;" +
+            "        }\n" +
+            "    </style>\n" +
+            "    <script>\n" +
+            "        function bigimage(x) {\n" +
+            "            myInterface.bigPic()\n" +
+            "        }\n" +
+            "    </script>\n" +
+            "</head>\n" +
+            "\n" +
+            "<body onclick=\"bigimage(this)\">\n";
+    //html尾
+    private String html_answer_tail = "</body>";
+
     private ActivityResultLauncher<Intent> mResultLauncher;
     private ActivityResultLauncher<Intent> mResultLauncher2;
     private ActivityResultLauncher<Intent> mResultLauncher3;
@@ -140,8 +166,6 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
     private ImageView iv_empty;
     public CustomLinearLayoutManager layoutManager;
 
-    // 修改标记
-    private boolean changeFlag = false;
     // 标记上传图的显示位置
     private int picUploadPos;
     private String picUploadType;
@@ -162,6 +186,11 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
     private ImagePagerAdapter imageAdapter;
     private View contentView = null;
 
+    // 待修改的WebView
+    private WebView changedWebView;
+
+    // 记录上一次保存的信息
+    private List<THomeworkCameraItem> lastSaveList;
 
     private int flexLayoutWidth = -1;
 
@@ -254,7 +283,8 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
 
         adapter.setmItemClickListener(new THomeworkCameraRecyclerAdapter.MyItemClickListener() {
             @Override
-            public void openGallery(View view, int pos, String type) {
+            public void openGallery(View view, int pos, String type, WebView wv) {
+                changedWebView = wv;
                 picUploadPos = pos;
                 picUploadType = type;
                 // 打开本地存储
@@ -262,7 +292,8 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
             }
 
             @Override
-            public void openCamera(View view, int pos, String type) {
+            public void openCamera(View view, int pos, String type, WebView wv) {
+                changedWebView = wv;
                 picUploadPos = pos;
                 picUploadType = type;
                 // 启动相机程序
@@ -280,11 +311,6 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                 } else {
                     iv_empty.setVisibility(View.VISIBLE);
                 }
-            }
-
-            @Override
-            public void setChangeFlag(boolean isChange) {
-                changeFlag = isChange;
             }
 
             @Override
@@ -442,19 +468,6 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
             }
         });
 
-        // 注册 涂鸦板
-        mResultLauncher3 = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-
-            @Override
-            public void onActivityResult(ActivityResult result) {
-                if (result.getResultCode() == RESULT_OK) {
-                    Intent intent = result.getData();
-                    imageBase64 = intent.getStringExtra("data");
-                    imageBase64 = imageBase64.replace("+", "%2b");
-                    uploadImage();
-                }
-            }
-        });
 
         /**
          * 注册通用裁切回调：与通用裁切方法对应。NEW
@@ -494,8 +507,8 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
         Map<String, String> params = new HashMap<>();
         params.put("baseCode", imageBase64);
         params.put("questionId", itemList.get(picUploadPos).getQuestionId());
-        params.put("userName",  MyApplication.username);
-        params.put("type",  picUploadType);
+        params.put("userName", MyApplication.username);
+        params.put("type", picUploadType);
 
         StringRequest request = new StringRequest(Request.Method.POST, mRequestUrl, response -> {
 
@@ -507,7 +520,6 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                 Toast.makeText(this, json.getString("message"), Toast.LENGTH_SHORT).show();
 
                 if (isSuccess) {
-                    changeFlag = true;
                     THomeworkCameraItem item = itemList.get(picUploadPos);
                     Log.e(TAG, "uploadImage: item + " + item.toString());
                     String addString = "<img onclick='bigimage(this)' src='" + url + "'>";
@@ -521,7 +533,8 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                                 item.setShitiShow(addString);
                             }
                             item.getShitiShowPic().add(url);  // 图片加入列表
-                            Log.e(TAG, "uploadImage: " + item.getShitiShow());
+                            changedWebView.loadDataWithBaseURL(null, html_answer_head + item.getShitiShow() + html_answer_tail, "text/html", "utf-8", null);
+
                             break;
                         case "Answer":
                             item.getShitiAnswerPic().add(url);
@@ -531,6 +544,8 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                                 item.setShitiAnswer(addString);
                             }
                             item.getShitiAnswerPic().add(url);  // 图片加入列表
+                            changedWebView.loadDataWithBaseURL(null, html_answer_head + item.getShitiAnswer() + html_answer_tail, "text/html", "utf-8", null);
+
                             break;
                         case "Analysis":
                             item.getShitiAnalysisPic().add(url);
@@ -540,6 +555,8 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                                 item.setShitiAnalysis(addString);
                             }
                             item.getShitiAnalysisPic().add(url);  // 图片加入列表
+                            changedWebView.loadDataWithBaseURL(null, html_answer_head + item.getShitiAnalysis() + html_answer_tail, "text/html", "utf-8", null);
+
                             break;
                     }
                     adapter.notifyDataSetChanged();
@@ -551,7 +568,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
             }
         }, error -> {
             Log.d("wen", "Volley_Error: " + error.toString());
-        }){
+        }) {
             @Override
             protected Map<String, String> getParams() {
                 return params;
@@ -610,7 +627,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
     }
 
     private void assign() {
-        if (changeFlag == false && !paperId.equals("-1")) {
+        if (!changeCheck() && !paperId.equals("-1")) {
             Intent intent = new Intent(this, TTeachAssginActivity.class);
             intent.putExtra("learnPlanId", paperId);
             intent.putExtra("learnPlanName", name);
@@ -638,7 +655,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
             THomeworkCameraItem item = itemList.get(i);
 
             // 非法判断
-            if (item.getShitiShow() == null || item.getShitiShow().length() == 0) {
+            if (item.getShitiShow().length() == 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("请填写第" + (i + 1) + "题面");
                 builder.setNegativeButton("关闭", null);
@@ -646,7 +663,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                 dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
                 dialog.show();
                 return;
-            } else if (item.getShitiAnswer() == null || item.getShitiAnswer().length() == 0) {
+            } else if (item.getShitiAnswer().length() == 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("请填写第" + (i + 1) + "答案");
                 builder.setNegativeButton("关闭", null);
@@ -735,7 +752,6 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                 return;
             }
 
-
             item.setOrder(String.valueOf(i + 1));
             if (jsonStringBuilder.length() > 0) {
                 jsonStringBuilder.append(", ");
@@ -766,7 +782,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                 Boolean isSuccess = json.getBoolean("success");
                 if (isSuccess) {
                     paperId = json.getString("data");
-                    changeFlag = false;
+                    // 记录上一次保存的信息
                     if (isAssign) {
                         assign();
                     } else {
@@ -813,7 +829,6 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                                 Toast.makeText(THomeworkCameraAddPickActivity.this, "请输入试题分数", Toast.LENGTH_SHORT).show();
                                 break;
                             }
-                            Log.d("wen", "测试1: " + isTypeChange);
 
                             THomeworkCameraItem newHomework;
                             if (isTypeChange) {
@@ -882,7 +897,13 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                 tv_name.setText(item.getTypeName());
 
                 tv_name.setOnClickListener(v -> {
+
+                    if (type.equals(tv_name.getText().toString())) {
+                        return;
+                    }
+
                     type = tv_name.getText().toString();
+
 
                     if (lastType != null) {
                         lastType.setBackgroundResource(R.drawable.t_homework_add_unselect2);
@@ -1016,7 +1037,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
         // 权限请求
         AndPermission.with(this)
                 .runtime()
-                .permission(Permission.Group.CAMERA)
+                .permission(Permission.Group.CAMERA, Permission.Group.STORAGE)
                 .onGranted(new Action<List<String>>() {
                     // 获得权限后
                     @Override
@@ -1247,5 +1268,19 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
         intent.putExtra("noFaceDetection", true);
 
         mResultLauncherCrop.launch(intent);
+    }
+
+    // 判断作业内容是否修改 [true:修改了;false:未修改]
+    private boolean changeCheck() {
+        if(lastSaveList == null){
+            return true;
+        }
+        if(lastSaveList.size() != itemList.size())
+        for(int i = 0; i < lastSaveList.size(); ++i){
+            if(!lastSaveList.get(i).toData().equals(itemList.get(i).toData())){
+                return true;
+            }
+        }
+        return false;
     }
 }

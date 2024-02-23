@@ -28,7 +28,9 @@ public class ShowStuAnsAdapter2 extends BaseAdapter {
     private String html_answer_head = "<head>\n" +
             "    <style>\n" +
             "        img{\n" +
-            "        vertical-align: middle;" +
+            "            vertical-align: middle;" +
+            "            max-width:40px !important;" +
+            "            height:40px !important;" +
             "        }" +
             "        body {\n" +
             "            color: rgb(117, 117, 117);\n" +

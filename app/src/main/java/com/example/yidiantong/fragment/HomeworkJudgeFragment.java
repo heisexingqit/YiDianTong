@@ -28,8 +28,8 @@ import com.example.yidiantong.util.HomeworkInterface;
 public class HomeworkJudgeFragment extends Fragment implements View.OnClickListener {
 
     private PagingInterface pageing;
-    int[] unselectIcons = {R.drawable.right_unselect, R.drawable.error_unselect};
-    int[] selectIcons = {R.drawable.right_select, R.drawable.error_select};
+    int[] unselectIcons = {R.drawable.error_unselect, R.drawable.right_unselect};
+    int[] selectIcons = {R.drawable.error_select, R.drawable.right_select};
 
     ClickableImageView[] iv_answer = new ClickableImageView[2];
     int answer = -1;

@@ -78,7 +78,7 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
 
         String answerString = homeworkMarked.getStandardAnswer();
         String analysisString = homeworkMarked.getAnalysis();
-
+        Log.e("wen0222", "onCreateView: " + homeworkMarked);
 
         /**
          * 简单判断答案是否为不可见
@@ -92,7 +92,6 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
 
         setHtmlOnWebView(wv_content2, answerString);
         setHtmlOnWebView(wv_content3, analysisString);
-
 
         if(isWatch){
             // 显示底部一栏

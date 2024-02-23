@@ -36,15 +36,12 @@ import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
 import com.google.android.flexbox.FlexboxLayout;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -306,6 +303,7 @@ public class TLearnPlanAddActivity extends AppCompatActivity implements View.OnC
 
                     // 知识点
                     editor.putString("zhishidian", zhishidian);
+                    editor.putString("zhishidianId", zhishidianId);
                     intent.putExtra("zhishidianId", zhishidianId);
                     intent.putExtra("zhishidian", zhishidian);
                     editor.commit();
@@ -852,7 +850,12 @@ public class TLearnPlanAddActivity extends AppCompatActivity implements View.OnC
                 if (loadPreference) {
                     String zhishidianId = preferences.getString("zhishidianId", "");
                     String zhishidianName = preferences.getString("zhishidian", "");
-                    if (zhishidianData.contains(zhishidianId) && zhishidianData.contains(zhishidian)) {
+                    Log.e("wen0222", "loadZhiShiDian: " + zhishidianId);
+                    Log.e("wen0222", "loadZhiShiDian: " + zhishidianName);
+                    Log.e("wen0222", "loadZhiShiDian: " + zhishidianData);
+                    Log.e("wen0222", "loadZhiShiDian111: " + zhishidianData.contains(zhishidianId));
+                    Log.e("wen0222", "loadZhiShiDian222: " + zhishidianData.contains(zhishidianName));
+                    if (zhishidianData.contains(zhishidianId) && zhishidianData.contains(zhishidianName)) {
                         zhishidian = zhishidianName;
                         this.zhishidianId = zhishidianId;
                         tv_point.setText(zhishidian);
@@ -922,7 +925,6 @@ public class TLearnPlanAddActivity extends AppCompatActivity implements View.OnC
                 "</body>";
         wb.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
     }
-
 
     private void selectedTv(TextView tv) {
         tv.setBackgroundResource(R.drawable.t_homework_add_select);

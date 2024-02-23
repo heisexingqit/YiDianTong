@@ -395,8 +395,8 @@ public class THomeworkMarkFragment extends Fragment {
                     // 获取权限后
                     @Override
                     public void onAction(List<String> data) {
-//                        oldUrl = url;
-//                        EditImageActivity.start(getActivity(), THomeworkMarkFragment.this, url, null, 0);
+                        oldUrl = url;
+                        EditImageActivity.start(getActivity(), THomeworkMarkFragment.this, url, null, 0);
                     }
                 }).onDenied(new Action<List<String>>() {
                     @Override

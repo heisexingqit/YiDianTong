@@ -549,28 +549,20 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                             } else {
                                 builder.setMessage("作业布置成功");
                             }
-                            builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    rl_submitting.setVisibility(View.GONE);
-                                    Intent toHome = new Intent(THomeworkAddPickActivity.this, TMainPagerActivity.class);
-                                    toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                    startActivity(toHome);
-                                }
-                            });
+
                         } else {
                             builder.setMessage(message);
-                            builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    rl_submitting.setVisibility(View.GONE);
-                                    Intent toHome = new Intent(THomeworkAddPickActivity.this, TMainPagerActivity.class);
-                                    toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-                                    startActivity(toHome);
-                                }
-                            });
                         }
+
+                        builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                rl_submitting.setVisibility(View.GONE);
+                                Intent toHome = new Intent(THomeworkAddPickActivity.this, TMainPagerActivity.class);
+                                toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                startActivity(toHome);
+                            }
+                        });
                         AlertDialog dialog = builder.create();
                         dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
                         dialog.show();
@@ -584,6 +576,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
             });
             MyApplication.addRequest(request, TAG);
             rl_submitting.setVisibility(View.VISIBLE);
+
             try {
                 // 休眠2秒钟，避免请求过快被丢弃
                 Thread.sleep(100);

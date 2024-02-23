@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,7 @@ import com.example.yidiantong.util.LogUtils;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
 import com.example.yidiantong.util.TLearnPlanAddInterface;
+import com.google.android.exoplayer2.upstream.Loader;
 import com.google.firebase.crashlytics.buildtools.log.MultiLogger;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -113,6 +115,7 @@ public class TLearnPlanPickAddFragment extends Fragment implements View.OnClickL
     private TLearnPlanAddInterface transmit;
     private LinearLayout ll_loading;
     private LinearLayout ll_loading2;
+    private RelativeLayout rl_bottom_block;
 
 
     public TLearnPlanPickAddFragment(String xd, String xdCode, String xk, String xkCode, String bb, String bbCode, String jc, String jcCode, String zsd, String zsdCode, String type, String typeValue, String shareTag) {
@@ -161,6 +164,7 @@ public class TLearnPlanPickAddFragment extends Fragment implements View.OnClickL
         // 底部翻页按钮
         view.findViewById(R.id.iv_left).setOnClickListener(this);
         view.findViewById(R.id.iv_right).setOnClickListener(this);
+        rl_bottom_block = view.findViewById(R.id.rl_bottom_block);
 
         // 添加本题
         tv_count = view.findViewById(R.id.tv_count);
@@ -387,7 +391,7 @@ public class TLearnPlanPickAddFragment extends Fragment implements View.OnClickL
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void loadItems_Net() {
 
-        if (StringUtils.hasEmptyString(xueduan, xueke, zhishidian, banben, jiaocai, type, shareTag)) {
+        if (StringUtils.hasEmptyString(xueduan, xueke, zhishidian, banben, jiaocai,type, shareTag)) {
             return;
         }
         ll_loading.setVisibility(View.VISIBLE);// 遮挡
@@ -409,14 +413,14 @@ public class TLearnPlanPickAddFragment extends Fragment implements View.OnClickL
             e.printStackTrace();
         }
 
-        Log.d(TAG, "loadItems_Net: " + typeValue);
+        Log.e("wen0222", "loadItems_Net: " + type);
 
         mRequestUrl = Constant.API + Constant.T_LEARN_PLAN_GET_ALL_RESOURCE + "?userName=" + MyApplication.username + "&type=" + type + "&typeValue=" + tvl
                 + "&shareTag=" + shareTag + "&channelCode=" + xueduanCode + "&subjectCode=" + xuekeCode + "&textBookCode=" + banbenCode + "&gradeLevelCode=" + jiaocaiCode
                 + "&pointCode=" + zhishidianCode + "&learnPlanId=" + learnPlanId + "&currentPage=" + currentpage + "&searchPage=" + searchPage + "&deviceType=" + deviceType
                 + "&channelName=" + xd + "&subjectName=" + xk + "&textBookName=" + bb + "&gradeLevelName=" + jc
                 + "&pointName=" + zsd;
-        Log.d("wen", "导学案题面获取Url:" + mRequestUrl);
+        Log.e("wen0222", "导学案题面获取Url:" + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
@@ -433,10 +437,12 @@ public class TLearnPlanPickAddFragment extends Fragment implements View.OnClickL
                 if (moreList.size() < 5) {
                     isAll = true;
                 }
-
+                Log.e("wen0223", "loadItems_Net: " + moreList.size());
                 if (moreList.size() == 0) {
                     if (currentpage == 1) {
                         tv_hide.setVisibility(View.VISIBLE);
+                        rl_bottom_block.setVisibility(View.GONE);
+                        adapter.update(moreList);
                     } else {
                         Toast.makeText(getActivity(), "已经是最后一页", Toast.LENGTH_SHORT).show();
                         currentpage -= 1;
@@ -444,12 +450,13 @@ public class TLearnPlanPickAddFragment extends Fragment implements View.OnClickL
                     isAll = true;
                     ll_loading.setVisibility(View.GONE);// 解除遮挡
                     ll_loading2.setVisibility(View.GONE);// 解除遮挡
+
                     return;
                 } else {
+                    rl_bottom_block.setVisibility(View.VISIBLE);
                     tv_hide.setVisibility(View.GONE);
+                    adapter.update(moreList);
                 }
-
-                adapter.update(moreList);
 
                 Message message = Message.obtain();
                 message.obj = moreList;

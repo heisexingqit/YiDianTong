@@ -283,7 +283,7 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                     MyApplication.password = newPW;
                     Toast.makeText(getActivity(), "修改密码成功", Toast.LENGTH_SHORT).show();
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString("password", newPW);
+                    editor.putString("password", "");
                     editor.commit();
                     fbtn_exit.callOnClick();
                 } else {
@@ -460,7 +460,7 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         // 权限请求
         AndPermission.with(this)
                 .runtime()
-                .permission(Permission.Group.CAMERA)
+                .permission(Permission.Group.CAMERA, Permission.Group.STORAGE)
                 .onGranted(new Action<List<String>>() {
                     // 获得权限后
                     @Override

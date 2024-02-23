@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.TWeikePickAddFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".fragment.TWeikePickAddFragment">
 
     <RelativeLayout
         android:id="@+id/rl_top"
@@ -50,12 +50,45 @@
             android:id="@+id/vp_main"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/tv_hide"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="30dp"
+            android:gravity="center_horizontal"
+            android:paddingTop="20dp"
+            android:text="请点击右上角图标修改筛选条件查找内容"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:id="@+id/ll_loading2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <ProgressBar
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="50dp"
+                android:indeterminateTint="@color/main_blue" />
+        </LinearLayout>
     </RelativeLayout>
+    <!-- 分割线 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/rl_bottom_block"
+        android:background="@color/light_gray" />
+
     <RelativeLayout
         android:id="@+id/rl_bottom_block"
-        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="120dp"
+        android:layout_alignParentBottom="true"
         android:background="@color/white"
         android:orientation="horizontal"
         android:paddingStart="5dp"
@@ -64,9 +97,9 @@
 
         <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/iv_left"
-            android:layout_alignParentStart="true"
             android:layout_width="30dp"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
             android:src="@drawable/left_ex" />
 
         <HorizontalScrollView
@@ -88,23 +121,27 @@
         </HorizontalScrollView>
 
         <com.example.yidiantong.View.ClickableImageView
-            android:layout_alignParentEnd="true"
             android:id="@+id/iv_right"
             android:layout_width="30dp"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
             android:src="@drawable/right_ex" />
 
+        <LinearLayout
+            android:id="@+id/ll_loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                android:indeterminateTint="@color/main_blue" />
+        </LinearLayout>
     </RelativeLayout>
-    <TextView
-        android:id="@+id/tv_hide"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/rl_top"
-        android:background="@color/white"
-        android:gravity="center_horizontal"
-        android:paddingTop="50dp"
-        android:text="请点击右上角图标修改筛选条件查找内容"
-        android:textColor="@color/black"
-        android:textSize="18sp"/>
-    <include layout="@layout/loading_page"/>
+
 </RelativeLayout>

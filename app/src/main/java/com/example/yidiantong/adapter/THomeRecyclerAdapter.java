@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.yidiantong.R;
-import com.example.yidiantong.bean.HomeItemEntity;
 import com.example.yidiantong.bean.THomeItemEntity;
 
 import java.util.List;
@@ -35,9 +34,6 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     // 加载失败
     public boolean fail = false;
-
-    // 假0判断
-    private int count = 0;
 
     public THomeRecyclerAdapter(Context context, List<THomeItemEntity> itemList) {
         this.layoutInflater = LayoutInflater.from(context);
@@ -101,7 +97,6 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void loadData(List<THomeItemEntity> moreList) {
         fail = false;
         if (this.isRefresh == 1) {
-            count = 0;
             this.itemList.clear();
             this.itemList = moreList;
             this.isRefresh = 0;
@@ -112,16 +107,7 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
             this.itemList.addAll(moreList);
             if (moreList.size() >= 12) {
                 isDown = 0;
-                count = 0;
-            } else if (moreList.size() == 0) {
-                isDown = 0;
-                count++;
             } else {
-                isDown = 1;
-                count = 0;
-            }
-
-            if (count > 1) {
                 isDown = 1;
             }
         }

@@ -229,14 +229,14 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
     }
 
     private void publishAnswer() {
-        String mRequestUrl = Constant.API + Constant.PUBLISH_ANSWER + "?userName=" + MyApplication.username + "&taskId=" + taskId;
+        String mRequestUrl = Constant.API + Constant.PUBLISH_ANSWER + "?userName=" + MyApplication.username + "&paperId=" + taskId;
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 String message = json.getString("message");
                 Boolean isSuccess = json.getBoolean("success");
-                message.replace("。", "");
+                message = message.replace("。", "");
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                 if (isSuccess) {
                     homeworkReport.setStatus("show");

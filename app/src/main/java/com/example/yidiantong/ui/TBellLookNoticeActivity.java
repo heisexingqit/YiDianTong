@@ -287,8 +287,8 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
             case R.id.fb_bd_modify:
                 if(modifymode == 1){
                     Intent intent = new Intent(TBellLookNoticeActivity.this,TBellNoticeUpdateActivity.class);
-                    intent.putExtra("type",type);
-                    intent.putExtra("noticeId",classTimeId);
+                    intent.putExtra("type", type);
+                    intent.putExtra("noticeId", classTimeId);
                     startActivity(intent);
                     goLastPage();
                 }

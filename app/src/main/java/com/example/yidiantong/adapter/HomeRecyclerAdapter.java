@@ -39,8 +39,6 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     // 加载失败
     public boolean fail = false;
 
-    // 假0判断
-    private int count = 0;
 
     private Context mContext;
 
@@ -102,7 +100,6 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void loadData(List<HomeItemEntity> moreList) {
         fail = false;
         if (this.isRefresh == 1) {
-            count = 0;
             this.itemList.clear();
             this.itemList = moreList;
             this.isRefresh = 0;
@@ -113,18 +110,10 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             this.itemList.addAll(moreList);
             if (moreList.size() >= 12) {
                 isDown = 0;
-                count = 0;
-            } else if (moreList.size() == 0) {
-                isDown = 0;
-                count++;
             } else {
                 isDown = 1;
-                count = 0;
             }
 
-            if (count > 3) {
-                isDown = 1;
-            }
         }
         this.notifyDataSetChanged();
     }

@@ -645,31 +645,21 @@ public class TWeikeAddPickActivity extends AppCompatActivity implements View.OnC
                         } else {
                             builder.setMessage("微课布置成功");
                         }
-                        builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                rl_submitting.setVisibility(View.GONE);
-                                Intent toHome = new Intent(TWeikeAddPickActivity.this, TMainPagerActivity.class);
-                                toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                startActivity(toHome);
 
-                            }
-                        });
                     } else {
                         builder.setMessage("数据提交失败，请稍后重试");
-                        builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                rl_submitting.setVisibility(View.GONE);
-                                Intent toHome = new Intent(TWeikeAddPickActivity.this, TMainPagerActivity.class);
-                                toHome.putExtra("pos", 2);
-                                //两个一起用
-                                toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-                                startActivity(toHome);
-                            }
-                        });
                     }
+
+                    builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            rl_submitting.setVisibility(View.GONE);
+                            Intent toHome = new Intent(TWeikeAddPickActivity.this, TMainPagerActivity.class);
+                            toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            startActivity(toHome);
+
+                        }
+                    });
 
                     AlertDialog dialog = builder.create();
                     dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框

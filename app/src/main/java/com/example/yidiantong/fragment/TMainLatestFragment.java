@@ -97,7 +97,8 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
     // Activity页面切换
     private ChangePageInterface changePageInterface;
 
-    private boolean backRefresh = false;
+    public boolean isRefresh = false; // 回调刷新列表
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -178,7 +179,6 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
                         intent2.putExtra("noticetime", adapter.itemList.get(pos).getfTime());
                         startActivity(intent2);
                     case "10":
-                        backRefresh = true;
                         intent = new Intent(getActivity(), TLiveListActivity.class);
                         startActivity(intent);
                         break;
@@ -210,9 +210,8 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                Log.d(TAG, "onScrollStateChanged: " + lastVisibleItem + "/" + adapter.getItemCount() + "/" + adapter.isDown);
 
-                if (newState == RecyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 >= adapter.getItemCount() && adapter.isDown == 0) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 >= adapter.getItemCount()) {
                     loadItems_Net();
                 }
             }
@@ -470,10 +469,6 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
                 message.obj = moreList;
 
                 // 发送消息给主线程
-                if (moreList.size() < 12 && moreList.size() > 0) {
-                    adapter.isDown = 1;
-                }
-
                 //标识线程
                 message.what = 100;
                 handler.sendMessage(message);
@@ -498,9 +493,9 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
     @Override
     public void onResume() {
         super.onResume();
-        if(backRefresh){
+        if(isRefresh){
             refreshList();
-            backRefresh = false;
+            isRefresh = false;
         }
     }
 }

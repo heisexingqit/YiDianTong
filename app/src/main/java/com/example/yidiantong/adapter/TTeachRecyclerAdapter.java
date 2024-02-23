@@ -40,9 +40,6 @@ public class TTeachRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     // 加载失败
     public boolean fail = false;
 
-    // 假0判断
-    private int count = 0;
-
     public TTeachRecyclerAdapter(Context context, List<TTeachItemEntity> itemList) {
         this.layoutInflater = LayoutInflater.from(context);
         this.itemList = itemList;
@@ -98,7 +95,6 @@ public class TTeachRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void loadData(List<TTeachItemEntity> moreList) {
         fail = false;
         if (this.isRefresh == 1) {
-            count = 0;
             this.itemList.clear();
             this.itemList = moreList;
             this.isRefresh = 0;
@@ -109,16 +105,7 @@ public class TTeachRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             this.itemList.addAll(moreList);
             if (moreList.size() == 12) {
                 isDown = 0;
-                count = 0;
-            } else if (moreList.size() == 0) {
-                isDown = 0;
-                count++;
-            } else {
-                isDown = 1;
-                count = 0;
-            }
-
-            if (count > 1) {
+            } else{
                 isDown = 1;
             }
         }

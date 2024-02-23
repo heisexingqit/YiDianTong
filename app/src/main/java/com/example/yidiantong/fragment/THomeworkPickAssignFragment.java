@@ -140,14 +140,13 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
         view.findViewById(R.id.iv_start).setOnClickListener(this);
         view.findViewById(R.id.iv_end).setOnClickListener(this);
 
-        loadKeTang();
+        loadKeTang(); // 第一步
         return view;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void onClick(View view) {
-
+    public void onClick(View view) { // 第五步
         switch (view.getId()) {
             case R.id.iv_start:
                 // 时间选择器
@@ -170,9 +169,7 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
 
 //                break;
             case R.id.tv_class:
-
                 changePopBtn(tv_class);
-
                 pos = 0;
                 showClass();
                 break;
@@ -191,7 +188,6 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
                     break;
                 }
                 changePopBtn(tv_person);
-
                 pos = 2;
                 showClass();
                 break;
@@ -474,7 +470,7 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
                     ketangMap.put(object.getString("keTangName"), object.getString("keTangId"));
                 }
                 Log.d("wen", "课堂: " + ketangMap);
-                showKeTang();
+                showKeTang(); // 第二步
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -552,8 +548,7 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
                         break;
                 }
                 // 加载班级信息
-                loadClass();
-
+                loadClass(); // 第三步
 //                tv_ketang.setText(ketang);
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
@@ -563,7 +558,6 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
             if(isFirst){
                 tv_name.callOnClick();
             }
-
         });
         isFirst = false;
     }
@@ -618,7 +612,7 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
                         groupMapStuIds.put(object.getString("value"), object.getString("ids"));
                     }
 
-                    showClass();
+                    showClass(); // 第四步
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -639,6 +633,8 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
             tv_class_null.setVisibility(View.VISIBLE);
             return;
         }
+
+        // 判断1：是否为空？
         switch (pos) {
             case 0:
                 if (classMap.size() == 0) {
@@ -668,9 +664,10 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
                 }
                 break;
         }
+
+        // 判断2：非空渲染按钮
         switch (pos) {
             case 0:
-
 //                classMap.forEach((name, id) -> {
 //                    View view = LayoutInflater.from(getActivity()).inflate(R.layout.item_t_homework_add_block, fl_class, false);
 //                    TextView tv_name = view.findViewById(R.id.tv_name);

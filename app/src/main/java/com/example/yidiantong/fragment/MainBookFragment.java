@@ -89,8 +89,8 @@ public class MainBookFragment extends Fragment {
         //设置RecyclerViewAdapter
         adapter = new BooksAdapter(getContext(), itemList);
 
-        // 展示课程信息
-        loadItems_Net();
+//        // 展示课程信息
+//        loadItems_Net();
 
         frv_channel.setAdapter(adapter);
         frv_channel.setItemViewCacheSize(0);
@@ -142,6 +142,9 @@ public class MainBookFragment extends Fragment {
                 //使用Goson框架转换Json字符串为列表
                 List<BookInfoEntity> moreList = gson.fromJson(itemString, new TypeToken<List<BookInfoEntity>>() {}.getType());
 
+                for(int i = 0; i < moreList.size(); ++i){
+                    Log.e("wen0223", "loadItems_Net: " + moreList.get(i));
+                }
                 //封装消息，传递给主线程
                 Message message = Message.obtain();
                 message.obj = moreList;

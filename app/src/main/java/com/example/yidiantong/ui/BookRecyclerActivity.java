@@ -192,7 +192,7 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
     private void loadItems_Net(int pos) {
         String mRequestUrl = Constant.API + Constant.ERROR_QUE_ANSWER_QUESTION + "?sourceId=" + sourceId +"&userName=" +userName +"&subjectId=" + subjectId +"&currentPage=" + pos + "&questionId=" + questionId;
 
-        Log.e("0123", "详细信息单题请求" + mRequestUrl);
+        Log.e("wen0223", "详细信息单题请求" + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
@@ -204,7 +204,7 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
                 //使用Goson框架转换Json字符串为列表
                 List<BookRecyclerEntity> itemList = gson.fromJson(itemString, new TypeToken<List<BookRecyclerEntity>>() {}.getType());
 
-                Log.e("0124", "loadItems_Net: " + itemList);
+                Log.e("wen0223", "loadItems_Net: " + itemList);
                 //封装消息，传递给主线程
                 Message message = Message.obtain();
                 message.obj = itemList;

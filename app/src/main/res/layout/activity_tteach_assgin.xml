@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".fragment.TWeikePickAssignFragment">
+
     <RelativeLayout
         android:id="@+id/rl_top"
         android:layout_width="match_parent"
@@ -43,9 +44,9 @@
 
     <LinearLayout
         android:id="@+id/ll_top_divider"
-        android:layout_below="@+id/rl_top"
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_below="@+id/rl_top"
         android:background="@color/tabbar_text_unselect"
         android:orientation="horizontal" />
 
@@ -58,39 +59,37 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:paddingStart="15dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="15dp"
+            android:paddingBottom="10dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="10dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="center_vertical"
-                    android:text="作业名称:"
-                    android:textSize="15sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="作业名称:"
+                android:textSize="15sp" />
 
-                <TextView
-                    android:id="@+id/tv_name"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="20dp"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text=""
-                    android:textSize="15sp" />
-                <com.example.yidiantong.View.ClickableImageView
-                    android:visibility="invisible"
-                    android:layout_width="60dp"
-                    android:layout_height="30dp"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/calendar_icon" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text=""
+                android:textSize="15sp" />
+
+            <com.example.yidiantong.View.ClickableImageView
+                android:layout_width="60dp"
+                android:layout_height="30dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/calendar_icon"
+                android:visibility="invisible" />
+
         </LinearLayout>
 
         <!-- 分割线 -->
@@ -102,41 +101,38 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:paddingStart="15dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="15dp"
+            android:paddingBottom="10dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="10dp">
 
-                <TextView
-                    android:id="@+id/tv_st"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="center_vertical"
-                    android:text="开始时间:"
-                    android:textSize="15sp" />
+            <TextView
+                android:id="@+id/tv_st"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="开始时间:"
+                android:textSize="15sp" />
 
-                <TextView
-                    android:id="@+id/tv_start"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="20dp"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text=""
-                    android:textSize="15sp" />
+            <TextView
+                android:id="@+id/tv_start"
+                android:layout_width="265dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text=""
+                android:textSize="15sp" />
 
-                <com.example.yidiantong.View.ClickableImageView
-                    android:id="@+id/iv_start"
-                    android:layout_width="60dp"
-                    android:layout_height="30dp"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/calendar_icon" />
-            </LinearLayout>
+            <com.example.yidiantong.View.ClickableImageView
+                android:id="@+id/iv_start"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:padding="5dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/calendar_icon" />
         </LinearLayout>
 
         <!-- 分割线 -->
@@ -148,41 +144,38 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:paddingStart="15dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="15dp"
+            android:paddingBottom="10dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="10dp">
 
-                <TextView
-                    android:id="@+id/tv_en"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="center_vertical"
-                    android:text="结束时间:"
-                    android:textSize="15sp" />
+            <TextView
+                android:id="@+id/tv_en"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="结束时间:"
+                android:textSize="15sp" />
 
-                <TextView
-                    android:id="@+id/tv_end"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="20dp"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text=""
-                    android:textSize="15sp" />
+            <TextView
+                android:id="@+id/tv_end"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text=""
+                android:textSize="15sp" />
 
-                <com.example.yidiantong.View.ClickableImageView
-                    android:id="@+id/iv_end"
-                    android:layout_width="60dp"
-                    android:layout_height="30dp"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/calendar_icon" />
-            </LinearLayout>
+            <com.example.yidiantong.View.ClickableImageView
+                android:id="@+id/iv_end"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:padding="5dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/calendar_icon" />
         </LinearLayout>
 
         <!-- 分割线 -->
@@ -194,20 +187,22 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="10dp">
+                android:paddingStart="15dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/tv_kt"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
                     android:gravity="center_vertical"
                     android:text="选择课堂:"
                     android:textSize="15sp" />
@@ -224,8 +219,8 @@
 
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_ketang"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:src="@drawable/down_icon" />
             </LinearLayout>
 
@@ -247,8 +242,8 @@
                     android:id="@+id/fl_ketang"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="18dp"
-                    android:layout_marginEnd="30dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
                     app:flexWrap="wrap" />
 
             </ScrollView>
@@ -270,73 +265,59 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="10dp"
+                android:paddingStart="15dp"
                 android:paddingTop="10dp"
-                android:paddingEnd="75dp"
+                android:paddingEnd="15dp"
                 android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/tv_bz"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="11dp"
-                    android:layout_marginEnd="10dp"
                     android:gravity="center_vertical"
+                    android:layout_marginEnd="10dp"
                     android:text="布置给:"
                     android:textSize="15sp" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_weight="1"
-                    android:gravity="center">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp">
 
                     <com.example.yidiantong.View.ClickableTextView
                         android:id="@+id/tv_class"
-                        android:layout_width="match_parent"
+                        android:layout_width="60dp"
                         android:layout_height="match_parent"
                         android:background="@drawable/t_homework_add_pick"
                         android:gravity="center"
                         android:text="班级"
-                        android:textColor="@color/white" />
-                </LinearLayout>
+                        android:textColor="@color/white"
+                        android:textSize="15sp"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_group"
+                        app:layout_constraintStart_toStartOf="parent" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_weight="1"
-                    android:gravity="center">
 
                     <com.example.yidiantong.View.ClickableTextView
                         android:id="@+id/tv_group"
-                        android:layout_width="match_parent"
+                        android:layout_width="60dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="小组" />
-                </LinearLayout>
+                        android:text="小组"
+                        android:textSize="15sp"
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_weight="1"
-                    android:gravity="center">
+                        app:layout_constraintEnd_toStartOf="@+id/tv_person"
+                        app:layout_constraintStart_toEndOf="@+id/tv_class" />
+
 
                     <com.example.yidiantong.View.ClickableTextView
                         android:id="@+id/tv_person"
-                        android:layout_width="match_parent"
+                        android:layout_width="60dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="个人" />
-                </LinearLayout>
+                        android:text="个人"
+                        android:textSize="15sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_group" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
 
             </LinearLayout>
@@ -363,8 +344,8 @@
                     android:id="@+id/fl_class"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="18dp"
-                    android:layout_marginEnd="30dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
                     app:flexWrap="wrap" />
 
             </ScrollView>
@@ -417,5 +398,5 @@
     <!--遮蔽-->
     <include
         layout="@layout/submitting_page"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 </RelativeLayout>

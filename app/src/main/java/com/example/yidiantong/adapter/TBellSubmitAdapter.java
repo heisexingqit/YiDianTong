@@ -37,8 +37,6 @@ public class TBellSubmitAdapter extends FragmentStatePagerAdapter {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         mFragments.add(TBellNoticeSubmitFragment.newInstance());
         mFragments.add(TBellAnnounceSubmitFragment.newInstance());
-        mFragments.add(TBellNoticeUpdateFragment.newInstance());
-        mFragments.add(TBellAnnounceUpdateFragment.newInstance());
     }
 
     @NonNull
@@ -48,17 +46,9 @@ public class TBellSubmitAdapter extends FragmentStatePagerAdapter {
         if(position == 0){
             Log.e("去到发布通知页面","");
             return TBellNoticeSubmitFragment.newInstance();
-        }else if(position == 1){
+        }else{
             Log.e("去到发布公告页面","");
             return TBellAnnounceSubmitFragment.newInstance();
-        }else if(position == 2){
-            Log.e("去到修改通知页面","");
-            return TBellNoticeUpdateFragment.newInstance();
-        }else if(position == 3){
-            Log.e("去到修改公告页面","");
-            return TBellAnnounceUpdateFragment.newInstance();
-        }else{
-            return null;
         }
     }
 

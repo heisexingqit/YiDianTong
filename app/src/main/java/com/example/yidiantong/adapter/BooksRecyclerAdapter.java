@@ -16,6 +16,7 @@ import com.example.yidiantong.fragment.BookDetailMultipleFragment;
 import com.example.yidiantong.fragment.BookDetailReadingFragment;
 import com.example.yidiantong.fragment.BookDetailSingleFragment;
 import com.example.yidiantong.fragment.BookDetailClozeFragment;
+import com.example.yidiantong.fragment.BookDetailSubjectFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,8 +59,9 @@ public class BooksRecyclerAdapter extends FragmentStatePagerAdapter {
                 break;
             case "104":
                 fragment = BookDetailClozeFragment.newInstance(itemList.get(position));
+                break;
             default:
-                Log.e("其他选项",":"+baseTypeId);
+                fragment = BookDetailSubjectFragment.newInstance(itemList.get(position));
                 break;
         }
         return fragment;

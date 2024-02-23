@@ -1,17 +1,12 @@
 package com.example.yidiantong.fragment;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
-
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -28,14 +23,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
+
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.Manager.CustomDatePicker;
 import com.example.yidiantong.Manager.DatePicker;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
-import com.example.yidiantong.ui.HomeworkPagerActivity;
-import com.example.yidiantong.ui.MainPagerActivity;
-import com.example.yidiantong.ui.TBellNoticeSubmitActivity;
 import com.example.yidiantong.ui.TMainPagerActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.DateFormatUtils;
@@ -49,10 +44,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -262,6 +254,7 @@ public class TBellNoticeSubmitFragment extends Fragment implements View.OnClickL
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -299,37 +292,32 @@ public class TBellNoticeSubmitFragment extends Fragment implements View.OnClickL
                     tv.setText("请先输入内容！");    //内容
                 } else if (nullmode == 3) {
                     tv.setText("请设置定时发布时间！");
-                } else {
-                    tv.setText("发布成功");    //内容
                 }
+//                else {
+//                    tv.setText("发布成功");    //内容
+//                }
                 tv.setTextSize(17);//字体大小
                 tv.setPadding(30, 40, 30, 40);//位置
                 tv.setTextColor(Color.parseColor("#000000"));//颜色
                 //设置title组件
                 builder.setCustomTitle(tv);
-                if (nullmode != -1) {
-                    builder.setNegativeButton("确定", null);
-                } else {
-                    builder.setNegativeButton("确定", new DialogInterface.OnClickListener() {
-                        @RequiresApi(api = Build.VERSION_CODES.N)
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            submit();
-                            gotolast();
-                        }
-                    });
-                }
                 //禁止返回和外部点击
                 builder.setCancelable(false);
-                //对话框弹出
-                builder.show();
+                if (nullmode != -1) {
+                    builder.setNegativeButton("确定", null);
+                    //对话框弹出
+                    builder.show();
+                } else {
+                    submit();
+                }
                 break;
         }
     }
 
     private void gotolast() {
         Intent toHome = new Intent(getActivity(), TMainPagerActivity.class);
-        toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        //两个一起用
+        toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(toHome);
     }
 
@@ -369,13 +357,21 @@ public class TBellNoticeSubmitFragment extends Fragment implements View.OnClickL
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 //结果信息
                 Boolean isSuccess = json.getBoolean("success");
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), AlertDialog.THEME_HOLO_LIGHT);
                 if (isSuccess) {
-                    Toast.makeText(getActivity(), "发布成功", Toast.LENGTH_SHORT).show();
+                    builder.setTitle("发表成功");
                 } else {
-                    Toast.makeText(getActivity(), "发布失败", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "submit: " + json.getString("message"));
+                    builder.setTitle("发表失败，请稍后重试");
                 }
-
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        gotolast();
+                    }
+                });
+                //禁止返回和外部点击
+                builder.setCancelable(false);
+                builder.show();
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -22,6 +22,9 @@ public class THomeworkCameraItem implements Serializable {
     private List<String> shitiAnalysisPic;
 
     public THomeworkCameraItem() {
+        shitiAnalysis = "";
+        shitiAnswer = "";
+        shitiShow = "";
         answerNum = "-1";
         smallQueNum = "-1";
         shitiShowPic = new ArrayList<>();
@@ -148,8 +151,8 @@ public class THomeworkCameraItem implements Serializable {
     }
 
     public String toData() {
-        String str = shitiAnalysis;
-        if(str == null || str.length() == 0){
+        String str = "";
+        if(shitiAnalysis.length() == 0){
             str = "略";
         }
         return "{" +
