@@ -154,6 +154,8 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
             i.setStuAnswer(info.stuAnswer);
             stuAnswerList.add(i);
         }
+        Log.e("wen0226", "onCreate: " + stuAnswerList.size());
+        Log.e("wen0226", "onCreate: " + stuAnswerList);
         loadItems_Net();
 
         // ViewPager滑动变速
@@ -329,6 +331,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
             }
             // 页面显示
             if (countReady >= 2) {
+                Log.e("wen0226", "handleMessage: ++++++++++++++");
                 adapter.update(timianList, stuAnswerList);
                 rl_loading.setVisibility(View.GONE);
                 if (MyApplication.isRotate) {
@@ -348,6 +351,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                Log.e("wen0226", "loadItems_Net: " + json);
 
                 String itemString = json.getString("data");
                 Gson gson = new Gson();
@@ -371,7 +375,6 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
 
         if (stuAnswerList.size() > 0) {
             Log.e("0130", "loadItems_Net: 数据库读取");
-            countReady += 1;
             Message message = Message.obtain();
             message.obj = stuAnswerList;
             message.what = 101;

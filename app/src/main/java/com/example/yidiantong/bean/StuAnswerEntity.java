@@ -68,8 +68,12 @@ public class StuAnswerEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "SAE{" +
-                "answer=" + stuAnswer +
-                "}";
+        return "StuAnswerEntity{" +
+                "order=" + order +
+                ", questionId='" + questionId + '\'' +
+                ", status='" + status + '\'' +
+                ", stuAnswer='" + stuAnswer + '\'' +
+                ", teaScore='" + teaScore + '\'' +
+                '}';
     }
 }
