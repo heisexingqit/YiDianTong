@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -44,8 +45,8 @@
                     android:layout_marginEnd="10dp"
                     android:background="@android:drawable/editbox_background_normal"
                     android:hint="请输入标题"
-                    android:textSize="17sp"
-                    android:padding="10dp" />
+                    android:padding="10dp"
+                    android:textSize="17sp" />
 
             </LinearLayout>
 
@@ -71,23 +72,23 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="对象:"
-                        android:textColor="@color/black"
-                        />
+                        android:textColor="@color/black" />
 
                     <CheckBox
                         android:id="@+id/fcb_bd_tea"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="全体教师"
-                        android:button="@drawable/muti_unselect"
                         android:layout_marginLeft="20dp"
-                        android:layout_marginRight="15dp"/>
+                        android:layout_marginRight="15dp"
+                        android:button="@drawable/muti_unselect"
+                        android:text="全体教师" />
+
                     <CheckBox
                         android:id="@+id/fcb_bd_stu"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="全体学生"
-                        android:button="@drawable/muti_unselect"/>
+                        android:button="@drawable/muti_unselect"
+                        android:text="全体学生" />
 
                 </LinearLayout>
 
@@ -129,21 +130,21 @@
                         android:id="@+id/frb_bell_now"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingRight="10dp"
-                        android:checked="true"
                         android:button="@drawable/bell_time_select"
+                        android:checked="true"
+                        android:paddingRight="10dp"
                         android:text=" 即时发布"
-                        android:textSize="15sp"/>
+                        android:textSize="15sp" />
 
                     <RadioButton
                         android:id="@+id/frb_bell_scheduled"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingRight="10dp"
+                        android:layout_marginTop="3dp"
                         android:button="@drawable/bell_time_unselect"
+                        android:paddingRight="10dp"
                         android:text=" 定时发布"
-                        android:textSize="15sp"
-                        android:layout_marginTop="3dp"/>
+                        android:textSize="15sp" />
 
                 </RadioGroup>
 
@@ -151,20 +152,20 @@
                     android:id="@+id/fll_bell_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:layout_gravity="bottom"
-                    android:background="@drawable/bell_time_unfocus">
+                    android:background="@drawable/bell_time_unfocus"
+                    android:orientation="vertical">
+
                     <TextView
                         android:id="@+id/fev_bell_time"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="15sp"
-                        android:paddingBottom="1dp"
-                        android:paddingTop="1dp"
+                        android:focusable="false"
                         android:paddingLeft="8dp"
-                        android:focusable="false" />
+                        android:paddingTop="1dp"
+                        android:paddingBottom="1dp"
+                        android:textSize="15sp" />
                 </LinearLayout>
-
 
 
             </LinearLayout>
@@ -179,22 +180,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="10dp"
-                android:layout_marginBottom="10dp">
+                android:padding="10dp">
 
                 <TextView
                     android:id="@+id/ftv_bell_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="内容：(添加文字)"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black" />
 
                 <EditText
                     android:id="@+id/fet_bell_content"
                     android:layout_width="match_parent"
-                    android:layout_height="590dp"
+                    android:layout_height="400dp"
+                    android:background="@android:drawable/editbox_background_normal"
                     android:gravity="top"
-                    android:background="@android:drawable/editbox_background_normal"/>
+                    android:padding="10dp" />
 
             </LinearLayout>
 

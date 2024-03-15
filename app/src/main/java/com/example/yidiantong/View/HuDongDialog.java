@@ -33,8 +33,8 @@ public class HuDongDialog extends Dialog implements View.OnClickListener {
     private int duosize;
     private THuDongInterface hudong;
 
-    int[] unselectIcons = {R.drawable.hudong_01, R.drawable.hudong_02, R.drawable.hudong_03, R.drawable.hudong_04};
-    int[] selectIcons = {R.drawable.hudong_010, R.drawable.hudong_020, R.drawable.hudong_030, R.drawable.hudong_040,};
+    int[] unselectIcons = {R.drawable.hudong_01, R.drawable.hudong_02, R.drawable.hudong_04, R.drawable.hudong_03};
+    int[] selectIcons = {R.drawable.hudong_010, R.drawable.hudong_020, R.drawable.hudong_040, R.drawable.hudong_030};
     int answer = -1;
 
     ImageView[] iv_answer = new ImageView[5];
@@ -66,8 +66,8 @@ public class HuDongDialog extends Dialog implements View.OnClickListener {
 
         iv_answer[0] = fiv_hd_dan;
         iv_answer[1] = fiv_hd_duo;
-        iv_answer[2] = fiv_hd_panduan;
-        iv_answer[3] = fiv_hd_luru;
+        iv_answer[2] = fiv_hd_luru;
+        iv_answer[3] = fiv_hd_panduan;
 
         dansize = Integer.valueOf(ftv_hd_dan.getText().toString());
         duosize = Integer.valueOf(ftv_hd_duo.getText().toString());
@@ -101,17 +101,17 @@ public class HuDongDialog extends Dialog implements View.OnClickListener {
                 showRadioBtn();
                 break;
             case R.id.fiv_hd_panduan:
-                answer = 2;
-                click = 2;
-                showRadioBtn();
-                break;
-            case R.id.fiv_hd_luru:
                 answer = 3;
                 click = 3;
                 showRadioBtn();
                 break;
+            case R.id.fiv_hd_luru:
+                answer = 2;
+                click = 2;
+                showRadioBtn();
+                break;
             case R.id.fiv_hd_dan_jia:
-                if(dansize < 6){
+                if(dansize < 8){
                     dansize = dansize + 1;
                     String dan = String.valueOf(dansize);
                     ftv_hd_dan.setText(dan);
@@ -125,7 +125,7 @@ public class HuDongDialog extends Dialog implements View.OnClickListener {
                 }
                 break;
             case R.id.fiv_hd_duo_jia:
-                if(duosize < 6){
+                if(duosize < 8){
                     duosize = duosize + 1;
                     String duo = String.valueOf(duosize);
                     ftv_hd_duo.setText(duo);

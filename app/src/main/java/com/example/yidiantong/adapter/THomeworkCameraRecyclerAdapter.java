@@ -41,6 +41,9 @@ import com.example.yidiantong.View.ClickableTextView;
 import com.example.yidiantong.bean.THomeworkCameraItem;
 import com.example.yidiantong.util.StringUtils;
 
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -66,11 +69,6 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
     //答题区域HTML头
     private String html_answer_head = "<head>\n" +
             "    <style>\n" +
-            "        img{\n" +
-            "        vertical-align: middle;" +
-            "        max-width:40px !important;" +
-            "        height:40px !important;" +
-            "        }" +
             "        body {\n" +
             "            color: rgb(117, 117, 117);\n" +
             "            word-wrap: break-word;\n" +
@@ -172,6 +170,28 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
 
     public void setShowPos(int showPos) {
         this.showPos = showPos;
+    }
+
+    public void addEditText(String txt) {
+        if (txt.length() == 0) {
+            showAnswerET = -1;
+            showAnalysisET = -1;
+            showTimianET = -1;
+        }
+        if (showTimianET != -1) {
+            THomeworkCameraItem item = itemList.get(showTimianET);
+            item.setShitiShow(item.getShitiShow() + "<p>" + txt + "</p>");
+            showTimianET = -1;
+        } else if (showAnswerET != -1) {
+            THomeworkCameraItem item = itemList.get(showAnalysisET);
+            item.setShitiAnswer(item.getShitiAnswer() + "<p>" + txt + "</p>");
+            showAnswerET = -1;
+        } else if (showAnalysisET != -1) {
+            THomeworkCameraItem item = itemList.get(showAnalysisET);
+            item.setShitiAnalysis(item.getShitiAnalysis() + "<p>" + txt + "</p>");
+            showAnalysisET = -1;
+        }
+        this.notifyDataSetChanged();
     }
 
     /**
@@ -408,6 +428,22 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
                 tv_ans_num.setText(item.getAnswerNum());
             }
 
+            // 公共资源
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,  // 这里可以设置视图的宽度，也可以使用具体的像素值，如 ViewGroup.LayoutParams.MATCH_PARENT
+                    ViewGroup.LayoutParams.WRAP_CONTENT   // 这里可以设置视图的高度，也可以使用具体的像素值，如 ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+
+            // 滚动冲突
+            NestedScrollView sv_main = mItemClickListener.getParentScrollView();
+            View.OnTouchListener childTouchListener = new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    sv_main.requestDisallowInterceptTouchEvent(true);
+                    return false;
+                }
+            };
+
             // 复杂的点击监听器总和
             View.OnClickListener answerListener = new View.OnClickListener() {
                 @Override
@@ -482,10 +518,14 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
                         case R.id.iv_timian_input2:
                             et_timian.setVisibility(View.VISIBLE);
                             showTimianET = pos;
+                            showAnswerET = -1;
+                            showAnalysisET = -1;
                             break;
                         case R.id.iv_analysis_input:
                         case R.id.iv_analysis_input2:
                             et_analysis.setVisibility(View.VISIBLE);
+                            showTimianET = -1;
+                            showAnswerET = -1;
                             showAnalysisET = pos;
                             break;
                         case R.id.iv_timian_camera:
@@ -511,7 +551,9 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
                         case R.id.iv_answer_input:
                         case R.id.iv_answer_input2:
                             et_answer.setVisibility(View.VISIBLE);
+                            showTimianET = -1;
                             showAnswerET = pos;
+                            showAnalysisET = -1;
                             break;
                         case R.id.iv_answer_camera:
                         case R.id.iv_answer_camera2:
@@ -558,24 +600,6 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
                 }
             };
 
-            // 公共资源
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,  // 这里可以设置视图的宽度，也可以使用具体的像素值，如 ViewGroup.LayoutParams.MATCH_PARENT
-                    ViewGroup.LayoutParams.WRAP_CONTENT   // 这里可以设置视图的高度，也可以使用具体的像素值，如 ViewGroup.LayoutParams.WRAP_CONTENT
-            );
-
-            // 滚动冲突
-            NestedScrollView sv_main = mItemClickListener.getParentScrollView();
-            View.OnTouchListener childTouchListener = new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-                    sv_main.requestDisallowInterceptTouchEvent(true);
-                    return false;
-                }
-            };
-
-            ContextThemeWrapper wrapper = new ContextThemeWrapper(mContext, R.style.CustomRadioStyle);
-
             switch (item.getBaseTypeId()) {
                 case "101":
                     /**
@@ -591,14 +615,15 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
 
                     char checkChar = ' ';
 
-                    if (item.getShitiAnswer().length() == 1) {
-                        checkChar = item.getShitiAnswer().charAt(0);
+                    if (item.getShitiAnswer().length() > 0) {
+                        checkChar = Jsoup.clean(item.getShitiAnswer(), Whitelist.none()).trim().charAt(0);
                     }
+
                     // 同步
-                    int radioButtonId = 0;
                     for (int i = 0; i < Integer.parseInt(item.getAnswerNum()); ++i) {
 
                         char word = (char) ('A' + i);
+                        ContextThemeWrapper wrapper = new ContextThemeWrapper(mContext, R.style.CustomRadioStyle);
                         RadioButton radioButton = new RadioButton(wrapper);
 
                         // 设置 margin 值，参数分别为左、上、右、下的间距（以像素为单位）
@@ -634,8 +659,8 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
 
                     // 同步
                     String checkString = "";
-                    if (item.getShitiAnswer().length() > 0 && item.getShitiAnswer().indexOf("<p>") == -1) {
-                        checkString = item.getShitiAnswer();
+                    if (item.getShitiAnswer().length() > 0) {
+                        checkString = Jsoup.clean(item.getShitiAnswer(), Whitelist.none()).trim();
                     }
 
                     for (int i = 0; i < Integer.parseInt(item.getAnswerNum()); ++i) {
@@ -682,8 +707,8 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
                     rg_answer.removeAllViews();
 
                     String checkStr = "";
-                    if (item.getShitiAnswer().length() == 1 && item.getShitiAnswer().indexOf("<p>") == -1) {
-                        checkStr = item.getShitiAnswer();
+                    if (item.getShitiAnswer().length() > 0) {
+                        checkStr = Jsoup.clean(item.getShitiAnswer(), Whitelist.none()).trim();
                     }
 
                     // 同步
@@ -861,6 +886,8 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
                             if (actionId == EditorInfo.IME_ACTION_DONE ||
                                     event.getAction() == KeyEvent.ACTION_DOWN &&
                                             event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                                hideKeyboard(et_answer);
+
                                 // 在这里执行你的回车键响应逻辑
                                 // 例如，可以触发提交表单、搜索等操作
                                 // 返回 true 表示已处理该事件
@@ -885,8 +912,11 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
                         ll_show_answer.setVisibility(View.GONE);
                         if (item.getShitiAnswer().length() > 0) {
                             wv_answer.setVisibility(View.VISIBLE);
-                            wv_answer.loadDataWithBaseURL(null, html_answer_head + item.getShitiAnswer() + html_answer_tail, "text/html", "utf-8", null);
+                        } else {
+                            wv_answer.setVisibility(View.GONE);
                         }
+                        wv_answer.loadDataWithBaseURL(null, html_answer_head + item.getShitiAnswer() + html_answer_tail, "text/html", "utf-8", null);
+
                     } else {
                         //**********************
                         //  注意内容为空时同步视图
@@ -907,11 +937,8 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
                         et_answer.setVisibility(View.VISIBLE);
                         et_answer.requestFocus();
                     } else {
-                        if (et_answer.getText().toString().length() > 0) {
-                            item.setShitiAnswer(item.getShitiAnswer() + "<p>" + et_answer.getText().toString() + "</p>");
-                            et_answer.setText("");
-                        }
                         et_answer.setVisibility(View.GONE);
+                        et_answer.setText("");
                     }
 
                     // 滚动冲突
@@ -955,11 +982,12 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
                 ll_show_timian.setVisibility(View.GONE);
                 if (item.getShitiShow().length() > 0) {
                     wv_timian.setVisibility(View.VISIBLE);
-                    wv_timian.loadDataWithBaseURL(null, html_answer_head + item.getShitiShow() + html_answer_tail, "text/html", "utf-8", null);
-                }else{
-                    wv_timian.loadUrl("about:blank");
+                } else {
+                    wv_timian.setVisibility(View.GONE);
                 }
-                if(showTimianET == pos){
+                wv_timian.loadDataWithBaseURL(null, html_answer_head + item.getShitiShow() + html_answer_tail, "text/html", "utf-8", null);
+
+                if (showTimianET == pos) {
                     et_timian.requestFocus();
                 }
             } else {
@@ -977,11 +1005,12 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
                 ll_show_analysis.setVisibility(View.GONE);
                 if (item.getShitiAnalysis().length() > 0) {
                     wv_analysis.setVisibility(View.VISIBLE);
-                    wv_analysis.loadDataWithBaseURL(null, html_answer_head + item.getShitiAnalysis() + html_answer_tail, "text/html", "utf-8", null);
-                }else{
-                    wv_analysis.loadDataWithBaseURL(null, "", "text/html", "utf-8", null);
+                } else {
+                    wv_analysis.setVisibility(View.GONE);
                 }
-                if(showAnalysisET == pos){
+                wv_analysis.loadDataWithBaseURL(null, html_answer_head + item.getShitiAnalysis() + html_answer_tail, "text/html", "utf-8", null);
+
+                if (showAnalysisET == pos) {
                     et_analysis.requestFocus();
                 }
             } else {
@@ -1051,20 +1080,14 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
             if (showTimianET == pos) {
                 et_timian.setVisibility(View.VISIBLE);
             } else {
-                if (et_timian.getText().toString().length() > 0) {
-                    item.setShitiShow(item.getShitiShow() + "<p>" + et_timian.getText().toString() + "</p>");
-                    et_timian.setText("");
-                }
                 et_timian.setVisibility(View.GONE);
+                et_timian.setText("");
             }
             if (showAnalysisET == pos) {
                 et_analysis.setVisibility(View.VISIBLE);
             } else {
-                if (et_analysis.getText().toString().length() > 0) {
-                    item.setShitiAnalysis(item.getShitiAnalysis() + "<p>" + et_analysis.getText().toString() + "</p>");
-                    et_analysis.setText("");
-                }
                 et_analysis.setVisibility(View.GONE);
+                et_analysis.setText("");
             }
 
             /**
@@ -1085,6 +1108,7 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
             iv_analysis_camera2.setOnClickListener(answerListener);
             iv_analysis_gallery.setOnClickListener(answerListener);
             iv_analysis_gallery2.setOnClickListener(answerListener);
+
         }
 
         private void hideKeyboard(View view) {

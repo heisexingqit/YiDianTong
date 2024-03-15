@@ -20,13 +20,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.example.yidiantong.View.ClickableImageView
-                android:id="@+id/back"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/left_ex" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -35,11 +28,12 @@
                 android:textSize="18sp" />
 
             <com.example.yidiantong.View.ClickableImageView
-                android:id="@+id/refresh"
+                android:id="@+id/iv_refresh"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
+                android:layout_marginEnd="10dp"
                 android:src="@drawable/refresh_icon" />
         </RelativeLayout>
 
@@ -57,10 +51,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="3dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
                 android:background="@color/white"
                 android:orientation="vertical"
                 android:padding="10dp">
@@ -84,7 +78,7 @@
                         android:id="@+id/top_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2022-2023年下班学期"
+                        android:text=""
                         android:textColor="@color/t_top_search"
                         android:textSize="17sp" />
 
@@ -105,7 +99,7 @@
 
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_height="80dp"
+                        android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="10dp"
@@ -121,11 +115,11 @@
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="25dp"
                             android:orientation="vertical"
                             android:paddingTop="10dp"
-                            android:paddingBottom="10dp">
+                            android:paddingBottom="15dp">
 
                             <TextView
                                 android:id="@+id/tv_report_num1"
@@ -144,7 +138,7 @@
 
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_height="80dp"
+                        android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="10dp"
@@ -160,11 +154,11 @@
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="25dp"
                             android:orientation="vertical"
                             android:paddingTop="10dp"
-                            android:paddingBottom="10dp">
+                            android:paddingBottom="15dp">
 
                             <TextView
                                 android:id="@+id/tv_report_num2"
@@ -183,7 +177,7 @@
 
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_height="80dp"
+                        android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="10dp"
@@ -199,11 +193,11 @@
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="25dp"
                             android:orientation="vertical"
                             android:paddingTop="10dp"
-                            android:paddingBottom="10dp">
+                            android:paddingBottom="15dp">
 
                             <TextView
                                 android:id="@+id/tv_report_num3"
@@ -222,7 +216,7 @@
 
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_height="80dp"
+                        android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="10dp"
@@ -238,11 +232,11 @@
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="25dp"
                             android:orientation="vertical"
                             android:paddingTop="10dp"
-                            android:paddingBottom="10dp">
+                            android:paddingBottom="15dp">
 
                             <TextView
                                 android:id="@+id/tv_report_num4"

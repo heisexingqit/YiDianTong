@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,8 +12,10 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.widget.Button;
@@ -103,6 +106,8 @@ public class THomeworkCameraAddActivity extends AppCompatActivity implements Vie
     private EditText et_introduce;
 
     private SharedPreferences preferences;
+    private boolean loadPreference = true; // 自动填写判断，仅第一次执行
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -176,35 +181,12 @@ public class THomeworkCameraAddActivity extends AppCompatActivity implements Vie
 
         // 记住选择-本地数据读取
         preferences = getSharedPreferences("config", Context.MODE_PRIVATE);
-        String json = preferences.getString("xueduanMap", "");
-        if ("".equals(json)) {
-            // 首先load学段
-            loadXueDuan();
-        } else {
-            Gson gson = new Gson();
-            Type type = new TypeToken<LinkedHashMap<String, String>>() {
-            }.getType();
-            xueduanMap = gson.fromJson(json, type);
-            json = preferences.getString("xuekeMap", "");
-            xuekeMap = gson.fromJson(json, type);
-            json = preferences.getString("banbenMap", "");
-            banbenMap = gson.fromJson(json, type);
-            json = preferences.getString("jiaocaiMap", "");
-            jiaocaiMap = gson.fromJson(json, type);
-            zhishidianData = preferences.getString("zhishidianData", "");
-            zhishidianId = preferences.getString("zhishidianId", "");
+        // 这里仅初始化preferences，后面进行判断时再用
+        // ------------------//
+        // 首先加载学段  第1步
+        // ------------------//
+        loadXueDuan();
 
-            xueduan = preferences.getString("xueduan", "");
-            xueke = preferences.getString("xueke", "");
-            banben = preferences.getString("banben", "");
-            jiaocai = preferences.getString("jiaocai", "");
-            zhishidian = preferences.getString("zhishidian", "");
-            tv_xueduan.setText(xueduan);
-            tv_xueke.setText(xueke);
-            tv_banben.setText(banben);
-            tv_jiaocai.setText(jiaocai);
-            tv_point.setText(zhishidian);
-        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -232,7 +214,9 @@ public class THomeworkCameraAddActivity extends AppCompatActivity implements Vie
                     contentView = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_show_zsd, null, false);
                     // 获取组件
                     contentView.findViewById(R.id.iv_back).setOnClickListener(v -> window.dismiss());
-                    window = new PopupWindow(contentView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, true);
+                    // 设置PopupWindow的宽度和高度为MATCH_PARENT，以覆盖整个界面
+                    window = new PopupWindow(contentView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
+                    contentView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 }
                 WebView wv_content = contentView.findViewById(R.id.wv_content);
                 pop_iv_back = contentView.findViewById(R.id.iv_back);
@@ -254,43 +238,45 @@ public class THomeworkCameraAddActivity extends AppCompatActivity implements Vie
                     dialog.show();
                 } else {
                     // 记住选择-本地写入 + Intent传参
+                    // ----------------------------//
+                    //  记住选择-本地写入 + Intent传参
+                    //  xueduanId, xueduan
+                    //  xuekeId, xueke
+                    //  banbenId, banben
+                    //  jiaocaiId, jiaocai
+                    //  zhishidianId, zhishidian
+                    // ----------------------------//
                     SharedPreferences.Editor editor = preferences.edit();
                     Intent intent = new Intent(this, THomeworkCameraAddPickActivity.class);
-                    Gson gson = new Gson();
+
                     // 学段
-                    String json = gson.toJson(xueduanMap);
-                    editor.putString("xueduanMap", json);
                     editor.putString("xueduan", xueduan);
-                    intent.putExtra("xueduanMap", json);
                     intent.putExtra("xueduan", xueduan);
-                    // 学科
-                    json = gson.toJson(xuekeMap);
-                    editor.putString("xuekeMap", json);
-                    editor.putString("xueke", xueke);
-                    intent.putExtra("xuekeMap", json);
-                    intent.putExtra("xueke", xueke);
+                    intent.putExtra("xueduanId", xueduanMap.get(xueduan));
 
                     // 学科
-                    json = gson.toJson(banbenMap);
-                    editor.putString("banbenMap", json);
+                    editor.putString("xueke", xueke);
+                    intent.putExtra("xueke", xueke);
+                    intent.putExtra("xuekeId", xuekeMap.get(xueke));
+
+                    // 版本
                     editor.putString("banben", banben);
-                    intent.putExtra("banbenMap", json);
                     intent.putExtra("banben", banben);
+                    intent.putExtra("banbenId", banbenMap.get(banben));
+
                     // 教材
-                    json = gson.toJson(jiaocaiMap);
-                    editor.putString("jiaocaiMap", json);
                     editor.putString("jiaocai", jiaocai);
-                    intent.putExtra("jiaocaiMap", json);
                     intent.putExtra("jiaocai", jiaocai);
+                    intent.putExtra("jiaocaiId", jiaocaiMap.get(jiaocai));
+
                     // 知识点
-                    editor.putString("zhishidianData", zhishidianData);
                     editor.putString("zhishidian", zhishidian);
                     editor.putString("zhishidianId", zhishidianId);
-                    intent.putExtra("zhishidianData", zhishidianData);
-                    intent.putExtra("zhishidian", zhishidian);
                     intent.putExtra("zhishidianId", zhishidianId);
+                    intent.putExtra("zhishidian", zhishidian);
                     editor.commit();
 
+                    // 其他
                     intent.putExtra("name", et_name.getText().toString());
                     intent.putExtra("introduce", et_introduce.getText().toString());
                     startActivity(intent);
@@ -422,6 +408,24 @@ public class THomeworkCameraAddActivity extends AppCompatActivity implements Vie
                 }
                 Log.d("wen", "学段: " + xueduanMap);
 
+                // --------------------//
+                // 接着比对同步学段  第2步
+                // --------------------//
+                if (loadPreference) {
+                    String xueduanName = preferences.getString("xueduan", "");
+                    if (xueduanMap.getOrDefault(xueduanName, "").length() > 0) {
+                        xueduan = xueduanName;
+                        tv_xueduan.setText(xueduan);
+                        // -----------------------//
+                        // 同步学段完成，加载学科 第3步
+                        // -----------------------//
+                        loadXueKe();
+                    } else {
+                        loadPreference = false;
+                    }
+                }
+                iv_xueduan.callOnClick();
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -474,6 +478,7 @@ public class THomeworkCameraAddActivity extends AppCompatActivity implements Vie
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void loadXueKe() {
         /**
          * 加载学科方法：
@@ -498,6 +503,22 @@ public class THomeworkCameraAddActivity extends AppCompatActivity implements Vie
                 }
 
                 Log.d("wen", "学科: " + xuekeMap);
+                // -----------------//
+                // 判断同步学科 第4步
+                // -----------------//
+                if (loadPreference) {
+                    String xuekeName = preferences.getString("xueke", "");
+                    if (xuekeMap.getOrDefault(xuekeName, "").length() > 0) {
+                        xueke = xuekeName;
+                        tv_xueke.setText(xueke);
+                        // -----------------------//
+                        // 同步学段完成，加载学科 第5步
+                        // -----------------------//
+                        loadBanBen();
+                    } else {
+                        loadPreference = false;
+                    }
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -556,6 +577,7 @@ public class THomeworkCameraAddActivity extends AppCompatActivity implements Vie
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void loadBanBen() {
         if (xueduanMap.get(xueduan) == null || xuekeMap.get(xueke) == null) {
             return;
@@ -576,7 +598,22 @@ public class THomeworkCameraAddActivity extends AppCompatActivity implements Vie
                 }
 
                 Log.d("wen", "版本: " + banbenMap);
-
+                // -----------------//
+                // 判断同步版本 第6步
+                // -----------------//
+                if (loadPreference) {
+                    String banbenName = preferences.getString("banben", "");
+                    if (banbenMap.getOrDefault(banbenName, "").length() > 0) {
+                        banben = banbenName;
+                        tv_banben.setText(banben);
+                        // -----------------------//
+                        // 同步版本完成，加载教材 第7步
+                        // -----------------------//
+                        loadJiaoCai();
+                    } else {
+                        loadPreference = false;
+                    }
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -628,6 +665,7 @@ public class THomeworkCameraAddActivity extends AppCompatActivity implements Vie
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void loadJiaoCai() {
 
         mRequestUrl = Constant.API + Constant.T_HOMEWORK_ADD_JIAOCAI + "?userName=" + MyApplication.username + "&channelCode=" + xueduanMap.get(xueduan) + "&subjectCode=" + xuekeMap.get(xueke) + "&textBookCode=" + banbenMap.get(banben);
@@ -646,7 +684,22 @@ public class THomeworkCameraAddActivity extends AppCompatActivity implements Vie
                 }
 
                 Log.d("wen", "教材: " + jiaocaiMap);
-
+                // -----------------//
+                // 判断同步教材 第8步
+                // -----------------//
+                if (loadPreference) {
+                    String jiaocaiName = preferences.getString("jiaocai", "");
+                    if (jiaocaiMap.getOrDefault(jiaocaiName, "").length() > 0) {
+                        jiaocai = jiaocaiName;
+                        tv_jiaocai.setText(jiaocai);
+                        // -----------------------//
+                        // 同步教材完成，加载知识点 第9步
+                        // -----------------------//
+                        loadZhiShiDian();
+                    } else {
+                        loadPreference = false;
+                    }
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -718,6 +771,23 @@ public class THomeworkCameraAddActivity extends AppCompatActivity implements Vie
                 if (zhishidianData.length() == 0) {
                     zhishidianData = "知识点列表未获取到或者为空";
                 }
+                // -----------------//
+                // 判断同步知识点 第10步
+                // -----------------//
+                if (loadPreference) {
+                    String zhishidianId = preferences.getString("zhishidianId", "");
+                    String zhishidianName = preferences.getString("zhishidian", "");
+                    if (zhishidianData.contains(zhishidianId) && zhishidianData.contains(zhishidian)) {
+                        zhishidian = zhishidianName;
+                        this.zhishidianId = zhishidianId;
+                        tv_point.setText(zhishidian);
+                    }
+                    // -------------------------//
+                    //  全同步完成
+                    //  loadPreference = false
+                    // -------------------------//
+                    loadPreference = false;
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -786,5 +856,22 @@ public class THomeworkCameraAddActivity extends AppCompatActivity implements Vie
     private void unselectedTv(TextView tv) {
         tv.setBackgroundResource(R.drawable.t_homework_add_unselect);
         tv.setTextColor(getColor(R.color.default_gray));
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (v instanceof EditText) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)ev.getRawX(), (int)ev.getRawY())) {
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev);
     }
 }

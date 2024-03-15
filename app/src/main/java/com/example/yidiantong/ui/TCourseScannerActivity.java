@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -32,6 +34,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.blankj.utilcode.util.SPUtils;
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableTextView;
 import com.example.yidiantong.View.ToastFormat;
@@ -70,6 +73,9 @@ public class TCourseScannerActivity extends AppCompatActivity {
     private String ipString; // 之前的记录数据
     private List<String> ipList; // 之前的记录列表
     private String learnPlanId;
+    private String ketangName;
+
+    private static final String TAG = "TCourseScannerActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,8 +110,11 @@ public class TCourseScannerActivity extends AppCompatActivity {
         });
 
         et_ip = findViewById(R.id.et_ip);
-        et_ip.setText((SPUtils.getInstance().getString("easyip", "")));
-
+        if (savedInstanceState != null) {
+            et_ip.setText(savedInstanceState.getString("ip"));
+        } else {
+            et_ip.setText((SPUtils.getInstance().getString("easyip", "")));
+        }
 
         // 初始化toast提示信息
         format = new ToastFormat(this);
@@ -158,18 +167,29 @@ public class TCourseScannerActivity extends AppCompatActivity {
             if (message.what == 100) {
                 SPUtils.getInstance().put("easyip", et_ip.getText().toString());
 
-                String ip = et_ip.getText().toString();
-                // 使用 Stream API 进行判断和删除
-                ipList = ipList.stream()
-                        .filter(str -> !str.equals(ip))
-                        .collect(Collectors.toList());
+                // 缓存记录构造
+                boolean found = false;
+                int index = -1;
+                for (int i = 0; i < ipList.size(); i++) {
+                    String[] parts = ipList.get(i).split(":");
+                    if (parts[0].equals(ketangName)) {
+                        ipList.set(i, ketangName + ":" + et_ip.getText().toString());
+                        found = true;
+                        index = i;
+                        break;
+                    }
+                }
+                if (!found) {
+                    ipList.add(0, ketangName + ":" + et_ip.getText().toString());
+                } else if (index != 0) {
+                    String temp = ipList.get(index); // 保存修改的项
+                    ipList.remove(index); // 移除修改的项
+                    ipList.add(0, temp); // 添加到开头
+                }
                 String newIpLog;
                 ArrayList<String> editIpList = new ArrayList<>(ipList.subList(0, ipList.size() - 1));
-                if (ipString.length() > 0) {
-                    newIpLog = ip + ", " + String.join(", ", editIpList);
-                } else {
-                    newIpLog = ip;
-                }
+                newIpLog = String.join(", ", editIpList);
+
                 // 存储记录
                 SPUtils.getInstance().put("ips", newIpLog);
                 turnLookContro((String) message.obj);
@@ -187,13 +207,13 @@ public class TCourseScannerActivity extends AppCompatActivity {
 
     private void loadItems_Net() {
         String mRequestUrl = "http://" + et_ip.getText() + ":8901" + Constant.T_CLIENT_KETANG_PLAY_BY_TEA;
-        Log.e("mReq", "" + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 String teacherId = json.getString("teacherId");
                 String openFlag = json.getString("openFlag");
                 learnPlanId = json.getString("learnPlanId");
+                ketangName = json.getString("ketangName");
                 //封装消息，传递给主线程
                 Message message = Message.obtain();
                 message.obj = teacherId;
@@ -211,10 +231,8 @@ public class TCourseScannerActivity extends AppCompatActivity {
         }, error -> {
             format.show();
             Log.e("volley", "Volley_Error: " + error.toString());
-
         });
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(request);
+        MyApplication.addRequest(request, TAG);
     }
 
 
@@ -223,15 +241,17 @@ public class TCourseScannerActivity extends AppCompatActivity {
             contentView = LayoutInflater.from(this).inflate(R.layout.menu_homework, null, false);
 
             ListView lv_homework = contentView.findViewById(R.id.lv_homework);
-            lv_homework.getLayoutParams().width = PxUtils.dip2px(this, 290);
+            lv_homework.getLayoutParams().width = PxUtils.dip2px(this, 350);
 
             lv_homework.setAdapter(myArrayAdapter);
             lv_homework.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    // 切换页+消除选项口
+                    // 切换页+消除选项
                     if (!ipList.get(i).equals("暂无历史记录") && !ipList.get(i).equals("清空历史记录")) {
-                        et_ip.setText(ipList.get(i));
+                        String clickIp = ipList.get(i);
+                        int idx = clickIp.lastIndexOf(":");
+                        et_ip.setText(clickIp.substring(idx + 1));
                     }
                     window.dismiss();
                 }
@@ -269,7 +289,6 @@ public class TCourseScannerActivity extends AppCompatActivity {
             ListView lv_homework = contentView.findViewById(R.id.lv_homework);
             lv_homework.setAdapter(myArrayAdapter);
         }
-
 
         if (window.isShowing()) {
             window.dismiss();
@@ -329,7 +348,7 @@ public class TCourseScannerActivity extends AppCompatActivity {
                 // ---------------- //
                 ArrayList<String> editIpList = new ArrayList<>(ipList.subList(0, ipList.size() - 1));
 
-                SPUtils.getInstance().put("ips", String.join(", ", ipList));
+                SPUtils.getInstance().put("ips", String.join(", ", editIpList));
             }
 
             @Override
@@ -344,5 +363,11 @@ public class TCourseScannerActivity extends AppCompatActivity {
                 SPUtils.getInstance().put("ips", "");
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("ip", et_ip.getText().toString());
     }
 }

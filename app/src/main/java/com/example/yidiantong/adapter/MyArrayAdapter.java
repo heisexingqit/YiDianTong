@@ -21,6 +21,11 @@ public class MyArrayAdapter extends BaseAdapter {
         this.question_types = question_types;
     }
 
+    public void update(List<String> question_types){
+        this.question_types = question_types;
+        this.notifyDataSetChanged();
+    }
+
     @Override
     public int getCount() {
         return question_types.size();

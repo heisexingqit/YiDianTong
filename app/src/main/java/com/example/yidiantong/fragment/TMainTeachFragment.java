@@ -131,7 +131,6 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
                              Bundle savedInstanceState) {
         Log.e(TAG, "onCreateView: ");
         View view = inflater.inflate(R.layout.fragment_t_main_teach, container, false);
-
         //获取组件
         rv_home = view.findViewById(R.id.rv_home);
 
@@ -251,6 +250,7 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
                     intent.putExtra("type", "paper");
                 }
                 startActivity(intent);
+
             }
 
             @Override

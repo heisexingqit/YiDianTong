@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.daimajia.swipe.SwipeLayout;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableTextView;
 import com.example.yidiantong.bean.THomeItemEntity;
@@ -105,7 +106,7 @@ public class TTeachRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             this.itemList.addAll(moreList);
             if (moreList.size() == 12) {
                 isDown = 0;
-            } else{
+            } else {
                 isDown = 1;
             }
         }
@@ -131,6 +132,7 @@ public class TTeachRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         private final ClickableTextView tv_item_params;
         private final LinearLayout ll_item_assign;
         private final LinearLayout ll_item_params;
+        private final SwipeLayout sl_main;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -148,6 +150,7 @@ public class TTeachRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             tv_item_params = itemView.findViewById(R.id.tv_item_params);
             ll_item_assign = itemView.findViewById(R.id.ll_item_assign);
             ll_item_params = itemView.findViewById(R.id.ll_item_params);
+            sl_main = itemView.findViewById(R.id.sl_main);
         }
 
         //数据更新放在这里(频繁调用，不能放一次性操作，例如绑定点击事件)
@@ -210,10 +213,20 @@ public class TTeachRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             tv_bottom.setText(item.getKnowledge());
 
             // 设置点击事件
-            tv_item_assign.setOnClickListener(view -> mItemClickListener.onItemClickAssign(view, pos));
-            tv_item_edit.setOnClickListener(view -> mItemClickListener.onItemClickEdit(view, pos));
-            tv_item_delete.setOnClickListener(view -> mItemClickListener.onItemClickDelete(view, pos));
-            tv_item_params.setOnClickListener(view -> mItemClickListener.onItemClickParams(view, pos));
+            tv_item_assign.setOnClickListener(view -> {
+                mItemClickListener.onItemClickAssign(view, pos);
+                sl_main.close();
+            });
+            tv_item_edit.setOnClickListener(view -> {
+                mItemClickListener.onItemClickEdit(view, pos);
+                sl_main.close();
+            });
+            tv_item_delete.setOnClickListener(view ->
+                    mItemClickListener.onItemClickDelete(view, pos));
+            tv_item_params.setOnClickListener(view -> {
+                mItemClickListener.onItemClickParams(view, pos);
+                sl_main.close();
+            });
         }
     }
 
@@ -248,8 +261,11 @@ public class TTeachRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     public interface MyItemClickListener {
         void onItemClickAssign(View view, int pos);
+
         void onItemClickEdit(View view, int pos);
+
         void onItemClickDelete(View view, int pos);
+
         void onItemClickParams(View view, int pos);
     }
 }

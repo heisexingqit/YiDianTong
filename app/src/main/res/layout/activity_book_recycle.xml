@@ -80,7 +80,7 @@
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/fvp_book_recycle"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
         <LinearLayout
             android:layout_width="match_parent"

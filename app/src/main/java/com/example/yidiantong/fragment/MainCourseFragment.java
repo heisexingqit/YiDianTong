@@ -4,11 +4,14 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -23,9 +26,12 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.android.volley.toolbox.StringRequest;
 import com.blankj.utilcode.util.SPUtils;
@@ -39,6 +45,7 @@ import com.example.yidiantong.ui.CourseLookActivity;
 import com.example.yidiantong.ui.CourseScannerActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
+import com.example.yidiantong.util.MyViewModel;
 import com.example.yidiantong.util.PxUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -96,6 +103,8 @@ public class MainCourseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main_course, container, false);
+        MyViewModel myViewModel = new ViewModelProvider(requireActivity()).get(MyViewModel.class);
+
 
         // 点击扫码图像
         iv_saoma = view.findViewById(R.id.fiv_saoma);
@@ -116,7 +125,11 @@ public class MainCourseFragment extends Fragment {
         });
 
         et_ip = view.findViewById(R.id.et_ip);
-        et_ip.setText((SPUtils.getInstance().getString("easyip", "")));
+        if(savedInstanceState != null){
+            et_ip.setText(savedInstanceState.getString("ip"));
+        }else{
+            et_ip.setText((SPUtils.getInstance().getString("easyip", "")));
+        }
 
         // 初始化toast提示信息
         format = new ToastFormat(MainCourseFragment.this.getContext());
@@ -150,12 +163,37 @@ public class MainCourseFragment extends Fragment {
                 }
             }
         });
+
+
+        // 设置 EditText 的监听器来更新 ViewModel
+        et_ip.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                myViewModel.setIp(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+        // 观察 ViewModel 中的数据变化并更新 UI
+        myViewModel.getIp().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                if(!s.equals(et_ip.getText().toString())){
+                    et_ip.setText(s);
+                }
+            }
+        });
         // ---------------- //
         // ip地址记录历史模块
         // ---------------- //
-        preferences = getActivity().getSharedPreferences("config", Context.MODE_PRIVATE);
-        tv_log = view.findViewById(R.id.tv_log);
-        tv_log.setOnClickListener(v -> showHistoryIps());
+//        preferences = getActivity().getSharedPreferences("config", Context.MODE_PRIVATE);
+//        tv_log = view.findViewById(R.id.tv_log);
+//        tv_log.setOnClickListener(v -> showHistoryIps());
+
 
         return view;
     }
@@ -169,23 +207,23 @@ public class MainCourseFragment extends Fragment {
             if (message.what == 100) {
 
                 SPUtils.getInstance().put("easyip", et_ip.getText().toString());
-                String ip = et_ip.getText().toString();
-
-                // 使用 Stream API 进行判断和删除
-                ipList = ipList.stream()
-                        .filter(str -> !str.equals(ip))
-                        .collect(Collectors.toList());
-                String newIpLog;
-                ArrayList<String> editIpList = new ArrayList<>(ipList.subList(0, ipList.size() - 1));
-
-                if (ipString.length() > 0) {
-                    newIpLog = ip + ", " + String.join(", ", editIpList);
-                } else {
-                    newIpLog = ip;
-                }
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putString("ips", newIpLog);
-                editor.commit();
+//                String ip = et_ip.getText().toString();
+//
+//                // 使用 Stream API 进行判断和删除
+//                ipList = ipList.stream()
+//                        .filter(str -> !str.equals(ip))
+//                        .collect(Collectors.toList());
+//                String newIpLog;
+//                ArrayList<String> editIpList = new ArrayList<>(ipList.subList(0, ipList.size() - 1));
+//
+//                if (ipString.length() > 0) {
+//                    newIpLog = ip + ", " + String.join(", ", editIpList);
+//                } else {
+//                    newIpLog = ip;
+//                }
+//                SharedPreferences.Editor editor = preferences.edit();
+//                editor.putString("ips", newIpLog);
+//                editor.commit();
 
                 turnLookCourse((List<CourseScannerEntity>) message.obj);
             }
@@ -213,6 +251,8 @@ public class MainCourseFragment extends Fragment {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 String itemString = json.getString("learnPlan");
+                Log.e("wen0228", "loadItems_Net: " + json);
+
                 itemString = "[" + itemString + "]";
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
@@ -241,7 +281,7 @@ public class MainCourseFragment extends Fragment {
                     }
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e("wen20228", "loadItems_Net: " + e);
             }
         }, error -> {
             format.setText("暂无课程开始");
@@ -305,7 +345,6 @@ public class MainCourseFragment extends Fragment {
             lv_homework.setAdapter(myArrayAdapter);
         }
 
-
         if (window.isShowing()) {
             window.dismiss();
         } else {
@@ -335,56 +374,57 @@ public class MainCourseFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        // -------------------- //
-        //  ip地址历史记录初始化
-        //  ips缓存在自建文件中
-        //  自动填写使用统一的
-        // -------------------- //
-        // 及时刷新历史记录
-        ipString = preferences.getString("ips", "");
-        // 记录历史IP
-        if (ipString.length() == 0) {
-            ipList = new ArrayList<>();
-            ipList.add("暂无历史记录");
-        } else {
-            ipList = new ArrayList<>(Arrays.asList(ipString.split(", ")));
-            ipList.add("清空历史记录");
-        }
-        myArrayAdapter = new IpLogAdapter(getActivity(), ipList);
-        myArrayAdapter.setMyOnclickListener(new IpLogAdapter.MyOnclickListener() {
-            @Override
-            public void delete_item(int pos) {
-                ipList.remove(pos);
-                if(ipList.size() == 1){
-                    ipList.clear();
-                    ipList.add("暂无历史记录");
-                }
-                myArrayAdapter.notifyDataSetChanged();
-
-                // ---------------- //
-                //  同步到数据表xml
-                // ---------------- //
-                ArrayList<String> editIpList = new ArrayList<>(ipList.subList(0, ipList.size() - 1));
-
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putString("ips", String.join(", ", editIpList));
-                editor.commit();
-            }
-
-            @Override
-            public void delete_all() {
-                ipList.clear();
-                ipList.add("暂无历史记录");
-                myArrayAdapter.notifyDataSetChanged();
-
-                // ---------------- //
-                //  同步到数据表xml
-                // ---------------- //
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putString("ips", "");
-                editor.commit();
-            }
-        });
+//        // -------------------- //
+//        //  ip地址历史记录初始化
+//        //  ips缓存在自建文件中
+//        //  自动填写使用统一的
+//        // -------------------- //
+//        // 及时刷新历史记录
+//        ipString = preferences.getString("ips", "");
+//        // 记录历史IP
+//        if (ipString.length() == 0) {
+//            ipList = new ArrayList<>();
+//            ipList.add("暂无历史记录");
+//        } else {
+//            ipList = new ArrayList<>(Arrays.asList(ipString.split(", ")));
+//            ipList.add("清空历史记录");
+//        }
+//        myArrayAdapter = new IpLogAdapter(getActivity(), ipList);
+//        myArrayAdapter.setMyOnclickListener(new IpLogAdapter.MyOnclickListener() {
+//            @Override
+//            public void delete_item(int pos) {
+//                ipList.remove(pos);
+//                if(ipList.size() == 1){
+//                    ipList.clear();
+//                    ipList.add("暂无历史记录");
+//                }
+//                myArrayAdapter.notifyDataSetChanged();
+//
+//                // ---------------- //
+//                //  同步到数据表xml
+//                // ---------------- //
+//                ArrayList<String> editIpList = new ArrayList<>(ipList.subList(0, ipList.size() - 1));
+//                Log.e("wen0228", "delete_item: " + editIpList);
+//                SharedPreferences.Editor editor = preferences.edit();
+//                editor.putString("ips", String.join(", ", editIpList));
+//                editor.commit();
+//            }
+//
+//            @Override
+//            public void delete_all() {
+//                ipList.clear();
+//                ipList.add("暂无历史记录");
+//                myArrayAdapter.notifyDataSetChanged();
+//
+//                // ---------------- //
+//                //  同步到数据表xml
+//                // ---------------- //
+//                SharedPreferences.Editor editor = preferences.edit();
+//                editor.putString("ips", "");
+//                editor.commit();
+//            }
+//        });
 
     }
+
 }

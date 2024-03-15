@@ -359,9 +359,9 @@ public class TBellNoticeSubmitFragment extends Fragment implements View.OnClickL
                 Boolean isSuccess = json.getBoolean("success");
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), AlertDialog.THEME_HOLO_LIGHT);
                 if (isSuccess) {
-                    builder.setTitle("发表成功");
+                    builder.setTitle("发布成功");
                 } else {
-                    builder.setTitle("发表失败，请稍后重试");
+                    builder.setTitle("发布失败，请稍后重试");
                 }
                 builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override

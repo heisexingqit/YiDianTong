@@ -4,10 +4,10 @@
     android:layout_height="wrap_content"
     android:background="#eceeed"
     android:orientation="vertical"
-    android:paddingTop="5dp"
-    android:paddingBottom="5dp"
     android:paddingStart="10dp"
-    android:paddingEnd="10dp">
+    android:paddingTop="5dp"
+    android:paddingEnd="10dp"
+    android:paddingBottom="5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -51,8 +51,10 @@
                 <com.example.yidiantong.View.ClickableTextView
                     android:id="@+id/tv_left"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginEnd="10dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
                     android:text="&lt;"
                     android:textColor="@color/t_top_search"
                     android:textSize="18sp" />
@@ -69,6 +71,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
                     android:text="&gt;"
                     android:textColor="@color/t_top_search"
                     android:textSize="18sp" />
@@ -88,7 +92,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@drawable/round_rectangle_white"
         android:orientation="vertical">
 
@@ -100,8 +104,8 @@
             <ImageView
                 android:id="@+id/iv_icon"
                 android:layout_width="120dp"
-                android:layout_marginStart="5dp"
                 android:layout_height="120dp"
+                android:layout_marginStart="5dp"
                 android:adjustViewBounds="true"
                 android:src="@drawable/t_teach_board" />
 
@@ -124,7 +128,6 @@
                         android:layout_height="wrap_content"
                         android:text="有效课次:"
                         android:textColor="@color/gray_new"
-
                         android:textSize="16sp" />
 
                     <TextView
@@ -141,9 +144,9 @@
                     android:id="@+id/gl_content"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginEnd="20dp"
                     android:columnCount="2"
                     android:gravity="center"
-                    android:layout_marginEnd="20dp"
                     android:rowCount="2" />
             </LinearLayout>
         </LinearLayout>
@@ -151,41 +154,88 @@
         <LinearLayout
             android:id="@+id/ll_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingStart="30dp"
+            android:paddingStart="15dp"
             android:paddingTop="15dp"
-            android:paddingEnd="30dp"
+            android:paddingEnd="15dp"
             android:paddingBottom="15dp">
 
             <LinearLayout
                 android:id="@+id/ll_show"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
+                android:orientation="vertical">
+
+                <com.github.mikephil.charting.charts.HorizontalBarChart
+                    android:id="@+id/hbc_mian"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:layout_marginTop="10dp"
+                    android:visibility="gone"
+                    android:layout_marginBottom="20dp" />
+
+                <RelativeLayout
+                    android:id="@+id/rl_show"
+                    android:layout_width="match_parent"
+                    android:layout_height="160dp"
+                    android:visibility="gone"
+                    android:layout_marginBottom="20dp">
+                    <!-- Y轴左侧的TextView -->
+                    <TextView
+                        android:id="@+id/leftAxisTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:rotation="-90"
+                        android:textSize="10sp"
+                        android:text="分数"
+                        android:textColor="@color/main_blue" />
+
+                    <!-- Y轴右侧的TextView -->
+                    <TextView
+                        android:id="@+id/rightAxisTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:rotation="90"
+                        android:text="得分率"
+                        android:textSize="10sp" />
+
+                    <com.github.mikephil.charting.charts.CombinedChart
+                        android:id="@+id/cbc_mian"
+                        android:layout_width="match_parent"
+                        android:layout_height="160dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="15dp"
+                        android:visibility="gone" />
+
+                </RelativeLayout>
 
                 <com.github.mikephil.charting.charts.BarChart
                     android:id="@+id/bc_mian"
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
-                    android:layout_marginTop="0dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginBottom="20dp" />
 
                 <HorizontalScrollView
-                    android:scrollbars="none"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:id="@+id/hsv_main"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none">
 
                     <TableLayout
                         android:id="@+id/tl_main"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/table_border"
                         android:divider="@drawable/table_border_divider"
                         android:padding="1dp"
                         android:showDividers="middle"
-                        android:stretchColumns="*" />
+                        android:stretchColumns="*"/>
                 </HorizontalScrollView>
 
             </LinearLayout>

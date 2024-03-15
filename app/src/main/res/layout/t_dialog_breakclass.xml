@@ -23,7 +23,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="0.6"/>
 
         <Button
             android:id="@+id/fbtn_bc_cancle"
@@ -40,7 +40,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="0.6"/>
         <Button
             android:id="@+id/fbtn_bc_confirm"
             android:layout_width="0dp"
@@ -55,7 +55,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="0.6"/>
 
     </LinearLayout>
 

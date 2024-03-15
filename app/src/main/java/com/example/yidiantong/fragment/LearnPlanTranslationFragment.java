@@ -105,11 +105,6 @@ public class LearnPlanTranslationFragment extends Fragment implements View.OnCli
     //答题区域HTML头
     private String html_answer_head = "<head>\n" +
             "    <style>\n" +
-            "        img{\n" +
-            "        vertical-align: middle;" +
-            "        max-width:40px !important;" +
-            "        height:40px !important;" +
-            "        }" +
             "        body {\n" +
             "            color: rgb(117, 117, 117);\n" +
             "            word-wrap: break-word;\n" +
@@ -476,7 +471,7 @@ public class LearnPlanTranslationFragment extends Fragment implements View.OnCli
                 Log.d("wen", "handleMessage: " + url);
                 url_list.add(url);
                 adapter.updateData(url_list);// 关键
-                html_answer += "<img onclick=\"bigimage(this)\" src=\"" + url + "\" style=\"max-width:80px;\"/>";
+                html_answer += "<img onclick='bigimage(this)' src='" + url + "' style=\"max-width:80px\">";;
                 wv_answer.loadDataWithBaseURL(null, getHtmlAnswer(), "text/html", "utf-8", null);
 
                 transmit.setStuAnswer(stuAnswerEntity.getOrder(), html_answer);

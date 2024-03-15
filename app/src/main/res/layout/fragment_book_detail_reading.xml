@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
     android:orientation="vertical"
-    tools:context=".fragment.BookDetailSingleFragment"
-    android:background="@color/white">
+    tools:context=".fragment.BookDetailSingleFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,17 +20,18 @@
             android:id="@+id/fiv_de_icon"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:layout_alignParentLeft="true"
             android:layout_gravity="left"
-            android:src="@drawable/homework_icon"
             android:paddingLeft="3dp"
-            android:layout_alignParentLeft="true"/>
+            android:src="@drawable/homework_icon" />
+
         <TextView
             android:id="@+id/ftv_br_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="集合的基本关系"
             android:layout_marginLeft="2dp"
-            android:layout_toRightOf="@+id/fiv_de_icon"/>
+            android:layout_toRightOf="@+id/fiv_de_icon"
+            android:text="集合的基本关系" />
 
     </LinearLayout>
 
@@ -45,14 +46,15 @@
             android:id="@+id/ftv_bd_num"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1"
-            android:layout_alignParentLeft="true" />
+            android:layout_alignParentLeft="true"
+            android:text="1" />
+
         <TextView
             android:id="@+id/ftv_bd_score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="得分和平均分"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true"
+            android:text="得分和平均分" />
 
     </RelativeLayout>
 
@@ -69,10 +71,10 @@
             android:id="@+id/fwv_bd_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:layout_marginBottom="3dp"
             android:layout_marginLeft="3dp"
+            android:layout_marginTop="3dp"
             android:layout_marginRight="3dp"
+            android:layout_marginBottom="3dp"
             android:scrollbars="none"
             tools:ignore="WebViewLayout" />
 
@@ -87,9 +89,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/f_answer"
+            android:layout_marginLeft="10dp"
             android:layout_marginBottom="3dp"
-            android:layout_marginLeft="10dp"/>
+            android:text="@string/f_answer" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -154,6 +156,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:src="@drawable/d_unselect" />
+
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_1e"
                     android:layout_width="0dp"
@@ -163,6 +166,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:src="@drawable/e_unselect" />
+
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_1f"
                     android:layout_width="0dp"
@@ -172,6 +176,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:src="@drawable/f_unselect" />
+
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_1g"
                     android:layout_width="0dp"
@@ -248,6 +253,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:src="@drawable/d_unselect" />
+
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_2e"
                     android:layout_width="0dp"
@@ -257,6 +263,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:src="@drawable/e_unselect" />
+
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_2f"
                     android:layout_width="0dp"
@@ -266,6 +273,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:src="@drawable/f_unselect" />
+
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_2g"
                     android:layout_width="0dp"
@@ -342,6 +350,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:src="@drawable/d_unselect" />
+
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_3e"
                     android:layout_width="0dp"
@@ -351,6 +360,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:src="@drawable/e_unselect" />
+
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_3f"
                     android:layout_width="0dp"
@@ -360,6 +370,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:src="@drawable/f_unselect" />
+
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_3g"
                     android:layout_width="0dp"
@@ -436,6 +447,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:src="@drawable/d_unselect" />
+
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_4e"
                     android:layout_width="0dp"
@@ -445,6 +457,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:src="@drawable/e_unselect" />
+
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_4f"
                     android:layout_width="0dp"
@@ -454,6 +467,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:src="@drawable/f_unselect" />
+
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_4g"
                     android:layout_width="0dp"
@@ -530,6 +544,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:src="@drawable/d_unselect" />
+
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_5e"
                     android:layout_width="0dp"
@@ -539,6 +554,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:src="@drawable/e_unselect" />
+
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_5f"
                     android:layout_width="0dp"
@@ -548,6 +564,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:src="@drawable/f_unselect" />
+
                 <com.example.yidiantong.View.ClickableImageView
                     android:id="@+id/iv_5g"
                     android:layout_width="0dp"
@@ -565,9 +582,9 @@
             android:id="@+id/fb_bd_sumbit"
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:text="@string/f_submit"
             android:background="@color/f_blue"
-            android:textColor="@color/white"/>
+            android:text="@string/f_submit"
+            android:textColor="@color/white" />
 
     </LinearLayout>
 
@@ -575,115 +592,117 @@
         android:id="@+id/fll_bd_analysis"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
         android:orientation="vertical">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="【参考答案】" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="5dp">
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/book_detail"
+            android:padding="2dp">
+
+            <WebView
+                android:id="@+id/fwv_wb_answer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                tools:ignore="WebViewLayout" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
 
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="【参考答案】"/>
+                android:layout_marginRight="3dp"
+                android:text="【你的作业作答】" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:background="@drawable/book_detail">
+            <ImageView
+                android:id="@+id/fiv_bd_tf"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ansright" />
 
-                <WebView
-                    android:id="@+id/fwv_wb_answer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="3dp"
-                    android:layout_marginRight="3dp"
-                    android:scrollbars="none"
-                    tools:ignore="WebViewLayout" />
-            </LinearLayout>
+        </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="3dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="3dp"
-                    android:text="【你的作业作答】"/>
-
-                <ImageView
-                    android:id="@+id/fiv_bd_tf"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ansright"/>
-
-            </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/book_detail"
+            android:padding="10dp"
+            tools:ignore="WebViewLayout">
 
             <TextView
                 android:id="@+id/ftv_bd_stuans"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="A"
-                android:layout_marginTop="3dp"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
-                android:textSize="16sp"
-                android:background="@drawable/book_detail"/>
-
+                android:textSize="16sp" />
         </LinearLayout>
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fll_bd_vedio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="3dp"
+        android:orientation="vertical">
+
         <LinearLayout
-            android:id="@+id/fll_bd_vedio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="3dp"
-            android:layout_marginRight="3dp"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="3dp"
-                    android:text="@string/f_explanation"/>
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/play"/>
+                android:layout_marginRight="3dp"
+                android:text="@string/f_explanation" />
 
-            </LinearLayout>
-
-            <RelativeLayout
-                android:id="@+id/frl_vedio"
-                android:layout_width="232dp"
-                android:layout_height="152dp"
-                android:background="@drawable/preview">
-
-                <TextView
-                    android:id="@+id/ftv_detail_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="2dp"
-                    android:layout_marginRight="2dp"
-                    android:layout_alignParentBottom="true"
-                    android:text="必修1 Unit3 The Karsts of ..."
-                    android:textColor="@color/white"
-                    android:textSize="18sp"/>
-            </RelativeLayout>
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/play" />
 
         </LinearLayout>
 
+        <RelativeLayout
+            android:id="@+id/frl_vedio"
+            android:layout_width="232dp"
+            android:layout_height="152dp"
+            android:background="@drawable/preview">
+
+            <TextView
+                android:id="@+id/ftv_detail_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:text="必修1 Unit3 The Karsts of ..."
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+    </LinearLayout>
 
 
 </LinearLayout>

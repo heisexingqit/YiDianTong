@@ -19,10 +19,9 @@
 
         <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/iv_back"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_centerVertical="true"
-            android:layout_marginStart="10dp"
             android:src="@drawable/left_ex" />
 
         <TextView
@@ -68,7 +67,7 @@
                 android:checked="true"
                 android:text="导学案"
 
-                android:textColor="@color/default_gray" />
+                android:textColor="@color/blue_btn2" />
 
             <CheckBox
                 android:id="@+id/cb_homework"
@@ -79,7 +78,7 @@
                 android:checked="true"
                 android:text="作业"
 
-                android:textColor="@color/default_gray" />
+                android:textColor="@color/blue_btn2" />
 
             <CheckBox
                 android:id="@+id/cb_class"
@@ -90,7 +89,7 @@
                 android:checked="true"
                 android:text="课堂"
 
-                android:textColor="@color/default_gray" />
+                android:textColor="@color/blue_btn2" />
         </LinearLayout>
 
         <!-- 时间块 -->

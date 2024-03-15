@@ -182,7 +182,7 @@ public class BookSelectorActivity extends AppCompatActivity implements View.OnCl
                     break;
             }
 
-            // 设置选中的RadioButton文本颜色为红色
+            // 设置选中的RadioButton文本颜色为蓝色
             btn.setTextColor(getResources().getColor(R.color.blue_btn2));
 
             // 遍历RadioGroup中的所有RadioButton，将未选中的文本颜色设置为黑色
@@ -256,13 +256,29 @@ public class BookSelectorActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void getListData() {
+        // 异常特判，三种数据为空情况
         if (!cb_learn_plan.isChecked() && !cb_homework.isChecked() && !cb_class.isChecked()) {
+            // 多选一个没选
+            this.itemList.clear();
+            adapter.notifyDataSetChanged();
+            ll_bottom_divider.setVisibility(View.GONE);
+            tv_empty.setVisibility(View.VISIBLE);
             return;
         }
         if (timeType.length() == 0) {
+            // 时间没选
+            this.itemList.clear();
+            adapter.notifyDataSetChanged();
+            ll_bottom_divider.setVisibility(View.GONE);
+            tv_empty.setVisibility(View.VISIBLE);
             return;
         }
         if (timeType.equals("other") && (tv_start.getText().length() == 0 || tv_end.getText().length() == 0)) {
+            // 时间选择器没选
+            this.itemList.clear();
+            adapter.notifyDataSetChanged();
+            ll_bottom_divider.setVisibility(View.GONE);
+            tv_empty.setVisibility(View.VISIBLE);
             return;
         }
         String sourceType = "";
@@ -294,6 +310,7 @@ public class BookSelectorActivity extends AppCompatActivity implements View.OnCl
                 Gson gson = new Gson();
                 List<BookSelectorEntity> itemList = gson.fromJson(itemString, new TypeToken<List<BookSelectorEntity>>() {
                 }.getType());
+
                 if (itemList.size() == 0) {
                     ll_bottom_divider.setVisibility(View.GONE);
                     tv_empty.setVisibility(View.VISIBLE);
@@ -302,7 +319,6 @@ public class BookSelectorActivity extends AppCompatActivity implements View.OnCl
                     tv_empty.setVisibility(View.GONE);
                 }
 
-                Log.e("0125", "getListData: " + itemList);
                 // 更新数据
                 this.itemList.clear();
                 this.itemList.addAll(itemList);

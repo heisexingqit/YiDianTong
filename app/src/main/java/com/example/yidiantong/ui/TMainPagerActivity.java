@@ -44,6 +44,7 @@ import com.example.yidiantong.fragment.TMainTeachFragment;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.LoadingPageInterface;
+import com.example.yidiantong.util.PxUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,20 +71,19 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
     private TMainReportFragment reportFragment;
     private TMainBellFragment bellFragment;
     private TMainMyFragment myFragment;
-
     private int initalPos = 0;
 
     // 悬浮按钮
-    private WindowManager wm;
     private WindowManager.LayoutParams wmParams;
     private CustomeMovebutton customeMovebutton;
+    private boolean destroyFlag = false;
 
     // 请求授课悬浮按钮
     private Handler handler_run = new Handler();
     private Runnable runnable = new Runnable() {
         public void run() {
             this.update();
-            handler_run.postDelayed(this, 200);
+            handler_run.postDelayed(this, 500);
         }
 
         void update() {
@@ -102,7 +102,6 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tmain_pager);
-        wm = null;
 
         Log.e("0110", "onCreate: 创建！！！！！！！！！！！！！");
 
@@ -171,13 +170,10 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
         SwitchTabById(initalPos);
         Log.e("0111", "onCreate: Activity创建并请求 按钮");
 
-
 //        vp_main = findViewById(R.id.vp_main);
 //        TMainPagerAdapter adapter = new TMainPagerAdapter(getSupportFragmentManager());
 //        vp_main.setAdapter(adapter);
 //        vp_main.setCurrentItem(0);
-        findClassOpen();
-        handler_run.postDelayed(runnable, 1000);
 
         checkUpdate();
     }
@@ -236,7 +232,7 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
             Log.e("volley", "Volley_Error: " + error.toString());
 
         });
-        MyApplication.addRequest(request, "noLimited");
+        MyApplication.addRequest(request, TAG);
     }
 
     @Override
@@ -277,6 +273,7 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
 //                    vp_main.setCurrentItem(4, false);
                     ft.replace(R.id.vp_main, myFragment);
                 }
+                // 关闭按钮
                 break;
             default:
                 break;
@@ -355,32 +352,48 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
         ft.commit();
     }
 
+    // 悬浮按钮服务
+    public static WindowManager wm = null;
+
     public void showMoveButtonView(int mode) {
+        if (destroyFlag) {
+            if (customeMovebutton != null && customeMovebutton.isAttachedToWindow()) {
+                wm.removeViewImmediate(customeMovebutton);
+            }
+
+            return;
+        }
         if (mode == 1) {
             if (flag == -1) {
                 wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
                 DisplayMetrics dm = getResources().getDisplayMetrics();
-                int widthPixels = dm.widthPixels;
-                int heightPixels = dm.heightPixels;
-                wmParams = ((MyApplication) getApplication()).getMywmParams();
+                wmParams = MyApplication.wmParams;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {//API Level 26
-                    wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
+                    wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
                 } else {
-                    wmParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
+                    wmParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
                 }
                 wmParams.format = PixelFormat.TRANSLUCENT;//设置透明背景ming
                 wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;//
-                wmParams.gravity = Gravity.LEFT | Gravity.TOP;//
-                wmParams.x = widthPixels - 30;  //设置位置像素
-                wmParams.y = heightPixels - 500;
-                wmParams.width = 200; //设置图片大小
-                wmParams.height = 200;
+                wmParams.gravity = Gravity.END | Gravity.BOTTOM;//
+                wmParams.x = 30;  //设置偏移位置像素
+                wmParams.y = 160;
+                wmParams.width = PxUtils.dip2px(this, 100); //设置图片大小
+                wmParams.height = PxUtils.dip2px(this, 100); //设置图片大小;
                 customeMovebutton = new CustomeMovebutton(TMainPagerActivity.this);
                 customeMovebutton.setImageResource(R.drawable.sj_bubble);
                 customeMovebutton.setBackgroundResource(R.drawable.move_button_bg_un);
                 flag = 1;
-                Log.e("0111", "视图创建并添加：wm.addView(customeMovebutton, wmParams);");
-                wm.addView(customeMovebutton, wmParams);
+                if (!isFinishing() && !isDestroyed()) {
+                    try {
+                        // 配置 wmParams 的属性
+                        wm.addView(customeMovebutton, wmParams);
+                    } catch (WindowManager.BadTokenException e) {
+                        // 这里处理 BadTokenException，例如记录日志或者尝试一个备选方案
+                        Log.e("wen0307", "尝试添加视图失败", e);
+                    }
+                }
+
                 customeMovebutton.setOnSpeakListener(new CustomeMovebutton.OnSpeakListener() {
                     @Override
                     public void onSpeakListener() {
@@ -390,17 +403,15 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
             } else if (flag == 1) {
                 return;
             }
-
         } else {
             if (flag == 1) {
                 if (customeMovebutton != null) {
-                    wm.removeView(customeMovebutton);
+                    wm.removeViewImmediate(customeMovebutton);
                 }
                 flag = -1;
             } else if (flag == -1) {
                 return;
             }
-
         }
     }
 
@@ -412,28 +423,23 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     protected void onDestroy() {
-        handler_run.removeCallbacks(runnable); //停止刷新
-
-        // 防止内存泄漏
-        if (customeMovebutton != null && wm != null) {
-            wm.removeView(customeMovebutton);
-        }
-
-        Log.e("0111", "onDestroy: Activity销毁了");
-
         super.onDestroy();
     }
 
     @Override
     protected void onStop() {
+        destroyFlag = true;
         handler_run.removeCallbacks(runnable); //停止刷新
+
+        showMoveButtonView(2);
         super.onStop();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        handler_run.postDelayed(runnable, 1000);
+        destroyFlag = false;
+        handler_run.postDelayed(runnable, 500);
     }
 
     @Override

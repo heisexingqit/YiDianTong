@@ -363,14 +363,15 @@ public class THomeworkMarkFragment extends Fragment {
      */
     private void setHtmlOnWebView(WebView wb, String str) {
         str = StringEscapeUtils.unescapeHtml4(str);
+        Log.e(TAG, "setHtmlOnWebView: " + str);
         String html_content = "<head><style>" +
-                " p {\n" +
-                "   margin: 0px;" +
-                "   line-height: 30px;" +
-                "   }" +
-                "  body {" +
+                "    p {\n" +
+                "    margin: 0px;\n" +
+                "    line-height: 30px;\n" +
+                "    }\n" +
+                "    body {\n" +
                 "       line-height: 30px;\n" +
-                "   }" +
+                "    }\n" +
                 "</style>" +
                 "<script>\n" +
                 "function bigimage(x) {\n" +

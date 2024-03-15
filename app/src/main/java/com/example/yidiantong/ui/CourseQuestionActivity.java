@@ -61,6 +61,7 @@ import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.ImageUtils;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.LogUtils;
+import com.example.yidiantong.util.PxUtils;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Rationale;
@@ -96,18 +97,18 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
     private String questionType;
     private String imgSource;
     // 单选
-    int[] unselectDan = {R.drawable.a_unselect, R.drawable.b_unselect, R.drawable.c_unselect, R.drawable.d_unselect, R.drawable.e_unselect, R.drawable.f_unselect};
-    int[] selectDan = {R.drawable.a_select, R.drawable.b_select, R.drawable.c_select, R.drawable.d_select, R.drawable.e_select, R.drawable.f_select};
-    ClickableImageView[] iv_answer_dan = new ClickableImageView[6];
-    int[] answer_dan = {-1, -1, -1, -1, -1, -1};
+    int[] unselectDan = {R.drawable.a_unselect, R.drawable.b_unselect, R.drawable.c_unselect, R.drawable.d_unselect, R.drawable.e_unselect, R.drawable.f_unselect, R.drawable.g_unselect, R.drawable.h_unselect};
+    int[] selectDan = {R.drawable.a_select, R.drawable.b_select, R.drawable.c_select, R.drawable.d_select, R.drawable.e_select, R.drawable.f_select, R.drawable.g_select, R.drawable.h_select};
+    ClickableImageView[] iv_answer_dan = new ClickableImageView[8];
+    int[] answer_dan = {-1, -1, -1, -1, -1, -1, -1, -1};
     int questionId = 0;
     //String[] option = {"A","B","C","D"};
     // 多选
-    int[] unselectDuo = {R.drawable.a_unselect2, R.drawable.b_unselect2, R.drawable.c_unselect2, R.drawable.d_unselect2, R.drawable.e_unselect2, R.drawable.f_unselect2};
-    int[] selectDuo = {R.drawable.a_select2, R.drawable.b_select2, R.drawable.c_select2, R.drawable.d_select2, R.drawable.e_select2, R.drawable.f_select2};
-    ClickableImageView[] iv_answer_duo = new ClickableImageView[6];
-    int[] answer_duo = {0, 0, 0, 0, 0, 0};
-    String[] stuAnswerDuo = {"A", "B", "C", "D", "E", "F"};
+    int[] unselectDuo = {R.drawable.a_unselect2, R.drawable.b_unselect2, R.drawable.c_unselect2, R.drawable.d_unselect2, R.drawable.e_unselect2, R.drawable.f_unselect2, R.drawable.g_unselect2, R.drawable.h_unselect2};
+    int[] selectDuo = {R.drawable.a_select2, R.drawable.b_select2, R.drawable.c_select2, R.drawable.d_select2, R.drawable.e_select2, R.drawable.f_select2, R.drawable.g_select2, R.drawable.h_select2};
+    ClickableImageView[] iv_answer_duo = new ClickableImageView[8];
+    int[] answer_duo = {0, 0, 0, 0, 0, 0, 0, 0};
+    String[] stuAnswerDuo = {"A", "B", "C", "D", "E", "F", "G", "H"};
     // 判断
     int[] unselectJudge = {R.drawable.right_unselect, R.drawable.error_unselect};
     int[] selectJudge = {R.drawable.right_select, R.drawable.error_select};
@@ -140,11 +141,6 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
     //答题区域HTML头
     private String html_answer_head = "<head>\n" +
             "    <style>\n" +
-            "        img{\n" +
-            "        vertical-align: middle;" +
-            "        max-width:40px !important;" +
-            "        height:40px !important;" +
-            "        }" +
             "        body {\n" +
             "            color: rgb(117, 117, 117);\n" +
             "            word-wrap: break-word;\n" +
@@ -188,15 +184,16 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
     private Bitmap imgBitmap = null; // 二维码url解析图片对象
 
     // 软键盘弹出NEW
+    private boolean isKeyboardVisible = false;
     private InputMethodManager imm;
-
+    private RelativeLayout lr_bottom;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_question);
-
+        Log.e("wen0228", "onNewIntent: 新建");
         // 提前创建Adapter
         imgadapter = new ImagePagerAdapter(CourseQuestionActivity.this, url_list);
 
@@ -208,7 +205,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
         ftv_ls_user = findViewById(R.id.ftv_ls_user);
         ftv_ls_user.setText(stu);
         ip = getIntent().getStringExtra("ip");
-        Log.e("0115", "onCreateIPIPIPIPI: " + ip);
+
         questionTypeName = getIntent().getStringExtra("questionTypeName");
         questionType = getIntent().getStringExtra("questionType");
         Log.e("tyoe1", "" + questionTypeName);
@@ -319,6 +316,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
         fll_acq.addView(v1);
         fll_fcq.setOnClickListener(this);
 
+        lr_bottom = findViewById(R.id.lr_bottom);
 
         // 提交按钮
         ftv_cq_commit = findViewById(R.id.ftv_cq_commit);
@@ -374,6 +372,8 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
 
     private void JudgeType(String action) {
         fll_cq.removeAllViews();
+        fll_fcq.setVisibility(View.GONE);
+        wv_answer.loadDataWithBaseURL(null, "", "text/html", "utf-8", null);
         View v = LayoutInflater.from(this).inflate(R.layout.course_btn, fll_cq, false);
         fll_cq_danxuan = v.findViewById(R.id.fll_cq_danxuan);
         fll_cq_duouan = v.findViewById(R.id.fll_cq_duouan);
@@ -381,7 +381,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
         fll_cq_tiankong = v.findViewById(R.id.fll_cq_tiankong);
         Log.e("0202ee", "JudgeTypeName: " + questionTypeName);
         Log.e("0202ee", "JudgeType: " + questionType);
-        if (questionTypeName.equals("单项选择题")) {
+        if (questionType.equals("1")) { // 单选题
             fll_cq_danxuan.setVisibility(View.VISIBLE);
             fll_cq_duouan.setVisibility(View.GONE);
             fll_cq_panduan.setVisibility(View.GONE);
@@ -393,6 +393,8 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
             ClickableImageView iv_d = v.findViewById(R.id.fiv_cb_d);
             ClickableImageView iv_e = v.findViewById(R.id.fiv_cb_e);
             ClickableImageView iv_f = v.findViewById(R.id.fiv_cb_f);
+            ClickableImageView iv_g = v.findViewById(R.id.fiv_cb_g);
+            ClickableImageView iv_h = v.findViewById(R.id.fiv_cb_h);
 
             iv_answer_dan[0] = iv_a;
             iv_answer_dan[1] = iv_b;
@@ -400,9 +402,11 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
             iv_answer_dan[3] = iv_d;
             iv_answer_dan[4] = iv_e;
             iv_answer_dan[5] = iv_f;
+            iv_answer_dan[6] = iv_g;
+            iv_answer_dan[7] = iv_h;
 
             content = "";
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 8; i++) {
                 if (i < questionValueList.length()) {
                     iv_answer_dan[i].setVisibility(View.VISIBLE);
                     iv_answer_dan[i].setOnClickListener(this);
@@ -410,7 +414,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
                     iv_answer_dan[i].setVisibility(View.GONE);
                 }
             }
-        } else if (questionTypeName.equals("多项选择题")) {
+        } else if (questionType.equals("2")) { // 多选题
             fll_cq_danxuan.setVisibility(View.GONE);
             fll_cq_duouan.setVisibility(View.VISIBLE);
             fll_cq_panduan.setVisibility(View.GONE);
@@ -422,23 +426,28 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
             ClickableImageView iv_d = v.findViewById(R.id.fiv_cb_d2);
             ClickableImageView iv_e = v.findViewById(R.id.fiv_cb_e2);
             ClickableImageView iv_f = v.findViewById(R.id.fiv_cb_f2);
+            ClickableImageView iv_g = v.findViewById(R.id.fiv_cb_g2);
+            ClickableImageView iv_h = v.findViewById(R.id.fiv_cb_h2);
             iv_answer_duo[0] = iv_a;
             iv_answer_duo[1] = iv_b;
             iv_answer_duo[2] = iv_c;
             iv_answer_duo[3] = iv_d;
             iv_answer_duo[4] = iv_e;
             iv_answer_duo[5] = iv_f;
+            iv_answer_duo[6] = iv_g;
+            iv_answer_duo[7] = iv_h;
             content = "";
             Log.e("0115", "JudgeType: " + questionValueList);
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 8; i++) {
                 if (i < questionValueList.length()) {
                     iv_answer_duo[i].setVisibility(View.VISIBLE);
                     iv_answer_duo[i].setOnClickListener(this);
                 } else {
                     iv_answer_duo[i].setVisibility(View.GONE);
                 }
+                answer_duo[i] = 0; // 初始化多选答案
             }
-        } else if (questionTypeName.equals("判断题")) {
+        } else if (questionType.equals("4")) { // 判断题
             fll_cq_danxuan.setVisibility(View.GONE);
             fll_cq_duouan.setVisibility(View.GONE);
             fll_cq_panduan.setVisibility(View.VISIBLE);
@@ -451,7 +460,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
             content = "";
             iv_r.setOnClickListener(this);
             iv_e.setOnClickListener(this);
-        } else if (questionTypeName.equals("填空题")) {
+        } else {
             fll_cq_danxuan.setVisibility(View.GONE);
             fll_cq_duouan.setVisibility(View.GONE);
             fll_cq_panduan.setVisibility(View.GONE);
@@ -462,17 +471,46 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
             v.findViewById(R.id.civ_camera).setOnClickListener(this);
             v.findViewById(R.id.civ_gallery).setOnClickListener(this);
 
+            // 添加软键盘状态监听NEW
+            et_answer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+
+                    Rect r = new Rect();
+                    et_answer.getWindowVisibleDisplayFrame(r);
+
+                    int screenHeight = et_answer.getRootView().getHeight();
+                    int keypadHeight = screenHeight - r.bottom;
+
+                    if (keypadHeight > screenHeight * 0.15) { // 15% of the screen
+                        if (!isKeyboardVisible) {
+                            // Move the EditText up
+                            lr_bottom.setTranslationY(-keypadHeight);
+
+                            isKeyboardVisible = true;
+                        }
+                    } else {
+                        if (isKeyboardVisible) {
+
+                            // Reset the EditText position
+                            lr_bottom.setTranslationY(0);
+                            isKeyboardVisible = false;
+                        }
+                    }
+                }
+            });
+
             // -------------------#
             //  视图初始化，清空内容
             // -------------------#
             fll_fcq.setVisibility(View.GONE);
             et_answer.setText("");
             html_answer = "";
-            wv_answer.loadData(getHtmlAnswer(), "text/html", "utf-8");
+            wv_answer.loadDataWithBaseURL(null, getHtmlAnswer(), "text/html", "utf-8", null);
             url_list.clear();
             imgadapter.updateData(url_list);
-            imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
+            imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             // 隐藏输入框
             fwv_cq.setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -481,18 +519,18 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
                     return false;
                 }
             });
-            // WebView尺寸BUG
-
             html_answer = "";
             content = "";
-        }else{
-            Log.e("0202ee", "未知题型名称: " + questionTypeName);
-            Log.e("0202ee", "未知题型编号: " + questionType);
         }
+//        else{
+//            Log.e("0202ee", "未知题型名称: " + questionTypeName);
+//            Log.e("0202ee", "未知题型编号: " + questionType);
+//        }
         if (action.equals("lock")) {
             lockmode = 1;
         } else if (lockmode != 1) {
             fll_cq.addView(v);
+
         }
     }
 
@@ -516,11 +554,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
                 int actualHeight = fll_acq.getHeight();
                 Log.e("0112", "showWebImage: " + actualHeight);
                 // 创建新的 LayoutParams 对象，并设置高度
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        actualHeight
-                );
-
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, actualHeight);
                 // 应用新的 LayoutParams
                 fll_acq.setLayoutParams(layoutParams);
             }
@@ -544,12 +578,12 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
                 String url = json.getString("url");
                 String status = json.getString("status");
                 if (status.equals("success")) {
-                    //封装消息，传递给主线程
+                    // 封装消息，传递给主线程
                     Message message = Message.obtain();
                     message.obj = url;
 
                     // 发送消息给主线程
-                    //标识线程
+                    // 标识线程
                     message.what = 101;
                     handler.sendMessage(message);
                 } else {
@@ -605,6 +639,16 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
                 content = "F";
                 showRadioBtnDan();
                 break;
+            case R.id.fiv_cb_g:
+                answer_dan[questionId] = 6;
+                content = "G";
+                showRadioBtnDan();
+                break;
+            case R.id.fiv_cb_h:
+                answer_dan[questionId] = 7;
+                content = "H";
+                showRadioBtnDan();
+                break;
             case R.id.fiv_cb_a2:
                 answer_duo[0] ^= 1;
                 showRadioBtnDuo();
@@ -627,6 +671,14 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
                 break;
             case R.id.fiv_cb_f2:
                 answer_duo[5] ^= 1;
+                showRadioBtnDuo();
+                break;
+            case R.id.fiv_cb_g2:
+                answer_duo[6] ^= 1;
+                showRadioBtnDuo();
+                break;
+            case R.id.fiv_cb_h2:
+                answer_duo[7] ^= 1;
                 showRadioBtnDuo();
                 break;
             case R.id.fiv_cb_r:
@@ -658,13 +710,13 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
 //                Toast.makeText(CourseQuestionActivity.this, "功能完善中，目前不可用", Toast.LENGTH_SHORT).show();
                 fll_fcq.setVisibility(View.VISIBLE);
                 html_answer += et_answer.getText().toString();
-                wv_answer.loadData(getHtmlAnswer(), "text/html", "utf-8");
+                wv_answer.loadDataWithBaseURL(null, getHtmlAnswer(), "text/html", "utf-8", null);
                 et_answer.setText("");
                 content = html_answer;
                 break;
             case R.id.tv_erase:
                 html_answer = "";
-                wv_answer.loadData(getHtmlAnswer(), "text/html", "utf-8");
+                wv_answer.loadDataWithBaseURL(null, getHtmlAnswer(), "text/html", "utf-8", null);
                 url_list.clear();
                 imgadapter.updateData(url_list);
                 break;
@@ -871,6 +923,8 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
 
     //单选展示底部按钮
     private void showRadioBtnDan() {
+        Log.e("wen0304", "全部: " + questionValueList.length());
+        Log.e("wen0304", "选中: " + answer_dan[questionId]);
         for (int i = 0; i < questionValueList.length(); ++i) {
             if (answer_dan[questionId] != i) {
                 iv_answer_dan[i].setImageResource(unselectDan[i]);
@@ -1073,9 +1127,12 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
             ftv_cq_commit.setEnabled(true);
             ftv_cq_commit.setTextColor(0xff57c5e8);
             ftv_cq_commit.setOnClickListener(this);
+            questionValueList = getIntent().getStringExtra("questionValueList");
+            questionValueList = questionValueList.replace(",", "");
+            JudgeType(action);
+            showWebImage(imagePath);
         }
 
-        JudgeType(action);
         Log.d("wenpeng", "onCreate: 创建");
     }
 
@@ -1120,7 +1177,9 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
 
     @Override
     protected void onNewIntent(Intent intent) {
+        Log.e("wen0306", "onNewIntent: 复用");
         super.onNewIntent(intent);
+
         setIntent(intent);
         // 页面切换
         questionTypeName = intent.getStringExtra("questionTypeName");
@@ -1128,7 +1187,6 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
         imagePath = intent.getStringExtra("imagePath");
         imagePath = imagePath.replaceAll("\\\\", "/");
         lockmode = -1;
-        showWebImage(imagePath);
         changeCommit();
     }
 
@@ -1148,6 +1206,8 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
         super.onDestroy();
         // 取消广播接收器的注册
         unregisterReceiver(finishReceiver);
+        Log.e("wen0306", "onDestroy: 销毁");
+
     }
 
     /**

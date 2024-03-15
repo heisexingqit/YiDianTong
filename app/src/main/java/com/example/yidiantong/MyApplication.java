@@ -144,10 +144,6 @@ public class MyApplication extends Application {
                 .build();
     }
 
-    private WindowManager.LayoutParams wmParams = new WindowManager.LayoutParams();
-
-    public WindowManager.LayoutParams getMywmParams() {
-        return wmParams;
-    }
+    public static WindowManager.LayoutParams wmParams = new WindowManager.LayoutParams();
 
 }

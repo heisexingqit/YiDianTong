@@ -2,8 +2,8 @@ package com.example.yidiantong.util;
 
 public class Constant {
     // 服务器地址
-    public static final String API = "http://www.cn901.net:8111";
-//    public static final String API = "http://www.cn901.com:8181";
+//    public static final String API = "http://www.cn901.net:8111";
+    public static final String API = "http://www.cn901.com:8181";
     // 直播课服务器地址
     public static final String API_LIVE = "http://www.cn901.com";
 
@@ -261,7 +261,7 @@ public class Constant {
     // 教师端教师页面属性获取
     public static final String T_MAIN_TEACH_PARAM_GET = "/AppServer/ajax/teacherApp_getLpProperty.do";
 
-    //教师端教师页面属性设置
+    // 教师端教师页面属性设置
     public static final String T_MAIN_TEACH_PARAM_SAVE = "/AppServer/ajax/teacherApp_saveLpProperty.do";
 
     // 教师端修改通知或公告，返回对应的内容
@@ -281,4 +281,10 @@ public class Constant {
 
     // 教师端向授课一点通上传图片
     public static final String T_YDT_UPLOAD_IMAGE = "/KeTangServer/ajax/ketang_saveBase64Image.do";
+
+    // 遥控器获取资源列表
+    public static final String T_REMOVE_GET_RESOUCE_LIST = "/KeTangServer/ajax/ketang_getPeriodList.do";
+
+    // 提分训练
+    public static final String T_GET_TIFEN_TRAIN = "/AppServer/ajax/studentApp_getRecommendQue.do";
 }

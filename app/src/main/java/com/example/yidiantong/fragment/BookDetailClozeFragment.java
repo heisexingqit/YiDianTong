@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -38,6 +39,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookRecyclerEntity;
+import com.example.yidiantong.ui.BookExerciseActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.RecyclerInterface;
@@ -63,6 +65,7 @@ public class BookDetailClozeFragment extends Fragment implements View.OnClickLis
     private LinearLayout fll_bd_analysis;
     private TextView ftv_br_title;
     private ImageView fiv_bd_mark;
+    private ImageView fiv_bd_exercise;
 
     int[] unselectIcons = {R.drawable.a_unselect, R.drawable.b_unselect, R.drawable.c_unselect, R.drawable.d_unselect};
     int[] selectIcons = {R.drawable.a_select, R.drawable.b_select, R.drawable.c_select, R.drawable.d_select};
@@ -186,8 +189,11 @@ public class BookDetailClozeFragment extends Fragment implements View.OnClickLis
         // 标记掌握
         fiv_bd_mark = getActivity().findViewById(R.id.fiv_bd_mark);
         fiv_bd_mark.setOnClickListener(this);
-        setHasOptionsMenu(true);
 
+        // 提分练习
+        fiv_bd_exercise = getActivity().findViewById(R.id.fiv_bd_exercise);
+        fiv_bd_exercise.setOnClickListener(this);
+        setHasOptionsMenu(true);
 
         // 解析部分
         fll_bd_analysis = view.findViewById(R.id.fll_bd_analysis);
@@ -309,6 +315,16 @@ public class BookDetailClozeFragment extends Fragment implements View.OnClickLis
                 builder.setCancelable(false);
                 //对话框弹出
                 builder.show();
+                break;
+            case R.id.fiv_bd_exercise:
+                // 弹出一个简单的Dialog提示 "功能完善中"
+                AlertDialog.Builder builder_exercise = new AlertDialog.Builder(getActivity());
+                builder_exercise.setMessage("功能完善中");
+                builder_exercise.setPositiveButton("确定", null);
+                builder_exercise.show();
+                Intent toExercise = new Intent(getActivity(), BookExerciseActivity.class);
+                toExercise.putExtra("questionId", bookrecyclerEntity.getQuestionId());
+//                startActivity(toExercise);
                 break;
             case R.id.fll_br_model:
                 AlertDialog.Builder builder_model = new AlertDialog.Builder(getActivity());

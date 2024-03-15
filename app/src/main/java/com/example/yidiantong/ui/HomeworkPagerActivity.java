@@ -53,7 +53,9 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -154,8 +156,6 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
             i.setStuAnswer(info.stuAnswer);
             stuAnswerList.add(i);
         }
-        Log.e("wen0226", "onCreate: " + stuAnswerList.size());
-        Log.e("wen0226", "onCreate: " + stuAnswerList);
         loadItems_Net();
 
         // ViewPager滑动变速
@@ -426,6 +426,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                     contentView = LayoutInflater.from(this).inflate(R.layout.menu_homework, null, false);
 
                     ListView lv_homework = contentView.findViewById(R.id.lv_homework);
+                    lv_homework.getLayoutParams().width = PxUtils.dip2px(this, 180);
 
                     lv_homework.setAdapter(myArrayAdapter);
                     lv_homework.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -497,12 +498,11 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
     // 上传试题
     private void uploadQuestion() {
         int pos = vp_homework.getCurrentItem();
+//        Log.e("wen0304", "uploadQuestion: 老答案" + oldStuAnswer[pos]);
+//        Log.e("wen0304", "uploadQuestion: 新答案" + stuAnswer[pos]);
         if (stuAnswer[pos].equals(oldStuAnswer[pos])) {
             return;
         }
-        Log.e(TAG, "uploadQuestion: 老答案" + oldStuAnswer[pos]);
-        Log.e(TAG, "uploadQuestion: 新答案" + stuAnswer[pos]);
-        Log.d("wen", "uploadQuestion: " + stuAnswer[pos]);
 
         java.util.Date day = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -519,26 +519,26 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
         MyApplication.database.homeworkStuAnswerDao().insert(info);
 
 
-//        String mRequestUrl = null;
-//        try {
-//            mRequestUrl = Constant.API + Constant.SUBMIT_ANSWER + "?learnPlanId=" + learnPlanId +
-//                    "&stuId=" + username + "&questionId=" + questionIds[pos] + "&answer=" + URLEncoder.encode(stuAnswer[pos], "UTF-8") + "&answerTime=" + date;
-//        } catch (UnsupportedEncodingException e) {
-//            e.printStackTrace();
-//        }
-//        StringRequest request = new StringRequest(mRequestUrl, response -> {
-//            try {
-//                JSONObject json = JsonUtils.getJsonObjectFromString(response);
-//
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }, error -> {
-//            Log.e("volley", "Volley_Error: " + error.toString());
-//
-//        });
-//
-//        MyApplication.addRequest(request, TAG);
+        String mRequestUrl = null;
+        try {
+            mRequestUrl = Constant.API + Constant.SUBMIT_ANSWER + "?learnPlanId=" + learnPlanId +
+                    "&stuId=" + username + "&questionId=" + questionIds[pos] + "&answer=" + URLEncoder.encode(stuAnswer[pos], "UTF-8") + "&answerTime=" + date;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Log.e("volley", "Volley_Error: " + error.toString());
+
+        });
+
+        MyApplication.addRequest(request, TAG);
 
         // 同步更新
         oldStuAnswer[pos] = stuAnswer[pos];

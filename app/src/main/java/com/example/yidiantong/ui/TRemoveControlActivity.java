@@ -2,74 +2,57 @@ package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.ClipData;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.provider.MediaStore;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.HuDongDialog;
+import com.example.yidiantong.adapter.MyArrayAdapter;
 import com.example.yidiantong.bean.TKeTangListEntity;
 import com.example.yidiantong.util.Constant;
-import com.example.yidiantong.util.ImageUtils;
 import com.example.yidiantong.util.JsonUtils;
+import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.THuDongInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.yanzhenjie.permission.Action;
-import com.yanzhenjie.permission.AndPermission;
-import com.yanzhenjie.permission.Rationale;
-import com.yanzhenjie.permission.RequestExecutor;
-import com.yanzhenjie.permission.runtime.Permission;
+import com.nostra13.universalimageloader.utils.L;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLClassLoader;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class TRemoveControlActivity extends AppCompatActivity implements THuDongInterface, View.OnClickListener {
     private static final String TAG = "TRemoveControlActivity";
@@ -96,6 +79,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
 
         void update() {
             loadItems_Net();
+            loadResouceList();
         }
     };
     private ImageView fiv_rc_six;
@@ -133,6 +117,10 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
     private PopupWindow window1;
     private String desc_num;
 
+    private View contentView;
+    private MyArrayAdapter myArrayAdapter;
+    private List<String> menuList;
+    private boolean showMenuFlag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,6 +173,9 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
         ftv_rc_break.setOnClickListener(this);
         fiv_rc_skbcd.setOnClickListener(this);
 
+        myArrayAdapter = new MyArrayAdapter(this, new ArrayList<>(Arrays.asList("暂无内容"))); //适配器
+
+
         loadItems_Net();
         handler.postDelayed(runnable, 200);
 
@@ -198,8 +189,21 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                 ViewGroup.LayoutParams.MATCH_PARENT, false);
         fiv_action = inflater.findViewById(R.id.fiv_action);
 
-    }
+        // 高度自动设置为屏幕宽度
+        ConstraintLayout cl_remove_main = findViewById(R.id.cl_remove_main);
+        // 获取屏幕尺寸
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int screenWidth = displayMetrics.widthPixels;
 
+        // 计算所需的高度（屏幕高度的 0.9 倍）
+        int newWidth = (int) (screenWidth * 0.8);
+
+        // 设置ConstraintLayout的新高度
+        ViewGroup.LayoutParams layoutParams = cl_remove_main.getLayoutParams();
+        layoutParams.height = newWidth;
+        cl_remove_main.setLayoutParams(layoutParams);
+    }
 
     private Handler handler1 = new Handler(Looper.getMainLooper()) {
         @SuppressLint("NotifyDataSetChanged")
@@ -208,6 +212,8 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
             super.handleMessage(message);
             if (message.what == 100) {
                 changePage((List<TKeTangListEntity>) message.obj);
+            } else if (message.what == 101) {
+                menuList = (List<String>) message.obj;
             }
         }
     };
@@ -351,6 +357,8 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     fiv_rc_six.setImageResource(R.drawable.six_b);
                     fiv_rc_ten.setImageResource(R.drawable.ten_b);
                     fiv_rc_eight.setImageResource(R.drawable.eight_c);
+                    fiv_rc_seven.setImageResource(R.drawable.seven_e);
+                    fiv_rc_nine.setImageResource(R.drawable.nine_e);
                     mode = 1;
                 } else if (messageList.get(0).getAction().equals("playPPT")) {
                     button_black();
@@ -358,7 +366,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     fiv_rc_ten.setImageResource(R.drawable.ten_b);
                     fiv_rc_eight.setImageResource(R.drawable.eight_b);
                     fiv_rc_seven.setImageResource(R.drawable.seven_c);
-                    fiv_rc_nine.setImageResource(R.drawable.nine_c);
+                    fiv_rc_nine.setImageResource(R.drawable.nine_b);
                     fiv_rc_seven.setOnClickListener(listener_ppt);
                     fiv_rc_nine.setOnClickListener(listener_ppt);
                     mode = 2;
@@ -387,10 +395,52 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                                 doAction(messageList, "pptpre");
                                 break;
                             case R.id.fiv_rc_eight:
+                                Log.e("wen0306", "onClick: " + mode);
                                 if (mode == 1) {
                                     doAction(messageList, "pptplay");
+                                    // pptplay后自动发出消息 pptplay状态
+                                    Message message = new Message();
+                                    message.what = 100;
+                                    // 创建一个虚拟的TKeTangListEntity对象
+                                    TKeTangListEntity tKeTangListEntity = new TKeTangListEntity();
+                                    tKeTangListEntity.setActionType("ppt");
+                                    tKeTangListEntity.setAction("playPPT");
+                                    tKeTangListEntity.setType("0");
+                                    tKeTangListEntity.setUserNum("one");
+                                    tKeTangListEntity.setSource(getIntent().getStringExtra("teacherId"));
+                                    tKeTangListEntity.setTarget("0");
+                                    tKeTangListEntity.setMessageType("0");
+                                    tKeTangListEntity.setLearnPlanId(getIntent().getStringExtra("learnPlanId"));
+
+                                    // 创建一个包含tKeTangListEntity的List
+                                    List<TKeTangListEntity> list = new ArrayList<>();
+                                    list.add(tKeTangListEntity);
+                                    message.obj = list;
+                                    handler1.sendMessage(message);
+                                    mode = 2;
                                 } else if (mode == 2) {
                                     doAction(messageList, "pptexit");
+                                    // pptplay后自动发出消息 pptOpen状态
+                                    Message message = new Message();
+                                    message.what = 100;
+                                    // 创建一个虚拟的TKeTangListEntity对象
+                                    TKeTangListEntity tKeTangListEntity = new TKeTangListEntity();
+                                    tKeTangListEntity.setActionType("ppt");
+                                    tKeTangListEntity.setAction("openPPT");
+                                    tKeTangListEntity.setType("0");
+                                    tKeTangListEntity.setUserNum("one");
+                                    tKeTangListEntity.setSource(getIntent().getStringExtra("teacherId"));
+                                    tKeTangListEntity.setTarget("0");
+                                    tKeTangListEntity.setMessageType("0");
+                                    tKeTangListEntity.setLearnPlanId(getIntent().getStringExtra("learnPlanId"));
+
+                                    // 创建一个包含tKeTangListEntity的List
+                                    List<TKeTangListEntity> list = new ArrayList<>();
+                                    list.add(tKeTangListEntity);
+                                    message.obj = list;
+                                    handler1.sendMessage(message);
+
+                                    mode = 1;
                                 }
                                 break;
                             case R.id.fiv_rc_nine:
@@ -523,13 +573,24 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                             case R.id.fiv_rc_three:
                                 doAction(messageList, "queresDown");
                                 break;
-
+                            case R.id.fiv_rc_four:
+                                doAction(messageList, "quechangeSizeBig");
+                                break;
+                            case R.id.fiv_rc_five:
+                                doAction(messageList, "quechangeSizeSmall");
+                                break;
+                            case R.id.fiv_rc_eight:
+                                doAction(messageList, "quelookAnswer");
+                                break;
                         }
                     }
                 };
                 fiv_rc_one.setOnClickListener(listener_que);
                 fiv_rc_two.setOnClickListener(listener_que);
                 fiv_rc_three.setOnClickListener(listener_que);
+                fiv_rc_four.setOnClickListener(listener_que);
+                fiv_rc_five.setOnClickListener(listener_que);
+                fiv_rc_eight.setOnClickListener(listener_que);
                 break;
             case "questionAnswer":
                 int light[] = {-1, -1, -1, -1};
@@ -559,6 +620,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                             case R.id.fiv_rc_right1:
                                 if (typehd.equals("正在作答中") | typehd.equals("作答结束")) {
                                     doActionFour(messageList, "dtxq");
+                                    Log.e("wen0306", "onClick: 答题详情");
                                 } else {
                                     doActionFour(messageList, "dz");
                                 }
@@ -570,26 +632,33 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     }
                 };
                 // 一起作答 一点通→教师端
-                if (messageList.get(0).getAction().equals("AnswerTogetherStartObjective")) {
+                if (messageList.get(0).getAction().equals("AnswerTogetherStartObjective") || messageList.get(0).getAction().equals("AnswerTogetherStartSubjective")) {
                     ftv_rc_text.setVisibility(View.GONE);
                     fib_rc_tiwen.setImageResource(R.drawable.tiwen2);
                     fiv_rc_left1.setImageResource(R.drawable.jszd);
+                    fiv_rc_left1.setEnabled(true);
                     fiv_rc_left2.setImageResource(R.drawable.dtfx);
+                    fiv_rc_left2.setEnabled(true);
                     fiv_rc_right1.setImageResource(R.drawable.dtxq);
-                    fiv_rc_right2.setImageResource(R.drawable.closesj);
-                    fib_rc_tiwen.setImageResource(R.drawable.tiwen2);
+                    fiv_rc_right1.setEnabled(true);
+                    fiv_rc_right2.setImageResource(R.drawable.closetw);
+                    fiv_rc_right2.setEnabled(true);
                     ftv_rc_bottom.setText("正在作答中");
                     typehd = "正在作答中";
                     for (int i = 0; i < 4; i++) {
                         light[i] = 1;
                     }
                     button_light(light);
-                } else if (messageList.get(0).getAction().equals("AnswerTogetherStopObjective")) {
+                } else if (messageList.get(0).getAction().equals("AnswerTogetherStopObjective") || messageList.get(0).getAction().equals("AnswerTogetherStopSubjective")) {
                     ftv_rc_text.setVisibility(View.GONE);
                     fiv_rc_left1.setImageResource(R.drawable.cxzd);
+                    fiv_rc_left1.setEnabled(true);
                     fiv_rc_left2.setImageResource(R.drawable.dtfx);
+                    fiv_rc_left2.setEnabled(true);
                     fiv_rc_right1.setImageResource(R.drawable.dtxq);
-                    fiv_rc_right2.setImageResource(R.drawable.closesj);
+                    fiv_rc_right1.setEnabled(true);
+                    fiv_rc_right2.setImageResource(R.drawable.closetw);
+                    fiv_rc_right2.setEnabled(true);
                     ftv_rc_bottom.setText("作答结束");
                     fib_rc_tiwen.setImageResource(R.drawable.tiwen2);
                     typehd = "作答结束";
@@ -600,12 +669,16 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                 }
 
                 // 随机  一点通→教师端
-                if (messageList.get(0).getAction().equals("RandomObjective")) {
+                else if (messageList.get(0).getAction().equals("RandomObjective")) {
                     ftv_rc_text.setVisibility(View.GONE);
                     fiv_rc_left1.setImageResource(R.drawable.cxsj_a);
+                    fiv_rc_left1.setEnabled(false);
                     fiv_rc_left2.setImageResource(R.drawable.dz_a);
+                    fiv_rc_left2.setEnabled(false);
                     fiv_rc_right1.setImageResource(R.drawable.szda_a);
+                    fiv_rc_right1.setEnabled(false);
                     fiv_rc_right2.setImageResource(R.drawable.closesj_0);
+                    fiv_rc_right2.setEnabled(false);
                     fib_rc_suiji.setImageResource(R.drawable.suiji2);
                     ftv_rc_bottom.setText("正在随机...");
                     button_light(light);
@@ -613,9 +686,13 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     ftv_rc_text.setVisibility(View.GONE);
                     fib_rc_suiji.setImageResource(R.drawable.suiji2);
                     fiv_rc_left1.setImageResource(R.drawable.cxsj_b);
+                    fiv_rc_left1.setEnabled(true);
                     fiv_rc_left2.setImageResource(R.drawable.dz_a);
+                    fiv_rc_left2.setEnabled(false);
                     fiv_rc_right1.setImageResource(R.drawable.szda_a);
+                    fiv_rc_right1.setEnabled(false);
                     fiv_rc_right2.setImageResource(R.drawable.closesj);
+                    fiv_rc_right2.setEnabled(true);
                     stuname = messageList.get(0).getDesc();
                     ftv_rc_bottom.setText(stuname);
                     light[0] = 1;
@@ -626,9 +703,13 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     ftv_rc_text.setVisibility(View.GONE);
                     fib_rc_suiji.setImageResource(R.drawable.suiji2);
                     fiv_rc_left1.setImageResource(R.drawable.cxsj_b);
+                    fiv_rc_left1.setEnabled(true);
                     fiv_rc_left2.setImageResource(R.drawable.dz_b);
+                    fiv_rc_left2.setEnabled(true);
                     fiv_rc_right1.setImageResource(R.drawable.szda_b);
+                    fiv_rc_right1.setEnabled(true);
                     fiv_rc_right2.setImageResource(R.drawable.closesj);
+                    fiv_rc_right2.setEnabled(true);
                     ftv_rc_bottom.setText("回显学生答案" + messageList.get(0).getDesc());
                     for (int i = 0; i < 4; i++) {
                         light[i] = 1;
@@ -637,21 +718,29 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     typehd = "随机答案";
                 }
                 // 抢答  一点通→教师端
-                if (messageList.get(0).getAction().equals("ResponderReadyObjective")) {
+                else if (messageList.get(0).getAction().equals("ResponderReadyObjective")) {
                     ftv_rc_text.setVisibility(View.GONE);
                     fib_rc_qiangda.setImageResource(R.drawable.qiangda2);
                     fiv_rc_left1.setImageResource(R.drawable.cxqd_a);
+                    fiv_rc_left1.setEnabled(false);
                     fiv_rc_left2.setImageResource(R.drawable.dz_a);
+                    fiv_rc_left2.setEnabled(false);
                     fiv_rc_right1.setImageResource(R.drawable.szda_a);
+                    fiv_rc_right1.setEnabled(false);
                     fiv_rc_right2.setImageResource(R.drawable.closeqd_0);
+                    fiv_rc_right2.setEnabled(false);
                     ftv_rc_bottom.setText("正在抢答");
                 } else if (messageList.get(0).getAction().equals("ResponderObjective")) {
                     ftv_rc_text.setVisibility(View.GONE);
                     fib_rc_qiangda.setImageResource(R.drawable.qiangda2);
                     fiv_rc_left1.setImageResource(R.drawable.cxqd_a);
+                    fiv_rc_left1.setEnabled(false);
                     fiv_rc_left2.setImageResource(R.drawable.dz_a);
+                    fiv_rc_left2.setEnabled(false);
                     fiv_rc_right1.setImageResource(R.drawable.szda_a);
+                    fiv_rc_right1.setEnabled(false);
                     fiv_rc_right2.setImageResource(R.drawable.closeqd);
+                    fiv_rc_right2.setEnabled(true);
                     ftv_rc_bottom.setText("正在抢答");
                     light[3] = 1;
                     button_light(light);
@@ -660,9 +749,13 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     ftv_rc_text.setVisibility(View.GONE);
                     fib_rc_qiangda.setImageResource(R.drawable.qiangda2);
                     fiv_rc_left1.setImageResource(R.drawable.cxqd_b);
+                    fiv_rc_left1.setEnabled(true);
                     fiv_rc_left2.setImageResource(R.drawable.dz_a);
+                    fiv_rc_left2.setEnabled(false);
                     fiv_rc_right1.setImageResource(R.drawable.szda_a);
+                    fiv_rc_right1.setEnabled(false);
                     fiv_rc_right2.setImageResource(R.drawable.closeqd);
+                    fiv_rc_right2.setEnabled(true);
                     stuname = messageList.get(0).getDesc();
                     ftv_rc_bottom.setText(stuname);
                     light[0] = 1;
@@ -673,9 +766,13 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     ftv_rc_text.setVisibility(View.GONE);
                     fib_rc_qiangda.setImageResource(R.drawable.qiangda2);
                     fiv_rc_left1.setImageResource(R.drawable.cxqd_b);
+                    fiv_rc_left1.setEnabled(true);
                     fiv_rc_left2.setImageResource(R.drawable.dz_b);
+                    fiv_rc_left2.setEnabled(true);
                     fiv_rc_right1.setImageResource(R.drawable.szda_b);
+                    fiv_rc_right1.setEnabled(true);
                     fiv_rc_right2.setImageResource(R.drawable.closeqd);
+                    fiv_rc_right2.setEnabled(true);
                     ftv_rc_bottom.setText("回显学生答案" + messageList.get(0).getDesc());
                     for (int i = 0; i < 4; i++) {
                         light[i] = 1;
@@ -834,24 +931,28 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
             mRequestUrl0 = "&action=close" + "&actionType=question";
         } else if (action.equals("queresDown")) {
             // question下一资源
-            mRequestUrl0 = "&action=resDown" + "&actionType=videoAndSound";
-        } else if (action.equals("shareImage")) {
-            // 分享图片
-            mRequestUrl0 = "&action=do:ShareStuAnswer" + "&actionType=shareImage";
+            mRequestUrl0 = "&action=resDown" + "&actionType=question";
+        } else if (action.equals("quechangeSizeBig")) {
+            // question放大
+            mRequestUrl0 = "&action=changeSizeBig" + "&actionType=question";
+        } else if (action.equals("quechangeSizeSmall")) {
+            // question缩小
+            mRequestUrl0 = "&action=changeSizeSmall" + "&actionType=question";
+        } else if (action.equals("quelookAnswer")) {
+            // question显示答案
+            mRequestUrl0 = "&action=lookAnswer" + "&actionType=question";
         }
         mRequestUrl = mRequestUrl_origin.replace("action", mRequestUrl0);
         mRequestUrl = mRequestUrl.replace("&", "&messageBean.");
         mRequestUrl = mRequestUrl.replace("?", "?messageBean.");
         Log.e("0129", "关键的请求" + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
-                Log.e("0129", "doAction: " + action);
-                if (action.equals("shareImage")) {
-                    Log.e("0129", "doActionClick: 成功！");
-                }
+            Log.e("0129", "doAction: " + action);
+
         }, error -> {
             Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
         });
-      MyApplication.addRequest(request, TAG);
+        MyApplication.addRequest(request, TAG);
     }
 
     // 互动开始答题按钮  教师端→一点通
@@ -866,7 +967,8 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
             hou = "0";
         }
         answer = answer + 1;
-        desc_num = String.valueOf(answer) + "_" + hou;
+        desc_num = answer + "_" + hou;
+        Log.e("wen0306", "doActionHuDong: " + desc_num);
         String mRequestUrl_origin = "http://" + ip + ":8901" + Constant.T_SEND_MESSAGE + "?type=0" + "&userType=teacher" +
                 "&source=" + teacherId + "&target=0" + "&messageType=0" + "actioncontent" + "&actionType=questionAnswer" + "&desc=" + desc_num;
 
@@ -895,8 +997,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
         }, error -> {
             Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
         });
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(request);
+        MyApplication.addRequest(request, TAG);
 
     }
 
@@ -915,6 +1016,9 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
         } else if (action.equals("dtfx")) {
             // 单题分析
             mRequestUrl0 = "&action=dtfx";
+        } else if (action.equals("dtxq")) {
+            // 答题详情
+            mRequestUrl0 = "&action=dtxq";
         } else if (action.equals("closeAnswerWindow")) {
             // 关闭互动窗口
             mRequestUrl0 = "&action=closeAnswerWindow";
@@ -995,19 +1099,19 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
         String ip = getIntent().getStringExtra("ip");
         String teacherId = getIntent().getStringExtra("teacherId");
         String mRequestUrl = "http://" + ip + ":8901" + Constant.T_GET_MESSAGE_LIST_BY_TEA + "?userId=" + teacherId;
+
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 JSONArray item = json.getJSONArray("messageList");
-
                 String itemList = item.get(item.length() - 1).toString();
+                Log.e("wen0306", "loadItems_Net: " + itemList);
                 itemList = "[" + itemList + "]";
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
                 List<TKeTangListEntity> messageList = gson.fromJson(itemList, new TypeToken<List<TKeTangListEntity>>() {
                 }.getType());
-                Log.e("0126", "loadItems_Net: " + messageList.size());
-                Log.e("messageList", "" + messageList);
+
                 //封装消息，传递给主线程
                 Message message = Message.obtain();
                 message.obj = messageList;
@@ -1016,11 +1120,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                 message.what = 100;
                 if (messageList.size() != 0) {
                     handler1.sendMessage(message);
-                } else {
-                    return;
                 }
-
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -1028,6 +1128,93 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
 
         });
 
+        MyApplication.addRequest(request, TAG);
+    }
+
+    private void loadResouceList() {
+        String ip = getIntent().getStringExtra("ip");
+        String mRequestUrl = "http://" + ip + ":8901" + Constant.T_REMOVE_GET_RESOUCE_LIST;
+
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String resourceString = json.getString("list");
+
+                Gson gson = new Gson();
+
+                //使用Goson框架转换Json字符串为列表
+                List<String> messageList = gson.fromJson(resourceString, new TypeToken<List<String>>() {
+                }.getType());
+
+                //封装消息，传递给主线程
+                Message message = Message.obtain();
+                message.obj = messageList;
+
+                //标识线程
+                message.what = 101;
+                handler1.sendMessage(message);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+
+        });
+        MyApplication.addRequest(request, TAG);
+
+    }
+
+    private void showMenu() {
+        if (contentView == null) {
+            contentView = LayoutInflater.from(this).inflate(R.layout.menu_homework, null, false);
+
+            ListView lv_homework = contentView.findViewById(R.id.lv_homework);
+            lv_homework.getLayoutParams().width = PxUtils.dip2px(this, 180);
+            window1 = new PopupWindow(contentView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, false);
+            window1.setOutsideTouchable(true);
+            lv_homework.setAdapter(myArrayAdapter);
+
+            lv_homework.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    showResouce(i);
+                    showMenuFlag = false;
+                    window1.dismiss();
+                }
+            });
+        }
+        if (menuList.size() == 0) {
+            myArrayAdapter.update(new ArrayList<>(Arrays.asList("暂无内容")));
+        } else {
+            myArrayAdapter.update(menuList);
+        }
+        window1.showAsDropDown(fiv_rc_skbcd, 0, 10);
+
+    }
+
+    private void showResouce(int id) {
+        String ip = getIntent().getStringExtra("ip");
+
+        String mRequestUrl = "http://" + ip + ":8901" + Constant.T_SEND_MESSAGE
+                + "?messageBean.type=0"
+                + "&messageBean.userType=teacher"
+                + "&messageBean.userNum=one"
+                + "&messageBean.source=" + getIntent().getStringExtra("teacherId")
+                + "&messageBean.target=0"
+                + "&messageBean.messageType=0"
+                + "&messageBean.action=openRes"
+                + "&messageBean.actionType=openRes"
+                + "&messageBean.resId="
+                + "&messageBean.resPath="
+                + "&messageBean.learnPlanId="
+                + "&messageBean.resRootPath="
+                + "&messageBean.desc=" + id;
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+
+            Log.e("0130", "response: " + response);
+        }, error -> {
+            Log.e("0130", "error: " + error);
+        });
         MyApplication.addRequest(request, TAG);
     }
 
@@ -1097,10 +1284,13 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
 
                 break;
             case R.id.fiv_rc_skbcd:
-                View inflater2 = LayoutInflater.from(this).inflate(R.layout.t_dialog_right, null, false);
-                window1 = new PopupWindow(inflater2, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, false);
-                window1.setOutsideTouchable(true);
-                window1.showAsDropDown(fiv_rc_skbcd, -150, 0);
+                if (showMenuFlag) {
+                    window1.dismiss();
+                    showMenuFlag = false;
+                } else {
+                    showMenu();
+                    showMenuFlag = true;
+                }
                 break;
         }
 
@@ -1119,8 +1309,6 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
         } else if (action.equals("toScan")) {
             mRequestUrl0 = "http://" + ip + ":8901" + Constant.T_SEND_MESSAGE + "?type=0" + "&userType=teacher" +
                     "&source=" + teacherId + "&target=0" + "&messageType=0" + "&action=toScan" + "&actionType=toScan";
-        } else if (action.equals("uploadImage")) {
-
         }
         mRequestUrl = mRequestUrl0.replace("&", "&messageBean.");
         mRequestUrl = mRequestUrl.replace("?", "?messageBean.");
@@ -1159,13 +1347,12 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
         builder.show();
     }
 
-
-    private void permissionOpenCamera(){
+    // 拍照分享
+    private void permissionOpenCamera() {
         Intent intent = new Intent(this, TCameraShareActivity.class);
         intent.putExtra("learnPlanId", getIntent().getStringExtra("learnPlanId"));
         intent.putExtra("userId", getIntent().getStringExtra("teacherId"));
         intent.putExtra("ip", getIntent().getStringExtra("ip"));
-
         startActivity(intent);
     }
 

@@ -3,6 +3,7 @@ package com.example.yidiantong.ui;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +23,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.NoScrollViewPager;
+import com.example.yidiantong.adapter.MainPagerAdapter;
 import com.example.yidiantong.fragment.MainBookFragment;
 import com.example.yidiantong.fragment.MainCourseFragment;
 import com.example.yidiantong.fragment.MainHomeFragment;
@@ -101,14 +104,32 @@ public class MainPagerActivity extends AppCompatActivity implements View.OnClick
         courseFragment = new MainCourseFragment();
         bookFragment = new MainBookFragment();
         myFragment = new MainMyFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.vp_main, homeFragment).commit();
 
-//        vp_main = findViewById(R.id.vp_main);
-//        MainPagerAdapter adapter = new MainPagerAdapter(getSupportFragmentManager());
-//        vp_main.setAdapter(adapter);
-//        vp_main.setCurrentItem(0);
-
-        checkUpdate(); // 版本更新检查
+        int idx_new = 0;
+        if (savedInstanceState != null) {
+            // 恢复默认fragment
+            idx_new = savedInstanceState.getInt("id_bottom_onclick");
+        }else{
+            checkUpdate(); // 版本更新检查
+        }
+        switch (idx_new){
+            case 0:
+                getSupportFragmentManager().beginTransaction().replace(R.id.vp_main, homeFragment).commit();
+                break;
+            case 1:
+                getSupportFragmentManager().beginTransaction().replace(R.id.vp_main, studyFragment).commit();
+                break;
+            case 2:
+                getSupportFragmentManager().beginTransaction().replace(R.id.vp_main, courseFragment).commit();
+                break;
+            case 3:
+                getSupportFragmentManager().beginTransaction().replace(R.id.vp_main, bookFragment).commit();
+                break;
+            case 4:
+                getSupportFragmentManager().beginTransaction().replace(R.id.vp_main, myFragment).commit();
+                break;
+        }
+        SwitchTabById(idx_new);
     }
 
     @Override
@@ -120,7 +141,6 @@ public class MainPagerActivity extends AppCompatActivity implements View.OnClick
                     SwitchTabById(0);
 //                    vp_main.setCurrentItem(0, false);
                     ft.replace(R.id.vp_main, homeFragment);
-
                 }
                 break;
             case R.id.ll_bottom_study:
@@ -280,4 +300,14 @@ public class MainPagerActivity extends AppCompatActivity implements View.OnClick
         MyApplication.addRequest(request, TAG);
     }
 
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("id_bottom_onclick", id_bottom_onclick);
+    }
 }

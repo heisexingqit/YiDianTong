@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -27,16 +28,20 @@ import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.View.ClickableTextView;
+import com.example.yidiantong.bean.TKeTangListEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.ImageUtils;
 import com.example.yidiantong.util.JsonUtils;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Rationale;
 import com.yanzhenjie.permission.RequestExecutor;
 import com.yanzhenjie.permission.runtime.Permission;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -68,6 +73,17 @@ public class TCameraShareActivity extends AppCompatActivity implements View.OnCl
     boolean pullFlag = false;
     private String ip;
     private String userId;
+
+    // 创建一个handler runable组成的监听器，间隔500ms执行一次
+    private Handler handler = new Handler();
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            getYDTMessage();
+            handler.postDelayed(this, 500);
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,12 +125,14 @@ public class TCameraShareActivity extends AppCompatActivity implements View.OnCl
             public void onActivityResult(ActivityResult result) {
                 if (result.getResultCode() == RESULT_OK) {
                     File Image = new File(getExternalCacheDir(), "output_temp.jpg");
-
                     imageBase64 = ImageUtils.Bitmap2StrByBase64(TCameraShareActivity.this, Image);
                     uploadImage();
                 }
             }
         });
+
+        // 启动runnable监听器
+        handler.postDelayed(runnable, 500);
 
     }
 
@@ -154,7 +172,6 @@ public class TCameraShareActivity extends AppCompatActivity implements View.OnCl
                 if (pushFlag) {
                     showImage(true);
                 }
-
                 break;
             case R.id.tv_share_off:
                 if (pullFlag) {
@@ -315,7 +332,6 @@ public class TCameraShareActivity extends AppCompatActivity implements View.OnCl
     private void uploadImage() {
 
         String mRequestUrl = "http://" + ip + ":8901" + Constant.T_YDT_UPLOAD_IMAGE;
-        Log.e("0129", "uploadImage: " + mRequestUrl);
 
 
         Map<String, String> params = new HashMap<>();
@@ -323,9 +339,9 @@ public class TCameraShareActivity extends AppCompatActivity implements View.OnCl
         params.put("baseCode", imageBase64);
         params.put("learnPlanId", learnPlanId);
         params.put("userId", userId);
-        Log.e("0129", "baseCode: " + imageBase64);
-        Log.e("0129", "learnPlanId: " + learnPlanId);
-        Log.e("0129", "userId: " + userId);
+//        Log.e("0129", "baseCode: " + imageBase64);
+//        Log.e("0129", "learnPlanId: " + learnPlanId);
+//        Log.e("0129", "userId: " + userId);
 
         StringRequest request = new StringRequest(Request.Method.POST, mRequestUrl, response -> {
             try {
@@ -333,7 +349,6 @@ public class TCameraShareActivity extends AppCompatActivity implements View.OnCl
 
                 String isSuccess = json.getString("status");
                 if (isSuccess.equals("success")) {
-                    Log.e("0129", "uploadImage: success");
                     imageUrl = json.getString("url");
 //                    TKeTangListEntity entity = new TKeTangListEntity();
 //                    entity.setAction("do:ShareStuAnswer");
@@ -379,7 +394,7 @@ public class TCameraShareActivity extends AppCompatActivity implements View.OnCl
                 + "?messageBean.type=0"
                 + "&messageBean.userType=teacher"
                 + "&messageBean.userNum=one"
-                + "&messageBean.source=userId"
+                + "&messageBean.source=" + userId
                 + "&messageBean.target=0"
                 + "&messageBean.messageType=0"
                 + "&messageBean.resId=" + content
@@ -394,11 +409,11 @@ public class TCameraShareActivity extends AppCompatActivity implements View.OnCl
         }
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
-            if(isShow){
+            if (isShow) {
                 pullFlag = true;
                 pushFlag = false;
 
-            }else{
+            } else {
                 pullFlag = false;
                 pushFlag = true;
             }
@@ -408,5 +423,44 @@ public class TCameraShareActivity extends AppCompatActivity implements View.OnCl
             Log.e("0130", "error: " + error);
         });
         MyApplication.addRequest(request, TAG);
+    }
+
+
+    private void getYDTMessage() {
+        // 使用Volley框架进行网络请求
+        String mRequestUrl = "http://" + ip + ":8901" + Constant.T_GET_MESSAGE_LIST_BY_TEA + "?userId=shitiShow";
+
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String jsonArray = json.getString("messageList");
+                Gson gson = new Gson();
+                List<TKeTangListEntity> messageList = gson.fromJson(jsonArray, new TypeToken<List<TKeTangListEntity>>() {
+                }.getType());
+                if (messageList.size() > 0) {
+
+                    // 获取到messageList最新的一条消息
+                    TKeTangListEntity entity = messageList.get(messageList.size() - 1);
+                    if (entity.getAction().equals("do:closeShareImage")) {
+                        pullFlag = false;
+                        pushFlag = true;
+                        changeUI();
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Log.e("wen", "Volley_Error: " + error.toString());
+        });
+        MyApplication.addRequest(request, TAG);
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 终止runable监听器
+        handler.removeCallbacks(runnable);
     }
 }

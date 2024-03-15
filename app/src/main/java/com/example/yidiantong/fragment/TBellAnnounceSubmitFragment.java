@@ -233,7 +233,7 @@ public class TBellAnnounceSubmitFragment extends Fragment implements View.OnClic
                     tv.setText("请设置定时发布时间！");
                 }
 //                else {
-//                    tv.setText("发表成功");    //内容
+//                    tv.setText("发布成功");    //内容
 //                }
 
                 tv.setTextSize(17);//字体大小
@@ -282,9 +282,9 @@ public class TBellAnnounceSubmitFragment extends Fragment implements View.OnClic
                 Boolean isSuccess = json.getBoolean("success");
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), AlertDialog.THEME_HOLO_LIGHT);
                 if (isSuccess) {
-                    builder.setTitle("发表成功");
+                    builder.setTitle("发布成功");
                 } else {
-                    builder.setTitle("发表失败，请稍后重试");
+                    builder.setTitle("发布失败，请稍后重试");
                 }
                 builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override

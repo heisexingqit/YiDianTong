@@ -137,6 +137,10 @@ public class TMainMyFragment extends Fragment implements View.OnClickListener {
         // 点击头像
         fiv_my = view.findViewById(R.id.fiv_my);
 
+        // 获取图片
+        String picUrl = MyApplication.picUrl;
+        ImageLoader.getInstance().displayImage(picUrl, fiv_my, MyApplication.getLoaderOptions());
+
         // 设置点击事件
         f_ll_info.setOnClickListener(this);
         f_ll_us.setOnClickListener(this);
@@ -239,11 +243,6 @@ public class TMainMyFragment extends Fragment implements View.OnClickListener {
         username = MyApplication.username;
         realName = MyApplication.cnName;
         tv_username.setText(realName + "(" + username + ")");
-
-
-        // 获取图片
-        String picUrl = MyApplication.picUrl;
-        ImageLoader.getInstance().displayImage(picUrl, fiv_my, MyApplication.getLoaderOptions());
 
         preferences = getActivity().getSharedPreferences("config", Context.MODE_PRIVATE);
 
@@ -380,13 +379,13 @@ public class TMainMyFragment extends Fragment implements View.OnClickListener {
             case R.id.f_ll_center:
 
             case R.id.fbtn_exit:
+
                 // 关闭自动登录
                 MyApplication.autoLogin = false;
                 // 退出登录
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                 //两个一起用
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 //登录成功跳转
                 startActivity(intent);
                 break;

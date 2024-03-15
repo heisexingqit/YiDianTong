@@ -3,6 +3,7 @@ package com.example.yidiantong.fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,13 +28,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.android.volley.toolbox.StringRequest;
@@ -42,18 +43,28 @@ import com.bigkoo.pickerview.listener.OnTimeSelectListener;
 import com.bigkoo.pickerview.view.TimePickerView;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
+import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.adapter.MyArrayAdapter;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.PxUtils;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.CombinedChart;
+import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.CombinedData;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.DefaultAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 
@@ -66,9 +77,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -81,6 +94,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
     private TextView tv_class[] = new TextView[4];
 
     private String todyDateString;
+    private ClickableImageView refresh;
 
     //  学期信息类
     class Semester {
@@ -129,11 +143,6 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_t_main_report, container, false);
-
-        view.findViewById(R.id.back).setOnClickListener(v -> {
-            getActivity().finish();
-        });
-
         LinearLayout ll_parent = view.findViewById(R.id.ll_parent);
 
         username = MyApplication.username;
@@ -143,18 +152,18 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
          * 三个版块块显示（后期可能用Fragment方式）
          */
         // 获取屏幕宽度
-        int screenWidth = getScreenWidth();
+//        int screenWidth = getScreenWidth();
         // 计算高度为宽度的1.2倍
-        int height = (int) (screenWidth * 1.1);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                height
-        );
+//        int height = (int) (screenWidth * 1.1);
+//        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+//                LinearLayout.LayoutParams.MATCH_PARENT,
+//                height
+//        );
         /** 1课堂授课
          *
          */
         v[0] = LayoutInflater.from(getActivity()).inflate(R.layout.item_t_statistic_report_board, ll_parent, false);
-        v[0].setLayoutParams(layoutParams);
+//        v[0].setLayoutParams(layoutParams);
 
         // 时间选择器
         time[0] = v[0].findViewById(R.id.tv_date);
@@ -212,7 +221,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
          *
          */
         v[1] = LayoutInflater.from(getActivity()).inflate(R.layout.item_t_statistic_report_board, ll_parent, false);
-        v[1].setLayoutParams(layoutParams);
+//        v[1].setLayoutParams(layoutParams);
 
         // 时间选择器
         time[1] = v[1].findViewById(R.id.tv_date);
@@ -248,7 +257,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         // 数据Tv颜色
         tv_num[1] = v[1].findViewById(R.id.tv_times_num);
         tv_num[1].setTextColor(0xFF9518ba);
-        textViewFontChange(tv_num[1], "0 / 0",  2);
+        textViewFontChange(tv_num[1], "0 / 0", 2);
 
         // 数据
         String content2[] = {"试题总数: 0", "平均题数: 0"};
@@ -271,7 +280,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
          *
          */
         v[2] = LayoutInflater.from(getActivity()).inflate(R.layout.item_t_statistic_report_board, ll_parent, false);
-        v[2].setLayoutParams(layoutParams);
+//        v[2].setLayoutParams(layoutParams);
 
         // 时间选择器
         time[2] = v[2].findViewById(R.id.tv_date);
@@ -299,7 +308,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         iv.setImageResource(imgs[2]);
         // 描述
         tv_times = v[2].findViewById(R.id.tv_times);
-        tv_times.setText("有效次数:");
+        tv_times.setText("批阅总数:");
         gl_content = v[2].findViewById(R.id.gl_content);
 
         // 数据Tv颜色
@@ -387,7 +396,13 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         //  2、数据显示 handler
         //  3、UI刷新方法 refresh
         // --------------------#
-
+        refresh = view.findViewById(R.id.iv_refresh);
+        refresh.setOnClickListener(v -> {
+            loadSemester();
+            loadClassInfo();
+            loadHWInfo();
+            loadQuInfo();
+        });
 
         return view;
     }
@@ -438,7 +453,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
                 try {
                     refreshHW((JSONObject) message.obj);
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Log.e("wen0309", "handleMessage: " + e);
                 }
             } else if (message.what == 103) {
                 // 更新批阅数据
@@ -465,7 +480,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
 
             ListView lv_homework = topTimeListView.findViewById(R.id.lv_homework);
             // 设置视图宽度
-            lv_homework.getLayoutParams().width = PxUtils.dip2px(getActivity(), 180);
+            lv_homework.getLayoutParams().width = PxUtils.dip2px(getActivity(), 200);
 
             lv_homework.setAdapter(myArrayAdapter);
             lv_homework.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -553,32 +568,30 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
 
     // 静态数据，加载一次即可
     private void loadSemester() {
-        Log.e("wenee", "loadSemester: " + userId);
-
         String mRequestUrl = Constant.API + Constant.T_REPORT_SEMESTER + "?unitId=1101010010001";
         StringRequest request = new StringRequest(mRequestUrl, response -> {
-
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
-                Log.e("wenee", "loadSemester: " + json);
-
 
                 JSONArray data = json.getJSONArray("data");
 
                 semesterList.clear(); // 同步前先清空
-
                 for (int i = 0; i < data.length(); ++i) {
                     JSONObject o = data.getJSONObject(i);
                     semesterList.add(o.getString("name"));
                     semesterMap.put(o.getString("name"), new Semester(o.getString("yearTermStartTime").split("\\.")[0], o.getString("yearTermEndTime").split("\\.")[0]));
+                }
+                if (semesterList.size() > 0) {
+                    tv_top_time.setText(semesterList.get(0));
+                    loadTopInfo(); // 有时间数据后再请求顶部数据
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
         }, error -> {
-            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
+//            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: loadSemester " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
     }
@@ -594,14 +607,12 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
             end = semester.endTime;
         }
         String mRequestUrl = Constant.API + Constant.T_REPORT_TOP + "?userId=" + username + "&unitId=1101010010001" + "&startTime=" + start + "&endTime=" + end;
-        Log.e(TAG, "loadTopInfo: " + mRequestUrl);
+        Log.e("wen0307", "loadTopInfo: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
-
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
-
                 JSONObject data = json.getJSONObject("data");
-                Log.e("wenee", "loadTopInfo: " + data);
+//                Log.e("wen0307", "loadTopInfo: " + json);
                 // 封装消息，传递给主线程
                 Message message = Message.obtain();
 
@@ -617,26 +628,99 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
             }
 
         }, error -> {
-            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
+//            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: loadTopInfo " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
     }
 
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     private void loadClassInfo() {
         String start = time[0].getText().toString() + " 00:00:00";
-        String end = time[0].getText().toString() + " 23:59:59";
+        // 将end时间改为start时间的下一天
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(sdf.parse(start));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        String end = sdf.format(calendar.getTime());
 
         String mRequestUrl = Constant.API + Constant.T_REPORT_CLASS + "?userId=" + username + "&unitId=1101010010001" + "&startTime=" + start + "&endTime=" + end;
-        Log.e(TAG, "loadClassInfo: " + mRequestUrl);
-
         StringRequest request = new StringRequest(mRequestUrl, response -> {
-
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
-
+                String testString =
+                        "{\n" +
+                                "    \"status\": \"yes\",\n" +
+                                "    \"hdNum\": 88,\n" +
+                                "    \"xList\": [\n" +
+                                "        \"提问\",\n" +
+                                "        \"抢答\",\n" +
+                                "        \"随机\",\n" +
+                                "        \"连答\"\n" +
+                                "    ],\n" +
+                                "    \"contentNum\": 4,\n" +
+                                "    \"effectiveKeci\": 3,\n" +
+                                "    \"yList\": [\n" +
+                                "        1,\n" +
+                                "        2,\n" +
+                                "        10,\n" +
+                                "        3\n" +
+                                "    ],\n" +
+                                "    \"tableData\": [\n" +
+                                "        [\n" +
+                                "            \"1\",\n" +
+                                "            \"2020级高二(1)班,\",\n" +
+                                "            \"2021-12-28 11:20:26.0\",\n" +
+                                "            \"1\",\n" +
+                                "            \"3\",\n" +
+                                "            \"8\",\n" +
+                                "            \"3\",\n" +
+                                "            \"1.0\"\n" +
+                                "        ],\n" +
+                                "        [\n" +
+                                "            \"2\",\n" +
+                                "            \"2020级高二(1)班,\",\n" +
+                                "            \"2021-12-28 10:30:11.0\",\n" +
+                                "            \"2\",\n" +
+                                "            \"2\",\n" +
+                                "            null,\n" +
+                                "            \"4\",\n" +
+                                "            \"1.0\"\n" +
+                                "        ],\n" +
+                                "        [\n" +
+                                "            \"3\",\n" +
+                                "            \"2020级高二(1)班,\",\n" +
+                                "            \"2021-12-27 11:19:11.0\",\n" +
+                                "            \"1\",\n" +
+                                "            \"8\",\n" +
+                                "            \"1\",\n" +
+                                "            \"3\",\n" +
+                                "            \"1.0\"\n" +
+                                "        ]\n" +
+                                "    ],\n" +
+                                "    \"sumKeci\": 3,\n" +
+                                "    \"tableHead\": [\n" +
+                                "        \"序号\",\n" +
+                                "        \"班级\",\n" +
+                                "        \"时间\",\n" +
+                                "        \"内容\",\n" +
+                                "        \"批注\",\n" +
+                                "        \"板书\",\n" +
+                                "        \"互动\",\n" +
+                                "        \"有效课次\"\n" +
+                                "    ],\n" +
+                                "    \"pzNum\": 13,\n" +
+                                "    \"bsNum\": 9\n" +
+                                "}";
+//                JSONObject data = new JSONObject(testString);
                 JSONObject data = json.getJSONObject("data");
-                Log.e("0108", "loadClassInfo: " + data);
+                Log.e("wen0312", "loadClassInfo: " + data);
+
+                // 将String转为JSONObject
                 // 封装消息，传递给主线程
                 Message message = Message.obtain();
 
@@ -650,9 +734,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
         }, error -> {
-            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -660,18 +742,152 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
 
     private void loadHWInfo() {
         String start = time[1].getText().toString() + " 00:00:00";
-        String end = time[1].getText().toString() + " 23:59:59";
+        // 将end时间改为start时间的下一天
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(sdf.parse(start));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        String end = sdf.format(calendar.getTime());
 
-        String mRequestUrl = Constant.API + Constant.T_REPORT_HW + "?userID=" + username + "&unitId=1101010010001" + "&startTime=" + start + "&endTime=" + end;
-        Log.e(TAG, "loadHWInfo: " + mRequestUrl);
+        String mRequestUrl = Constant.API + Constant.T_REPORT_HW + "?userId=" + username + "&unitId=1101010010001" + "&startTime=" + start + "&endTime=" + end;
+//        Log.e("wen0308", "loadHWInfo: " + mRequestUrl);
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
 
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
-
+                String testString =
+                        "   {\n" +
+                                "    \"effectiveKeciNum\": \"2.10\",\n" +
+                                "    \"queSumNum\": 30,\n" +
+                                "    \"queAvgNum\": 7,\n" +
+                                "    \"sumKeciNum\": 4,\n" +
+                                "    \"status\": \"yes\",\n" +
+                                "    \"X1List\": [\n" +
+                                "        {\n" +
+                                "            \"data\": [\n" +
+                                "                1,\n" +
+                                "                3,\n" +
+                                "                5,\n" +
+                                "                7\n" +
+                                "            ],\n" +
+                                "            \"name\": \"提交率\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"data\": [\n" +
+                                "                2,\n" +
+                                "                4,\n" +
+                                "                6,\n" +
+                                "                8\n" +
+                                "            ],\n" +
+                                "            \"name\": \"批改率\"\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"X2List\": [\n" +
+                                "        {\n" +
+                                "            \"data\": [\n" +
+                                "                30,\n" +
+                                "                30,\n" +
+                                "                104,\n" +
+                                "                104\n" +
+                                "            ],\n" +
+                                "            \"name\": \"总分\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"data\": [\n" +
+                                "                22.4,\n" +
+                                "                27.5,\n" +
+                                "                32.5,\n" +
+                                "                88.5\n" +
+                                "            ],\n" +
+                                "            \"name\": \"平均分\"\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "            \"data\": [\n" +
+                                "                74.67,\n" +
+                                "                91.67,\n" +
+                                "                31.25,\n" +
+                                "                85.1\n" +
+                                "            ],\n" +
+                                "            \"name\": \"得分率\"\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"tableData\": [\n" +
+                                "        [\n" +
+                                "            \"0\",\n" +
+                                "            \"高二(4)班物理\",\n" +
+                                "            \"2021-12-20 14:32\",\n" +
+                                "            \"2021-12-21 23:59\",\n" +
+                                "            \"5\",\n" +
+                                "            \"88.10%\",\n" +
+                                "            \"100.00%\",\n" +
+                                "            \"22.4/30.0\",\n" +
+                                "            \"74.67%\",\n" +
+                                "            \"0.70\"\n" +
+                                "        ],\n" +
+                                "        [\n" +
+                                "            \"1\",\n" +
+                                "            \"高二(1)班物理\",\n" +
+                                "            \"2021-12-20 14:32\",\n" +
+                                "            \"2021-12-21 23:59\",\n" +
+                                "            \"5\",\n" +
+                                "            \"100.00%\",\n" +
+                                "            \"100.00%\",\n" +
+                                "            \"27.5/30.0\",\n" +
+                                "            \"91.67%\",\n" +
+                                "            \"0.70\"\n" +
+                                "        ],\n" +
+                                "        [\n" +
+                                "            \"2\",\n" +
+                                "            \"高二(4)班物理\",\n" +
+                                "            \"2021-12-16 16:30\",\n" +
+                                "            \"2021-12-18 23:59\",\n" +
+                                "            \"10\",\n" +
+                                "            \"4.76%\",\n" +
+                                "            \"100.00%\",\n" +
+                                "            \"32.5/104.0\",\n" +
+                                "            \"31.25%\",\n" +
+                                "            \"0.00\"\n" +
+                                "        ],\n" +
+                                "        [\n" +
+                                "            \"3\",\n" +
+                                "            \"高二(1)班物理\",\n" +
+                                "            \"2021-12-16 16:30\",\n" +
+                                "            \"2021-12-18 23:59\",\n" +
+                                "            \"10\",\n" +
+                                "            \"100.00%\",\n" +
+                                "            \"100.00%\",\n" +
+                                "            \"88.5/104.0\",\n" +
+                                "            \"85.10%\",\n" +
+                                "            \"0.70\"\n" +
+                                "        ]\n" +
+                                "    ],\n" +
+                                "    \"tableHead\": [\n" +
+                                "        \"序号\",\n" +
+                                "        \"班级\",\n" +
+                                "        \"开始时间\",\n" +
+                                "        \"结束时间\",\n" +
+                                "        \"试题数量\",\n" +
+                                "        \"提交率\",\n" +
+                                "        \"批改率\",\n" +
+                                "        \"平均分/总分\",\n" +
+                                "        \"得分率\",\n" +
+                                "        \"有效次数\"\n" +
+                                "    ],\n" +
+                                "    \"classNameList\": [\n" +
+                                "        \"高二(1)班\",\n" +
+                                "        \"高二(2)班\",\n" +
+                                "        \"高二(3)班\",\n" +
+                                "        \"高二(4)班\"\n" +
+                                "    ]\n" +
+                                "}";
+//                JSONObject data = new JSONObject(testString);
                 JSONObject data = json.getJSONObject("data");
-                Log.e("0108", "loadHWInfo: " + data);
+                Log.e("wen0308", "loadHWInfo: " + data);
+
                 // 封装消息，传递给主线程
                 Message message = Message.obtain();
 
@@ -683,22 +899,31 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
                 handler.sendMessage(message);
 
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e("json", "loadHWInfo: " + e);
+
             }
 
         }, error -> {
-            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
+//            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: loadHWInfo " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
     }
 
     private void loadQuInfo() {
         String start = time[2].getText().toString() + " 00:00:00";
-        String end = time[2].getText().toString() + " 23:59:59";
+        // 将end时间改为start时间的下一天
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(sdf.parse(start));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        String end = sdf.format(calendar.getTime());
 
         String mRequestUrl = Constant.API + Constant.T_REPORT_QU + "?userId=" + username + "&unitId=1101010010001" + "&startTime=" + start + "&endTime=" + end;
-        Log.e(TAG, "loadQuInfo: " + mRequestUrl);
+        Log.e("wen0307", "loadQuInfo: " + mRequestUrl);
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
 
@@ -722,8 +947,8 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
             }
 
         }, error -> {
-            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
+//            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: loadQuInfo " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
     }
@@ -740,13 +965,13 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         tv_num4.setText(JsonUtils.clearString(data.getString("pgNum")));
     }
 
-    // 课堂授课刷新UI
+    // 课堂授课刷新UI 【第二模块】
     private void refreshClass(JSONObject data) throws JSONException {
         String status = data.getString("status");
-        BarChart bc_main = v[1].findViewById(R.id.bc_mian);
-        LinearLayout ll_show = v[2].findViewById(R.id.ll_show);
-        TextView tv_empty = v[2].findViewById(R.id.tv_empty);
-        TableLayout tl_main = v[2].findViewById(R.id.tl_main);
+        BarChart bc_main = v[0].findViewById(R.id.bc_mian);
+        LinearLayout ll_show = v[0].findViewById(R.id.ll_show);
+        TextView tv_empty = v[0].findViewById(R.id.tv_empty);
+        TableLayout tl_main = v[0].findViewById(R.id.tl_main);
         bc_main.setScaleEnabled(false);
         bc_main.setTouchEnabled(false);
 
@@ -757,62 +982,85 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
             textViewFontChange(tv_class[0], "内容: 0", 4);
             textViewFontChange(tv_class[1], "批注: 0", 4);
             textViewFontChange(tv_class[2], "互动: 0", 4);
-            textViewFontChange(tv_class[3], "版本: 0", 4);
+            textViewFontChange(tv_class[3], "板书: 0", 4);
             tv_num[0].setText("0");
             return;
         } else {
+            Log.e("wen0308", "refreshClass: " + data);
             ll_show.setVisibility(View.VISIBLE);
             tv_empty.setVisibility(View.GONE);
         }
 
+        // 直接数据
+        textViewFontChange(tv_class[0], "内容: " + data.getString("contentNum"), 4);
+        textViewFontChange(tv_class[1], "批注: " + data.getString("pzNum"), 4);
+        textViewFontChange(tv_class[2], "互动: " + data.getString("hdNum"), 4);
+        textViewFontChange(tv_class[3], "板书: " + data.getString("bsNum"), 4);
+
+        String effectiveKeciNum = data.getString("effectiveKeci");
+        String sumKeciNum = data.getString("sumKeci");
+
+        textViewFontChange(tv_num[0], effectiveKeciNum + " / " + sumKeciNum, effectiveKeciNum.length() + 1);
+
         // 绘制柱状图
+        List<BarEntry> entries = new ArrayList<>();
+        JSONArray yValues = data.getJSONArray("yList");
+        for (int i = 0; i < yValues.length(); i++) {
+            entries.add(new BarEntry((float) (i + 0.5), yValues.getInt(i)));
+        }
+        // Create a dataset
+        BarDataSet dataSet = new BarDataSet(entries, "");
+        dataSet.setColor(Color.parseColor("#a7cf93")); // Set color for the bars
 
-        String x_data[] = {"提问", "随机", "抢答"};
-        String y_data[] = {"5", "1", "3"};
-        BarChart barChart = bc_main;
-        barChart.getDescription().setEnabled(false);
-        barChart.setDrawGridBackground(false);
-        ArrayList<BarEntry> barEntries = new ArrayList<>();
-        barEntries.add(new BarEntry(0, 10)); // 第一个柱子的位置和高度
-        barEntries.add(new BarEntry(1, 20)); // 第二个柱子的位置和高度
-        ArrayList<String> labels = new ArrayList<>();
-        labels.add("Label 1");
-        labels.add("Label 2");
-        // 添加更多标签...
+        // Set xValues below the bars
+        XAxis xAxis = bc_main.getXAxis();
 
-//        XAxis xAxis = barChart.getXAxis();
-//        xAxis.setValueFormatter(new MyValueFormatterX(labels));
-//        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-//        xAxis.setGranularity(1f);
-//
-//        YAxis yAxis = barChart.getAxisLeft();
-//        yAxis.setValueFormatter(new DefaultAxisValueFormatter(0)); // 设置 Y 轴为整数
-//
-//        BarDataSet barDataSet = new BarDataSet(barEntries, "Label");
-//        barDataSet.setColor(Color.GREEN);
-//
-//        BarData barData = new BarData(barDataSet);
-//        barData.setValueFormatter(new DefaultValueFormatter(0)); // 设置标注为整数
-//
-//        barChart.setData(barData);
-//        barChart.setFitBars(true);
-//        barChart.animateY(2000); // 可选的动画效果
+        // 确保X轴标签与柱子对齐
+        xAxis.setGranularity(1f); // 设置最小间隔为1，避免刻度间距导致标签错位
+        xAxis.setLabelCount(yValues.length(), false); // 设置X轴标签数量与数据点个数一致，但不启用自动换行
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setCenterAxisLabels(true); // 尝试居中对齐标签
+        // 确保X轴标签与柱子对齐
+        xAxis.setValueFormatter(new MyXAxisValueFormatter(data.getJSONArray("xList"))); // Custom XAxisValueFormatter
+        xAxis.setDrawGridLines(false);
+        // 获取右侧Y轴并设置为不可见
+        YAxis yAxisRight = bc_main.getAxisRight();
+        yAxisRight.setEnabled(false);
+        // Create a BarData object and assign it to BarChart
+        BarData barData = new BarData(dataSet);
+        barData.setValueFormatter(new MyValueFormatter());
+        barData.setValueTextSize(20);
+        bc_main.setData(barData);
+        bc_main.getDescription().setEnabled(false); // Disable description
+        bc_main.setDrawValueAboveBar(true); // Set values below bars
+        // 关闭图例显示
+        bc_main.getLegend().setEnabled(false);
+        // Refresh the chart
+        bc_main.invalidate();
 
 
         // 绘制表格
         makeTableUI(data, tl_main);
     }
 
-    // 布置作业刷新UI
+    // 布置作业刷新UI 【第三板块】
     private void refreshHW(JSONObject data) throws JSONException {
         String status = data.getString("status");
-        BarChart bc_main = v[1].findViewById(R.id.bc_mian);
-        LinearLayout ll_show = v[2].findViewById(R.id.ll_show);
-        TextView tv_empty = v[2].findViewById(R.id.tv_empty);
-        TableLayout tl_main = v[2].findViewById(R.id.tl_main);
-        bc_main.setScaleEnabled(false);
-        bc_main.setTouchEnabled(false);
-
+        HorizontalBarChart hbc_mian = v[1].findViewById(R.id.hbc_mian);
+        BarChart chart = v[1].findViewById(R.id.bc_mian);
+        chart.setVisibility(View.GONE);
+        CombinedChart combinedChart = v[1].findViewById(R.id.cbc_mian);
+        LinearLayout ll_show = v[1].findViewById(R.id.ll_show);
+        TextView tv_empty = v[1].findViewById(R.id.tv_empty);
+        TableLayout tl_main = v[1].findViewById(R.id.tl_main);
+        RelativeLayout rl_show = v[1].findViewById(R.id.rl_show);
+        rl_show.setVisibility(View.VISIBLE);
+        hbc_mian.setVisibility(View.VISIBLE);
+        hbc_mian.setScaleEnabled(false);
+        hbc_mian.setTouchEnabled(false);
+        combinedChart.setVisibility(View.VISIBLE);
+        combinedChart.setScaleEnabled(false);
+        combinedChart.setTouchEnabled(false);
         if (status.equals("no")) {
             ll_show.setVisibility(View.GONE);
             tv_empty.setVisibility(View.VISIBLE);
@@ -826,8 +1074,8 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
             tv_empty.setVisibility(View.GONE);
         }
         // 直接数据
-        textViewFontChange(tv_qu[0], "试题总数: " + data.getString("queSumNum"), 6);
-        textViewFontChange(tv_qu[1], "平均题数: " + data.getString("queAvgNum"), 6);
+        textViewFontChange(tv_hw[0], "试题总数: " + data.getString("queSumNum"), 6);
+        textViewFontChange(tv_hw[1], "平均题数: " + data.getString("queAvgNum"), 6);
 
         String effectiveKeciNum = data.getString("effectiveKeciNum");
         String sumKeciNum = data.getString("sumKeciNum");
@@ -836,17 +1084,215 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         // 绘图数据
         // 图1
         JSONArray Xlist = data.getJSONArray("classNameList");
-        JSONArray Ylist = data.getJSONArray("X1List");
+        JSONArray Ylist1 = data.getJSONArray("X1List");
+        List<Float> submitRates = new ArrayList<>();
+        List<Float> correctRates = new ArrayList<>();
+        JSONObject Ylist1_1 = Ylist1.getJSONObject(0);
+        JSONObject Ylist1_2 = Ylist1.getJSONObject(1);
+        // 构建数据集 提交率和批改率
+        for (int i = 0; i < Xlist.length(); i++) {
+            if (Ylist1_1.get("name").equals("提交率")) {
+                submitRates.add((float) Ylist1_1.getJSONArray("data").getDouble(i));
+                correctRates.add((float) Ylist1_2.getJSONArray("data").getDouble(i));
+            } else {
+                submitRates.add((float) Ylist1_2.getJSONArray("data").getDouble(i));
+                correctRates.add((float) Ylist1_1.getJSONArray("data").getDouble(i));
+            }
+        }
 
-        // 图二
-        Ylist = data.getJSONArray("X2List");
+        // 顺序逆向一下
+        Collections.reverse(submitRates);
+        Collections.reverse(correctRates);
+        JSONArray classNameList = data.getJSONArray("classNameList");
+        // reverseX顺序逆向一下
+        List<String> XlistReverse = new ArrayList<>();
+        for (int i = classNameList.length() - 1; i >= 0; i--) {
+            XlistReverse.add(classNameList.getString(i));
+        }
+        // 还原为JSONArray
+        JSONArray XlistReverseJson = new JSONArray(XlistReverse);
+
+        List<BarEntry> submitEntries = new ArrayList<>();
+        List<BarEntry> correctEntries = new ArrayList<>();
+
+        for (int i = 0; i < Xlist.length(); i++) {
+            // 提交率数据集
+            submitEntries.add(new BarEntry(i, submitRates.get(i)));
+            // 批改率数据集
+            correctEntries.add(new BarEntry(i, correctRates.get(i)));
+        }
+
+        BarDataSet set1 = new BarDataSet(submitEntries, "提交率");
+        set1.setColor(Color.parseColor("#7ec6c8")); // 可以自定义颜色
+        set1.setValueFormatter(new PersentValueFormatter()); // 应用格式化器
+        BarDataSet set2 = new BarDataSet(correctEntries, "批改率");
+        set2.setColor(Color.parseColor("#fac9d2")); // 可以自定义颜色
+        set2.setValueFormatter(new PersentValueFormatter()); // 应用格式化器
+        // 如果想在柱状图上方显示数值，可以启用以下设置
+        set1.setDrawValues(true);
+        set2.setDrawValues(true);
+        // 计算组间距、柱子间距和柱子宽度
+        float barWidth = 0.35f; // 条目宽度
+        float groupSpace = 0.13f; // 组之间的间隔
+        float barSpace = 0.08f; // 组内条目之间的间隔
+        // 计算条目之间的间距总和
+        // 计算起始位置，以便第一个柱子的中心与X轴标签对齐
+        BarData barData = new BarData(set2, set1);
+        barData.setBarWidth(barWidth); // 设置柱子宽度
+        hbc_mian.setData(barData);
+        // 分组柱状图设置
+        hbc_mian.groupBars(0, groupSpace, barSpace);
+        // 获取图表的描述并设置为空
+        Description description = hbc_mian.getDescription();
+        description.setText(""); // 设置描述文本为空
+        // x轴设置
+        XAxis xAxis = hbc_mian.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1f);
+        xAxis.setAxisMinimum(0);
+        xAxis.setAxisMaximum(XlistReverse.size());
+        xAxis.setCenterAxisLabels(true);
+        xAxis.setValueFormatter(new MyXAxisValueFormatter(XlistReverseJson));
+        xAxis.setDrawGridLines(false); // 设置不绘制网格线
+
+        // 确保左边Y轴的最小值设置为0
+        YAxis yAxisLeft = hbc_mian.getAxisLeft();
+        yAxisLeft.setEnabled(false);
+        yAxisLeft.setAxisMinimum(0f); // 确保右边Y轴的最小值也是0
+        yAxisLeft.setSpaceBottom(0f); // 设置底部空间为0
+        yAxisLeft.setValueFormatter(new PersentValueFormatter());
+        yAxisLeft.setDrawAxisLine(false);
+        // 保持刻度线绘制
+        yAxisLeft.setDrawGridLines(true);
+
+        YAxis yAxisRight = hbc_mian.getAxisRight();
+        yAxisRight.setValueFormatter(new PersentValueFormatter());
+        yAxisRight.setAxisMinimum(0f); // 确保右边Y轴的最小值也是0
+        yAxisRight.setSpaceBottom(0f); // 设置底部空间为0
+        yAxisRight.setDrawAxisLine(false);
+        // 保持刻度线绘制
+        yAxisRight.setDrawGridLines(true);
+
+
+        // 图例
+        Legend legend = hbc_mian.getLegend();
+        legend.setEnabled(true);
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+        legend.setOrientation(Legend.LegendOrientation.VERTICAL);
+        legend.setDrawInside(false);
+        legend.setForm(Legend.LegendForm.CIRCLE);
+        legend.setFormSize(10f); // 设置图标大小
+        legend.setTextSize(12f); // 设置文本大小
+        LegendEntry[] legendEntries = new LegendEntry[2];
+        legendEntries[0] = new LegendEntry("提交率", Legend.LegendForm.CIRCLE, 10f, Float.NaN, null, set1.getColor());
+        legendEntries[1] = new LegendEntry("批改率", Legend.LegendForm.CIRCLE, 10f, Float.NaN, null, set2.getColor());
+        hbc_mian.getLegend().setCustom(legendEntries);
+        // 刷新图表
+        hbc_mian.invalidate();
+
+
+        // 图二========================================================================================================
+
+        // 修改CombinedData对象以同时保存BarData和LineData
+        CombinedData cobData = new CombinedData();
+
+        JSONArray X2List = data.getJSONArray("X2List");
+        JSONArray totalScores = null;
+        JSONArray avgScores = null;
+        JSONArray scoreRates = null;
+        for (int i = 0; i < X2List.length(); i++) {
+            if (X2List.getJSONObject(i).getString("name").equals("总分")) {
+                totalScores = X2List.getJSONObject(i).getJSONArray("data");
+            } else if (X2List.getJSONObject(i).getString("name").equals("平均分")) {
+                avgScores = X2List.getJSONObject(i).getJSONArray("data");
+            } else if (X2List.getJSONObject(i).getString("name").equals("得分率")) {
+                scoreRates = X2List.getJSONObject(i).getJSONArray("data");
+            }
+        }
+
+        cobData.setData(generateBarData(totalScores, avgScores)); // 添加柱状图数据
+        cobData.setData(generateLineData(scoreRates)); // 添加折线图数据
+
+        combinedChart.setData(cobData); // 将组合数据设置到图表上
+
+        // 启用右侧Y轴来显示折线数据集
+        YAxis rightAxis = combinedChart.getAxisRight();
+        rightAxis.setEnabled(true);
+        rightAxis.setValueFormatter(new PersentValueFormatter());
+        rightAxis.setAxisMinimum(0f); // 右侧Y轴起始值设置为0
+        // 根据scoreRates数据集确定并设置右侧Y轴的最大值
+        rightAxis.setAxisMaximum(180f);
+        rightAxis.setDrawAxisLine(false);
+
+
+        // 调整左侧Y轴来显示柱状数据集
+        YAxis leftAxis = combinedChart.getAxisLeft();
+        leftAxis.setEnabled(true);
+        leftAxis.setAxisMinimum(0f); // 左侧Y轴起始值设置为0
+        leftAxis.setAxisMaximum(120f);
+        leftAxis.setDrawAxisLine(false);
+        leftAxis.setTextColor(getResources().getColor(R.color.main_blue));
+
+        // 根据totalScores和avgScores数据集确定并设置左侧Y轴的最大值
+//        leftAxis.setAxisMaximum(/* 从totalScores和avgScores中计算最大值并在此设置 */);
+
+        // 调整X轴以匹配X2list数据
+        xAxis = combinedChart.getXAxis();
+        xAxis.setDrawGridLines(false);
+        // 使用XlistReverseJson设置X轴标签
+        xAxis.setValueFormatter(new MyXAxisValueFormatter(classNameList));
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setAxisMinimum(-0.5f); // 设置X轴的最小值
+        xAxis.setGranularity(1f); // 设置X轴的刻度间隔
+        xAxis.setAxisMaximum(classNameList.length() - 0.5f); // 设置X轴的最大值
+        xAxis.setLabelCount(classNameList.length()); // 调整标签数量
+
+        combinedChart.getDescription().setEnabled(false);
+
+        Legend legend2 = combinedChart.getLegend();
+
+        // 获取图表中的数据集以修改它们的图例形状
+        List<LegendEntry> legendEntries2 = new ArrayList<>();
+
+        // 对于柱状图数据集（总分和平均分），设置图例为圆点
+        LegendEntry totalScoreLegendEntry = new LegendEntry();
+        totalScoreLegendEntry.form = Legend.LegendForm.CIRCLE;
+        totalScoreLegendEntry.label = "总分";
+        totalScoreLegendEntry.formColor = Color.parseColor("#feeb9b");
+
+        LegendEntry avgScoreLegendEntry = new LegendEntry();
+        avgScoreLegendEntry.form = Legend.LegendForm.CIRCLE;
+        avgScoreLegendEntry.label = "平均分";
+        avgScoreLegendEntry.formColor = Color.parseColor("#c6eecc");
+
+        // 对于折线图数据集（得分率），保留默认样式（线加点）
+        LegendEntry scoreRateLegendEntry = new LegendEntry();
+        scoreRateLegendEntry.form = Legend.LegendForm.LINE;
+        scoreRateLegendEntry.label = "得分率";
+        scoreRateLegendEntry.formColor = Color.parseColor("#7f80d7");
+
+        // 将自定义的图例条目添加到图例条目列表中
+        legendEntries2.add(totalScoreLegendEntry);
+        legendEntries2.add(avgScoreLegendEntry);
+        legendEntries2.add(scoreRateLegendEntry);
+        legend2.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM); // 将图例放置在底部
+        legend2.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER); // 在中间对齐
+        legend2.setFormSize(10f); // 设置图标大小
+        legend2.setTextSize(10f); // 设置文本大小
+        legend2.setTypeface(Typeface.DEFAULT_BOLD);
+        // 将自定义的图例条目列表设置到图例中
+
+        legend2.setCustom(legendEntries2);
+        combinedChart.setExtraOffsets(0, 0, 0, 10);
+        // 刷新图表
+        combinedChart.invalidate();
 
         // 表格
         makeTableUI(data, tl_main);
-
     }
 
-    // 批阅试题刷新UI
+    // 批阅试题刷新UI 【第四板块】
     private void refreshQu(JSONObject data) throws JSONException {
         String status = data.getString("status");
         BarChart bc_main = v[2].findViewById(R.id.bc_mian);
@@ -916,10 +1362,9 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
 
         // 我的数据
         List<BarEntry> values = new ArrayList<>();
-
+        JSONArray dataT = Ylist.getJSONObject(0).getJSONArray("data");
+        JSONArray dataQ = Ylist.getJSONObject(1).getJSONArray("data");
         for (int i = 0; i < Xlist.length(); ++i) {
-            JSONArray dataT = Ylist.getJSONObject(0).getJSONArray("data");
-            JSONArray dataQ = Ylist.getJSONObject(1).getJSONArray("data");
             values.add(new BarEntry(i, new float[]{dataQ.getInt(i), dataT.getInt(i)}));
         }
 
@@ -934,7 +1379,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         dataB.setValueFormatter(new MyValueFormatter());
         dataB.setValueTextColor(Color.WHITE);
         dataB.setValueTextSize(20);
-
+        dataB.setBarWidth(0.6f); // 设置柱子的宽度为分配空间的 90%
         chart.setData(dataB);
         chart.setFitBars(true);
         chart.invalidate();
@@ -947,6 +1392,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         /** 表格
          *
          */
+        Log.e("wen0309", "refreshHW: ");
 
         // 表格数据
         // 表头的标题
@@ -958,6 +1404,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         }
 
         table_json = data.getJSONArray("tableData");
+        Log.e("wen0306", "makeTableUI: " + table_json.length());
         String[][] contentData = new String[table_json.length()][];
 
         for (int i = 0; i < table_json.length(); ++i) {
@@ -987,7 +1434,8 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
             headerTextView.setTextColor(getResources().getColor(R.color.white));
             headerTextView.setGravity(Gravity.CENTER);
             headerTextView.setBackgroundColor(Color.parseColor("#a5a5a5"));
-            headerTextView.setPadding(5, 0, 5, 0);
+            headerTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14.0f); // 设置字号为18sp
+            headerTextView.setPadding(10, 0, 10, 0);
             headerRow.addView(headerTextView);
         }
 
@@ -1005,10 +1453,14 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
 
             for (String cell : row) {
                 TextView cellTextView = new TextView(getActivity());
+                if (cell.equals("null")) {
+                    cell = "";
+                }
+                cellTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14.0f); // 设置字号为18sp
                 cellTextView.setText(cell);
                 cellTextView.setGravity(Gravity.CENTER);
                 cellTextView.setBackgroundResource(R.color.white);
-                cellTextView.setPadding(5, 0, 5, 0);
+                cellTextView.setPadding(10, 0, 10, 0);
                 contentRow.addView(cellTextView);
             }
 
@@ -1024,7 +1476,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         spannableString.setSpan(new AbsoluteSizeSpan(25, true), startId, originalText.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
 
         // 变色
-        int color = ContextCompat.getColor(getActivity(), R.color.gray_new);
+        int color = getActivity().getColor(R.color.gray_new);
         spannableString.setSpan(new ForegroundColorSpan(color), startId, originalText.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
 
         // 粗体
@@ -1062,19 +1514,119 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
 
         @Override
         public String getFormattedValue(float value) {
-            if ((int) value == 0) {
-                return "";
-            } else {
-                return String.valueOf((int) value);
-            }
+
+            return String.valueOf((int) value);
+
         }
     }
 
-    private int getScreenWidth() {
-        WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        DisplayMetrics metrics = new DisplayMetrics();
-        display.getMetrics(metrics);
-        return metrics.widthPixels;
+    public class MyXAxisValueFormatter extends ValueFormatter {
+
+        private final JSONArray mValues;
+
+        public MyXAxisValueFormatter(JSONArray values) {
+            this.mValues = values;
+        }
+
+        @Override
+        public String getAxisLabel(float value, AxisBase axis) {
+            int index = (int) value;
+            if (index >= 0 && index < mValues.length()) {
+                try {
+                    return mValues.getString(index);
+                } catch (JSONException e) {
+                    Log.e("wen0308", "getAxisLabel: " + e);
+                }
+            }
+            return "";
+        }
     }
+
+    private class PersentValueFormatter extends ValueFormatter {
+
+        @Override
+        public String getAxisLabel(float value, AxisBase axis) {
+            return String.format("%.0f%%", value);
+        }
+
+        @Override
+        public String getFormattedValue(float value) {
+            // 修改这里来格式化浮点数，比如保留一位小数
+            return String.format("%.0f%%", value);
+        }
+    }
+
+    private BarData generateBarData(JSONArray totalScores, JSONArray avgScores) {
+
+        ArrayList<BarEntry> entriesTotal = new ArrayList<>();
+        ArrayList<BarEntry> entriesAvg = new ArrayList<>();
+
+        // Loop through the data and add entries
+        for (int index = 0; index < totalScores.length(); index++) {
+            try {
+                entriesTotal.add(new BarEntry(index, (float) totalScores.getDouble(index)));
+                entriesAvg.add(new BarEntry(index, (float) avgScores.getDouble(index)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        BarDataSet setTotal = new BarDataSet(entriesTotal, "总分");
+        setTotal.setColor(Color.parseColor("#feeb9b"));
+        BarDataSet setAvg = new BarDataSet(entriesAvg, "平均分");
+        setAvg.setColor(Color.parseColor("#c6eecc"));
+
+        // We will need half of the bar width to offset the two datasets
+        float barSpace = 0.05f; // x2 dataset
+        float barWidth = 0.3f; // x2 dataset
+        float groupSpace = 1.0f - (barWidth + barSpace) * 2;
+
+        // (barWidth + barSpace) * 2 + groupSpace = 1, meaning we have room for two bars and spacing
+        BarData d = new BarData(setTotal, setAvg);
+        d.setBarWidth(barWidth);
+
+        d.setBarWidth(barWidth); // 设置柱子宽度
+        // Make this BarData object grouped
+        d.groupBars(-0.5f, groupSpace, barSpace); // Start at x = 0
+        d.setDrawValues(false); // 隐藏数值标注
+
+        return d;
+    }
+
+    private LineData generateLineData(JSONArray scoreRates) {
+
+        ArrayList<Entry> entriesRate = new ArrayList<>();
+
+        // Loop through the data and add entries
+        for (int index = 0; index < scoreRates.length(); index++) {
+            // Here we add the entries for the line dataset
+            try {
+                entriesRate.add(new Entry(index, (float) scoreRates.getDouble(index)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        LineDataSet setRate = new LineDataSet(entriesRate, "得分率");
+        setRate.setColor(Color.parseColor("#7f80d7"));
+        setRate.setLineWidth(2.5f);
+        setRate.setCircleColor(Color.parseColor("#7f80d7"));
+        setRate.setCircleHoleColor(Color.parseColor("#7f80d7")); // 设置点的内部颜色为白色
+        setRate.setCircleRadius(4f);
+        setRate.setFillColor(Color.parseColor("#7f80d7"));
+        setRate.setMode(LineDataSet.Mode.CUBIC_BEZIER); // 修改为直线模式，不填充
+        setRate.setDrawValues(false); // 隐藏数值标注
+
+        LineData lineData = new LineData(setRate);
+        return lineData;
+    }
+
+//
+//    private int getScreenWidth() {
+//        WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
+//        Display display = wm.getDefaultDisplay();
+//        DisplayMetrics metrics = new DisplayMetrics();
+//        display.getMetrics(metrics);
+//        return metrics.widthPixels;
+//    }
 }

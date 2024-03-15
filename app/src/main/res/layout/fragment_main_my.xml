@@ -7,15 +7,15 @@
     android:background="@color/white">
 
     <ScrollView
-        tools:ignore="MissingConstraints"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints">
 
         <LinearLayout
-            tools:ignore="MissingConstraints"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            tools:ignore="MissingConstraints">
 
             <LinearLayout
                 android:id="@+id/f_ll"
@@ -77,6 +77,7 @@
                     android:layout_height="30dp"
                     android:layout_marginTop="15dp"
                     android:layout_marginBottom="10dp"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <TextView
@@ -126,6 +127,7 @@
                     android:layout_height="30dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <TextView
@@ -171,6 +173,7 @@
                     android:layout_height="30dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <TextView
@@ -185,16 +188,17 @@
                     <TextView
                         android:id="@+id/tv_version"
                         android:layout_width="0dp"
-                        android:layout_weight="2"
                         android:layout_height="match_parent"
+                        android:layout_weight="2"
                         android:gravity="end|center_vertical"
                         android:text="1.0.0"
-                        android:textSize="18sp"/>
+                        android:textSize="18sp" />
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
-                        android:scaleType="fitEnd"
+                        android:adjustViewBounds="true"
                         android:src="@drawable/my_icon_arrowright" />
                 </LinearLayout>
             </LinearLayout>
@@ -222,6 +226,8 @@
                     android:layout_height="30dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
+
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <TextView
@@ -268,6 +274,7 @@
                     android:layout_height="30dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <TextView

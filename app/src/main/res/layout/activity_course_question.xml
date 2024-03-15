@@ -56,15 +56,16 @@
         android:background="@color/black" />
 
     <!--可滑动ViewPager-->
+
+
     <LinearLayout
         android:id="@+id/fll_acq"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
     </LinearLayout>
-
 
     <RelativeLayout
         android:id="@+id/lr_bottom"
@@ -84,10 +85,8 @@
                 android:id="@+id/fll_cq"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="5dp"
                 android:orientation="vertical"
-                android:gravity="bottom">
+                android:gravity="center_vertical">
 
             </LinearLayout>
 

@@ -18,80 +18,73 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginLeft="70dp"
+        android:layout_marginLeft="60dp"
         android:layout_marginTop="50dp"
-        android:layout_marginRight="70dp"
+        android:layout_marginRight="60dp"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="10dp">
 
         <ImageView
             android:id="@+id/fiv_saoma"
             android:layout_width="120dp"
             android:layout_height="120dp"
+            android:layout_marginTop="20dp"
             android:src="@drawable/scan_icon" />
 
+
         <LinearLayout
+            android:id="@+id/ll_ip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="10dp"
-            android:background="@color/white">
+            android:layout_marginTop="40dp"
+            android:background="@drawable/login_et_border_unfocus"
+            android:gravity="center"
+            android:padding="10dp">
 
-            <LinearLayout
-                android:id="@+id/ll_ip"
-                android:layout_width="match_parent"
+            <ImageView
+                android:id="@+id/iv_account"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/ip_icon_unfocus" />
+
+            <EditText
+                android:id="@+id/et_ip"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:background="@drawable/login_et_border_unfocus"
-                android:gravity="center"
-                android:padding="10dp">
-
-                <ImageView
-                    android:id="@+id/iv_account"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:src="@drawable/ip_icon_unfocus" />
-
-                <EditText
-                    android:id="@+id/et_ip"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:height="40dp"
-                    android:background="@null"
-                    android:hint="@string/ip_hint"
-                    android:singleLine="true"
-                    android:textColor="@color/black"
-                    android:textColorHint="#8F9BB3"
-                    android:textSize="17sp" />
-
-                <com.example.yidiantong.View.ClickableTextView
-                    android:id="@+id/tv_log"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
-                    android:gravity="center"
-                    android:text="•••" />
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/fbtn_lianjie"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="40dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginRight="40dp"
-                android:background="@drawable/login_btn"
-                android:text="@string/connect"
-                android:textColor="@color/white"
+                android:layout_weight="1"
+                android:height="40dp"
+                android:background="@null"
+                android:hint="@string/ip_hint"
+                android:singleLine="true"
+                android:textColor="@color/black"
+                android:textColorHint="#8F9BB3"
                 android:textSize="17sp" />
+
+            <com.example.yidiantong.View.ClickableTextView
+                android:id="@+id/tv_log"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                android:text="•••" />
         </LinearLayout>
 
-
+        <Button
+            android:id="@+id/fbtn_lianjie"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="40dp"
+            android:background="@drawable/login_btn"
+            android:text="@string/connect"
+            android:textColor="@color/white"
+            android:textSize="17sp" />
     </LinearLayout>
 
 

@@ -13,7 +13,7 @@ import com.example.yidiantong.R;
 
 @SuppressLint("AppCompatCustomView")
 public class CustomeMovebutton extends ImageView {
-    private final int statusHeight;
+//    private final int statusHeight;
     int sW;
     int sH;
     private float mTouchStartX;
@@ -22,8 +22,8 @@ public class CustomeMovebutton extends ImageView {
     private float y;
     private boolean isMove=false;
     private Context context;
-    private WindowManager wm = (WindowManager) getContext().getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-    private WindowManager.LayoutParams wmParams = ((MyApplication)getContext().getApplicationContext()).getMywmParams();
+//    private WindowManager wm = (WindowManager) getContext().getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+//    private WindowManager.LayoutParams wmParams = ((MyApplication)getContext().getApplicationContext()).getMywmParams();
 
     private float mLastX;
     private float mLastY;
@@ -42,9 +42,9 @@ public class CustomeMovebutton extends ImageView {
     }
     public CustomeMovebutton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs,defStyleAttr);
-        sW = wm.getDefaultDisplay().getWidth();
-        sH = wm.getDefaultDisplay().getHeight();
-        statusHeight = getStatusHeight(context);
+//        sW = wm.getDefaultDisplay().getWidth();
+//        sH = wm.getDefaultDisplay().getHeight();
+//        statusHeight = getStatusHeight(context);
     }
 
     /**
@@ -100,11 +100,11 @@ public class CustomeMovebutton extends ImageView {
         return true;
     }
 
-    private void updateViewPosition() {
-        wmParams.x = (int) (x - mTouchStartX);
-        wmParams.y = (int) (y- mTouchStartY);
-        wm.updateViewLayout(this, wmParams); //刷新显示
-    }
+//    private void updateViewPosition() {
+//        wmParams.x = (int) (x - mTouchStartX);
+//        wmParams.y = (int) (y- mTouchStartY);
+//        wm.updateViewLayout(this, wmParams); //刷新显示
+//    }
 
     /**
      * 设置点击回调接口

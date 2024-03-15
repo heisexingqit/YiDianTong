@@ -1,10 +1,11 @@
 package com.xinlan.imageeditlibrary.editimage.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.view.ViewTreeObserver;
 
 import com.xinlan.imageeditlibrary.R;
 import com.xinlan.imageeditlibrary.editimage.ModuleConfig;
@@ -51,9 +52,14 @@ public class MainMenuFragment extends BaseEditFragment implements View.OnClickLi
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        ensureEditActivity();
         stickerBtn = mainView.findViewById(R.id.btn_stickers);
         fliterBtn = mainView.findViewById(R.id.btn_filter);
         cropBtn = mainView.findViewById(R.id.btn_crop);
@@ -75,6 +81,7 @@ public class MainMenuFragment extends BaseEditFragment implements View.OnClickLi
         mMoveBtn.setOnClickListener(this);
         mCleanBtn.setOnClickListener(this);
         mUndoBtn.setOnClickListener(this);
+        Log.e("wen0228", "onActivityCreated: " + activity.mode);
     }
 
     @Override

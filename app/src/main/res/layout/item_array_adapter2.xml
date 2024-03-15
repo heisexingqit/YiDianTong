@@ -10,7 +10,7 @@
         android:paddingStart="15dp"
         android:paddingBottom="10dp"
         android:paddingTop="10dp"
-        android:paddingEnd="10dp"
+        android:paddingEnd="15dp"
         android:text="@string/all"
         android:textSize="13sp"
         android:textColor="@color/gray_text">

@@ -151,7 +151,7 @@ public class THomeworkCameraItem implements Serializable {
     }
 
     public String toData() {
-        String str = "";
+        String str = shitiAnalysis;
         if(shitiAnalysis.length() == 0){
             str = "略";
         }

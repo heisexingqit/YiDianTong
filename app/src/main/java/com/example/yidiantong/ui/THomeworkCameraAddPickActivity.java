@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -13,9 +14,11 @@ import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -90,11 +93,6 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
     //答题区域HTML头
     private String html_answer_head = "<head>\n" +
             "    <style>\n" +
-            "        img{\n" +
-            "        vertical-align: middle;" +
-            "        max-width:40px !important;" +
-            "        height:40px !important;" +
-            "        }" +
             "        body {\n" +
             "            color: rgb(117, 117, 117);\n" +
             "            word-wrap: break-word;\n" +
@@ -145,12 +143,13 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
     private String zhishidianData = "知识点列表未获取到或者为空";
     private String zhishidianId = "";
     private String name;
-    private String introduce;
+    private String introduce = "";
+    private String xueduanId = "";
+    private String xuekeId = "";
+    private String banbenId = "";
+    private String jiaocaiId = "";
     private String paperId = "-1";
-    private Map<String, String> xueduanMap = new LinkedHashMap<>();
-    private Map<String, String> xuekeMap = new LinkedHashMap<>();
-    private Map<String, String> banbenMap = new LinkedHashMap<>();
-    private Map<String, String> jiaocaiMap = new LinkedHashMap<>();
+
     private Map<String, String> typeMap = new LinkedHashMap<>();
     private FlexboxLayout fl_type;
     private List<THomeworkCameraType> typeList;
@@ -190,9 +189,10 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
     private WebView changedWebView;
 
     // 记录上一次保存的信息
-    private List<THomeworkCameraItem> lastSaveList;
+    private String lastSaveJson = "";
 
     private int flexLayoutWidth = -1;
+    private String jsonStr;
 
     public class CustomLinearLayoutManager extends LinearLayoutManager {
         private boolean isScrollEnabled = true;
@@ -254,25 +254,16 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
         // 获取本地数据
 
         Intent intent = getIntent();
-        Gson gson = new Gson();
-        Type mtype = new TypeToken<LinkedHashMap<String, String>>() {
-        }.getType();
-        String json = intent.getStringExtra("xueduanMap");
-        xueduanMap = gson.fromJson(json, mtype);
-        json = intent.getStringExtra("xuekeMap");
-        xuekeMap = gson.fromJson(json, mtype);
-        json = intent.getStringExtra("banbenMap");
-        banbenMap = gson.fromJson(json, mtype);
-        json = intent.getStringExtra("jiaocaiMap");
-        jiaocaiMap = gson.fromJson(json, mtype);
-        zhishidianData = intent.getStringExtra("zhishidianData");
-        zhishidianId = intent.getStringExtra("zhishidianId");
-
         xueduan = intent.getStringExtra("xueduan");
         xueke = intent.getStringExtra("xueke");
         banben = intent.getStringExtra("banben");
         jiaocai = intent.getStringExtra("jiaocai");
         zhishidian = intent.getStringExtra("zhishidian");
+        zhishidianId = intent.getStringExtra("zhishidianId");
+        xueduanId = intent.getStringExtra("xueduanId");
+        xuekeId = intent.getStringExtra("xuekeId");
+        banbenId = intent.getStringExtra("banbenId");
+        jiaocaiId = intent.getStringExtra("jiaocaiId");
 
         name = intent.getStringExtra("name");
         introduce = intent.getStringExtra("introduce");
@@ -450,7 +441,6 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
 
                         Crop(picUri); // 裁剪图片
                     }
-
                 }
             }
         });
@@ -522,7 +512,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                 if (isSuccess) {
                     THomeworkCameraItem item = itemList.get(picUploadPos);
                     Log.e(TAG, "uploadImage: item + " + item.toString());
-                    String addString = "<img onclick='bigimage(this)' src='" + url + "'>";
+                    String addString = "<img onclick='bigimage(this)' src='" + url + "' style=\"max-width:80px\">";
                     switch (picUploadType) {
                         case "Show":
                             item.getShitiShowPic().add(url);
@@ -580,7 +570,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void loadType() {
 
-        mRequestUrl = Constant.API + Constant.T_HOMEWORK_CAMERA_GET_TYPE + "?subjectId=" + xuekeMap.get(xueke);
+        mRequestUrl = Constant.API + Constant.T_HOMEWORK_CAMERA_GET_TYPE + "?subjectId=" + xuekeId;
         Log.d("wen", "type: " + mRequestUrl);
         typeMap.clear();
         StringRequest request = new StringRequest(mRequestUrl, response -> {
@@ -627,7 +617,13 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
     }
 
     private void assign() {
-        if (!changeCheck() && !paperId.equals("-1")) {
+
+        Log.e("wen0307", "assign: " + changeCheck() + " " + paperId);
+        String changeFlag = changeCheck();
+        if(changeFlag.equals("error")){
+            return;
+        }
+        if (changeFlag.equals("false") && !paperId.equals("-1")) {
             Intent intent = new Intent(this, TTeachAssginActivity.class);
             intent.putExtra("learnPlanId", paperId);
             intent.putExtra("learnPlanName", name);
@@ -647,8 +643,55 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
             AlertDialog dialog = builder.create();
             dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
             dialog.show();
+            return;
         }
 
+        String jsonStr = getJsonString();
+        // 知识点参数实际是属性拼接
+        String zsdLongString = banben + "/" + jiaocai + "/" + zhishidian + "/";
+        try {
+            mRequestUrl = Constant.API + Constant.T_HOMEWORK_CAMERA_SAVE + "?userName=" + MyApplication.username + "&paperName=" + URLEncoder.encode(name, "UTF-8")
+                    + "&paperId=" + paperId
+                    + "&jsonStr=" + URLEncoder.encode(jsonStr, "UTF-8") + "&channelCode=" + xueduanId
+                    + "&subjectCode=" + xuekeId + "&textBookCode=" + banbenId + "&gradeLevelCode=" + jiaocaiId
+                    + "&pointCode=" + zhishidianId + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") + "&subjectName=" + URLEncoder.encode(xueduan, "UTF-8")
+                    + "&textBookName=" + URLEncoder.encode(banben, "UTF-8") + "&gradeLevelName=" + URLEncoder.encode(jiaocai, "UTF-8")
+                    + "&pointName=" + URLEncoder.encode(zsdLongString, "UTF-8");
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("wen", "submit: " + mRequestUrl);
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                Boolean isSuccess = json.getBoolean("success");
+                if (isSuccess) {
+                    lastSaveJson = jsonStr;
+                    paperId = json.getString("data");
+                    // 记录上一次保存的信息
+                    if (isAssign) {
+                        assign();
+                    } else {
+                        Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                Log.d("wen", "提交返回值:试卷Id： " + paperId);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            rl_submitting.setVisibility(View.GONE);
+        }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());
+            rl_submitting.setVisibility(View.GONE);
+        });
+        MyApplication.addRequest(request, TAG);
+        rl_submitting.setVisibility(View.VISIBLE);
+    }
+
+    private String getJsonString() {
         StringBuilder jsonStringBuilder = new StringBuilder();
         String jsonStr = "[";
         for (int i = 0; i < itemList.size(); ++i) {
@@ -657,20 +700,28 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
             // 非法判断
             if (item.getShitiShow().length() == 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage("请填写第" + (i + 1) + "题面");
+                builder.setMessage("请填写第" + (i + 1) + "题题面");
                 builder.setNegativeButton("关闭", null);
                 AlertDialog dialog = builder.create();
                 dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
                 dialog.show();
-                return;
+                return "";
             } else if (item.getShitiAnswer().length() == 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage("请填写第" + (i + 1) + "答案");
+                builder.setMessage("请填写第" + (i + 1) + "题答案");
                 builder.setNegativeButton("关闭", null);
                 AlertDialog dialog = builder.create();
                 dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
                 dialog.show();
-                return;
+                return "";
+            }else if (item.getShitiAnalysis().length() == 0) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("请填写第" + (i + 1) + "题解析");
+                builder.setNegativeButton("关闭", null);
+                AlertDialog dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+                dialog.show();
+                return "";
             }
 
             // 题型格式判断
@@ -749,7 +800,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                 AlertDialog dialog = builder.create();
                 dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
                 dialog.show();
-                return;
+                return "";
             }
 
             item.setOrder(String.valueOf(i + 1));
@@ -760,47 +811,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
         }
         jsonStr += jsonStringBuilder.toString();
         jsonStr += "]";
-
-        // 知识点参数实际是属性拼接
-        String zsdLongString = banben + "/" + jiaocai + "/" + zhishidian + "/";
-        try {
-            mRequestUrl = Constant.API + Constant.T_HOMEWORK_CAMERA_SAVE + "?userName=" + MyApplication.username + "&paperName=" + URLEncoder.encode(name, "UTF-8")
-                    + "&paperId=" + paperId
-                    + "&jsonStr=" + URLEncoder.encode(jsonStr, "UTF-8") + "&channelCode=" + xueduanMap.get(xueduan)
-                    + "&subjectCode=" + xuekeMap.get(xueke) + "&textBookCode=" + banbenMap.get(banben) + "&gradeLevelCode=" + jiaocaiMap.get(jiaocai)
-                    + "&pointCode=" + zhishidianId + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") + "&subjectName=" + URLEncoder.encode(xueduan, "UTF-8")
-                    + "&textBookName=" + URLEncoder.encode(banben, "UTF-8") + "&gradeLevelName=" + URLEncoder.encode(jiaocai, "UTF-8")
-                    + "&pointName=" + URLEncoder.encode(zsdLongString, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        Log.d("wen", "submit: " + mRequestUrl);
-        StringRequest request = new StringRequest(mRequestUrl, response -> {
-            try {
-                JSONObject json = JsonUtils.getJsonObjectFromString(response);
-
-                Boolean isSuccess = json.getBoolean("success");
-                if (isSuccess) {
-                    paperId = json.getString("data");
-                    // 记录上一次保存的信息
-                    if (isAssign) {
-                        assign();
-                    } else {
-                        Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                Log.d("wen", "提交返回值:试卷Id： " + paperId);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            rl_submitting.setVisibility(View.GONE);
-        }, error -> {
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
-            rl_submitting.setVisibility(View.GONE);
-        });
-        MyApplication.addRequest(request, TAG);
-        rl_submitting.setVisibility(View.VISIBLE);
+        return jsonStr;
     }
 
     private void showTypeMenu() {
@@ -999,8 +1010,8 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
     private void getQuestionId(int pos) {
 
         try {
-            mRequestUrl = Constant.API + Constant.T_HOMEWORK_CAMERA_GET_ID + "?userName=" + MyApplication.username + "&channelCode=" + xueduanMap.get(xueduan)
-                    + "&subjectCode=" + xuekeMap.get(xueke) + "&textBookCode=" + banbenMap.get(banben) + "&gradeLevelCode=" + jiaocaiMap.get(jiaocai)
+            mRequestUrl = Constant.API + Constant.T_HOMEWORK_CAMERA_GET_ID + "?userName=" + MyApplication.username + "&channelCode=" + xueduanId
+                    + "&subjectCode=" + xuekeId + "&textBookCode=" + banbenId + "&gradeLevelCode=" + jiaocaiId
                     + "&pointCode=" + zhishidianId + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") + "&subjectName=" + URLEncoder.encode(xueduan, "UTF-8")
                     + "&textBookName=" + URLEncoder.encode(banben, "UTF-8") + "&gradeLevelName=" + URLEncoder.encode(jiaocai, "UTF-8")
                     + "&pointName=" + URLEncoder.encode(zhishidian, "UTF-8") + "&typeId=" + itemList.get(pos).getTypeId() + "&typeName="
@@ -1271,16 +1282,34 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
     }
 
     // 判断作业内容是否修改 [true:修改了;false:未修改]
-    private boolean changeCheck() {
-        if(lastSaveList == null){
-            return true;
+    private String changeCheck() {
+        jsonStr = getJsonString();
+        if(jsonStr.length() == 0){
+            return "error";
         }
-        if(lastSaveList.size() != itemList.size())
-        for(int i = 0; i < lastSaveList.size(); ++i){
-            if(!lastSaveList.get(i).toData().equals(itemList.get(i).toData())){
-                return true;
+        if (lastSaveJson.equals(jsonStr)) {
+            return "false";
+        } else {
+            return "true";
+        }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (v instanceof EditText) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
+                    adapter.addEditText(((EditText) v).getText().toString());
+
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
             }
         }
-        return false;
+        return super.dispatchTouchEvent(ev);
     }
 }

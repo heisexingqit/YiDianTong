@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -38,6 +39,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookRecyclerEntity;
+import com.example.yidiantong.ui.BookExerciseActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.RecyclerInterface;
@@ -62,6 +64,7 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
     private LinearLayout fll_bd_analysis;
     private TextView ftv_br_title;
     private ImageView fiv_bd_mark;
+    private ImageView fiv_bd_exercise;
     private ImageView fiv_de_icon;
     private AlertDialog dialog_model;
 
@@ -197,6 +200,12 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
         // 标记掌握
         fiv_bd_mark = getActivity().findViewById(R.id.fiv_bd_mark);
         fiv_bd_mark.setOnClickListener(this);
+
+        // 提分练习
+        fiv_bd_exercise = getActivity().findViewById(R.id.fiv_bd_exercise);
+        fiv_bd_exercise.setOnClickListener(this);
+        setHasOptionsMenu(true);
+
         setHasOptionsMenu(true);
 
         /// 修改模式
@@ -224,12 +233,10 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
                 spannableString.setSpan(new ForegroundColorSpan(Color.RED), start, textLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 ftv_bd_stuans.setText(spannableString);
                 fiv_bd_tf.setVisibility(View.GONE); // 隐藏对错图标
-
             }else{
                 ftv_bd_stuans.setText(bookrecyclerEntity.getStuAnswer());
                 fiv_bd_tf.setVisibility(View.VISIBLE); // 显示对错图标
             }
-
         }
 
         return  view;
@@ -333,6 +340,16 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
                 builder.setCancelable(false);
                 //对话框弹出
                 builder.show();
+                break;
+            case R.id.fiv_bd_exercise:
+                // 弹出一个简单的Dialog提示 "功能完善中"
+                AlertDialog.Builder builder_exercise = new AlertDialog.Builder(getActivity());
+                builder_exercise.setMessage("功能完善中");
+                builder_exercise.setPositiveButton("确定", null);
+                builder_exercise.show();
+                Intent toExercise = new Intent(getActivity(), BookExerciseActivity.class);
+                toExercise.putExtra("questionId", bookrecyclerEntity.getQuestionId());
+//                startActivity(toExercise);
                 break;
             case R.id.fll_br_model:
                 AlertDialog.Builder builder_model = new AlertDialog.Builder(getActivity());

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -129,6 +130,7 @@ public class HomeworkJudgeFragment extends Fragment implements View.OnClickListe
         iv_r.setOnClickListener(this);
         iv_e.setOnClickListener(this);
 
+        showRadioBtn();
         return view;
     }
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,9 +14,11 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -393,7 +396,7 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
                 Gson gson = new Gson();
                 itemList = gson.fromJson(data, new com.google.gson.reflect.TypeToken<List<THomeworkCameraItem>>() {
                 }.getType());
-
+                Log.e("wen0307", "loadListItem: " + itemList);
                 Log.d("wen", "数据: " + itemList);
                 adapter.update(itemList);
                 rl_loading.setVisibility(View.GONE);
@@ -424,7 +427,7 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
                 if (isSuccess) {
                     changeFlag = true;
                     THomeworkCameraItem item = itemList.get(picUploadPos);
-                    String addString = "<img onclick='bigimage(this)' src='" + url + "'>";
+                    String addString = "<img onclick='bigimage(this)' src='" + url + "' style=\"max-width:80px\">";
                     switch (picUploadType) {
                         case "Show":
                             if (item.getShitiShow() != null) {
@@ -1072,5 +1075,24 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
                 }
             }
         return false;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (v instanceof EditText) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)ev.getRawX(), (int)ev.getRawY())) {
+                    adapter.addEditText(((EditText) v).getText().toString());
+
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev);
     }
 }

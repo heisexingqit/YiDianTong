@@ -28,11 +28,11 @@ public class ImageUtils {
 
     public static String Bitmap2StrByBase64(Context mContext, File image) {
         try {
+            Log.e("wen0304", "Bitmap2StrByBase64: " + image.getAbsolutePath());
+
             File compressedImage = new Compressor(mContext)
                     .setQuality(80)
                     .setCompressFormat(Bitmap.CompressFormat.JPEG)
-                    .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
-                            Environment.DIRECTORY_PICTURES).getAbsolutePath())
                     .compressToFile(image);
 
             // 将压缩后的图片文件转换为Base64编码

@@ -15,11 +15,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.util.Constant;
@@ -31,7 +30,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, View.OnFocusChangeListener {
@@ -82,10 +80,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         ll_pw.setOnClickListener(this);
         // 组件样式 结束-----------------------------------------------------
 
-        //记住密码
-        preferences = getSharedPreferences("config", Context.MODE_PRIVATE);
-        String user = preferences.getString("username", null);
-        String pw = preferences.getString("password", null);
+        String user = null, pw = null;
+        if (savedInstanceState != null) {
+            user = savedInstanceState.getString("username");
+            pw = savedInstanceState.getString("password");
+        } else {
+            //记住密码
+            preferences = getSharedPreferences("config", Context.MODE_PRIVATE);
+            user = preferences.getString("username", null);
+            pw = preferences.getString("password", null);
+        }
+
+
         if (user != null) {
             et_username.setText(user);
         }
@@ -298,8 +304,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     MyApplication.autoLogin = true;
 
                     //两个一起用
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     //登录成功跳转
                     startActivity(intent);
 
@@ -314,5 +319,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         });
         MyApplication.addRequest(request, TAG);
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("username", username);
+        outState.putString("password", password);
     }
 }

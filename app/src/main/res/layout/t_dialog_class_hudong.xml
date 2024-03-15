@@ -113,9 +113,9 @@
             android:id="@+id/fiv_hd_panduan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/hudong_03"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="35dp"/>
+            android:layout_marginLeft="35dp"
+            android:src="@drawable/hudong_03" />
 
         <ImageView
             android:id="@+id/fiv_hd_luru"
@@ -162,9 +162,9 @@
             android:id="@+id/fiv_hd_start"
             android:layout_width="85dp"
             android:layout_height="wrap_content"
-            android:src="@drawable/hudong_05"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="35dp"/>
+            android:layout_marginLeft="35dp"
+            android:src="@drawable/hudong_05" />
 
         <ImageView
             android:id="@+id/fiv_hd_cancle"

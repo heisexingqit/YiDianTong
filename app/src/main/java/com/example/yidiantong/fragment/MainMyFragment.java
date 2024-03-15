@@ -38,6 +38,7 @@ import androidx.fragment.app.Fragment;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
+import com.bumptech.glide.Glide;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.PswDialog;
@@ -45,6 +46,7 @@ import com.example.yidiantong.View.TouxiangDialog;
 import com.example.yidiantong.ui.LoginActivity;
 import com.example.yidiantong.ui.MyIntroductionActivity;
 import com.example.yidiantong.ui.SelectCourseActivity;
+import com.example.yidiantong.ui.TCameraShareActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.ImageUtils;
 import com.example.yidiantong.util.JsonUtils;
@@ -138,9 +140,12 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         TextView tv_version = view.findViewById(R.id.tv_version);
         tv_version.setText(MyApplication.versionName);
 
-
         // 点击头像
         fiv_my = view.findViewById(R.id.fiv_my);
+
+        // 获取图片
+        String picUrl = MyApplication.picUrl;
+        ImageLoader.getInstance().displayImage(picUrl, fiv_my, MyApplication.getLoaderOptions());
 
         // 设置点击事件
         f_ll_info.setOnClickListener(this);
@@ -246,10 +251,6 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         username = MyApplication.username;
         realName = MyApplication.cnName;
         tv_username.setText(realName + "(" + username + ")");
-
-        // 获取图片
-        String picUrl = MyApplication.picUrl;
-        ImageLoader.getInstance().displayImage(picUrl, fiv_my, MyApplication.getLoaderOptions());
 
         preferences = getActivity().getSharedPreferences("config", Context.MODE_PRIVATE);
 

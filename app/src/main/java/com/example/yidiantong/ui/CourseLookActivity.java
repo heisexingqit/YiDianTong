@@ -64,7 +64,6 @@ public class CourseLookActivity extends AppCompatActivity {
     private String desc;
     private String learnPlanId;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,6 +126,7 @@ public class CourseLookActivity extends AppCompatActivity {
             intent.putExtra("learnPlanName", this.getIntent().getStringExtra("classname"));
             intent.putExtra("answerTime", desc);
             startActivity(intent);
+            Log.e("wen0306", "hudongclass: ddddddddddd");
             action = "";
         } else if (queList.get(0).getType().equals("document")) {
             if (queList.get(0).getLinks().contains(".ppt") | queList.get(0).getLinks().contains(".pptx")) {
@@ -139,7 +139,6 @@ public class CourseLookActivity extends AppCompatActivity {
                 intent.putExtra("stunum", stunum);
                 intent.putExtra("ip", ip);
                 startActivity(intent);
-
             }
         }
     }
@@ -180,8 +179,8 @@ public class CourseLookActivity extends AppCompatActivity {
             String action = "readyResponder";
             intent.putExtra("action", action);
 //                PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+            Log.e("wen0228", "hudongclass: 4");
             startActivity(intent);
-
         } else if (moreList.get(0).getAction().equals("startResponder")) {
             Intent intent1 = new Intent(this, CourseLockActivity.class);
             intent1.putExtra("stuname", getIntent().getStringExtra("stuname"));
@@ -216,7 +215,8 @@ public class CourseLookActivity extends AppCompatActivity {
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
-                Log.e("0202", "loadItems_Net: " + json.getJSONArray("messageList"));
+
+//                Log.e("wen0306", "loadItems_Net: " + json.getJSONArray("messageList"));
                 // 主体“messageList”中第一个JsonObject【改为最后一个，因为前面可能是垃圾消息】
                 int length = json.getJSONArray("messageList").length();
                 JSONObject data_obj = json.getJSONArray("messageList").getJSONObject(length - 1);
@@ -224,7 +224,7 @@ public class CourseLookActivity extends AppCompatActivity {
                 String courseString = data_obj.getString("period");
                 String newString = ",\"period\":" + courseString;
                 courseString = "[" + courseString + "]"; // 将题面制作为JSONArray，后续解析为List
-
+                Log.e("wen0306", "loadItems_Net: " + courseString);
                 // 去除题目信息的部分，制作为JSONArray，后续解析为List【注意去除前面的垃圾消息，不然可能闪退】
                 String itemdetailString = "[" + data_obj.toString().replace(newString, "") + "]";
 //                LogUtils.writeLogToFile("CourseLookEntity.txt", itemdetailString, false, this);
