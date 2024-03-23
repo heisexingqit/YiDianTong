@@ -14,9 +14,9 @@
     <!--        android:layout_weight="1" />-->
     <FrameLayout
         android:id="@+id/vp_main"
-        android:layout_above="@+id/rl_bottom"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_above="@+id/rl_bottom" />
 
     <!--底部引用布局-->
     <RelativeLayout

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -81,6 +82,46 @@ public class CourseLookActivity extends AppCompatActivity {
         ftv_cl_exit.setOnClickListener(v -> {
             finish();
         });
+        //获取本地未提交的题目消息
+        SharedPreferences preferences = getSharedPreferences("questionAnswer", MODE_PRIVATE);
+        String stunum =  preferences.getString("stunum",null);
+        String stuname =  preferences.getString("stuname",null);
+        String learnPlanId =  preferences.getString("learnPlanId",null);
+        String interactionType =  preferences.getString("interactionType",null);
+        String content =  preferences.getString("content",null);
+        String questionAnswer =  preferences.getString("questionAnswer",null);
+        String imagePath =  preferences.getString("imagePath",null);
+        String questionValueList =  preferences.getString("questionValueList",null);
+        String action =  preferences.getString("action",null);
+        String questionTypeName =  preferences.getString("questionTypeName",null);
+        String questionScore =  preferences.getString("questionScore",null);
+        String questionType =  preferences.getString("questionType",null);
+        String learnPlanName =  preferences.getString("learnPlanName",null);
+        String answerTime =  preferences.getString("answerTime",null);
+        String ip =  preferences.getString("ip",null);
+        //判断是否有错题消息，若有在加载题目界面
+        if (stunum != null) {
+            Intent intent = new Intent(this, CourseQuestionActivity.class);
+            intent.putExtra("stuname", stuname);
+            intent.putExtra("stunum", stunum);
+            intent.putExtra("ip",  ip );
+            Log.e("ning", "sendIPIPIPIPI: " + ip);
+            intent.putExtra("imagePath", imagePath);
+            intent.putExtra("learnPlanId", learnPlanId);
+            intent.putExtra("questionValueList", questionValueList);
+            intent.putExtra("action", action);
+            intent.putExtra("questionTypeName", questionTypeName);
+            intent.putExtra("questionScore", questionScore);
+            intent.putExtra("interactionType", interactionType);
+            intent.putExtra("questionAnswer", questionAnswer);
+            intent.putExtra("questionType", questionType);
+            intent.putExtra("learnPlanName", learnPlanName);
+            intent.putExtra("answerTime", answerTime);
+            intent.putExtra("content", content);
+            intent.putExtra("flag",1);
+            startActivity(intent);
+
+        }
 
         loadItems_Net();
         handler_run.postDelayed(runnable, 2000);
