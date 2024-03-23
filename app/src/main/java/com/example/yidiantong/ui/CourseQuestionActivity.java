@@ -1008,30 +1008,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
                     if (status.equals("success")) {
                         msg.obj = 1;
                         Log.d("ningdelect","错题删除");
-                        editor.putString("action", action);
-                        editor.putString("stunum", stunum);
-                        editor.putString("stuname", stuname);
-                        editor.putString("learnPlanId", learnPlanId);
-                        editor.putString("interactionType", interactionType);
-                        editor.putString("content", content);
-                        editor.putString("questionAnswer", questionAnswer);
-                        editor.putString("imagePath", imagePath);
-                        editor.putString("resourceID", resourceID);
-                        editor.putString("questionScore", questionScore);
-                        editor.putString("learnPlanName", learnPlanName);
-                        editor.putString("answerTime", answerTime);
-                        editor.commit();
-                        //提交成功删除本地错题
-//                        SharedPreferences sharedPreferences = getSharedPreferences("your_pref_name", MODE_PRIVATE);
-//                        SharedPreferences.Editor editor = sharedPreferences.edit();
-//                        editor.clear();
-//                        editor.apply();
-//                        File sharedPreferencesFile = new File(getFilesDir().getParent() + "/shared_prefs/questionAnswer.xml");
-//                        if (sharedPreferencesFile.exists()) {
-//                            sharedPreferencesFile.delete();
-//                        }
-                    } else {
-                        //服务器返回失败，存储重要答题消息以便下次加载
+                        //测试用代码
 //                        editor.putString("action", action);
 //                        editor.putString("stunum", stunum);
 //                        editor.putString("stuname", stuname);
@@ -1045,6 +1022,30 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
 //                        editor.putString("learnPlanName", learnPlanName);
 //                        editor.putString("answerTime", answerTime);
 //                        editor.commit();
+                        //提交成功删除本地错题
+                        SharedPreferences sharedPreferences = getSharedPreferences("your_pref_name", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.clear();
+                        editor.apply();
+                        File sharedPreferencesFile = new File(getFilesDir().getParent() + "/shared_prefs/questionAnswer.xml");
+                        if (sharedPreferencesFile.exists()) {
+                            sharedPreferencesFile.delete();
+                        }
+                    } else {
+                        //服务器返回失败，存储重要答题消息以便下次加载
+                        editor.putString("action", action);
+                        editor.putString("stunum", stunum);
+                        editor.putString("stuname", stuname);
+                        editor.putString("learnPlanId", learnPlanId);
+                        editor.putString("interactionType", interactionType);
+                        editor.putString("content", content);
+                        editor.putString("questionAnswer", questionAnswer);
+                        editor.putString("imagePath", imagePath);
+                        editor.putString("resourceID", resourceID);
+                        editor.putString("questionScore", questionScore);
+                        editor.putString("learnPlanName", learnPlanName);
+                        editor.putString("answerTime", answerTime);
+                        editor.commit();
 
                         msg.obj = 0;
                     }
