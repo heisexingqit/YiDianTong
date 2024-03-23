@@ -9,13 +9,19 @@ import androidx.viewpager.widget.ViewPager;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.animation.AccelerateInterpolator;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,10 +39,12 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import com.example.yidiantong.util.JsonUtils;
+import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.RecyclerInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -88,6 +96,27 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
         fvp_book_recycle.setCurrentItem(currentItem);
 
 
+        // 学习路径展示表格
+//        TableLayout tl_main = findViewById(R.id.tl_main);
+//        String jsonString = "{\n" +
+//                "  \"tableHead\": [\"ID\", \"当前知识点\", \"前置知识点\", \"知识点路径\", \"难度等级\"],\n" +
+//                "  \"tableData\": [\n" +
+//                "    [1, \"集合的概念\", \"/\", \"集合的概念/第一章 集合与常用逻辑用语/必修一\", \"1\"],\n" +
+//                "    [2, \"集合间的基本关系\", \"集合的概念\", \"集合间的基本关系/第一章 集合与常用逻辑用语/必修一\", \"1\"],\n" +
+//                "    [3, \"集合的基本运算\", \"集合间的基本关系\", \"集合的基本运算/第一章 集合与常用逻辑用语/必修一\", \"1\"],\n" +
+//                "    [4, \"充分条件与必要条件\", \"/\", \"充分条件与必要条件/第一章 集合与常用逻辑用语/必修一\", \"1\"],\n" +
+//                "    [5, \"全称量词与存在量词\", \"/\", \"全称量词与存在量词/第一章 集合与常用逻辑用语/必修一\", \"1\"],\n" +
+//                "    [6, \"等式性质与不等式性质\", \"/\", \"等式性质与不等式性质/第二章 一元二次函数、方程和不等式/必修一\", \"1\"],\n" +
+//                "    [7, \"基本不等式\", \"等式性质与不等式性质\", \"基本不等式/第二章 一元二次函数、方程和不等式/必修一\", \"1\"]\n" +
+//                "  ]\n" +
+//                "}";
+//        try {
+//            JSONObject obj = new JSONObject(jsonString);
+//            makeTableUI(obj, tl_main);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+
         loadItems_Net(currentItem);
 
         //ViewPager滑动变速
@@ -102,6 +131,95 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
 
         }
 
+    }
+
+    private void makeTableUI(JSONObject data, TableLayout tl_main) throws JSONException {
+        /** 表格
+         *
+         */
+        Log.e("wen0309", "refreshHW: ");
+
+        // 表格数据
+        // 表头的标题
+        JSONArray table_json = data.getJSONArray("tableHead");
+        String[] headerTitles = new String[table_json.length()];
+        // 将 JSON 数组转换为 Java 数组
+        for (int i = 0; i < table_json.length(); ++i) {
+            headerTitles[i] = table_json.getString(i);
+        }
+
+        table_json = data.getJSONArray("tableData");
+        Log.e("wen0306", "makeTableUI: " + table_json.length());
+        String[][] contentData = new String[table_json.length()][];
+
+        for (int i = 0; i < table_json.length(); ++i) {
+            JSONArray table_js = table_json.getJSONArray(i);
+            String[] body_data = new String[table_js.length()];
+            for (int j = 0; j < table_js.length(); ++j) {
+                body_data[j] = table_js.getString(j);
+            }
+            contentData[i] = body_data;
+        }
+
+        tl_main.removeAllViews();
+
+        // 添加表头
+        Drawable divider = getResources().getDrawable(R.drawable.table_border_divider);
+
+        TableRow headerRow = new TableRow(this);
+        headerRow.setDividerDrawable(divider);
+        headerRow.setShowDividers(TableRow.SHOW_DIVIDER_MIDDLE);
+        headerRow.setLayoutParams(new TableLayout.LayoutParams(
+                TableLayout.LayoutParams.MATCH_PARENT,
+                TableLayout.LayoutParams.WRAP_CONTENT));
+
+        for (String title : headerTitles) {
+            TextView headerTextView = new TextView(this);
+            headerTextView.setText(title);
+            headerTextView.setTextColor(getResources().getColor(R.color.white));
+            headerTextView.setGravity(Gravity.CENTER);
+            headerTextView.setBackgroundColor(Color.parseColor("#a5a5a5"));
+            headerTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14.0f); // 设置字号为18sp
+            headerTextView.setPadding(10, 0, 10, 0);
+            headerRow.addView(headerTextView);
+        }
+
+        tl_main.addView(headerRow);
+
+
+        // 表体
+        for (String[] row : contentData) {
+            TableRow contentRow = new TableRow(this);
+            contentRow.setDividerDrawable(divider);
+            contentRow.setGravity(Gravity.CENTER);
+            contentRow.setShowDividers(TableRow.SHOW_DIVIDER_MIDDLE);
+            contentRow.setLayoutParams(new TableLayout.LayoutParams(
+                    TableLayout.LayoutParams.MATCH_PARENT,
+                    TableLayout.LayoutParams.WRAP_CONTENT));
+
+            for (String cell : row) {
+                TextView cellTextView = new TextView(this);
+                if (cell.equals("null")) {
+                    cell = "";
+                }
+                cellTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14.0f); // 设置字号为18sp
+                cellTextView.setText(cell);
+                cellTextView.setGravity(Gravity.CENTER);
+                cellTextView.setBackgroundResource(R.color.white);
+                cellTextView.setPadding(10, 0, 10, 0);
+                // 设置TextView宽度为固定值100dp，并允许内容换行
+                TableRow.LayoutParams params = new TableRow.LayoutParams(
+                        PxUtils.dip2px(this, 20), // 宽度
+                        TableRow.LayoutParams.WRAP_CONTENT); // 高度
+                cellTextView.setLayoutParams(params);
+                cellTextView.setMaxLines(Integer.MAX_VALUE); // 允许无限换行
+                cellTextView.setEllipsize(TextUtils.TruncateAt.END); // 文本溢出时末尾显示省略号
+
+                contentRow.addView(cellTextView);
+            }
+
+            tl_main.addView(contentRow);
+        }
     }
 
     @Override
@@ -162,14 +280,14 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
     public void updatepage(String currentpage, String allpage) {
         int currentpage1 = Integer.parseInt(currentpage);
         int allpage1 = Integer.parseInt(allpage);
-        if(allpage1 == 1){
-           this.finish();
-        }else if(currentpage1 == allpage1) {
+        if (allpage1 == 1) {
+            this.finish();
+        } else if (currentpage1 == allpage1) {
             currentpage1 -= 1;
             loadItems_Net(currentpage1);
             //fvp_book_recycle.setCurrentItem(currentItem);
-        }else{
-           loadItems_Net(currentpage1);
+        } else {
+            loadItems_Net(currentpage1);
             //fvp_book_recycle.setCurrentItem(currentItem);
         }
     }
@@ -182,7 +300,7 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
         public void handleMessage(Message message) {
             super.handleMessage(message);
             if (message.what == 100) {
-                List<BookRecyclerEntity> list = (List<BookRecyclerEntity>)message.obj;
+                List<BookRecyclerEntity> list = (List<BookRecyclerEntity>) message.obj;
                 adapter.update(list);
             }
         }
@@ -190,7 +308,7 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
 
     // 获取错题详情信息
     private void loadItems_Net(int pos) {
-        String mRequestUrl = Constant.API + Constant.ERROR_QUE_ANSWER_QUESTION + "?sourceId=" + sourceId +"&userName=" +userName +"&subjectId=" + subjectId +"&currentPage=" + pos + "&questionId=" + questionId;
+        String mRequestUrl = Constant.API + Constant.ERROR_QUE_ANSWER_QUESTION + "?sourceId=" + sourceId + "&userName=" + userName + "&subjectId=" + subjectId + "&currentPage=" + pos + "&questionId=" + questionId;
 
         Log.e("wen0223", "详细信息单题请求" + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
@@ -199,10 +317,11 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
 
                 String itemString = json.getString("data");
 
-                itemString = "["+itemString+"]";
+                itemString = "[" + itemString + "]";
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
-                List<BookRecyclerEntity> itemList = gson.fromJson(itemString, new TypeToken<List<BookRecyclerEntity>>() {}.getType());
+                List<BookRecyclerEntity> itemList = gson.fromJson(itemString, new TypeToken<List<BookRecyclerEntity>>() {
+                }.getType());
 
                 Log.e("wen0223", "loadItems_Net: " + itemList);
                 //封装消息，传递给主线程

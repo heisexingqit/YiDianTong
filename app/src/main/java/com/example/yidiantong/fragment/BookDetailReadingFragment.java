@@ -262,7 +262,7 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
         fll_br_model.setOnClickListener(this);
         ftv_br_mode = getActivity().findViewById(R.id.ftv_br_mode);
         String modename = ftv_br_mode.getText().toString();
-            // 获取学生答案
+        // 获取学生答案
         stuanswer = bookrecyclerEntity.getStuAnswer();
         if(stuanswer.length() !=0 && stuans != 2){
             stuans = 1;
@@ -302,7 +302,6 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
                 judge(stuans);
             }
         }
-
         return view;
     }
 
@@ -412,13 +411,13 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
                 break;
             case R.id.fiv_bd_exercise:
                 // 弹出一个简单的Dialog提示 "功能完善中"
-                AlertDialog.Builder builder_exercise = new AlertDialog.Builder(getActivity());
-                builder_exercise.setMessage("功能完善中");
-                builder_exercise.setPositiveButton("确定", null);
-                builder_exercise.show();
+//                AlertDialog.Builder builder_exercise = new AlertDialog.Builder(getActivity());
+//                builder_exercise.setMessage("功能完善中");
+//                builder_exercise.setPositiveButton("确定", null);
+//                builder_exercise.show();
                 Intent toExercise = new Intent(getActivity(), BookExerciseActivity.class);
                 toExercise.putExtra("questionId", bookrecyclerEntity.getQuestionId());
-//                startActivity(toExercise);
+                startActivity(toExercise);
                 break;
             case R.id.fll_br_model:
                 AlertDialog.Builder builder_model = new AlertDialog.Builder(getActivity());

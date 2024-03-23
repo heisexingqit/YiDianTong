@@ -323,15 +323,13 @@ public class BookDetailJudgeFragment extends Fragment implements View.OnClickLis
                 break;
             case R.id.fiv_bd_exercise:
                 // 弹出一个简单的Dialog提示 "功能完善中"
-                AlertDialog.Builder builder_exercise = new AlertDialog.Builder(getActivity());
-                builder_exercise.setMessage("功能完善中");
-                builder_exercise.setPositiveButton("确定", null);
-                builder_exercise.show();
-
-
+//                AlertDialog.Builder builder_exercise = new AlertDialog.Builder(getActivity());
+//                builder_exercise.setMessage("功能完善中");
+//                builder_exercise.setPositiveButton("确定", null);
+//                builder_exercise.show();
                 Intent toExercise = new Intent(getActivity(), BookExerciseActivity.class);
                 toExercise.putExtra("questionId", bookrecyclerEntity.getQuestionId());
-//                startActivity(toExercise);
+                startActivity(toExercise);
                 break;
             case R.id.fll_br_model:
                 AlertDialog.Builder builder_model = new AlertDialog.Builder(getActivity());

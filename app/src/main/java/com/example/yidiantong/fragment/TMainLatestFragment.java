@@ -178,6 +178,7 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
                         intent2.putExtra("noticetype", adapter.itemList.get(pos).getfType());
                         intent2.putExtra("noticetime", adapter.itemList.get(pos).getfTime());
                         startActivity(intent2);
+                        break;
                     case "10":
                         intent = new Intent(getActivity(), TLiveListActivity.class);
                         startActivity(intent);

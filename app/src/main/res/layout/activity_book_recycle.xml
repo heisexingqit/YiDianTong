@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context=".ui.BookRecyclerActivity">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
@@ -32,7 +32,7 @@
             android:layout_centerInParent="true"
             android:gravity="center_horizontal"
             android:singleLine="true"
-            android:text="null"
+            android:text="学习路径展示"
             android:textColor="@color/main_bg"
             android:textSize="17sp" />
 
@@ -77,6 +77,7 @@
         android:layout_height="0dp"
         android:layout_weight="1">
         <!--可滑动ViewPager-->
+
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/fvp_book_recycle"
             android:layout_width="wrap_content"
@@ -90,21 +91,35 @@
 
             <ImageView
                 android:id="@+id/fiv_bd_exercise"
-                android:layout_width="155dp"
-                android:layout_height="24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
                 android:layout_gravity="right"
+                android:adjustViewBounds="true"
+                android:layout_marginEnd="15dp"
                 android:layout_marginBottom="10dp"
                 android:src="@drawable/recommend" />
 
             <ImageView
                 android:id="@+id/fiv_bd_mark"
-                android:layout_width="155dp"
-                android:layout_height="24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:layout_marginEnd="15dp"
+
                 android:layout_gravity="right"
+                android:adjustViewBounds="true"
                 android:layout_marginBottom="10dp"
                 android:src="@drawable/mark_icon" />
         </LinearLayout>
 
+<!--        <TableLayout-->
+<!--            android:id="@+id/tl_main"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@drawable/table_border"-->
+<!--            android:divider="@drawable/table_border_divider"-->
+<!--            android:padding="1dp"-->
+<!--            android:showDividers="middle"-->
+<!--            android:stretchColumns="*" />-->
     </RelativeLayout>
 
 

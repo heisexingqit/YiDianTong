@@ -60,11 +60,9 @@ public class BooksDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         if (viewType == 0) {
-            //Log.e("转换到0","000000000000");
             View v = layoutInflater.inflate(R.layout.item_book_detail_list, null, false);
             return new BooksDetailAdapter.ItemViewHolder(v);
         } else {
-            //Log.e("转换到2","222222222222222");
             View v = layoutInflater.inflate(R.layout.top_detail, null, false);
             return new BooksDetailAdapter.TopViewHolder(v);
         }

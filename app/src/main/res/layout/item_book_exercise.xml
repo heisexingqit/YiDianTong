@@ -10,8 +10,15 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp">
-
+        android:layout_marginBottom="10dp"
+        android:orientation="vertical">
+        <!--        <TextView-->
+        <!--            android:id="@+id/tv_id"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:text="举例一:"-->
+        <!--            android:textSize="18sp"-->
+        <!--            android:textColor="@color/blue_btn"/>-->
         <TextView
             android:id="@+id/tv_type_name"
             android:layout_width="match_parent"
@@ -22,6 +29,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
         android:background="@color/white"
         android:orientation="vertical">
 
@@ -52,8 +60,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:paddingBottom="5dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="5dp">
 
             <TextView
                 android:layout_width="match_parent"
@@ -63,9 +71,9 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:paddingTop="7dp"
-                android:paddingBottom="6dp">
+                android:layout_height="37dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp">
 
                 <!-- 单选 -->
                 <LinearLayout
@@ -74,10 +82,7 @@
                     android:layout_height="match_parent"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="55dp"
-                    android:layout_marginEnd="45dp"
-                    android:paddingBottom="5dp"
-                    android:visibility="gone">
-
+                    android:layout_marginEnd="45dp">
 
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/iv_a"
@@ -126,8 +131,7 @@
                     android:layout_height="match_parent"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="55dp"
-                    android:layout_marginEnd="45dp"
-                    android:visibility="gone">
+                    android:layout_marginEnd="45dp">
 
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/iv_a2"
@@ -173,7 +177,7 @@
                 <LinearLayout
                     android:id="@+id/ll_panduan"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="55dp"
                     android:layout_marginEnd="45dp">
@@ -216,29 +220,20 @@
             android:id="@+id/ll_answer_analysis"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="5dp">
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="3dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginRight="3dp"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 tools:ignore="WebViewLayout">
 
-                <TextView
-                    android:id="@+id/tv_shiti_answer"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="【参考答案】D" />
-
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:orientation="horizontal">
 
                     <TextView
@@ -246,7 +241,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="3dp"
-                        android:text="【你的作答】A" />
+                        android:text="【你的答案】A" />
 
                     <ImageView
                         android:id="@+id/iv_result"
@@ -256,37 +251,35 @@
 
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/tv_shiti_answer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="【参考答案】D" />
+
 
             </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="3dp"
                 android:text="@string/f_analysis"
                 android:textSize="14sp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="3dp"
-                android:layout_marginEnd="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/book_detail">
+            <WebView
+                android:id="@+id/wv_analysis"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="3dp"
+                android:scrollbars="none"
+                tools:ignore="WebViewLayout" />
 
-                <WebView
-                    android:id="@+id/wv_analysis"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="3dp"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginRight="3dp"
-                    android:layout_marginBottom="3dp"
-                    android:scrollbars="none" />
-
-            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray_ccc" />
 </LinearLayout>

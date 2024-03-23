@@ -165,7 +165,8 @@
                 android:id="@+id/ll_show"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <com.github.mikephil.charting.charts.HorizontalBarChart
                     android:id="@+id/hbc_mian"
@@ -231,11 +232,9 @@
                         android:id="@+id/tl_main"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/table_border"
-                        android:divider="@drawable/table_border_divider"
-                        android:padding="1dp"
-                        android:showDividers="middle"
-                        android:stretchColumns="*"/>
+                        android:background="@color/black"
+                        android:stretchColumns="*">
+                    </TableLayout>
                 </HorizontalScrollView>
 
             </LinearLayout>

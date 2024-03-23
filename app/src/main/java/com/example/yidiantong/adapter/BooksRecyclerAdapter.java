@@ -54,7 +54,6 @@ public class BooksRecyclerAdapter extends FragmentStatePagerAdapter {
                 fragment = BookDetailJudgeFragment.newInstance(itemList.get(position));
                 break;
             case "108":
-            case "109":
                 fragment = BookDetailReadingFragment.newInstance(itemList.get(position));
                 break;
             case "104":

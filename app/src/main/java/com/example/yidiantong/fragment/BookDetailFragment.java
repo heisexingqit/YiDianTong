@@ -121,7 +121,7 @@ public class BookDetailFragment extends Fragment {
         adapter = new BooksDetailAdapter(getContext(), errorList, itemList, quesList);
         frv_detail.setAdapter(adapter);
 
-        refreshList();
+//        refreshList(); 放在onResume周期中，及时更新
 
         //设置item点击事件
         adapter.setmItemClickListener((v, pos) -> {
@@ -361,15 +361,6 @@ public class BookDetailFragment extends Fragment {
 
     }
 
-    //慢加载
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            if (isResumed()) {
-                refreshList();
-            }
-        }
-    }
 
     @Override
     public void onResume() {
@@ -381,6 +372,7 @@ public class BookDetailFragment extends Fragment {
 
     private void selectorRefresh(String sourceId){
         this.sourceId = sourceId;
+        // 未完成部分 筛选器回调请求
     }
 
 }

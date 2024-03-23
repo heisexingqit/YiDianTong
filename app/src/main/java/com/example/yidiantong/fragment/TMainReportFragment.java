@@ -1,10 +1,8 @@
 package com.example.yidiantong.fragment;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -13,15 +11,12 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -64,7 +59,6 @@ import com.github.mikephil.charting.data.CombinedData;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.DefaultAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 
@@ -81,7 +75,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 
@@ -434,6 +427,9 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         @Override
         public void handleMessage(Message message) {
             super.handleMessage(message);
+            if(getActivity() == null){
+                return;
+            }
             if (message.what == 100) {
                 // 更新顶部数据
                 try {
@@ -753,7 +749,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         String end = sdf.format(calendar.getTime());
 
         String mRequestUrl = Constant.API + Constant.T_REPORT_HW + "?userId=" + username + "&unitId=1101010010001" + "&startTime=" + start + "&endTime=" + end;
-//        Log.e("wen0308", "loadHWInfo: " + mRequestUrl);
+        Log.e("wen0308", "loadHWURL: " + mRequestUrl);
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
 
@@ -886,7 +882,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
                                 "}";
 //                JSONObject data = new JSONObject(testString);
                 JSONObject data = json.getJSONObject("data");
-                Log.e("wen0308", "loadHWInfo: " + data);
+                Log.e("wen0321", "loadHWInfo: " + data);
 
                 // 封装消息，传递给主线程
                 Message message = Message.obtain();
@@ -1020,9 +1016,12 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         xAxis.setLabelCount(yValues.length(), false); // 设置X轴标签数量与数据点个数一致，但不启用自动换行
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setCenterAxisLabels(true); // 尝试居中对齐标签
+
         // 确保X轴标签与柱子对齐
         xAxis.setValueFormatter(new MyXAxisValueFormatter(data.getJSONArray("xList"))); // Custom XAxisValueFormatter
         xAxis.setDrawGridLines(false);
+        YAxis yAxisLeft = bc_main.getAxisLeft();
+        yAxisLeft.setAxisMinimum(0f); // 设置Y轴的最小值为0
         // 获取右侧Y轴并设置为不可见
         YAxis yAxisRight = bc_main.getAxisRight();
         yAxisRight.setEnabled(false);
@@ -1037,7 +1036,6 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         bc_main.getLegend().setEnabled(false);
         // Refresh the chart
         bc_main.invalidate();
-
 
         // 绘制表格
         makeTableUI(data, tl_main);
@@ -1061,6 +1059,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         combinedChart.setVisibility(View.VISIBLE);
         combinedChart.setScaleEnabled(false);
         combinedChart.setTouchEnabled(false);
+        Log.e("wen0321", "data" + data.toString());
         if (status.equals("no")) {
             ll_show.setVisibility(View.GONE);
             tv_empty.setVisibility(View.VISIBLE);
@@ -1418,18 +1417,24 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
 
         tl_main.removeAllViews();
 
-        // 添加表头
-        Drawable divider = getResources().getDrawable(R.drawable.table_border_divider);
-
+        // 表头
         TableRow headerRow = new TableRow(getActivity());
-        headerRow.setDividerDrawable(divider);
-        headerRow.setShowDividers(TableRow.SHOW_DIVIDER_MIDDLE);
         headerRow.setLayoutParams(new TableLayout.LayoutParams(
                 TableLayout.LayoutParams.MATCH_PARENT,
                 TableLayout.LayoutParams.WRAP_CONTENT));
+        int dp1 = PxUtils.dip2px(getActivity(), 1);
 
-        for (String title : headerTitles) {
+        for (int i = 0; i < headerTitles.length; ++i) {
+            String title = headerTitles[i];
             TextView headerTextView = new TextView(getActivity());
+            // 创建单元格布局参数，并设置外边距
+            TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+            if (i == 0) {
+                layoutParams.setMargins(dp1, dp1, dp1, dp1);
+            }else{
+                layoutParams.setMargins(0, dp1, dp1, dp1);
+            }
+            headerTextView.setLayoutParams(layoutParams);
             headerTextView.setText(title);
             headerTextView.setTextColor(getResources().getColor(R.color.white));
             headerTextView.setGravity(Gravity.CENTER);
@@ -1443,19 +1448,26 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
 
 
         // 表体
-        for (String[] row : contentData) {
+        for (int i = 0; i < contentData.length; ++i) {
+            String[] row = contentData[i];
             TableRow contentRow = new TableRow(getActivity());
-            contentRow.setDividerDrawable(divider);
-            contentRow.setShowDividers(TableRow.SHOW_DIVIDER_MIDDLE);
             contentRow.setLayoutParams(new TableLayout.LayoutParams(
                     TableLayout.LayoutParams.MATCH_PARENT,
                     TableLayout.LayoutParams.WRAP_CONTENT));
 
-            for (String cell : row) {
+            for (int j = 0; j < row.length; ++j) {
+                String cell = row[j];
                 TextView cellTextView = new TextView(getActivity());
                 if (cell.equals("null")) {
                     cell = "";
                 }
+                TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+                if (j == 0) {
+                    layoutParams.setMargins(dp1, 0, dp1, dp1);
+                }else{
+                    layoutParams.setMargins(0, 0, dp1, dp1);
+                }
+                cellTextView.setLayoutParams(layoutParams);
                 cellTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14.0f); // 设置字号为18sp
                 cellTextView.setText(cell);
                 cellTextView.setGravity(Gravity.CENTER);
@@ -1476,7 +1488,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         spannableString.setSpan(new AbsoluteSizeSpan(25, true), startId, originalText.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
 
         // 变色
-        int color = getActivity().getColor(R.color.gray_new);
+        int color = getContext().getColor(R.color.gray_new);
         spannableString.setSpan(new ForegroundColorSpan(color), startId, originalText.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
 
         // 粗体
@@ -1629,4 +1641,5 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
 //        display.getMetrics(metrics);
 //        return metrics.widthPixels;
 //    }
+
 }

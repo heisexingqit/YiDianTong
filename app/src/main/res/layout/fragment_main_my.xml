@@ -250,6 +250,97 @@
                 </LinearLayout>
             </LinearLayout>
 
+<!--            &lt;!&ndash; 修改密码 &ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginLeft="15dp"-->
+<!--                android:layout_marginRight="15dp"-->
+<!--                android:background="@drawable/my_item_selector"-->
+<!--                android:orientation="vertical"-->
+<!--                app:layout_constraintLeft_toLeftOf="parent"-->
+<!--                app:layout_constraintRight_toRightOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/f_ll_update">-->
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="5dp"-->
+<!--                    android:background="@drawable/shape_line_gray" />-->
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="30dp"-->
+<!--                    android:layout_marginTop="10dp"-->
+<!--                    android:layout_marginBottom="10dp"-->
+
+<!--                    android:gravity="center_vertical"-->
+<!--                    android:orientation="horizontal">-->
+
+<!--                    <TextView-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_weight="2"-->
+<!--                        android:gravity="center_vertical"-->
+<!--                        android:text="自主学习"-->
+<!--                        android:textColor="#000000"-->
+<!--                        android:textSize="20sp" />-->
+
+<!--                    <ImageView-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginRight="5dp"-->
+<!--                        android:layout_weight="2"-->
+<!--                        android:scaleType="fitEnd"-->
+<!--                        android:src="@drawable/my_icon_arrowright" />-->
+
+<!--                </LinearLayout>-->
+<!--            </LinearLayout>-->
+<!--            &lt;!&ndash; 修改密码 &ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginLeft="15dp"-->
+<!--                android:layout_marginRight="15dp"-->
+<!--                android:background="@drawable/my_item_selector"-->
+<!--                android:orientation="vertical"-->
+<!--                app:layout_constraintLeft_toLeftOf="parent"-->
+<!--                app:layout_constraintRight_toRightOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/f_ll_update">-->
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="5dp"-->
+<!--                    android:background="@drawable/shape_line_gray" />-->
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="30dp"-->
+<!--                    android:layout_marginTop="10dp"-->
+<!--                    android:layout_marginBottom="10dp"-->
+
+<!--                    android:gravity="center_vertical"-->
+<!--                    android:orientation="horizontal">-->
+
+<!--                    <TextView-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_weight="2"-->
+<!--                        android:gravity="center_vertical"-->
+<!--                        android:text="巩固提升"-->
+<!--                        android:textColor="#000000"-->
+<!--                        android:textSize="20sp" />-->
+
+<!--                    <ImageView-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginRight="5dp"-->
+<!--                        android:layout_weight="2"-->
+<!--                        android:scaleType="fitEnd"-->
+<!--                        android:src="@drawable/my_icon_arrowright" />-->
+
+<!--                </LinearLayout>-->
+<!--            </LinearLayout>-->
+
             <!-- 选科中心 -->
             <LinearLayout
                 android:id="@+id/f_ll_center"
