@@ -6,6 +6,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
@@ -187,6 +188,8 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
     private boolean isKeyboardVisible = false;
     private InputMethodManager imm;
     private RelativeLayout lr_bottom;
+    private SharedPreferences.Editor editor;
+    private SharedPreferences preferences;
 
 
     @Override
@@ -209,9 +212,20 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
         questionTypeName = getIntent().getStringExtra("questionTypeName");
         questionType = getIntent().getStringExtra("questionType");
         Log.e("tyoe1", "" + questionTypeName);
+        Log.d("ningquestionType",""+questionType);
         questionValueList = getIntent().getStringExtra("questionValueList");
         questionValueList = questionValueList.replace(",", "");
         fll_cq = findViewById(R.id.fll_cq);
+        content = getIntent().getStringExtra("content");
+        Log.d("ning0content", "" + content );
+
+        //记录错题消息
+        preferences = getSharedPreferences("questionAnswer", Context.MODE_PRIVATE);
+        editor = preferences.edit();
+        editor.putString("ip", ip);
+        editor.putString("questionTypeName", questionTypeName);
+        editor.putString("questionType", questionType);
+        editor.putString("questionValueList", questionValueList);
 
         // 注册Gallery回调组件
         mResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -405,7 +419,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
             iv_answer_dan[6] = iv_g;
             iv_answer_dan[7] = iv_h;
 
-            content = "";
+            //content = "";
             for (int i = 0; i < 8; i++) {
                 if (i < questionValueList.length()) {
                     iv_answer_dan[i].setVisibility(View.VISIBLE);
@@ -414,6 +428,37 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
                     iv_answer_dan[i].setVisibility(View.GONE);
                 }
             }
+            //读取content内容，判断他内容并将对应的按钮改为选中状态
+            Log.d("ning单选",""+content);
+            if(content != null){
+                switch (content){
+                    case "A":
+                        answer_dan[questionId] = 0;
+                        showRadioBtnDan();
+                        break;
+                    case "B":
+                        answer_dan[questionId] = 1;
+                        showRadioBtnDan();
+                        break;
+                    case "C":
+                        answer_dan[questionId] = 2;
+                        showRadioBtnDan();
+                        break;
+                    case "D":
+                        answer_dan[questionId] = 3;
+                        showRadioBtnDan();
+                        break;
+                    case "E":
+                        answer_dan[questionId] = 4;
+                        showRadioBtnDan();
+                        break;
+                    case "F":
+                        answer_dan[questionId] = 5;
+                        showRadioBtnDan();
+                        break;
+                }
+            }
+
         } else if (questionType.equals("2")) { // 多选题
             fll_cq_danxuan.setVisibility(View.GONE);
             fll_cq_duouan.setVisibility(View.VISIBLE);
@@ -436,7 +481,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
             iv_answer_duo[5] = iv_f;
             iv_answer_duo[6] = iv_g;
             iv_answer_duo[7] = iv_h;
-            content = "";
+            //content = "";
             Log.e("0115", "JudgeType: " + questionValueList);
             for (int i = 0; i < 8; i++) {
                 if (i < questionValueList.length()) {
@@ -447,7 +492,45 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
                 }
                 answer_duo[i] = 0; // 初始化多选答案
             }
+            //判断是否有错题信息并加载选项
+            Log.d("ning多选",""+content);
+            if(content != null){
+                String result = content.replaceAll(",", "");//将答案中的逗号去掉
+                int length = result.length();
+                for(int i=0;i< length;i++){
+                    switch (result.charAt(i)){
+                        case 'A':
+                            answer_duo[0] ^= 1;
+                            showRadioBtnDuo();
+                            break;
+                        case 'B':
+                            answer_duo[1] ^= 1;
+                            showRadioBtnDuo();
+                            break;
+                        case 'C':
+                            answer_duo[2] ^= 1;
+                            showRadioBtnDuo();
+                            break;
+                        case 'D':
+                            answer_duo[3] ^= 1;
+                            showRadioBtnDuo();
+                            break;
+                        case 'E':
+                            answer_duo[4] ^= 1;
+                            showRadioBtnDuo();
+                            break;
+                        case 'F':
+                            answer_duo[5] ^= 1;
+                            showRadioBtnDuo();
+                            break;
+                    }
+
+                }
+
+            }
+
         } else if (questionType.equals("4")) { // 判断题
+            Log.d("ningquestionType",""+questionType);
             fll_cq_danxuan.setVisibility(View.GONE);
             fll_cq_duouan.setVisibility(View.GONE);
             fll_cq_panduan.setVisibility(View.VISIBLE);
@@ -457,9 +540,23 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
             ClickableImageView iv_e = v.findViewById(R.id.fiv_cb_er);
             iv_answer_jud[0] = iv_r;
             iv_answer_jud[1] = iv_e;
-            content = "";
+            //content = "";
             iv_r.setOnClickListener(this);
             iv_e.setOnClickListener(this);
+            //判断题目是否存在，若错在则显示答案
+            Log.d("ning判断",""+content);
+            if(content != null){
+                switch (content){
+                    case "对":
+                        answer_jud = 0;
+                        showRadioBtnJud();
+                        break;
+                    case "错":
+                        answer_jud = 1;
+                        showRadioBtnJud();
+                        break;
+                }
+            }
         } else {
             fll_cq_danxuan.setVisibility(View.GONE);
             fll_cq_duouan.setVisibility(View.GONE);
@@ -503,10 +600,20 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
             // -------------------#
             //  视图初始化，清空内容
             // -------------------#
-            fll_fcq.setVisibility(View.GONE);
+            Log.d("ning1content:",""+content);
+            //判断本次是否有题目，如果有则设置右边输入框为可见状态并显示之前的答案
+            if(content != null) {
+                fll_fcq.setVisibility(View.VISIBLE);
+                html_answer = content;
+            }else {
+                fll_fcq.setVisibility(View.GONE);
+                html_answer = "";
+            }
             et_answer.setText("");
-            html_answer = "";
-            wv_answer.loadDataWithBaseURL(null, getHtmlAnswer(), "text/html", "utf-8", null);
+
+
+            Log.d("ninghtml:",""+html_answer);
+             wv_answer.loadDataWithBaseURL(null, getHtmlAnswer(), "text/html", "utf-8", null);
             url_list.clear();
             imgadapter.updateData(url_list);
 
@@ -519,8 +626,8 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
                     return false;
                 }
             });
-            html_answer = "";
-            content = "";
+            //html_answer = "";
+            //content = "";
         }
 //        else{
 //            Log.e("0202ee", "未知题型名称: " + questionTypeName);
@@ -900,7 +1007,46 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
                     Message msg = Message.obtain();
                     if (status.equals("success")) {
                         msg.obj = 1;
+                        Log.d("ningdelect","错题删除");
+                        //测试用代码
+//                        editor.putString("action", action);
+//                        editor.putString("stunum", stunum);
+//                        editor.putString("stuname", stuname);
+//                        editor.putString("learnPlanId", learnPlanId);
+//                        editor.putString("interactionType", interactionType);
+//                        editor.putString("content", content);
+//                        editor.putString("questionAnswer", questionAnswer);
+//                        editor.putString("imagePath", imagePath);
+//                        editor.putString("resourceID", resourceID);
+//                        editor.putString("questionScore", questionScore);
+//                        editor.putString("learnPlanName", learnPlanName);
+//                        editor.putString("answerTime", answerTime);
+//                        editor.commit();
+                        //提交成功删除本地错题
+                        SharedPreferences sharedPreferences = getSharedPreferences("your_pref_name", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.clear();
+                        editor.apply();
+                        File sharedPreferencesFile = new File(getFilesDir().getParent() + "/shared_prefs/questionAnswer.xml");
+                        if (sharedPreferencesFile.exists()) {
+                            sharedPreferencesFile.delete();
+                        }
                     } else {
+                        //服务器返回失败，存储重要答题消息以便下次加载
+                        editor.putString("action", action);
+                        editor.putString("stunum", stunum);
+                        editor.putString("stuname", stuname);
+                        editor.putString("learnPlanId", learnPlanId);
+                        editor.putString("interactionType", interactionType);
+                        editor.putString("content", content);
+                        editor.putString("questionAnswer", questionAnswer);
+                        editor.putString("imagePath", imagePath);
+                        editor.putString("resourceID", resourceID);
+                        editor.putString("questionScore", questionScore);
+                        editor.putString("learnPlanName", learnPlanName);
+                        editor.putString("answerTime", answerTime);
+                        editor.commit();
+
                         msg.obj = 0;
                     }
                     msg.what = 100;
