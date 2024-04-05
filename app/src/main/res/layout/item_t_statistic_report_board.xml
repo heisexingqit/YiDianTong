@@ -90,165 +90,203 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/round_rectangle_white"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
         <LinearLayout
+            android:id="@+id/ll_main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/iv_icon"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_marginStart="5dp"
-                android:adjustViewBounds="true"
-                android:src="@drawable/t_teach_board" />
+            android:background="@drawable/round_rectangle_white"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
+                <ImageView
+                    android:id="@+id/iv_icon"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_marginStart="5dp"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/t_teach_board" />
+
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="0dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:padding="10dp">
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/tv_times"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="有效课次:"
-                        android:textColor="@color/gray_new"
-                        android:textSize="16sp" />
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="0dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
-                    <TextView
-                        android:id="@+id/tv_times_num"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textColor="@color/gray_new"
-                        android:textSize="50sp"
-                        android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/tv_times"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="有效课次:"
+                            android:textColor="@color/gray_new"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/tv_times_num"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/gray_new"
+                            android:textSize="50sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <GridLayout
+                        android:id="@+id/gl_content"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="20dp"
+                        android:columnCount="2"
+                        android:gravity="center"
+                        android:rowCount="2" />
                 </LinearLayout>
-
-                <GridLayout
-                    android:id="@+id/gl_content"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="20dp"
-                    android:columnCount="2"
-                    android:gravity="center"
-                    android:rowCount="2" />
             </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingStart="15dp"
-            android:paddingTop="15dp"
-            android:paddingEnd="15dp"
-            android:paddingBottom="15dp">
 
             <LinearLayout
-                android:id="@+id/ll_show"
+                android:id="@+id/ll_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:paddingStart="15dp"
+                android:paddingTop="15dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="15dp">
 
-                <com.github.mikephil.charting.charts.HorizontalBarChart
-                    android:id="@+id/hbc_mian"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_marginTop="10dp"
-                    android:visibility="gone"
-                    android:layout_marginBottom="20dp" />
-
-                <RelativeLayout
-                    android:id="@+id/rl_show"
-                    android:layout_width="match_parent"
-                    android:layout_height="160dp"
-                    android:visibility="gone"
-                    android:layout_marginBottom="20dp">
-                    <!-- Y轴左侧的TextView -->
-                    <TextView
-                        android:id="@+id/leftAxisTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerVertical="true"
-                        android:rotation="-90"
-                        android:textSize="10sp"
-                        android:text="分数"
-                        android:textColor="@color/main_blue" />
-
-                    <!-- Y轴右侧的TextView -->
-                    <TextView
-                        android:id="@+id/rightAxisTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:rotation="90"
-                        android:text="得分率"
-                        android:textSize="10sp" />
-
-                    <com.github.mikephil.charting.charts.CombinedChart
-                        android:id="@+id/cbc_mian"
-                        android:layout_width="match_parent"
-                        android:layout_height="160dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="15dp"
-                        android:visibility="gone" />
-
-                </RelativeLayout>
-
-                <com.github.mikephil.charting.charts.BarChart
-                    android:id="@+id/bc_mian"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="20dp" />
-
-                <HorizontalScrollView
-                    android:id="@+id/hsv_main"
+                <LinearLayout
+                    android:id="@+id/ll_show"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:scrollbars="none">
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <com.github.mikephil.charting.charts.HorizontalBarChart
+                        android:id="@+id/hbc_mian"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="20dp"
+                        android:visibility="gone" />
+
+                    <RelativeLayout
+                        android:id="@+id/rl_show"
+                        android:layout_width="match_parent"
+                        android:layout_height="160dp"
+                        android:layout_marginBottom="20dp"
+                        android:visibility="gone">
+                        <!-- Y轴左侧的TextView -->
+                        <TextView
+                            android:id="@+id/leftAxisTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:rotation="-90"
+                            android:text="分数"
+                            android:textColor="@color/main_blue"
+                            android:textSize="10sp" />
+
+                        <!-- Y轴右侧的TextView -->
+                        <TextView
+                            android:id="@+id/rightAxisTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:rotation="90"
+                            android:text="得分率"
+                            android:textSize="10sp" />
+
+                        <com.github.mikephil.charting.charts.CombinedChart
+                            android:id="@+id/cbc_mian"
+                            android:layout_width="match_parent"
+                            android:layout_height="160dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="15dp"
+                            android:visibility="gone" />
+
+                    </RelativeLayout>
+
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/bc_mian"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="20dp" />
+
+                    <!--                <HorizontalScrollView-->
+                    <!--                    android:id="@+id/hsv_main"-->
+                    <!--                    android:layout_width="match_parent"-->
+                    <!--                    android:layout_height="wrap_content"-->
+                    <!--                    android:scrollbars="none">-->
 
                     <TableLayout
                         android:id="@+id/tl_main"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/black"
-                        android:stretchColumns="*">
-                    </TableLayout>
-                </HorizontalScrollView>
+                        android:stretchColumns="*"></TableLayout>
+                    <!--                </HorizontalScrollView>-->
 
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_empty"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="25dp"
+                    android:gravity="center"
+                    android:text="暂无数据"
+                    android:textColor="@color/gray_new"
+                    android:textSize="25sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_loading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/ll_main"
+            android:layout_alignBottom="@+id/ll_main"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:orientation="vertical">
+
+                <ProgressBar
+                    android:id="@+id/pb_main"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_horizontal"
+                    android:indeterminateTint="@color/blue_btn" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/loading"
+                    android:textColor="@color/blue_btn" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_empty"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="25dp"
-                android:gravity="center"
-                android:text="暂无数据"
-                android:textColor="@color/gray_new"
-                android:textSize="25sp" />
-        </LinearLayout>
-    </LinearLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
 </LinearLayout>

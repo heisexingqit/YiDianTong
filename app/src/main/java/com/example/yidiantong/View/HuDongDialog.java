@@ -146,8 +146,6 @@ public class HuDongDialog extends Dialog implements View.OnClickListener {
                 }else if(click == 1){
                     size = duosize;
                 }
-                Log.e("click",""+click);
-                Log.e("size",""+size);
                 hudong.doActionHuDong(click, size);
                 dismiss();
                 break;

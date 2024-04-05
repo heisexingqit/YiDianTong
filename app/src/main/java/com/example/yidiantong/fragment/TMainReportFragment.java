@@ -118,6 +118,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
     private PopupWindow window;
     private TextView tv_top_time;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private RelativeLayout loadingView[] = new RelativeLayout[3];
 
     public static TMainReportFragment newInstance() {
         TMainReportFragment fragment = new TMainReportFragment();
@@ -173,7 +174,6 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
             }
         });
 
-
         // 主题色
         LinearLayout ll_color = v[0].findViewById(R.id.ll_color);
         ll_color.setBackgroundColor(0xFF47bb3e);
@@ -217,6 +217,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
 //        v[1].setLayoutParams(layoutParams);
 
         // 时间选择器
+
         time[1] = v[1].findViewById(R.id.tv_date);
         v[1].findViewById(R.id.iv_calendar).setOnClickListener(v -> {
             // 将字符串时间解析为 Date 对象
@@ -308,7 +309,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         tv_num[2] = v[2].findViewById(R.id.tv_times_num);
         tv_num[2].setTextColor(0xFF7c67f4);
         // 数据
-        String content3[] = {"填空题: 0", "其他题: 0"};
+        String content3[] = {"填空题: 0", "其它题: 0"};
         for (int i = 0; i < 2; ++i) {
             // 定位
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
@@ -375,7 +376,9 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
             });
         }
 
-
+        for (int i = 0; i < 3; ++i) {
+            loadingView[i] = v[i].findViewById(R.id.rl_loading);
+        }
         // 数据加载 =》刷新
         loadSemester();
         loadTopInfo();
@@ -427,7 +430,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         @Override
         public void handleMessage(Message message) {
             super.handleMessage(message);
-            if(getActivity() == null){
+            if (getActivity() == null) {
                 return;
             }
             if (message.what == 100) {
@@ -633,6 +636,8 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private void loadClassInfo() {
+        loadingView[0].setVisibility(View.VISIBLE);
+
         String start = time[0].getText().toString() + " 00:00:00";
         // 将end时间改为start时间的下一天
         Calendar calendar = Calendar.getInstance();
@@ -726,6 +731,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
                 //标识线程
                 message.what = 101;
                 handler.sendMessage(message);
+                loadingView[0].setVisibility(View.GONE);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -737,6 +743,8 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
     }
 
     private void loadHWInfo() {
+        loadingView[1].setVisibility(View.VISIBLE);
+
         String start = time[1].getText().toString() + " 00:00:00";
         // 将end时间改为start时间的下一天
         Calendar calendar = Calendar.getInstance();
@@ -893,6 +901,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
                 //标识线程
                 message.what = 102;
                 handler.sendMessage(message);
+                loadingView[1].setVisibility(View.GONE);
 
             } catch (JSONException e) {
                 Log.e("json", "loadHWInfo: " + e);
@@ -907,6 +916,8 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
     }
 
     private void loadQuInfo() {
+        loadingView[2].setVisibility(View.VISIBLE);
+
         String start = time[2].getText().toString() + " 00:00:00";
         // 将end时间改为start时间的下一天
         Calendar calendar = Calendar.getInstance();
@@ -937,6 +948,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
                 //标识线程
                 message.what = 103;
                 handler.sendMessage(message);
+                loadingView[2].setVisibility(View.GONE);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -1307,7 +1319,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
             tv_empty.setVisibility(View.VISIBLE);
             // 空数据
             textViewFontChange(tv_qu[0], "填空题: 0", 5);
-            textViewFontChange(tv_qu[1], "其他题: 0", 5);
+            textViewFontChange(tv_qu[1], "其它题: 0", 5);
             tv_num[2].setText("0");
             return;
         } else {
@@ -1316,7 +1328,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         }
         // 直接数据
         textViewFontChange(tv_qu[0], "填空题: " + data.getString("tkNum"), 5);
-        textViewFontChange(tv_qu[1], "其他题: " + data.getString("qtNum"), 5);
+        textViewFontChange(tv_qu[1], "其它题: " + data.getString("qtNum"), 5);
 
         tv_num[2].setText(data.getString("sumNum"));
 
@@ -1371,7 +1383,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         set1 = new BarDataSet(values, "");
         set1.setDrawIcons(false);
         set1.setColors(new ArrayList<>(Arrays.asList(Color.parseColor("#f8a45e"), Color.parseColor("#7db4e9"))));
-        set1.setStackLabels(new String[]{"其他题", "填空题"});
+        set1.setStackLabels(new String[]{"其它题", "填空题"});
         ArrayList<IBarDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
         BarData dataB = new BarData(dataSets);
@@ -1394,7 +1406,6 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         Log.e("wen0309", "refreshHW: ");
 
         // 表格数据
-        // 表头的标题
         JSONArray table_json = data.getJSONArray("tableHead");
         String[] headerTitles = new String[table_json.length()];
         // 将 JSON 数组转换为 Java 数组
@@ -1428,19 +1439,18 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
             String title = headerTitles[i];
             TextView headerTextView = new TextView(getActivity());
             // 创建单元格布局参数，并设置外边距
-            TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+            TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT, 1f);
             if (i == 0) {
                 layoutParams.setMargins(dp1, dp1, dp1, dp1);
-            }else{
+            } else {
                 layoutParams.setMargins(0, dp1, dp1, dp1);
             }
             headerTextView.setLayoutParams(layoutParams);
             headerTextView.setText(title);
             headerTextView.setTextColor(getResources().getColor(R.color.white));
             headerTextView.setGravity(Gravity.CENTER);
+            headerTextView.setTextSize(11f);
             headerTextView.setBackgroundColor(Color.parseColor("#a5a5a5"));
-            headerTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14.0f); // 设置字号为18sp
-            headerTextView.setPadding(10, 0, 10, 0);
             headerRow.addView(headerTextView);
         }
 
@@ -1461,18 +1471,17 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
                 if (cell.equals("null")) {
                     cell = "";
                 }
-                TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+                TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT, 1f);
                 if (j == 0) {
                     layoutParams.setMargins(dp1, 0, dp1, dp1);
-                }else{
+                } else {
                     layoutParams.setMargins(0, 0, dp1, dp1);
                 }
                 cellTextView.setLayoutParams(layoutParams);
-                cellTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14.0f); // 设置字号为18sp
                 cellTextView.setText(cell);
                 cellTextView.setGravity(Gravity.CENTER);
+                cellTextView.setTextSize(11f);
                 cellTextView.setBackgroundResource(R.color.white);
-                cellTextView.setPadding(10, 0, 10, 0);
                 contentRow.addView(cellTextView);
             }
 

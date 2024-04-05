@@ -19,6 +19,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -95,11 +96,10 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
         currentItem = Integer.valueOf(pos);
         fvp_book_recycle.setCurrentItem(currentItem);
 
-
         // 学习路径展示表格
 //        TableLayout tl_main = findViewById(R.id.tl_main);
 //        String jsonString = "{\n" +
-//                "  \"tableHead\": [\"ID\", \"当前知识点\", \"前置知识点\", \"知识点路径\", \"难度等级\"],\n" +
+//                "  \"tableHead\": [\"ID\", \"当前知识点\", \"前置知识点\", \"         知识点路径       \", \"难度等级\"],\n" +
 //                "  \"tableData\": [\n" +
 //                "    [1, \"集合的概念\", \"/\", \"集合的概念/第一章 集合与常用逻辑用语/必修一\", \"1\"],\n" +
 //                "    [2, \"集合间的基本关系\", \"集合的概念\", \"集合间的基本关系/第一章 集合与常用逻辑用语/必修一\", \"1\"],\n" +
@@ -133,6 +133,7 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
 
     }
 
+    // 绘制表格（大表格）
     private void makeTableUI(JSONObject data, TableLayout tl_main) throws JSONException {
         /** 表格
          *
@@ -163,24 +164,31 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
 
         tl_main.removeAllViews();
 
-        // 添加表头
-        Drawable divider = getResources().getDrawable(R.drawable.table_border_divider);
-
+        // 表头
         TableRow headerRow = new TableRow(this);
-        headerRow.setDividerDrawable(divider);
-        headerRow.setShowDividers(TableRow.SHOW_DIVIDER_MIDDLE);
         headerRow.setLayoutParams(new TableLayout.LayoutParams(
                 TableLayout.LayoutParams.MATCH_PARENT,
                 TableLayout.LayoutParams.WRAP_CONTENT));
+        int dp1 = PxUtils.dip2px(this, 1);
 
-        for (String title : headerTitles) {
+        for (int i = 0; i < headerTitles.length; ++i) {
+            String title = headerTitles[i];
             TextView headerTextView = new TextView(this);
+            // 创建单元格布局参数，并设置外边距
+            TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT);
+            headerTextView.setMaxLines(Integer.MAX_VALUE); // 允许无限换行
+            if (i == 0) {
+                layoutParams.setMargins(dp1, dp1, dp1, dp1);
+            }else{
+                layoutParams.setMargins(0, dp1, dp1, dp1);
+            }
+            headerTextView.setLayoutParams(layoutParams);
             headerTextView.setText(title);
             headerTextView.setTextColor(getResources().getColor(R.color.white));
             headerTextView.setGravity(Gravity.CENTER);
             headerTextView.setBackgroundColor(Color.parseColor("#a5a5a5"));
             headerTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14.0f); // 设置字号为18sp
-            headerTextView.setPadding(10, 0, 10, 0);
+            headerTextView.setPadding(10, 10, 10, 10);
             headerRow.addView(headerTextView);
         }
 
@@ -188,39 +196,40 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
 
 
         // 表体
-        for (String[] row : contentData) {
+        for (int i = 0; i < contentData.length; ++i) {
+            String[] row = contentData[i];
             TableRow contentRow = new TableRow(this);
-            contentRow.setDividerDrawable(divider);
-            contentRow.setGravity(Gravity.CENTER);
-            contentRow.setShowDividers(TableRow.SHOW_DIVIDER_MIDDLE);
             contentRow.setLayoutParams(new TableLayout.LayoutParams(
                     TableLayout.LayoutParams.MATCH_PARENT,
                     TableLayout.LayoutParams.WRAP_CONTENT));
 
-            for (String cell : row) {
+            for (int j = 0; j < row.length; ++j) {
+                String cell = row[j];
                 TextView cellTextView = new TextView(this);
                 if (cell.equals("null")) {
                     cell = "";
                 }
+                TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(PxUtils.dip2px(this, 20), TableRow.LayoutParams.MATCH_PARENT);
+                cellTextView.setMaxLines(Integer.MAX_VALUE); // 允许无限换行
+                if (j == 0) {
+                    layoutParams.setMargins(dp1, 0, dp1, dp1);
+                }else{
+                    layoutParams.setMargins(0, 0, dp1, dp1);
+                }
+
+                cellTextView.setLayoutParams(layoutParams);
                 cellTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14.0f); // 设置字号为18sp
                 cellTextView.setText(cell);
                 cellTextView.setGravity(Gravity.CENTER);
                 cellTextView.setBackgroundResource(R.color.white);
-                cellTextView.setPadding(10, 0, 10, 0);
-                // 设置TextView宽度为固定值100dp，并允许内容换行
-                TableRow.LayoutParams params = new TableRow.LayoutParams(
-                        PxUtils.dip2px(this, 20), // 宽度
-                        TableRow.LayoutParams.WRAP_CONTENT); // 高度
-                cellTextView.setLayoutParams(params);
-                cellTextView.setMaxLines(Integer.MAX_VALUE); // 允许无限换行
-                cellTextView.setEllipsize(TextUtils.TruncateAt.END); // 文本溢出时末尾显示省略号
-
+                cellTextView.setPadding(10, 10, 10, 10);
                 contentRow.addView(cellTextView);
             }
 
             tl_main.addView(contentRow);
         }
     }
+
 
     @Override
     public void pageLast(String currentpage, String allpage) {

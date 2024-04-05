@@ -34,7 +34,6 @@ public class CourseScannerActivity extends AppCompatActivity implements View.OnC
             setContentView(R.layout.activity_course_scanner);
             barcodeScannerView = findViewById(R.id.zxing_barcode_scanner);
 
-
         //顶栏返回按钮
         findViewById(R.id.fiv_back).setOnClickListener(v -> {
             this.finish();

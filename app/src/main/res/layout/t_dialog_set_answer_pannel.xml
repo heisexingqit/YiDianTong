@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/half8_transparent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:paddingTop="60dp"
+        android:paddingBottom="40dp"
+        android:translationY="-40dp">
+
+        <LinearLayout
+            android:id="@+id/ll_type2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/ll_line1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30dp">
+
+                <com.example.yidiantong.View.ClickableImageView
+                    android:id="@+id/iv_line1_1"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/a_unselect" />
+
+                <com.example.yidiantong.View.ClickableImageView
+                    android:id="@+id/iv_line1_2"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_centerInParent="true"
+
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/b_unselect" />
+
+                <com.example.yidiantong.View.ClickableImageView
+                    android:id="@+id/iv_line1_3"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_centerInParent="true"
+
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/c_unselect" />
+
+                <com.example.yidiantong.View.ClickableImageView
+                    android:id="@+id/iv_line1_4"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_centerInParent="true"
+
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/d_unselect" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_line2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30dp">
+
+                <com.example.yidiantong.View.ClickableImageView
+                    android:id="@+id/iv_line2_1"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="1"
+
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/a_unselect" />
+
+                <com.example.yidiantong.View.ClickableImageView
+                    android:id="@+id/iv_line2_2"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_centerInParent="true"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/b_unselect" />
+
+                <com.example.yidiantong.View.ClickableImageView
+                    android:id="@+id/iv_line2_3"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_centerInParent="true"
+                    android:layout_weight="1"
+
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/c_unselect" />
+
+                <com.example.yidiantong.View.ClickableImageView
+                    android:id="@+id/iv_line2_4"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_centerInParent="true"
+
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/d_unselect" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <com.example.yidiantong.View.ClickableImageView
+                android:id="@+id/iv_save"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:src="@drawable/save" />
+
+            <com.example.yidiantong.View.ClickableImageView
+                android:id="@+id/iv_cancel"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:src="@drawable/hudong_06" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

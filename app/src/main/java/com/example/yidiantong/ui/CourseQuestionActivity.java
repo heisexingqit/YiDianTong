@@ -190,6 +190,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
     private RelativeLayout lr_bottom;
     private SharedPreferences.Editor editor;
     private SharedPreferences preferences;
+    private LinearLayout fll_w1;
 
 
     @Override
@@ -321,6 +322,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
         fll_acq = findViewById(R.id.fll_acq);
         View v1 = LayoutInflater.from(this).inflate(R.layout.fragment_course_question, fll_acq, false);
         fwv_cq = v1.findViewById(R.id.fwv_cq);
+        fll_w1 = v1.findViewById(R.id.fll_w1);
         wv_answer = v1.findViewById(R.id.wv_answer);
         imagePath = getIntent().getStringExtra("imagePath");
         imagePath = imagePath.replaceAll("\\\\", "/");
@@ -419,10 +421,11 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
             iv_answer_dan[6] = iv_g;
             iv_answer_dan[7] = iv_h;
 
-            //content = "";
+            content = "";
             for (int i = 0; i < 8; i++) {
                 if (i < questionValueList.length()) {
                     iv_answer_dan[i].setVisibility(View.VISIBLE);
+                    iv_answer_dan[i].setImageResource(unselectDan[i]);
                     iv_answer_dan[i].setOnClickListener(this);
                 } else {
                     iv_answer_dan[i].setVisibility(View.GONE);
@@ -481,7 +484,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
             iv_answer_duo[5] = iv_f;
             iv_answer_duo[6] = iv_g;
             iv_answer_duo[7] = iv_h;
-            //content = "";
+            content = "";
             Log.e("0115", "JudgeType: " + questionValueList);
             for (int i = 0; i < 8; i++) {
                 if (i < questionValueList.length()) {
@@ -540,7 +543,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
             ClickableImageView iv_e = v.findViewById(R.id.fiv_cb_er);
             iv_answer_jud[0] = iv_r;
             iv_answer_jud[1] = iv_e;
-            //content = "";
+            content = "";
             iv_r.setOnClickListener(this);
             iv_e.setOnClickListener(this);
             //判断题目是否存在，若错在则显示答案
@@ -619,15 +622,15 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
 
             imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             // 隐藏输入框
-            fwv_cq.setOnTouchListener(new View.OnTouchListener() {
+            fll_w1.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {
                     hideInputKB();
                     return false;
                 }
             });
-            //html_answer = "";
-            //content = "";
+            html_answer = "";
+            content = "";
         }
 //        else{
 //            Log.e("0202ee", "未知题型名称: " + questionTypeName);
@@ -963,7 +966,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
                 }
             }
         }
-        if(content.length() == 0){
+        if(content == null || content.length() == 0){
             Toast.makeText(this, "作答内容为空!", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -1312,7 +1315,6 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
         }
     }
 
-
     // 按返回键，不传回上一界面
     public void onBackPressed() {
 //        Intent intent = new Intent(CourseQuestionActivity.this, CourseLookActivity.class);
@@ -1413,7 +1415,6 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
     //  二维码弹窗 方法
     //  源于LockActivity页面中
     // ---------------------//
-
     private Handler handler_qc = new Handler(Looper.getMainLooper()) {
         @SuppressLint("NotifyDataSetChanged")
         @Override

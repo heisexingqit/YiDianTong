@@ -164,7 +164,6 @@
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.TRemoveControlActivity"
-            android:configChanges="orientation|screenSize"
             android:exported="false" />
         <activity
             android:name=".ui.TCourseScannerActivity"

@@ -6,7 +6,7 @@ public class BookExerciseEntity {
     public String shiTiAnswer; // 标准答案
     public String typeName; // 题目标题
     public String baseTypeId; // 题目基类
-    public String stuAnswer; // 学生作答
+    public String stuAnswer = ""; // 学生作答
     public int orderNum; // 小题个数
     public String stuHtml = ""; // 主观题图片url
     @Override

@@ -285,6 +285,12 @@ public class Constant {
     // 遥控器获取资源列表
     public static final String T_REMOVE_GET_RESOUCE_LIST = "/KeTangServer/ajax/ketang_getPeriodList.do";
 
+    // 遥控器设置答案
+    public static final String T_REMOVE_SET_ANSWER = "/KeTangServer/ajax/hwp_savePPTAnswer.do";
+
+    // 遥控器获取答案面板参数
+    public static final String T_REMOVE_GET_ANSWER_PARAMS = "/KeTangServer/ajax/hwp_getQueInfo.do";
+
     // 提分训练
     public static final String T_GET_TIFEN_TRAIN = "/AppServer/ajax/studentApp_getRecommendQue.do";
 }

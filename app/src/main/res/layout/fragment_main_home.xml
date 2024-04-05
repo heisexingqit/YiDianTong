@@ -8,7 +8,9 @@
     tools:context=".fragment.MainHomeFragment">
 
     <include layout="@layout/bar_top_search" />
-    <include layout="@layout/loading_page"/>
+
+    <include layout="@layout/loading_page" />
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRf"
         android:layout_width="match_parent"

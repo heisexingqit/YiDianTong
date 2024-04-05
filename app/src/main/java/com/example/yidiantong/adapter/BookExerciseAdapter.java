@@ -304,7 +304,7 @@ public class BookExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             char[] answerArray = item.stuAnswer.toCharArray();
                             Arrays.sort(answerArray);
                             // 反转字符数组，使其从大到小排序
-                            item.stuAnswer = new StringBuilder(new String(answerArray)).reverse().toString();
+                            item.stuAnswer = new StringBuilder(new String(answerArray)).toString();
                             showDuoxuanBtn(item.stuAnswer);
                         }
                     };
@@ -352,7 +352,7 @@ public class BookExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     tv_shiti_answer.setText("【参考答案】" + item.shiTiAnswer);
                     break;
                 case "108":
-                    if (item.typeName.contains("七")) {
+                    if (item.typeName.contains("七选")) {
                         View.OnClickListener read75Listener = new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -368,8 +368,8 @@ public class BookExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         };
                         StringBuilder sb = new StringBuilder();
 
-                        for (int i = 0; i < 7; ++i) {
-                            for (int j = 0; j < 5; ++j) {
+                        for (int i = 0; i < 5; ++i) {
+                            for (int j = 0; j < 7; ++j) {
                                 iv_answer_drawer2[i][j].setTag(i + "-" + j);
                                 iv_answer_drawer2[i][j].setOnClickListener(read75Listener);
                             }
@@ -380,6 +380,10 @@ public class BookExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         }
 
                         item.stuAnswer = sb.toString();
+                        // html清洗
+                        String cleanString = Jsoup.clean(item.shiTiAnswer, Whitelist.none()).trim().replace("&nbsp;", "");
+                        tv_shiti_answer.setText("【参考答案】" + cleanString);
+                        item.shiTiAnswer = cleanString;
 
                     } else {
                         // 阅读题
@@ -475,6 +479,11 @@ public class BookExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                     });
 
+                    // 解析设置
+                    html_content_analysis = "<body style=\"color: rgb(100, 100, 100); font-size: 14px;line-height: 20px;\">" + item.shiTiAnswer + "</body>";
+                    html_analysis = html_content_analysis.replace("#", "%23");
+                    wv_answer.loadDataWithBaseURL(null, html_analysis, "text/html", "utf-8", null);
+
                     break;
             }
             ll_answer_analysis.setVisibility(View.GONE);
@@ -490,6 +499,7 @@ public class BookExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         case "102": // 多选题
                         case "103": // 判断题
                         case "108":
+
                             if (item.stuAnswer == null || item.stuAnswer.length() == 0) {
                                 Toast.makeText(mContext, "请选择答案", Toast.LENGTH_SHORT).show();
                                 return;

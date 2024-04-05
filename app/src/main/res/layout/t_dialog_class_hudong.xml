@@ -170,9 +170,9 @@
             android:id="@+id/fiv_hd_cancle"
             android:layout_width="85dp"
             android:layout_height="wrap_content"
-            android:src="@drawable/hudong_06"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="35dp"/>
+            android:layout_marginRight="35dp"
+            android:src="@drawable/hudong_06" />
 
     </RelativeLayout>
 

@@ -714,14 +714,6 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                 dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
                 dialog.show();
                 return "";
-            }else if (item.getShitiAnalysis().length() == 0) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage("请填写第" + (i + 1) + "题解析");
-                builder.setNegativeButton("关闭", null);
-                AlertDialog dialog = builder.create();
-                dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
-                dialog.show();
-                return "";
             }
 
             // 题型格式判断

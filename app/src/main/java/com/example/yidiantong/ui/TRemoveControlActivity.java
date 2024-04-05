@@ -27,11 +27,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
+import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.View.HuDongDialog;
 import com.example.yidiantong.adapter.MyArrayAdapter;
 import com.example.yidiantong.bean.TKeTangListEntity;
@@ -52,6 +51,13 @@ import java.util.List;
 
 public class TRemoveControlActivity extends AppCompatActivity implements THuDongInterface, View.OnClickListener {
     private static final String TAG = "TRemoveControlActivity";
+    int[] unselectDan = {R.drawable.a_unselect, R.drawable.b_unselect, R.drawable.c_unselect, R.drawable.d_unselect, R.drawable.e_unselect, R.drawable.f_unselect, R.drawable.g_unselect, R.drawable.h_unselect};
+    int[] selectDan = {R.drawable.a_select, R.drawable.b_select, R.drawable.c_select, R.drawable.d_select, R.drawable.e_select, R.drawable.f_select, R.drawable.g_select, R.drawable.h_select};
+    int[] unselectDuo = {R.drawable.a_unselect2, R.drawable.b_unselect2, R.drawable.c_unselect2, R.drawable.d_unselect2, R.drawable.e_unselect2, R.drawable.f_unselect2, R.drawable.g_unselect2, R.drawable.h_unselect2};
+    int[] selectDuo = {R.drawable.a_select2, R.drawable.b_select2, R.drawable.c_select2, R.drawable.d_select2, R.drawable.e_select2, R.drawable.f_select2, R.drawable.g_select2, R.drawable.h_select2};
+    private boolean isSelected[] = new boolean[8];
+    int[] unselectJudge = {R.drawable.right_unselect, R.drawable.error_unselect};
+    int[] selectJudge = {R.drawable.right_select, R.drawable.error_select};
 
     private ImageView fiv_dianming;
     private ImageView fiv_rc_xueqing;
@@ -95,6 +101,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
     private PopupWindow popupWindow;
     private PopupWindow popupWindow1;
     private PopupWindow popupWindowDetailAnalysis;
+    private PopupWindow popupWindowSetAnswer;
     private TextView ftv_rc_text;
     private ImageView fiv_rc_left1;
     private ImageView fiv_rc_left2;
@@ -119,7 +126,18 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
     private boolean showMenuFlag = false;
     private ImageView iv_detail_analysis;
     private ImageView iv_answer;
+    private ImageView iv_answer2;
     private ImageView iv_close;
+    private boolean openRes = false;
+    private LinearLayout ll_line1, ll_line2;
+    private ClickableImageView iv_line1[] = new ClickableImageView[4];
+    private ClickableImageView iv_line2[] = new ClickableImageView[4];
+    private ClickableImageView iv_save_answer;
+    private ClickableImageView iv_cancel;
+    private String answer_content = "";
+    private boolean subjectFlag = false;
+    private boolean publishFlag = true;
+    private boolean showStuFlag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,15 +204,52 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT, false);
         fiv_action = inflater.findViewById(R.id.fiv_action);
-        // 客观题 单题分析
 
+        // 二级面板
         inflater = LayoutInflater.from(this).inflate(R.layout.t_dialog_analysis, null);
         popupWindowDetailAnalysis = new PopupWindow(inflater,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT, false);
         iv_detail_analysis = inflater.findViewById(R.id.iv_detail_or_analysis);
         iv_answer = inflater.findViewById(R.id.iv_answer);
+        iv_answer2 = inflater.findViewById(R.id.iv_answer2);
         iv_close = inflater.findViewById(R.id.iv_close);
+
+
+        // 设置答案面板
+        inflater = LayoutInflater.from(this).inflate(R.layout.t_dialog_set_answer_pannel, null);
+        popupWindowSetAnswer = new PopupWindow(inflater,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT, false);
+
+        iv_line1[0] = inflater.findViewById(R.id.iv_line1_1);
+        iv_line1[1] = inflater.findViewById(R.id.iv_line1_2);
+        iv_line1[2] = inflater.findViewById(R.id.iv_line1_3);
+        iv_line1[3] = inflater.findViewById(R.id.iv_line1_4);
+        iv_line2[0] = inflater.findViewById(R.id.iv_line2_1);
+        iv_line2[1] = inflater.findViewById(R.id.iv_line2_2);
+        iv_line2[2] = inflater.findViewById(R.id.iv_line2_3);
+        iv_line2[3] = inflater.findViewById(R.id.iv_line2_4);
+        iv_save_answer = inflater.findViewById(R.id.iv_save);
+        iv_cancel = inflater.findViewById(R.id.iv_cancel);
+        ll_line1 = inflater.findViewById(R.id.ll_line1);
+        ll_line2 = inflater.findViewById(R.id.ll_line2);
+        iv_cancel.setOnClickListener(v -> {
+            popupWindowSetAnswer.dismiss();
+        });
+        iv_save_answer.setOnClickListener(v -> {
+            if (answer_content.length() == 0) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("请选择答案")
+                        .setPositiveButton("确定", null);
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            } else {
+                setAnswer(answer_content);
+                popupWindowSetAnswer.dismiss();
+            }
+        });
 
 
         // 高度自动设置为屏幕宽度
@@ -204,7 +259,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int screenWidth = displayMetrics.widthPixels;
 
-        // 计算所需的高度（屏幕高度的 0.9 倍）
+        // 计算所需的高度（屏幕高度的 0.8 倍）
         int newWidth = (int) (screenWidth * 0.8);
 
         // 设置ConstraintLayout的新高度
@@ -227,7 +282,6 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
     };
 
     private void changePage(List<TKeTangListEntity> messageList) {
-
         switch (messageList.get(0).getActionType()) {
             case "sign":
                 // 二级页面模版
@@ -253,15 +307,15 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
             case "allAnalysis":
                 View inflater1 = LayoutInflater.from(this).inflate(R.layout.t_dialog_allanalysis, null);
                 popupWindow1 = new PopupWindow(inflater1,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT, false);
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT, false);
                 fll_allanalysis = inflater1.findViewById(R.id.fll_allanalysis);
                 if (messageList.get(0).getAction().equals("openAllAnalysis")) {
                     //对话框弹出
                     popupWindow1.showAtLocation(fiv_rc_six, Gravity.CENTER, 0, 0);
-                    WindowManager.LayoutParams lp = getWindow().getAttributes();
-                    lp.alpha = 0.5f; //0.0-1.0
-                    getWindow().setAttributes(lp);
+//                    WindowManager.LayoutParams lp = getWindow().getAttributes();
+//                    lp.alpha = 0.5f; //0.0-1.0
+//                    getWindow().setAttributes(lp);
                     fiv_ztfx = inflater1.findViewById(R.id.fiv_ztfx);
                     fiv_qsfx = inflater1.findViewById(R.id.fiv_qsfx);
                     fiv_tcxq = inflater1.findViewById(R.id.fiv_tcxq);
@@ -555,6 +609,12 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     fiv_rc_four.setImageResource(R.drawable.four_b);
                     fiv_rc_five.setImageResource(R.drawable.five_b);
                     fiv_rc_eight.setImageResource(R.drawable.eight_e);
+                    // 关闭提问面板【消息冲突，打开试题和关闭提问相同】
+                    fib_rc_tiwen.setImageResource(R.drawable.tiwen1);
+                    fib_rc_suiji.setImageResource(R.drawable.suiji1);
+                    fib_rc_qiangda.setImageResource(R.drawable.qiangda1);
+                    ftv_rc_text.setVisibility(View.VISIBLE);
+                    openRes = true;
                 } else if (messageList.get(0).getAction().equals("showQuestionAnswer")) {
                     button_black();
                     fiv_rc_four.setImageResource(R.drawable.four_b);
@@ -564,8 +624,8 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     fib_rc_tiwen.setImageResource(R.drawable.tiwen1);
                     fib_rc_suiji.setImageResource(R.drawable.suiji1);
                     fib_rc_qiangda.setImageResource(R.drawable.qiangda1);
-
                     ftv_rc_text.setVisibility(View.VISIBLE);
+                    openRes = false;
                 } else {
                     button_white();
                 }
@@ -609,7 +669,6 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     public void onClick(View v) {
                         switch (v.getId()) {
                             case R.id.fiv_rc_left1:
-                                Log.e("点击左一", "");
                                 if (typehd.equals("正在作答中")) {
                                     doActionFour("stopAnswer");
                                 } else if (typehd.equals("作答结束")) {
@@ -622,19 +681,32 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                                 break;
                             case R.id.fiv_rc_left2:
                                 if (typehd.equals("正在作答中") | typehd.equals("作答结束")) {
-                                    doActionFour("dtfx");
-//
+                                    if (subjectFlag) {
+                                        doActionFour("danr");
+                                    } else {
+                                        doActionFour("dtfx");
+                                    }
                                 } else {
-                                    // 设置答案
+                                    doActionFour("dz");
                                 }
                                 break;
                             case R.id.fiv_rc_right1:
                                 if (typehd.equals("正在作答中") | typehd.equals("作答结束")) {
                                     doActionFour("dtxq");
-                                    Log.e("wen0306", "onClick: 答题详情");
-//
                                 } else {
-                                    doActionFour("dz");
+                                    if(typehd.contains("客观")){
+                                        // 设置答案
+                                        publishFlag = false;
+                                        getAnswerParams();
+                                    }else{
+                                        if(showStuFlag){
+                                            // 状态更新在监听部分
+                                            doActionFour("closeStuAnswer");
+                                        }else {
+                                            // 查看学生作答
+                                            doActionFour("openStuAnswer");
+                                        }
+                                    }
                                 }
                                 break;
                             case R.id.fiv_rc_right2:
@@ -644,7 +716,8 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     }
                 };
                 // 一起作答 一点通→教师端
-                if (messageList.get(0).getAction().equals("AnswerTogetherStartObjective") || messageList.get(0).getAction().equals("AnswerTogetherStartSubjective")) {
+                if (messageList.get(0).getAction().equals("AnswerTogetherStartObjective")) {
+                    // 客观题
                     ftv_rc_text.setVisibility(View.GONE);
                     fib_rc_tiwen.setImageResource(R.drawable.tiwen2);
                     // 三按钮互斥
@@ -664,7 +737,31 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                         light[i] = 1;
                     }
                     button_light(light);
-                } else if (messageList.get(0).getAction().equals("AnswerTogetherStopObjective") || messageList.get(0).getAction().equals("AnswerTogetherStopSubjective")) {
+                    subjectFlag = false;
+                } else if (messageList.get(0).getAction().equals("AnswerTogetherStartSubjective")) {
+                    // 主观题 ===================
+                    ftv_rc_text.setVisibility(View.GONE);
+                    fib_rc_tiwen.setImageResource(R.drawable.tiwen2);
+                    // 三按钮互斥
+                    fib_rc_suiji.setImageResource(R.drawable.suiji1);
+                    fib_rc_qiangda.setImageResource(R.drawable.qiangda1);
+
+                    fiv_rc_left1.setImageResource(R.drawable.jszd);
+                    fiv_rc_left2.setImageResource(R.drawable.danr);
+                    fiv_rc_right1.setImageResource(R.drawable.dtxq);
+                    fiv_rc_right2.setImageResource(R.drawable.closetw);
+                    if (messageList.get(0).getDesc() == null || messageList.get(0).getDesc().length() == 0) {
+                        messageList.get(0).setDesc("正在作答中");
+                    }
+                    ftv_rc_bottom.setText(messageList.get(0).getDesc());
+                    typehd = "正在作答中";
+                    for (int i = 0; i < 4; i++) {
+                        light[i] = 1;
+                    }
+                    button_light(light);
+                    subjectFlag = true;
+
+                } else if (messageList.get(0).getAction().equals("AnswerTogetherStopObjective")) {
                     ftv_rc_text.setVisibility(View.GONE);
                     fiv_rc_left1.setImageResource(R.drawable.cxzd);
                     fiv_rc_left2.setImageResource(R.drawable.dtfx);
@@ -681,13 +778,34 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                         light[i] = 1;
                     }
                     button_light(light);
-                } else if (messageList.get(0).getAction().equals("RandomObjective")) {
+                } else if (messageList.get(0).getAction().equals("AnswerTogetherStopSubjective")) {
+                    ftv_rc_text.setVisibility(View.GONE);
+                    fiv_rc_left1.setImageResource(R.drawable.cxzd);
+                    fiv_rc_left2.setImageResource(R.drawable.danr);
+                    fiv_rc_right1.setImageResource(R.drawable.dtxq);
+                    fiv_rc_right2.setImageResource(R.drawable.closetw);
+                    ftv_rc_bottom.setText("作答结束");
+                    fib_rc_tiwen.setImageResource(R.drawable.tiwen2);
+                    // 三按钮互斥
+                    fib_rc_suiji.setImageResource(R.drawable.suiji1);
+                    fib_rc_qiangda.setImageResource(R.drawable.qiangda1);
+                    Log.e("wen0321", "changePage: 作答结束");
+                    typehd = "作答结束";
+                    for (int i = 0; i < 4; i++) {
+                        light[i] = 1;
+                    }
+                    button_light(light);
+                } else if (messageList.get(0).getAction().equals("RandomObjective") || messageList.get(0).getAction().equals("RandomSubjective")) {
                     // 随机  一点通→教师端
 
                     ftv_rc_text.setVisibility(View.GONE);
                     fiv_rc_left1.setImageResource(R.drawable.cxsj_a);
                     fiv_rc_left2.setImageResource(R.drawable.dz_a);
-                    fiv_rc_right1.setImageResource(R.drawable.szda_a);
+                    if (messageList.get(0).getAction().equals("RandomObjective")) {
+                        fiv_rc_right1.setImageResource(R.drawable.szda_a);
+                    } else {
+                        fiv_rc_right1.setImageResource(R.drawable.xsda_0);
+                    }
                     fiv_rc_right2.setImageResource(R.drawable.closesj_0);
                     fib_rc_suiji.setImageResource(R.drawable.suiji2);
                     // 三按钮互斥
@@ -699,7 +817,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                         light[i] = 0;
                     }
                     button_light(light);
-                } else if (messageList.get(0).getAction().equals("RandomPeopleObjective")) {
+                } else if (messageList.get(0).getAction().equals("RandomPeopleObjective") || messageList.get(0).getAction().equals("RandomPeopleSubjective")) {
                     ftv_rc_text.setVisibility(View.GONE);
                     fib_rc_suiji.setImageResource(R.drawable.suiji2);
                     // 三按钮互斥
@@ -708,7 +826,11 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
 
                     fiv_rc_left1.setImageResource(R.drawable.cxsj_b);
                     fiv_rc_left2.setImageResource(R.drawable.dz_a);
-                    fiv_rc_right1.setImageResource(R.drawable.szda_a);
+                    if (messageList.get(0).getAction().equals("RandomPeopleObjective")) {
+                        fiv_rc_right1.setImageResource(R.drawable.szda_a);
+                    } else {
+                        fiv_rc_right1.setImageResource(R.drawable.xsda_0);
+                    }
                     fiv_rc_right2.setImageResource(R.drawable.closesj);
                     stuname = messageList.get(0).getDesc();
                     ftv_rc_bottom.setText(stuname);
@@ -718,7 +840,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     light[3] = 1;
                     button_light(light);
                     typehd = "随机作答";
-                } else if (messageList.get(0).getAction().equals("RandomAnswerObjective")) {
+                } else if (messageList.get(0).getAction().equals("RandomAnswerObjective") || messageList.get(0).getAction().equals("RandomAnswerSubjective")) {
                     ftv_rc_text.setVisibility(View.GONE);
                     fib_rc_suiji.setImageResource(R.drawable.suiji2);
                     // 三按钮互斥
@@ -727,15 +849,27 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
 
                     fiv_rc_left1.setImageResource(R.drawable.cxsj_b);
                     fiv_rc_left2.setImageResource(R.drawable.dz_b);
-                    fiv_rc_right1.setImageResource(R.drawable.szda_b);
+                    if (messageList.get(0).getAction().equals("RandomAnswerObjective")) {
+                        fiv_rc_right1.setImageResource(R.drawable.szda_b);
+                        typehd = "随机答案客观";
+                    } else {
+                        fiv_rc_right1.setImageResource(R.drawable.xsda);
+                        // 状态设置，学生答案未显示状态
+                        showStuFlag = false;
+                        typehd = "随机答案主观";
+                    }
                     fiv_rc_right2.setImageResource(R.drawable.closesj);
-                    ftv_rc_bottom.setText("回显学生答案" + messageList.get(0).getDesc());
+                    ftv_rc_bottom.setText(messageList.get(0).getDesc());
                     for (int i = 0; i < 4; i++) {
                         light[i] = 1;
                     }
                     button_light(light);
-                    typehd = "随机答案";
+                }else if(messageList.get(0).getAction().equals("RandomAnswerSubjectiveShowStuAnswer")){
+                    // 状态设置，学生答案显示状态
+                    showStuFlag = true;
+                    fiv_rc_right1.setImageResource(R.drawable.gbda2);
                 }
+
                 // 抢答  一点通→教师端
                 else if (messageList.get(0).getAction().equals("ResponderReadyObjective")) {
                     ftv_rc_text.setVisibility(View.GONE);
@@ -826,16 +960,44 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                         iv_detail_analysis.setImageResource(R.drawable.dtxq);
                     });
                     iv_answer.setOnClickListener(ve -> {
-                        questionAnalysis("publicAnswer", "");
+//                        questionAnalysis("publicAnswer");
+                        publishFlag = true;
+                        getAnswerParams();
 
                     });
-                    iv_close.setOnClickListener(ve->{
+                    iv_answer2.setVisibility(View.GONE);
+                    iv_close.setOnClickListener(ve -> {
                         popupWindowDetailAnalysis.dismiss();
-                        questionAnalysis("closeQuestionAnalysis", "");
-
+                        questionAnalysis("closeQuestionAnalysis");
+                    });
+                } else if (messageList.get(0).getAction().equals("dtxqSubjective") || messageList.get(0).getAction().equals("danrSubjective")) {
+                    // 【答题详情】切换二级页面
+                    popupWindowDetailAnalysis.showAtLocation(fiv_rc_six, Gravity.CENTER, 0, 0);
+                    iv_detail_analysis.setImageResource(R.drawable.danr);
+                    // 点击事件
+                    iv_detail_analysis.setOnClickListener(ve -> {
+                        doActionFour("danr");
+                    });
+                    iv_answer.setImageResource(R.drawable.dtxq);
+                    iv_answer.setOnClickListener(ve -> {
+                        doActionFour("dtxq");
+                    });
+                    if (messageList.get(0).getResId().contains("PRQUI")) {
+                        iv_answer2.setVisibility(View.VISIBLE);
+                        iv_answer2.setImageResource(R.drawable.gbda);
+                        iv_answer2.setOnClickListener(v -> {
+                            Log.e("wen0402", "changePage: 授课包直接公布答案" );
+                            questionAnalysis("publicAnswer");
+                        });
+                    } else {
+                        iv_answer2.setVisibility(View.GONE);
+                    }
+                    iv_close.setOnClickListener(ve -> {
+                        popupWindowDetailAnalysis.dismiss();
+                        questionAnalysis("closeQuestionAnalysis");
                     });
 
-                } else if (messageList.get(0).getAction().equals("dtfxObjective")) {
+                } else if (messageList.get(0).getAction().equals("dtfxObjective") || messageList.get(0).getAction().equals("dtfx")) {
                     // 【单题分析】切换二级页面
                     popupWindowDetailAnalysis.showAtLocation(fiv_rc_six, Gravity.CENTER, 0, 0);
                     iv_detail_analysis.setImageResource(R.drawable.dtxq);
@@ -845,18 +1007,56 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                         iv_detail_analysis.setImageResource(R.drawable.dtfx);
 
                     });
+                    iv_answer.setImageResource(R.drawable.gbda);
                     iv_answer.setOnClickListener(ve -> {
-                        questionAnalysis("publicAnswer", "");
+//                        questionAnalysis("publicAnswer");
+                        publishFlag = true;
+                        getAnswerParams();
+
                     });
-                    iv_close.setOnClickListener(ve->{
+                    iv_answer2.setVisibility(View.GONE);
+                    iv_close.setOnClickListener(ve -> {
                         popupWindowDetailAnalysis.dismiss();
-                        questionAnalysis("closeQuestionAnalysis", "");
+                        questionAnalysis("closeQuestionAnalysis");
 
                     });
                 } else if (messageList.get(0).getAction().equals("closeQuestionAnalysis")) {
                     // 关闭二级页面
                     popupWindowDetailAnalysis.dismiss();
+                } else if (messageList.get(0).getAction().equals("dtxqObjectiveShowAnswer") || messageList.get(0).getAction().equals("dtxqSubjectiveShowAnswer")) {
+                    // 【答题详情】【公布答案后】切换二级页面
+                    popupWindowDetailAnalysis.showAtLocation(fiv_rc_six, Gravity.CENTER, 0, 0);
+                    if(messageList.get(0).getAction().equals("dtxqSubjectiveShowAnswer")){
+                        iv_detail_analysis.setImageResource(R.drawable.danr);
+                        // 点击事件
+                        iv_detail_analysis.setOnClickListener(ve -> {
+                            doActionFour("danr");
+                        });
+                    }else{
+                        iv_detail_analysis.setImageResource(R.drawable.dtfx);
+                        // 点击事件
+                        iv_detail_analysis.setOnClickListener(ve -> {
+                            doActionFour("dtfx");
+                        });
+                    }
+
+                    iv_answer.setImageResource(R.drawable.right_students);
+                    iv_answer2.setVisibility(View.VISIBLE);
+                    iv_answer2.setImageResource(R.drawable.all_students);
+
+
+                    iv_answer.setOnClickListener(ve -> {
+                        questionAnalysis("ddxs");
+                    });
+                    iv_answer2.setOnClickListener(ve -> {
+                        questionAnalysis("qbxs");
+                    });
+                    iv_close.setOnClickListener(ve -> {
+                        popupWindowDetailAnalysis.dismiss();
+                        questionAnalysis("closeQuestionAnalysis");
+                    });
                 }
+                Log.e("wen0337", "changePage: " + messageList.get(0));
                 break;
         }
 
@@ -1073,6 +1273,8 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
 
     // 右上四个按钮  教师端→一点通
     private void doActionFour(String action) {
+        Log.e("wen0402", "doActionFour请求: " + action);
+
         String ip = getIntent().getStringExtra("ip");
         String teacherId = getIntent().getStringExtra("teacherId");
         String mRequestUrl_origin = "http://" + ip + ":8901" + Constant.T_SEND_MESSAGE + "?type=0" + "&userType=teacher" +
@@ -1088,7 +1290,10 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
             mRequestUrl0 = "&action=dtfx";
         } else if (action.equals("dtxq")) {
             // 答题详情
+            Log.e("wen0401", "doActionFour: 答题详情");
             mRequestUrl0 = "&action=dtxq";
+        } else if (action.equals("danr")) {
+            mRequestUrl0 = "&action=danr";
         } else if (action.equals("closeAnswerWindow")) {
             // 关闭互动窗口
             mRequestUrl0 = "&action=closeAnswerWindow";
@@ -1101,6 +1306,12 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
         } else if (action.equals("responderAgain")) {
             // 重新抢答
             mRequestUrl0 = "&action=responderAgain";
+        } else if(action.equals("openStuAnswer")){
+            // 学生作答
+            mRequestUrl0 = "&action=openStuAnswer";
+        }else if(action.equals("closeStuAnswer")){
+            // 关闭作答
+            mRequestUrl0 = "&action=closeStuAnswer";
         }
 
         mRequestUrl = mRequestUrl_origin.replace("actioncontext", mRequestUrl0);
@@ -1120,21 +1331,20 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
     }
 
     // 试题分析二级页面请求
-    private void questionAnalysis(String action, String answerStr) {
+    private void questionAnalysis(String action) {
+        Log.e("wen0402", "questionAnalysis: 请求" + action);
         String ip = getIntent().getStringExtra("ip");
         String teacherId = getIntent().getStringExtra("teacherId");
         mRequestUrl = "http://" + ip + ":8901" + Constant.T_SEND_MESSAGE + "?type=0" + "&userType=teacher" +
                 "&source=" + teacherId + "&target=0" + "&messageType=0&actionType=questionAnalysis" +
                 "&action=" + action +
-                "&desc=" + answerStr;
+                "&desc=";
 
         mRequestUrl = mRequestUrl.replace("&", "&messageBean.");
         mRequestUrl = mRequestUrl.replace("?", "?messageBean.");
-        Log.e("wen0321", "questionAnalysis: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -1144,6 +1354,224 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
         MyApplication.addRequest(request, TAG);
     }
 
+    // 获取设置答案的参数
+    private void getAnswerParams() {
+        String ip = getIntent().getStringExtra("ip");
+        mRequestUrl = "http://" + ip + ":8901" + Constant.T_REMOVE_GET_ANSWER_PARAMS;
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                showAnswerPannel(json.getInt("qType"), json.getInt("qNum"), json.getString("qAnswer"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+        });
+        MyApplication.addRequest(request, TAG);
+    }
+
+    // 展示设置答案的面板
+    private void showAnswerPannel(int type, int num, String answer) {
+        if (answer.equals("haveAnswer")) {
+            Log.e("wen0402", "showAnswerPannel: 已有答案，直接公布");
+            questionAnalysis("publicAnswer");
+            return;
+        }
+        answer_content = "";
+        int line1_num = (num + 1) / 2;
+        int line2_num = num - line1_num;
+        switch (type) {
+            case 1:
+                // 判断
+                View.OnClickListener panduan = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        answer_content = (String) view.getTag();
+                        if (answer_content.equals("T")) {
+                            iv_line1[0].setImageResource(selectJudge[0]);
+                            iv_line1[1].setImageResource(unselectJudge[0]);
+                        } else {
+                            iv_line1[0].setImageResource(unselectJudge[0]);
+                            iv_line1[1].setImageResource(selectJudge[1]);
+                        }
+                    }
+                };
+
+                ll_line2.setVisibility(View.GONE);
+                iv_line1[0].setVisibility(View.VISIBLE);
+                iv_line1[0].setImageResource(unselectJudge[0]);
+                iv_line1[0].setTag("T");
+                iv_line1[0].setOnClickListener(panduan);
+                iv_line1[1].setVisibility(View.VISIBLE);
+                iv_line1[1].setImageResource(unselectJudge[1]);
+                iv_line1[1].setTag("R");
+                iv_line1[1].setOnClickListener(panduan);
+
+
+                for (int i = 2; i < 4; ++i) {
+                    iv_line1[i].setVisibility(View.GONE);
+                }
+
+                break;
+            case 2:
+                // 单选
+                View.OnClickListener danxuan = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // 获取点击的信息
+                        answer_content = String.valueOf(view.getTag());
+                        // 绘制点击后的面板
+                        for (int i = 0; i < 4; ++i) {
+                            if (iv_line1[i].getTag() != null) {
+
+                                if (iv_line1[i].getTag().equals(view.getTag())) {
+                                    iv_line1[i].setImageResource(selectDan[(char) iv_line1[i].getTag() - 'A']);
+                                } else {
+                                    iv_line1[i].setImageResource(unselectDan[(char) iv_line1[i].getTag() - 'A']);
+                                }
+                            }
+
+                            if (iv_line2[i].getTag() != null) {
+                                if (iv_line2[i].getTag().equals(view.getTag())) {
+                                    iv_line2[i].setImageResource(selectDan[(char) iv_line2[i].getTag() - 'A']);
+                                } else {
+                                    iv_line2[i].setImageResource(unselectDan[(char) iv_line2[i].getTag() - 'A']);
+                                }
+                            }
+                        }
+                    }
+
+                };
+                if (num <= 3) {
+                    ll_line2.setVisibility(View.GONE);
+                    for (int i = 0; i < 4; ++i) {
+                        if (i < num) {
+                            iv_line1[i].setVisibility(View.VISIBLE);
+                            iv_line1[i].setVisibility(unselectDan[i]);
+                            iv_line1[i].setTag((char) (i + 'A'));
+                            iv_line1[i].setOnClickListener(danxuan);
+                        } else {
+                            iv_line1[i].setVisibility(View.GONE);
+                        }
+                    }
+                } else {
+                    ll_line2.setVisibility(View.VISIBLE);
+
+                    Log.e(TAG, "showAnswerPannel: " + line1_num + "  " + line2_num);
+                    for (int i = 0; i < 4; ++i) {
+                        if (i < line1_num) {
+                            iv_line1[i].setVisibility(View.VISIBLE);
+                            iv_line1[i].setImageResource(unselectDan[i]);
+                            iv_line1[i].setTag((char) (i + 'A'));
+                            iv_line1[i].setOnClickListener(danxuan);
+                        } else {
+                            iv_line1[i].setVisibility(View.GONE);
+                        }
+                    }
+                    for (int i = 0; i < 4; ++i) {
+                        if (i < line2_num) {
+                            iv_line2[i].setVisibility(View.VISIBLE);
+                            iv_line2[i].setImageResource(unselectDan[i + line1_num]);
+                            iv_line2[i].setTag((char) (i + line1_num + 'A'));
+                            iv_line2[i].setOnClickListener(danxuan);
+                        } else {
+                            iv_line2[i].setVisibility(View.GONE);
+                        }
+                    }
+                }
+                break;
+            case 3:
+                // 多选
+                View.OnClickListener duoxuan = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int idx = (char) view.getTag() - 'A';
+                        if (isSelected[idx]) {
+                            // 切换选中状态
+                            ((ClickableImageView) view).setImageResource(unselectDuo[idx]);
+                            isSelected[idx] = false;
+                        } else {
+                            ((ClickableImageView) view).setImageResource(selectDuo[idx]);
+                            isSelected[idx] = true;
+                        }
+                        List<String> sb = new ArrayList<>();
+                        for (int i = 0; i < 8; ++i) {
+                            if (isSelected[i]) {
+                                sb.add(String.valueOf((char) (i + 'A')));
+                            }
+                        }
+                        answer_content = String.join("", sb);
+                    }
+                };
+
+                if (num <= 3) {
+                    ll_line2.setVisibility(View.GONE);
+                    for (int i = 0; i < 4; ++i) {
+                        if (i < num) {
+                            iv_line1[i].setVisibility(View.VISIBLE);
+                            iv_line1[i].setVisibility(unselectDuo[i]);
+                            iv_line1[i].setTag((char) (i + 'A'));
+                            iv_line1[i].setOnClickListener(duoxuan);
+                        } else {
+                            iv_line1[i].setVisibility(View.GONE);
+                        }
+                    }
+                } else {
+                    ll_line2.setVisibility(View.VISIBLE);
+                    line1_num = (num + 1) / 2;
+                    line2_num = num - line1_num;
+                    for (int i = 0; i < 4; ++i) {
+                        if (i < line1_num) {
+                            iv_line1[i].setVisibility(View.VISIBLE);
+                            iv_line1[i].setImageResource(unselectDuo[i]);
+                            iv_line1[i].setTag((char) (i + 'A'));
+                            iv_line1[i].setOnClickListener(duoxuan);
+                        } else {
+                            iv_line1[i].setVisibility(View.GONE);
+                        }
+                    }
+                    for (int i = 0; i < 4; ++i) {
+                        if (i < line2_num) {
+                            iv_line2[i].setVisibility(View.VISIBLE);
+                            iv_line2[i].setImageResource(unselectDuo[i + line1_num]);
+                            iv_line2[i].setTag((char) (i + line1_num + 'A'));
+                            iv_line2[i].setOnClickListener(duoxuan);
+                        } else {
+                            iv_line2[i].setVisibility(View.GONE);
+                        }
+                    }
+                }
+                break;
+
+        }
+        popupWindowSetAnswer.showAtLocation(fiv_rc_six, Gravity.CENTER, 0, 0);
+
+        Log.e(TAG, "showAnswerPannel获取到的参数: type=" + type + ", num=" + num + ",answer=" + answer);
+
+    }
+
+    // 设置答案
+    private void setAnswer(String answer) {
+        String ip = getIntent().getStringExtra("ip");
+        mRequestUrl = "http://" + ip + ":8901" + Constant.T_REMOVE_SET_ANSWER + "?answer=" + answer;
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                if (publishFlag) {
+                    questionAnalysis("publicAnswer");
+                    Log.e("wen0402", "setAnswer: 设置后直接公布");
+                }else{
+                    Log.e("wen0402", "setAnswer: 仅设置，不公布");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+        });
+        MyApplication.addRequest(request, TAG);
+    }
 
     // 恢复非点击状态
     private void button_white() {
@@ -1198,7 +1626,6 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 JSONArray item = json.getJSONArray("messageList");
                 String itemList = item.get(item.length() - 1).toString();
-                Log.e("wen0306", "loadItems_Net: " + itemList);
                 itemList = "[" + itemList + "]";
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
@@ -1212,7 +1639,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                 //标识线程
                 message.what = 100;
                 if (messageList.size() != 0) {
-                    Log.e("wen0321", "loadItems_Net: " + messageList.get(0));
+                    Log.e("wen0402", "loadItems_Net: " + messageList.get(0));
                     handler1.sendMessage(message);
                 }
             } catch (JSONException e) {
@@ -1257,6 +1684,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
         MyApplication.addRequest(request, TAG);
 
     }
+
 
     private void showMenu() {
         if (contentView == null) {
@@ -1430,6 +1858,11 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
 
     // 左栏
     private void hudongdialog() {
+        if (openRes) {
+            doActionHuDong(0, 0);
+            return;
+        }
+
         HuDongDialog builder = new HuDongDialog(this);
         Window window = builder.getWindow();
         if (window != null) {
