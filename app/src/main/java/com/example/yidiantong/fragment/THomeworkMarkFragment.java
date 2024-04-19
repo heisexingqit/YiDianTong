@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.yidiantong.R;
 import com.example.yidiantong.bean.THomeworkMarkedEntity;
+import com.example.yidiantong.ui.THomeworkImageMark;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
 import com.example.yidiantong.util.THomeworkMarkInterface;
@@ -69,6 +71,7 @@ public class THomeworkMarkFragment extends Fragment {
 
     private PopupWindow window;
     private View popView;
+    private static final int REQUEST_CODE_EDIT_IMAGE = 1001;
 
 
     public static THomeworkMarkFragment newInstance(THomeworkMarkedEntity homeworkMarked, int position, int size, boolean canMark) {
@@ -92,7 +95,6 @@ public class THomeworkMarkFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         Bundle arg = getArguments();
 //        position = arg.getInt("position") + 1;
 //        int size = arg.getInt("size");
@@ -128,6 +130,10 @@ public class THomeworkMarkFragment extends Fragment {
         setHtmlOnWebView(wv_content, homeworkMarked.getShitiShow());
         stuStr = homeworkMarked.getStuAnswer().trim();
 
+        // 设置WebView缓存策略
+        WebSettings settings = wv_content2.getSettings();
+        settings.setCacheMode(WebSettings.LOAD_NO_CACHE); // 禁止使用缓存加载内容
+
         // 图片批改
         WebSettings webSettings = wv_content2.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -137,6 +143,7 @@ public class THomeworkMarkFragment extends Fragment {
                     @JavascriptInterface
                     @SuppressLint("JavascriptInterface")
                     public void bigPic(String url) {
+                        //Log.d("HSK"," permissionOpenGallery的URL:"+url);
                         permissionOpenGallery(url);
                     }
                 }
@@ -389,25 +396,29 @@ public class THomeworkMarkFragment extends Fragment {
      */
     private void permissionOpenGallery(String url) {
         // 权限请求
-        AndPermission.with(this)
-                .runtime()
-                .permission(Permission.Group.STORAGE)
-                .onGranted(new Action<List<String>>() {
-                    // 获取权限后
-                    @Override
-                    public void onAction(List<String> data) {
-                        oldUrl = url;
-                        EditImageActivity.start(getActivity(), THomeworkMarkFragment.this, url, null, 0);
-                    }
-                }).onDenied(new Action<List<String>>() {
-                    @Override
-                    public void onAction(List<String> data) {
-                        // 判断是否点了永远拒绝，不再提示
-//
-                    }
-                })
-                .rationale(rGallery)
-                .start();
+        oldUrl = url;
+        Intent intent = new Intent(getActivity(), THomeworkImageMark.class);
+        intent.putExtra("imageUrl", url); // 如果有需要传递的数据，可以使用 Intent 的 putExtra 方法
+        startActivityForResult(intent, REQUEST_CODE_EDIT_IMAGE);
+//        AndPermission.with(this)
+//                .runtime()
+//                .permission(Permission.Group.STORAGE)
+//                .onGranted(new Action<List<String>>() {
+//                    // 获取权限后
+//                    @Override
+//                    public void onAction(List<String> data) {
+//                        oldUrl = url;
+//                        EditImageActivity.start(getActivity(), THomeworkMarkFragment.this, url, null, 0);
+//                    }
+//                }).onDenied(new Action<List<String>>() {
+//                    @Override
+//                    public void onAction(List<String> data) {
+//                        // 判断是否点了永远拒绝，不再提示
+////
+//                    }
+//                })
+//                .rationale(rGallery)
+//                .start();
     }
 
     /**
@@ -438,13 +449,23 @@ public class THomeworkMarkFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == getActivity().RESULT_OK) {
             String newUrl = data.getStringExtra("newUrl");
-            boolean isImageEdit = data.getBooleanExtra(EditImageActivity.IMAGE_IS_EDIT, false);
-            // 图片已修改
-            if (isImageEdit) {
-                Log.e(TAG, "onActivityResult: 图片已替换");
-                stuStr = homeworkMarked.getStuAnswer().trim().replace(oldUrl, newUrl);
-                setHtmlOnWebView(wv_content2, stuStr);
-            }
+            stuStr = homeworkMarked.getStuAnswer().trim().replace(oldUrl, newUrl);
+            Log.d("HSK","stuStr："+stuStr);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setHtmlOnWebView(wv_content2, stuStr);
+                }
+            }, 1500); // 设置延迟时间为1.5秒
+
+//            boolean isImageEdit = data.getBooleanExtra(EditImageActivity.IMAGE_IS_EDIT, false);
+//            // 图片已修改
+//            if (isImageEdit) {
+//                Log.e(TAG, "onActivityResult: 图片已替换");
+//                stuStr = homeworkMarked.getStuAnswer().trim().replace(oldUrl, newUrl);
+//                Log.d("HSK","stuStr："+stuStr);
+//                setHtmlOnWebView(wv_content2, stuStr);
+//            }
         }
     }
 }
