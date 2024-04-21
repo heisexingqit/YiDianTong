@@ -2,16 +2,23 @@ package com.example.yidiantong.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 
@@ -80,8 +87,6 @@ public class THomeworkImageMark extends AppCompatActivity {
         }
 
 
-
-        RadioGroup radioGroup = findViewById(R.id.radioGroup);
         ImageButton zoomInButton = findViewById(R.id.zoomInButton);
         ImageButton zoomOutButton = findViewById(R.id.zoomOutButton);
         ImageButton btnUndo = findViewById(R.id.btnUndo);
@@ -89,24 +94,48 @@ public class THomeworkImageMark extends AppCompatActivity {
         ImageButton btnRotate =findViewById(R.id.btnRotate);
         Button image_cancel = findViewById(R.id.image_cancel);
         Button image_save = findViewById(R.id.image_save);
-
-
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        ImageButton toggleDrawingButton = findViewById(R.id.toggleDrawingButton);
+        ImageButton moveButton = findViewById(R.id.moveButton);
+        FrameLayout frameLayout = findViewById(R.id.fl_ColorAndStroke);
+        Button close_button = findViewById(R.id.close_button);
+        RadioGroup radioGroupBorder = findViewById(R.id.radio_group_border);
+        RadioGroup radioGroupColor = findViewById(R.id.radio_group_color);
+        RadioButton redButton = findViewById(R.id.btn_color_red);
+        RadioButton yellowButton = findViewById(R.id.btn_color_yellow);
+        RadioButton blueButton = findViewById(R.id.btn_color_blue);
+        RadioButton greenButton = findViewById(R.id.btn_color_green);
+        RadioButton blackButton = findViewById(R.id.btn_color_black);
+        toggleDrawingButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.toggleDrawingButton) {
+            public void onClick(View view) {
+                if (customDraw.getDrawingEnabled()) {
+                    frameLayout.setVisibility(View.VISIBLE);
+                } else {
+                    // 如果按钮未选中，则改为选中状态
                     customDraw.setDrawingEnabled(true);
+                    toggleDrawingButton.setBackgroundResource(R.drawable.image_edit_pen_on);
                     customDraw.setMoveEnabled(false);
-                    // 如果选择了 Toggle Drawing 按钮
-                    // 在这里执行相应的操作
-                } else if (checkedId == R.id.moveButton) {
-                    customDraw.setDrawingEnabled(false);
-                    customDraw.setMoveEnabled(true);
-                    // 如果选择了 Move 按钮
-                    // 在这里执行相应的操作
+                    moveButton.setBackgroundResource(R.drawable.image_edit_move);
                 }
+
             }
         });
+
+        moveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!customDraw.getMoveEnabled()) {
+                    customDraw.setDrawingEnabled(false);
+                    toggleDrawingButton.setBackgroundResource(R.drawable.image_edit_pen);
+                    customDraw.setMoveEnabled(true);
+                    moveButton.setBackgroundResource(R.drawable.image_edit_move_on);
+                }
+
+            }
+        });
+
+
+
         //放大
         zoomInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,6 +182,106 @@ public class THomeworkImageMark extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 new SaveImageTask().execute(); // 启动异步任务
+            }
+        });
+        close_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                frameLayout.setVisibility(View.GONE);
+            }
+        });
+        radioGroupBorder.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+                RadioButton btn_border1 = findViewById(R.id.btn_border1);
+                RadioButton btn_border2 = findViewById(R.id.btn_border2);
+                RadioButton btn_border3 = findViewById(R.id.btn_border3);
+                RadioButton btn_border4 = findViewById(R.id.btn_border4);
+                switch (checkedId) {
+                    case R.id.btn_border1:
+                        customDraw.setPenStrokeWidth(1); // 设置画笔粗细为1
+                        btn_border1.setChecked(true);
+                        btn_border2.setChecked(false);
+                        btn_border3.setChecked(false);
+                        btn_border4.setChecked(false);
+                        break;
+                    case R.id.btn_border2:
+                        customDraw.setPenStrokeWidth(3); // 设置画笔粗细为3
+                        btn_border1.setChecked(false);
+                        btn_border2.setChecked(true);
+                        btn_border3.setChecked(false);
+                        btn_border4.setChecked(false);
+                        break;
+                    case R.id.btn_border3:
+                        customDraw.setPenStrokeWidth(5); // 设置画笔粗细为5
+                        btn_border1.setChecked(false);
+                        btn_border2.setChecked(false);
+                        btn_border3.setChecked(true);
+                        btn_border4.setChecked(false);
+                        break;
+                    case R.id.btn_border4:
+                        customDraw.setPenStrokeWidth(10);
+                        btn_border1.setChecked(false);
+                        btn_border2.setChecked(false);
+                        btn_border3.setChecked(false);
+                        btn_border4.setChecked(true);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+        radioGroupColor.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+                int color = 0;
+                // 设置所有按钮为未选中状态
+                switch (checkedId) {
+                    case R.id.btn_color_red:
+                        redButton.setChecked(true);
+                        yellowButton.setChecked(false);
+                        blueButton.setChecked(false);
+                        greenButton.setChecked(false);
+                        blackButton.setChecked(false);
+                        color = Color.RED; // 设置画笔颜色为红色
+                        break;
+                    case R.id.btn_color_yellow:
+                        redButton.setChecked(false);
+                        yellowButton.setChecked(true);
+                        blueButton.setChecked(false);
+                        greenButton.setChecked(false);
+                        blackButton.setChecked(false);
+                        color = Color.YELLOW; // 设置画笔颜色为黄色
+                        break;
+                    case R.id.btn_color_blue:
+                        redButton.setChecked(false);
+                        yellowButton.setChecked(false);
+                        blueButton.setChecked(true);
+                        greenButton.setChecked(false);
+                        blackButton.setChecked(false);
+                        color = Color.BLUE; // 设置画笔颜色为蓝色
+                        break;
+                    case R.id.btn_color_green:
+                        redButton.setChecked(false);
+                        yellowButton.setChecked(false);
+                        blueButton.setChecked(false);
+                        greenButton.setChecked(true);
+                        blackButton.setChecked(false);
+                        color = Color.GREEN; // 设置画笔颜色为绿色
+                        break;
+                    case R.id.btn_color_black:
+                        redButton.setChecked(false);
+                        yellowButton.setChecked(false);
+                        blueButton.setChecked(false);
+                        greenButton.setChecked(false);
+                        blackButton.setChecked(true);
+                        color = Color.BLACK; // 设置画笔颜色为黑色
+                        break;
+                    default:
+                        break;
+                }
+                // 在这里调用CustomDraw的setPenColor方法来设置画笔的颜色
+                customDraw.setPenColor(color);
             }
         });
 
@@ -271,4 +400,5 @@ public class THomeworkImageMark extends AppCompatActivity {
         }
         return ImageUtils.Bitmap2StrByBase64(this, file);
     }
+
 }

@@ -11,6 +11,7 @@ import android.graphics.PointF;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -21,7 +22,7 @@ public class CustomDraw extends View {
 
     private Paint paint;
     private Path path;
-    private List<Path> paths; // 存储绘制的路径
+    private List<Pair<Path, PathAttributes>> paths; // 存储绘制的路径及其画笔属性
     private int currentPathIndex = -1; // 当前路径的索引
     private Bitmap backgroundBitmap;//背景
     private boolean isDrawingEnabled = true;
@@ -66,7 +67,7 @@ public class CustomDraw extends View {
         isMoveEnabled = enabled ;
     }
     public boolean getMoveEnabled() {
-        return isMoveEnabled ;
+        return isMoveEnabled;
     }
 
     private void init() {
@@ -92,11 +93,21 @@ public class CustomDraw extends View {
             canvas.drawBitmap(backgroundBitmap, 0, 0, null);
         }
         // 绘制所有路径
-        for (Path path : paths) {
-            canvas.drawPath(path, paint);
+        for (Pair<Path, PathAttributes> pair : paths) {
+            paint.setColor(pair.second.getColor()); // 设置画笔颜色为路径对应的颜色
+            paint.setStrokeWidth(pair.second.getStrokeWidth()); // 设置画笔粗细为路径对应的粗细
+            canvas.drawPath(pair.first, paint); // 绘制路径
         }
         // 恢复画布状态
         canvas.restore();
+    }
+    //设置画笔颜色
+    public void setPenColor(int color) {
+        paint.setColor(color);
+    }
+    //设置画笔粗细
+    public void setPenStrokeWidth(float strokeWidth) {
+        paint.setStrokeWidth(strokeWidth);
     }
     // 放大背景图片
     public void zoomIn() {
@@ -118,7 +129,7 @@ public class CustomDraw extends View {
     // 撤销上一步绘画操作
     public void undo() {
         if (currentPathIndex >= 0) {
-            paths.remove(currentPathIndex);
+            paths.remove(paths.size() - 1); // 移除最后一个路径及其属性
             currentPathIndex--;
             invalidate(); // 重新绘制视图
         }
@@ -150,7 +161,7 @@ public class CustomDraw extends View {
                     matrix.mapPoints(downPoint);
                     path = new Path();
                     path.moveTo(downPoint[0], downPoint[1]);
-                    paths.add(path);
+                    paths.add(new Pair<>(path, new PathAttributes(paint.getColor(), paint.getStrokeWidth()))); // 记录当前画笔的颜色和粗细
                     currentPathIndex++;
                     // 恢复原始矩阵
                     matrix.invert(matrix);
@@ -203,10 +214,30 @@ public class CustomDraw extends View {
         canvas.drawBitmap(backgroundBitmap, 0, 0, null);
 
         // 绘制所有路径
-        for (Path path : paths) {
-            canvas.drawPath(path, paint);
+        for (Pair<Path, PathAttributes> pair : paths) {
+            paint.setColor(pair.second.getColor()); // 设置画笔颜色为路径对应的颜色
+            paint.setStrokeWidth(pair.second.getStrokeWidth()); // 设置画笔粗细为路径对应的粗细
+            canvas.drawPath(pair.first, paint); // 绘制路径
         }
 
         return drawnBitmap;
+    }
+    //存储画笔的颜色和粗细
+    public class PathAttributes {
+        private int color;
+        private float strokeWidth;
+
+        public PathAttributes(int color, float strokeWidth) {
+            this.color = color;
+            this.strokeWidth = strokeWidth;
+        }
+
+        public int getColor() {
+            return color;
+        }
+
+        public float getStrokeWidth() {
+            return strokeWidth;
+        }
     }
 }

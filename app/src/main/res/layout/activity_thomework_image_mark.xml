@@ -21,59 +21,93 @@
             android:orientation="horizontal"
             android:weightSum="7"
             android:background="#989898">
-            <RadioGroup
-                android:id="@+id/radioGroup"
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_weight="2"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <RadioButton
+                android:layout_weight="1">
+                <ImageButton
                     android:id="@+id/toggleDrawingButton"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:button="@null"
                     android:checked="true"
-                    android:background="@drawable/edit_pen"/>
-                <RadioButton
-                    android:id="@+id/moveButton"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:button="@null"
-                    android:background="@drawable/edit_move" />
-            </RadioGroup>
-            <ImageButton
-                android:id="@+id/zoomInButton"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:background="@drawable/image_edit_big"/>
+                    android:background="@drawable/image_edit_pen_on"
+                    android:button="@null" />
 
-            <ImageButton
-                android:id="@+id/zoomOutButton"
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:background="@drawable/image_edit_small"/>
-            <ImageButton
-                android:id="@+id/btnRotate"
+                android:layout_weight="1">
+                <ImageButton
+                    android:id="@+id/moveButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/image_edit_move"
+                    android:button="@null" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:background="@drawable/image_edit_rotate"/>
-            <ImageButton
+                android:layout_weight="1">
+                <ImageButton
+                    android:id="@+id/zoomInButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/image_edit_big"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+                <ImageButton
+                    android:id="@+id/zoomOutButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/image_edit_small"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+                <ImageButton
+                    android:id="@+id/btnRotate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/image_edit_rotate"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+                <ImageButton
                 android:id="@+id/btnUndo"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/image_edit_undo"/>
-            <ImageButton
-                android:id="@+id/btnClear"
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:background="@drawable/image_edit_clean"/>
+                android:layout_weight="1">
+                <ImageButton
+                    android:id="@+id/btnClear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/image_edit_clean" />
+
+            </LinearLayout>
 
         </LinearLayout>
         <LinearLayout
@@ -139,4 +173,188 @@
                 android:text="正在保存批改图片，请稍后"/>
         </LinearLayout>
     </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_ColorAndStroke"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="50dp"
+        android:background="@color/half_transparent"
+        android:visibility="invisible"
+        android:clickable="true"
+        android:focusable="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@android:color/white"
+            android:orientation="vertical"
+            android:padding="16dp">
+            <!-- 关闭按钮 -->
+            <Button
+                android:id="@+id/close_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|end"
+                android:textSize="15sp"
+                android:background="@android:color/white"
+                android:text="X" />
+
+            <!-- 第一行按钮 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:text="粗细"/>
+
+                <RadioGroup
+                    android:id="@+id/radio_group_border"
+                    android:layout_width="0dp"
+                    android:layout_weight="5"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/btn_border1"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:textSize="15sp"
+                        android:text="极细"
+                        android:background="@drawable/btn_border"
+                        android:button="@null"/>
+
+                    <!-- RadioButton1 -->
+                    <RadioButton
+                        android:id="@+id/btn_border2"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:textSize="15sp"
+                        android:text="细"
+                        android:background="@drawable/btn_border"
+                        android:button="@null"/>
+
+                    <!-- RadioButton2 -->
+                    <RadioButton
+                        android:id="@+id/btn_border3"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:textSize="15sp"
+                        android:text="中"
+                        android:checked="true"
+                        android:background="@drawable/btn_border"
+                        android:button="@null"/>
+
+                    <!-- RadioButton3 -->
+                    <RadioButton
+                        android:id="@+id/btn_border4"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:text="粗"
+                        android:background="@drawable/btn_border"
+                        android:button="@null"/>
+                </RadioGroup>
+            </LinearLayout>
+
+            <!-- 第二行按钮 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:text="颜色"/>
+
+
+                <RadioGroup
+                    android:id="@+id/radio_group_color"
+                    android:layout_width="0dp"
+                    android:layout_weight="5"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- RadioButton1 -->
+                    <RadioButton
+                        android:id="@+id/btn_color_red"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:textSize="15sp"
+                        android:text="红"
+                        android:checked="true"
+                        android:button="@null"
+                        android:background="@drawable/btn_color_red"
+                       />
+
+                    <!-- RadioButton2 -->
+                    <RadioButton
+                        android:id="@+id/btn_color_yellow"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:textSize="15sp"
+                        android:text="黄"
+                        android:background="@drawable/btn_color_yellow"
+                        android:button="@null"/>
+
+                    <!-- RadioButton3 -->
+                    <RadioButton
+                        android:id="@+id/btn_color_blue"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:textSize="15sp"
+                        android:text="蓝"
+                        android:background="@drawable/btn_color_blue"
+                        android:button="@null"/>
+
+                    <!-- RadioButton4 -->
+                    <RadioButton
+                        android:id="@+id/btn_color_green"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:textSize="15sp"
+                        android:text="绿"
+                        android:background="@drawable/btn_color_green"
+                        android:button="@null"/>
+
+                    <!-- RadioButton5 -->
+                    <RadioButton
+                        android:id="@+id/btn_color_black"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:text="黑"
+                        android:background="@drawable/btn_color_black"
+                        android:button="@null"/>
+                </RadioGroup>
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </FrameLayout>
 </RelativeLayout>

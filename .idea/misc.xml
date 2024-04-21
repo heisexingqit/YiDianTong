@@ -246,8 +246,18 @@
         <entry key="..\:/AndroidProject/YiDianTong0913/imageeditlibrary/src/main/res/layout/fragment_edit_image_add_text.xml" value="0.21197916666666666" />
         <entry key="..\:/AndroidProject/YiDianTong0913/imageeditlibrary/src/main/res/layout/fragment_edit_image_main_menu.xml" value="0.21197916666666666" />
         <entry key="..\:/AndroidProject/YiDianTong0913/imageeditlibrary/src/main/res/layout/fragment_edit_paint.xml" value="0.240625" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/drawable/btn_border.xml" value="0.273" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/drawable/btn_color_black.xml" value="0.273" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/drawable/btn_color_blue.xml" value="0.273" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/drawable/btn_color_green.xml" value="0.273" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/drawable/btn_color_red.xml" value="0.273" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/drawable/btn_color_yellow.xml" value="0.273" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/drawable/edit_move.xml" value="0.273" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/drawable/edit_pen.xml" value="0.273" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/drawable/radio_button_border.xml" value="0.273" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_course_question.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_thomework.xml" value="0.3" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_thomework_image_mark.xml" value="0.1729957805907173" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_tmain_pager.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_tpackage_add.xml" value="0.13271604938271606" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/course_btn.xml" value="0.3" />
