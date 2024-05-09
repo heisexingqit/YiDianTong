@@ -70,6 +70,23 @@ public class ResourceFolderPaperFragment extends Fragment {
                         "for (var i = 0; i < elements.length; i++) { " +
                         "   elements[i].style.width = '95%'; " +
                         "} " +
+
+                        "var splitter = document.getElementById('splitter');" +
+                        "if (splitter){" +
+                        "   splitter.style.left = '150px';" +
+                        "}" +
+                        "var thumbPanel = document.getElementById('thumbPanel');" +
+                        "if (thumbPanel){" +
+                        "   thumbPanel.style.width = '150px';" +
+                        "}" +
+                        "var images = document.querySelectorAll('#thumbPanel .thumb img');" +
+                        "  for (var i = 0; i < images.length; i++) {" +
+                        "    images[i].style.width = 'auto';" +
+                        "}"+
+                        "var imgBoxes = document.querySelectorAll('#thumbPanel .img-box');" +
+                        "  for (var i = 0; i < imgBoxes.length; i++) {" +
+                        "    imgBoxes[i].style.width = 'auto';" +
+                        "}"+
                         "})()";
 
                 view.loadUrl(javascript);
@@ -77,6 +94,7 @@ public class ResourceFolderPaperFragment extends Fragment {
         });
 
         wv_content.loadUrl(learnPlanEntity.getUrl());
+
 
         return view;
     }

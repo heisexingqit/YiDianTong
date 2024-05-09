@@ -163,6 +163,8 @@ public class ResourceFolderRecyclerAdapter extends RecyclerView.Adapter<Recycler
                 icon_id = R.drawable.t_learn_plan_ppt;
             }else if(item.getImgUrl().contains("mp4")){
                 icon_id = R.drawable.t_learn_plan_video;
+            }else if(item.getImgUrl().contains("pdf")){
+                icon_id = R.drawable.t_learn_plan_pdf;
             }
             iv_icon.setImageResource(icon_id);
             tv_title.setText(item.getTitle());

@@ -35,9 +35,10 @@ public class ResourceFolderShowActivity extends AppCompatActivity {
         Log.d("wen", "onCreate: " + itemShow);
         switch (itemShow.getFormat()) {
             case "word":
+            case "pdf":
                 fragment = ResourceFolderPaperFragment.newInstance(itemShow);
-
                 break;
+
             case "video":
             case "music":
                 fragment = ResourceFolderVideoFragment.newInstance(itemShow);

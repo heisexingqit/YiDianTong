@@ -86,8 +86,6 @@ public class ResourceFolderActivity extends AppCompatActivity {
 
         rv_home.setAdapter(adapter);
 
-        loadItems_Net();
-
         //下拉刷新
         swipeRf = findViewById(R.id.swipeRf);
         swipeRf.setOnRefreshListener(() -> {
@@ -154,6 +152,8 @@ public class ResourceFolderActivity extends AppCompatActivity {
     };
 
     private void loadItems_Net() {
+        Log.e("wen0402", "onScrollStateChanged: SSSSSSSSSSSSSSSSS");
+
         // 获取本地app的版本名称
 
         mRequestUrl = Constant.API + Constant.GET_RESOURCE_FOLDER_ITEM + "?currentPage=" + currentPage + "&userId=" + MyApplication.username;
