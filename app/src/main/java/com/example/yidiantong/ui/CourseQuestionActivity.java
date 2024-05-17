@@ -565,6 +565,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
             fll_cq_duouan.setVisibility(View.GONE);
             fll_cq_panduan.setVisibility(View.GONE);
             fll_cq_tiankong.setVisibility(View.VISIBLE);
+            fll_fcq.setVisibility(View.GONE);
             et_answer = v.findViewById(R.id.et_answer);
             v.findViewById(R.id.tv_save).setOnClickListener(this);
             v.findViewById(R.id.tv_erase).setOnClickListener(this);
@@ -616,7 +617,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
 
 
             Log.d("ninghtml:",""+html_answer);
-             wv_answer.loadDataWithBaseURL(null, getHtmlAnswer(), "text/html", "utf-8", null);
+            wv_answer.loadDataWithBaseURL(null, getHtmlAnswer(), "text/html", "utf-8", null);
             url_list.clear();
             imgadapter.updateData(url_list);
 
@@ -640,7 +641,6 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
             lockmode = 1;
         } else if (lockmode != 1) {
             fll_cq.addView(v);
-
         }
     }
 
@@ -1054,7 +1054,8 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
                     }
                     msg.what = 100;
                     handler.sendMessage(msg);
-
+                    html_answer = null;
+                    content = null;
 
                 } catch (JSONException e) {
                     e.printStackTrace();

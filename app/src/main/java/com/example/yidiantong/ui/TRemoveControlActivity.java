@@ -711,6 +711,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                                 break;
                             case R.id.fiv_rc_right2:
                                 doActionFour("closeAnswerWindow");
+                                //todo
                                 break;
                         }
                     }
@@ -768,7 +769,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                     fiv_rc_right1.setImageResource(R.drawable.dtxq);
                     fiv_rc_right2.setImageResource(R.drawable.closetw);
                     ftv_rc_bottom.setText("作答结束");
-                    fib_rc_tiwen.setImageResource(R.drawable.tiwen2);
+                    fib_rc_tiwen.setImageResource(R.drawable.tiwen1);
                     // 三按钮互斥
                     fib_rc_suiji.setImageResource(R.drawable.suiji1);
                     fib_rc_qiangda.setImageResource(R.drawable.qiangda1);
@@ -1626,6 +1627,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 JSONArray item = json.getJSONArray("messageList");
                 String itemList = item.get(item.length() - 1).toString();
+                Log.e("wen0402", "itemList: " + itemList);
                 itemList = "[" + itemList + "]";
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表

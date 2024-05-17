@@ -283,7 +283,7 @@ public class THomeworkMarkFragment extends Fragment {
                     // 在布局加载完成后调用此方法
                     for (int i = 0; i < scoreNum + 1; ++i) {
                         ViewGroup.LayoutParams params = btnArray[i].getLayoutParams();
-                        params.width = fl_score.getWidth() / 8 - PxUtils.dip2px(view.getContext(), 20);
+                        //params.width = fl_score.getWidth() / 8 - PxUtils.dip2px(view.getContext(), 20);
                         btnArray[i].setLayoutParams(params);
                     }
                     // 在需要的地方使用组件的宽度
@@ -448,15 +448,17 @@ public class THomeworkMarkFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == getActivity().RESULT_OK) {
+
             String newUrl = data.getStringExtra("newUrl");
+            //int img_length = data.getIntExtra("img_length",0);
             stuStr = homeworkMarked.getStuAnswer().trim().replace(oldUrl, newUrl);
-            Log.d("HSK","stuStr："+stuStr);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    setHtmlOnWebView(wv_content2, stuStr);
-                }
-            }, 1500); // 设置延迟时间为1.5秒
+            setHtmlOnWebView(wv_content2, stuStr);
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    setHtmlOnWebView(wv_content2, stuStr);
+//                }
+//            }, delay_time*1000); // 设置延迟时间为1.5秒
 
 //            boolean isImageEdit = data.getBooleanExtra(EditImageActivity.IMAGE_IS_EDIT, false);
 //            // 图片已修改

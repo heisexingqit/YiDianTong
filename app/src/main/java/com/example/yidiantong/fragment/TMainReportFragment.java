@@ -265,6 +265,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
             tv_hw[i].setTextColor(getResources().getColor(R.color.gray_new));
             tv_hw[i].setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
             textViewFontChange(tv_hw[i], content2[i], 6);
+            Log.d("hsk5.12","content2[i]:"+content2[i]);
             gl_content.addView(tv_hw[i], params);
         }
         ll_parent.addView(v[1]);
@@ -757,7 +758,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         String end = sdf.format(calendar.getTime());
 
         String mRequestUrl = Constant.API + Constant.T_REPORT_HW + "?userId=" + username + "&unitId=1101010010001" + "&startTime=" + start + "&endTime=" + end;
-        Log.e("wen0308", "loadHWURL: " + mRequestUrl);
+        Log.e("wen0321", "loadHWURL: " + mRequestUrl);
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
 
@@ -911,6 +912,24 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         }, error -> {
 //            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: loadHWInfo " + error.toString());
+
+            // 当网络请求失败时，构造一个默认的JSONObject作为错误反馈
+            JSONObject defaultData = new JSONObject();
+            try {
+                defaultData.put("status", "no"); // 设置默认的状态字段，可根据需要添加其他字段
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            // 封装默认消息，传递给主线程处理
+            Message message = Message.obtain();
+            message.obj = defaultData; // 使用默认的JSONObject
+            message.what = 102; // 保持与正常数据处理时相同的what值以便于在handler中识别
+
+            // 发送消息到主线程更新UI
+            handler.sendMessage(message);
+
+            loadingView[1].setVisibility(View.GONE); // 隐藏加载视图，因为已经处理了错误情况
         });
         MyApplication.addRequest(request, TAG);
     }
@@ -955,7 +974,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
             }
 
         }, error -> {
-//            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: loadQuInfo " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
@@ -1358,7 +1377,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         xLabels.setDrawGridLines(false);
         xLabels.setGranularity(1);
         xLabels.setPosition(XAxis.XAxisPosition.BOTTOM);
-        Log.e("0109", "refreshQu: " + Xlist.toString());
+        Log.d("HSK", "refreshQu: " + Xlist.toString());
         xLabels.setValueFormatter(new MyValueFormatterX(Xlist));
         // legend配置
         Legend l = chart.getLegend();
@@ -1377,6 +1396,7 @@ public class TMainReportFragment extends Fragment implements View.OnClickListene
         JSONArray dataQ = Ylist.getJSONObject(1).getJSONArray("data");
         for (int i = 0; i < Xlist.length(); ++i) {
             values.add(new BarEntry(i, new float[]{dataQ.getInt(i), dataT.getInt(i)}));
+            Log.d("HSK","data："+i+"| "+ dataQ.getInt(i)+"| "+dataT.getInt(i));
         }
 
         BarDataSet set1;

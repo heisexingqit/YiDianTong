@@ -9,17 +9,23 @@
         android:layout_height="match_parent"
         android:background="@color/white"
         android:orientation="vertical">
-
-        <com.example.yidiantong.View.CustomDraw
-            android:id="@+id/CustomDraw"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:layout_gravity="center">
+            <com.example.yidiantong.View.CustomDraw
+                android:id="@+id/CustomDraw"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_gravity="center"/>
+        </FrameLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:weightSum="7"
+            android:weightSum="5"
             android:background="#989898">
             <LinearLayout
                 android:layout_width="0dp"
@@ -48,29 +54,29 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
-                <ImageButton
-                    android:id="@+id/zoomInButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/image_edit_big"/>
+<!--            <LinearLayout-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1">-->
+<!--                <ImageButton-->
+<!--                    android:id="@+id/zoomInButton"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:background="@drawable/image_edit_big"/>-->
 
-            </LinearLayout>
+<!--            </LinearLayout>-->
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
-                <ImageButton
-                    android:id="@+id/zoomOutButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/image_edit_small"/>
+<!--            <LinearLayout-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1">-->
+<!--                <ImageButton-->
+<!--                    android:id="@+id/zoomOutButton"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:background="@drawable/image_edit_small"/>-->
 
-            </LinearLayout>
+<!--            </LinearLayout>-->
 
 
             <LinearLayout
@@ -150,7 +156,7 @@
         android:background="@color/half_transparent">
 
         <LinearLayout
-            android:layout_width="100dp"
+            android:layout_width="150dp"
             android:background="@drawable/submit_loading_bg"
             android:layout_height="100dp"
             android:layout_centerInParent="true"
@@ -170,7 +176,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:textSize="14sp"
-                android:text="正在保存批改图片，请稍后"/>
+                android:text="图片正在保存"/>
         </LinearLayout>
     </RelativeLayout>
 
@@ -191,15 +197,27 @@
             android:background="@android:color/white"
             android:orientation="vertical"
             android:padding="16dp">
-            <!-- 关闭按钮 -->
-            <Button
-                android:id="@+id/close_button"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="top|end"
-                android:textSize="15sp"
-                android:background="@android:color/white"
-                android:text="X" />
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="设置"
+                    android:textSize="15sp" />
+                <!-- 关闭按钮 -->
+                <ImageButton
+                    android:id="@+id/close_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:background="@android:color/white"
+                    android:src="@drawable/x"
+                    android:textSize="15sp" />
+            </RelativeLayout>
 
             <!-- 第一行按钮 -->
             <LinearLayout
@@ -230,6 +248,7 @@
                         android:textSize="15sp"
                         android:text="极细"
                         android:background="@drawable/btn_border"
+                        android:textColor="@drawable/radio_button_text_color"
                         android:button="@null"/>
 
                     <!-- RadioButton1 -->
@@ -241,6 +260,7 @@
                         android:layout_marginRight="10dp"
                         android:textSize="15sp"
                         android:text="细"
+                        android:textColor="@drawable/radio_button_text_color"
                         android:background="@drawable/btn_border"
                         android:button="@null"/>
 
@@ -253,6 +273,7 @@
                         android:layout_marginRight="10dp"
                         android:textSize="15sp"
                         android:text="中"
+                        android:textColor="@drawable/radio_button_text_color"
                         android:checked="true"
                         android:background="@drawable/btn_border"
                         android:button="@null"/>
@@ -265,6 +286,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="15sp"
                         android:text="粗"
+                        android:textColor="@drawable/radio_button_text_color"
                         android:background="@drawable/btn_border"
                         android:button="@null"/>
                 </RadioGroup>
@@ -301,6 +323,7 @@
                         android:text="红"
                         android:checked="true"
                         android:button="@null"
+                        android:textColor="@drawable/radio_button_text_color"
                         android:background="@drawable/btn_color_red"
                        />
 
@@ -314,6 +337,7 @@
                         android:textSize="15sp"
                         android:text="黄"
                         android:background="@drawable/btn_color_yellow"
+                        android:textColor="@drawable/radio_button_text_color"
                         android:button="@null"/>
 
                     <!-- RadioButton3 -->
@@ -326,6 +350,7 @@
                         android:textSize="15sp"
                         android:text="蓝"
                         android:background="@drawable/btn_color_blue"
+                        android:textColor="@drawable/radio_button_text_color"
                         android:button="@null"/>
 
                     <!-- RadioButton4 -->
@@ -338,6 +363,7 @@
                         android:textSize="15sp"
                         android:text="绿"
                         android:background="@drawable/btn_color_green"
+                        android:textColor="@drawable/radio_button_text_color"
                         android:button="@null"/>
 
                     <!-- RadioButton5 -->
@@ -349,6 +375,7 @@
                         android:textSize="15sp"
                         android:text="黑"
                         android:background="@drawable/btn_color_black"
+                        android:textColor="@drawable/radio_button_text_color"
                         android:button="@null"/>
                 </RadioGroup>
 

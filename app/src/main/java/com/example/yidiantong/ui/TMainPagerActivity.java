@@ -85,7 +85,6 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
             this.update();
             handler_run.postDelayed(this, 500);
         }
-
         void update() {
             findClassOpen();
         }
@@ -439,7 +438,7 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
     public void onResume() {
         super.onResume();
         destroyFlag = false;
-        handler_run.postDelayed(runnable, 500);
+        //handler_run.postDelayed(runnable, 500);
     }
 
     @Override

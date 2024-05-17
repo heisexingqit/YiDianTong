@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -21,6 +22,8 @@ import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -62,6 +65,7 @@ public class THomeworkImageMark extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thomework_image_mark);
         customDraw = findViewById(R.id.CustomDraw);
+        customDraw.makeSquare();
         rl_submitting = findViewById(R.id.rl_submitting);
         //Bitmap backgroundBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.preview);
        // customDraw.setBackgroundBitmap(backgroundBitmap);
@@ -87,8 +91,8 @@ public class THomeworkImageMark extends AppCompatActivity {
         }
 
 
-        ImageButton zoomInButton = findViewById(R.id.zoomInButton);
-        ImageButton zoomOutButton = findViewById(R.id.zoomOutButton);
+//        ImageButton zoomInButton = findViewById(R.id.zoomInButton);
+//        ImageButton zoomOutButton = findViewById(R.id.zoomOutButton);
         ImageButton btnUndo = findViewById(R.id.btnUndo);
         ImageButton btnClear = findViewById(R.id.btnClear);
         ImageButton btnRotate =findViewById(R.id.btnRotate);
@@ -97,7 +101,7 @@ public class THomeworkImageMark extends AppCompatActivity {
         ImageButton toggleDrawingButton = findViewById(R.id.toggleDrawingButton);
         ImageButton moveButton = findViewById(R.id.moveButton);
         FrameLayout frameLayout = findViewById(R.id.fl_ColorAndStroke);
-        Button close_button = findViewById(R.id.close_button);
+        ImageButton close_button = findViewById(R.id.close_button);
         RadioGroup radioGroupBorder = findViewById(R.id.radio_group_border);
         RadioGroup radioGroupColor = findViewById(R.id.radio_group_color);
         RadioButton redButton = findViewById(R.id.btn_color_red);
@@ -105,6 +109,7 @@ public class THomeworkImageMark extends AppCompatActivity {
         RadioButton blueButton = findViewById(R.id.btn_color_blue);
         RadioButton greenButton = findViewById(R.id.btn_color_green);
         RadioButton blackButton = findViewById(R.id.btn_color_black);
+        //绘画按钮
         toggleDrawingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -120,15 +125,21 @@ public class THomeworkImageMark extends AppCompatActivity {
 
             }
         });
-
+        //移动按钮
         moveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!customDraw.getMoveEnabled()) {
+                    //取消绘画
                     customDraw.setDrawingEnabled(false);
                     toggleDrawingButton.setBackgroundResource(R.drawable.image_edit_pen);
+                    //开启移动
                     customDraw.setMoveEnabled(true);
                     moveButton.setBackgroundResource(R.drawable.image_edit_move_on);
+                    //提示消息
+                    Toast toast = Toast.makeText(THomeworkImageMark.this,"你可以通过双指来实现图片的放大与缩小！", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
                 }
 
             }
@@ -136,20 +147,20 @@ public class THomeworkImageMark extends AppCompatActivity {
 
 
 
-        //放大
-        zoomInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                customDraw.zoomIn();
-            }
-        });
-        //缩小
-        zoomOutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                customDraw.zoomOut();
-            }
-        });
+//        //放大
+//        zoomInButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                customDraw.zoomIn();
+//            }
+//        });
+//        //缩小
+//        zoomOutButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                customDraw.zoomOut();
+//            }
+//        });
 
         //撤销
         btnUndo.setOnClickListener(new View.OnClickListener() {
@@ -172,24 +183,28 @@ public class THomeworkImageMark extends AppCompatActivity {
                 customDraw.rotateBackground();
             }
         });
+        //取消按钮
         image_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
+        //保存按钮
         image_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 new SaveImageTask().execute(); // 启动异步任务
             }
         });
+        //关闭画笔选择框
         close_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 frameLayout.setVisibility(View.GONE);
             }
         });
+        //画笔粗细选择
         radioGroupBorder.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
@@ -231,6 +246,7 @@ public class THomeworkImageMark extends AppCompatActivity {
                 }
             }
         });
+        //画笔颜色选择
         radioGroupColor.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
@@ -286,12 +302,14 @@ public class THomeworkImageMark extends AppCompatActivity {
         });
 
     }
-    private class SaveImageTask extends AsyncTask<Void, Void, String> {
 
+    private class SaveImageTask extends AsyncTask<Void, Void, String> {
+        private  String base64=null;
         @Override
         protected String doInBackground(Void... voids) {
             Bitmap drawnBitmap = customDraw.getDrawnBitmap(); // 获取绘制后的图片
-            String base64 = Bitmap2StrByBase64(drawnBitmap);
+            base64 = Bitmap2StrByBase64(drawnBitmap);
+            Log.d("HSK0517","base64:"+base64.length());
 
             HttpURLConnection connection = null;
             BufferedReader reader = null;
@@ -300,14 +318,18 @@ public class THomeworkImageMark extends AppCompatActivity {
 
             try {
                 // 创建一个URL对象，替换为您要请求的URL
-                URL url = new URL("http://www.cn901.net:8111/AppServer/ajax/userManage_saveCanvasImageFromRn.do");
+                //URL url = new URL("http://www.cn901.net:8111/AppServer/ajax/userManage_saveCanvasImageFromRn.do");
+                URL url = new URL("http://www.cn901.net:8111/AppServer/ajax/teacherApp_saveCanvasImageFromRn.do");
+                Log.d("HSK0517","url:"+url);
                 // 打开连接
                 connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setDoOutput(true);
                // Log.d("HSK", "filePath:" + filePath);
                 // 构建请求参数
+                //String params_json = "type=save&imagePath=" + URLEncoder.encode(filePath, "UTF-8") + "&base64=" + URLEncoder.encode(base64, "UTF-8");
                 String params_json = "type=save&imagePath=" + URLEncoder.encode(filePath, "UTF-8") + "&baseData=" + URLEncoder.encode(base64, "UTF-8");
+
                 // 获取输出流，用于发送请求数据
                 outputStream = connection.getOutputStream();
                 outputStream.write(params_json.getBytes("UTF-8"));
@@ -325,10 +347,12 @@ public class THomeworkImageMark extends AppCompatActivity {
 
                 // 输出响应数据
                 String responseData = response.toString();
+                Log.d("HSK0517","responseData:"+responseData);
                 JSONObject jsonObject = JsonUtils.getJsonObjectFromString(responseData);
                 newUrl = jsonObject.getString("url");
-                Log.d("HSK","image");
-            } catch (IOException | JSONException e) {
+                Log.d("HSK0517","url"+newUrl);
+            } catch (Exception e) {
+                Log.d("hsk0517","Exception"+e);
                 e.printStackTrace();
             } finally {
                 // 关闭连接和输入流
@@ -351,11 +375,13 @@ public class THomeworkImageMark extends AppCompatActivity {
             if (result != null) {
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("newUrl", result);
-                //Log.d("HSK", "返回的newUrl:" + result);
+                //returnIntent.putExtra("img_length",base64.length());
+                Log.d("hsk0516", "返回的newUrl:" + result);
                 setResult(RESULT_OK, returnIntent);
             }
             // 显示加载页面
             showSubmittingLayout();
+            float delay_time = (float) base64.length()/20000;
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -364,7 +390,7 @@ public class THomeworkImageMark extends AppCompatActivity {
                     // 清空绘制路径列表，以便下次保存
                     finish();
                 }
-            }, 1000); // 设置延迟时间为1.5秒
+            }, (long) delay_time*1000); // 设置延迟时间为1.5秒
         }
     }
     // 显示加载页面
@@ -389,7 +415,7 @@ public class THomeworkImageMark extends AppCompatActivity {
 
             // 将 Bitmap 压缩为 JPEG 格式，并写入文件
             image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-
+            Log.e("debug0116", "临时修改文件路径: " + file.getAbsolutePath());
             // 关闭输出流
             outputStream.close();
         }  catch (IOException e) {
@@ -398,6 +424,7 @@ public class THomeworkImageMark extends AppCompatActivity {
         if(file.exists() && file.length() > 0){
             Log.e("debug0116", "OK了: " + file.length());
         }
+
         return ImageUtils.Bitmap2StrByBase64(this, file);
     }
 

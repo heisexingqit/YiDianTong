@@ -13,6 +13,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,7 +66,7 @@ public class CourseLookActivity extends AppCompatActivity {
     private String stunum;
     private String desc;
     private String learnPlanId;
-
+    private LinearLayout fll_acq;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +76,7 @@ public class CourseLookActivity extends AppCompatActivity {
         ftv_cl_teaname = findViewById(R.id.ftv_cl_teaname);
         ftv_cl_stuname = findViewById(R.id.ftv_cl_stuname);
         ftv_cl_exit = findViewById(R.id.ftv_cl_exit);
+
 
         ftv_cl_classname.setText("课堂：" + this.getIntent().getStringExtra("classname"));
         ftv_cl_teaname.setText("教师：" + this.getIntent().getStringExtra("teaname"));

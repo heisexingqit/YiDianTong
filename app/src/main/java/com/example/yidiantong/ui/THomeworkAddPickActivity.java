@@ -1104,15 +1104,28 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
 
                 String data = json.getString("data");
                 Log.d("wenbb", "loadType: " + data);
-
-                if (data != "null") {
+                if (data != null && !data.equals("null")) {
                     typeMap.put("全部", "all");
                     for (String row : data.split("\\],\\[")) {
                         String[] values = row.replaceAll("\\[|\\]|\"", "").split(",");
-                        typeMap.put(values[1], values[1]);
-                        Log.e(TAG, "loadType: " + values[1]);
+                        if (values.length >= 2) { // 添加这一行来检查数组长度
+                            typeMap.put(values[1], values[1]);
+                            Log.e(TAG, "loadType: " + values[1]);
+                        } else {
+                            // 处理数组长度不足的情况，可以输出日志或者其他处理方式
+                            Log.e(TAG, "loadType: values数组长度不足");
+                        }
                     }
                 }
+
+//                if (data != "null") {
+//                    typeMap.put("全部", "all");
+//                    for (String row : data.split("\\],\\[")) {
+//                        String[] values = row.replaceAll("\\[|\\]|\"", "").split(",");
+//                        typeMap.put(values[1], values[1]);
+//                        Log.e(TAG, "loadType: " + values[1]);
+//                    }
+//                }
                 // 基类排序
 
                 Log.d("wen", "类型: " + typeMap);
