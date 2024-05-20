@@ -26,22 +26,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
-import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.adapter.BooksDetailAdapter;
 import com.example.yidiantong.bean.BookDetailEntity;
 import com.example.yidiantong.ui.BookRecoverActivity;
 import com.example.yidiantong.ui.BookRecyclerActivity;
 import com.example.yidiantong.ui.BookSelectorActivity;
 import com.example.yidiantong.ui.HomeworkPagerActivity;
-import com.example.yidiantong.ui.MainPagerActivity;
+import com.example.yidiantong.ui.MainBookUpActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
-import com.example.yidiantong.util.LogUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -53,10 +49,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+// 学科错题本页面,展示某学科一共有哪些错题
 public class BookDetailFragment extends Fragment {
-
-    private static final String TAG = "BookDetailActivity";
-    private String course_name;
+    private static final String TAG = "BookDetailFragmentActivity";
     private View contentView = null;
     private SwipeRefreshLayout swipeRf;
 
@@ -64,8 +59,9 @@ public class BookDetailFragment extends Fragment {
 
     //请求数据参数
     private int currentPage = 1;
-    private String username;
-    private String coures_Id;
+    private String username; //用户名
+    private String coures_Id;  //学科id
+    private String course_name;  //学科名
 
     //列表数据
     private List<BookDetailEntity> itemList = new ArrayList<>();
@@ -80,7 +76,7 @@ public class BookDetailFragment extends Fragment {
 
     private String sourceId = "";
 
-    private ActivityResultLauncher<Intent> mResultLauncher;
+    private ActivityResultLauncher<Intent> mResultLauncher;  //用于处理Intent的返回结果
 
     public static BookDetailFragment newInstance() {
         BookDetailFragment fragment = new BookDetailFragment();
@@ -93,7 +89,6 @@ public class BookDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_book_detail, container, false);
         //顶栏返回按钮
         view.findViewById(R.id.fiv_back).setOnClickListener(v -> {
@@ -101,15 +96,14 @@ public class BookDetailFragment extends Fragment {
         });
 
         frv_detail = view.findViewById(R.id.frv_detail);
-
         //RecyclerView两步必要配置
         frv_detail.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         frv_detail.setItemAnimator(new DefaultItemAnimator());
 
-        //获取Intent参数
-        username = getActivity().getIntent().getStringExtra("username");
-        coures_Id = getActivity().getIntent().getStringExtra("subjectId");
-        course_name = getActivity().getIntent().getStringExtra("subjectName");
+        //获取Intent参数,设置学科错题本最上面的内容
+        username = getActivity().getIntent().getStringExtra("username");  //用户名
+        coures_Id = getActivity().getIntent().getStringExtra("subjectId"); //学科名
+        course_name = getActivity().getIntent().getStringExtra("subjectName"); //学科id
         TextView tv_title = view.findViewById(R.id.ftv_title);
         tv_title.setText(course_name + "错题本");
 
@@ -118,10 +112,10 @@ public class BookDetailFragment extends Fragment {
         fll_null = view.findViewById(R.id.fll_null);
 
         //设置RecyclerViewAdapter
-        adapter = new BooksDetailAdapter(getContext(), errorList, itemList, quesList);
+        adapter = new BooksDetailAdapter(getContext(), errorList, itemList, quesList,true);
         frv_detail.setAdapter(adapter);
 
-//        refreshList(); 放在onResume周期中，及时更新
+        //refreshList();
 
         //设置item点击事件
         adapter.setmItemClickListener((v, pos) -> {
@@ -129,14 +123,25 @@ public class BookDetailFragment extends Fragment {
             int newPos = adapter.quenum[pos];
             BookDetailEntity.errorList item = adapter.errorList.get(newPos);
             questionId = item.getQuestionId();
-            intent.putExtra("questionId", questionId);
-            intent.putExtra("subjectId", coures_Id);
-            intent.putExtra("username", username);
-            intent.putExtra("name", course_name);
+            intent.putExtra("questionId", questionId);  //错题id
+            intent.putExtra("subjectId", coures_Id);  //学科id
+            System.out.println("错题的学科subjectId:" + coures_Id);
+            intent.putExtra("username", username);  //用户名
+            intent.putExtra("name", course_name);   //学科名
             intent.putExtra("sourceId", item.getSourceId());
             pos = pos + 1;
             intent.putExtra("pos", String.valueOf(pos));
             startActivity(intent);
+        });
+
+        // 巩固提升按钮
+        view.findViewById(R.id.fiv_up).setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), MainBookUpActivity.class);
+            intent.putExtra("courseName", course_name);
+            intent.putExtra("userName", username);
+            intent.putExtra("subjectId", coures_Id);
+            intent.putExtra("questionId", questionId);
+            getActivity().startActivity(intent);
         });
 
         // 回收站按钮
@@ -170,8 +175,6 @@ public class BookDetailFragment extends Fragment {
             intent.putExtra("subjectName", course_name);
             mResultLauncher.launch(intent);
         });
-
-
         return view;
     }
 
@@ -183,6 +186,7 @@ public class BookDetailFragment extends Fragment {
         frv_detail.scrollToPosition(0);
     }
 
+    // what:100 加载错题信息
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @SuppressLint("NotifyDataSetChanged")
         @Override
@@ -190,11 +194,10 @@ public class BookDetailFragment extends Fragment {
             super.handleMessage(message);
             if (message.what == 100) {
                 Bundle receivedBundle = (Bundle) message.obj;
+                // 获得三个列表信息
                 List<BookDetailEntity.errorList> moreList = (List<BookDetailEntity.errorList>) receivedBundle.getSerializable("moreList");
                 List<BookDetailEntity.errorList> quesList = (List<BookDetailEntity.errorList>) receivedBundle.getSerializable("quesList");
                 List<BookDetailEntity> almostList = (List<BookDetailEntity>) receivedBundle.getSerializable("almostList");
-
-
                 adapter.loadData(moreList);
                 adapter.loadData3(quesList);
                 adapter.loadData2(almostList);
@@ -204,14 +207,14 @@ public class BookDetailFragment extends Fragment {
         }
     };
 
-    //加载消息条目，包括刷新和加载，通过upDown标识两种状态
+    //发送请求获得错题数据,对请求到的数据进行处理
     private void loadItems_Net() {
         if (adapter.isRefresh == 1) {
             fll_null.setVisibility(View.GONE);
             rl_loading.setVisibility(View.VISIBLE);
         }
         // 获取错题本信息
-        String mRequestUrl = Constant.API + Constant.ERROR_QUE_GET_QUESTION + "?userName=" + username + "&subjectId=" + coures_Id + "&currentPage=1&sourceId=" + sourceId;
+        String mRequestUrl = Constant.API + Constant.ERROR_QUE_GET_QUESTION + "?userName=" + username + "&subjectId=" + coures_Id + "&currentPage=1&sourceId=" + sourceId + "&errorNum=1";
         Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -225,6 +228,7 @@ public class BookDetailFragment extends Fragment {
                 for (int j = 0; j < error.length(); j++) {
                     Log.e("wen0223", "sourceId: " + error.getJSONObject(j).getString("sourceId"));
                     String alitre0 = error.get(j).toString();
+                    Log.d("wen0223", "item: " + alitre0);
                     alitre0 = alitre0 + ",";
                     itemString += alitre0;
 
@@ -269,7 +273,6 @@ public class BookDetailFragment extends Fragment {
                 bundle.putSerializable("moreList", (Serializable) moreList);
                 bundle.putSerializable("quesList", (Serializable) quesList);
                 bundle.putSerializable("almostList", (Serializable) almostList);
-
                 //封装消息，传递给主线程
                 Message message = Message.obtain();
                 message.obj = bundle;
@@ -291,7 +294,6 @@ public class BookDetailFragment extends Fragment {
         }, error -> {
             Toast.makeText(BookDetailFragment.this.getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
         });
-
         MyApplication.addRequest(request, TAG);
 
 //        request = new StringRequest(mRequestUrl, response -> {
@@ -361,6 +363,15 @@ public class BookDetailFragment extends Fragment {
 
     }
 
+    //慢加载
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            if (isResumed()) {
+                refreshList();
+            }
+        }
+    }
 
     @Override
     public void onResume() {
@@ -372,7 +383,6 @@ public class BookDetailFragment extends Fragment {
 
     private void selectorRefresh(String sourceId){
         this.sourceId = sourceId;
-        // 未完成部分 筛选器回调请求
     }
 
 }

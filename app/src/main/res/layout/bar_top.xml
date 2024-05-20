@@ -28,4 +28,18 @@
         android:text="null"
         android:textColor="@color/main_bg"
         android:textSize="17sp" />
+
+    <!--刷新-->
+    <com.example.yidiantong.View.ClickableImageView
+        android:id="@+id/fiv_refresh"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/refresh"
+        android:visibility="gone"/>
+
+
 </RelativeLayout>

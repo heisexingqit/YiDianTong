@@ -26,7 +26,6 @@ public class BooksAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private final Context context;
     private final LayoutInflater layoutInflater;
     public List<BookInfoEntity> itemList;
-
     private MyItemClickListener mItemClickListener;
 
     public BooksAdapter(Context context, List<BookInfoEntity> itemList) {

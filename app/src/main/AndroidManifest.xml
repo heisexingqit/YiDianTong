@@ -27,7 +27,28 @@
         <activity android:name=".ui.THomeworkImageMark"
             android:exported="false" />
         <activity
-            android:name=".ui.BookExerciseActivity"
+            android:name=".ui.KnowledgeShiTiDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.KnowledgeShiTiActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.KnowledgePointActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.AutoStudyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.BookUpDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.MainBookUpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.BookExerciseDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.MainBookExerciseActivity"
             android:exported="false" />
         <activity
             android:name=".ui.TCameraShareActivity"

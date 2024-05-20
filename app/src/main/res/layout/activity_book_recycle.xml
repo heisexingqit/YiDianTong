@@ -11,13 +11,15 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:paddingStart="5dp"
-        android:paddingEnd="5dp">
+        android:paddingTop="10dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="10dp">
 
         <!--左-->
         <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/fiv_back"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:clickable="true"
             android:focusable="true"
@@ -28,13 +30,23 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
             android:gravity="center_horizontal"
             android:singleLine="true"
-            android:text="学习路径展示"
+            android:text="null"
             android:textColor="@color/main_bg"
             android:textSize="17sp" />
+
+        <!--巩固提升-->
+<!--        <com.example.yidiantong.View.ClickableImageView-->
+<!--            android:id="@+id/fiv_up"-->
+<!--            android:layout_width="35dp"-->
+<!--            android:layout_height="35dp"-->
+<!--            android:layout_centerVertical="true"-->
+<!--            android:layout_marginRight="10dp"-->
+<!--            android:layout_toLeftOf="@id/fll_br_model"-->
+<!--            android:clickable="true"-->
+<!--            android:focusable="true"-->
+<!--            android:src="@drawable/up" />-->
 
         <!--右-->
         <LinearLayout
@@ -66,11 +78,6 @@
                 android:layout_marginLeft="14dp"
                 android:src="@drawable/arrow_down" />
 
-            <!--            <ImageView-->
-            <!--                android:layout_width="35dp"-->
-            <!--                android:layout_height="35dp"-->
-            <!--                android:layout_marginEnd="10dp"-->
-            <!--                android:src="@drawable/to_learn" />-->
         </LinearLayout>
 
 
@@ -82,11 +89,10 @@
         android:layout_height="0dp"
         android:layout_weight="1">
         <!--可滑动ViewPager-->
-
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/fvp_book_recycle"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -94,60 +100,24 @@
             android:layout_alignParentBottom="true"
             android:orientation="vertical">
 
+
             <ImageView
                 android:id="@+id/fiv_bd_exercise"
-                android:layout_width="wrap_content"
-                android:layout_height="25dp"
+                android:layout_width="155dp"
+                android:layout_height="24dp"
                 android:layout_gravity="right"
-                android:layout_marginEnd="15dp"
                 android:layout_marginBottom="10dp"
-                android:adjustViewBounds="true"
-                android:src="@drawable/recommend" />
+                android:src="@drawable/exercise" />
 
             <ImageView
                 android:id="@+id/fiv_bd_mark"
-                android:layout_width="wrap_content"
-                android:layout_height="25dp"
+                android:layout_width="155dp"
+                android:layout_height="24dp"
                 android:layout_gravity="right"
-                android:layout_marginEnd="15dp"
                 android:layout_marginBottom="10dp"
-                android:adjustViewBounds="true"
                 android:src="@drawable/mark_icon" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/ll_aaa"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:gravity="center"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="教材名称:"
-                android:textColor="@color/black"
-                android:textSize="20sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:text="高一数学北师大版(2019)"
-                android:textColor="@color/red"
-                android:textSize="20sp" />
-        </LinearLayout>
-
-        <TableLayout
-            android:id="@+id/tl_main"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/ll_aaa"
-            android:background="@color/white"
-            android:stretchColumns="*"
-            android:visibility="gone" />
     </RelativeLayout>
 
 
