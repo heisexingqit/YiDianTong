@@ -56,7 +56,7 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
 
     private MyItemClickListener mItemClickListener;
 
-
+    private EditText mCurrentFocusedEditText;
     private List<THomeworkCameraItem> itemList;
 
     private Context mContext;
@@ -172,7 +172,7 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
         this.showPos = showPos;
     }
 
-    public void addEditText(String txt) {
+    public void addEditText( String txt) {
         if (txt.length() == 0) {
             showAnswerET = -1;
             showAnalysisET = -1;
@@ -183,7 +183,7 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
             item.setShitiShow(item.getShitiShow() + "<p>" + txt + "</p>");
             showTimianET = -1;
         } else if (showAnswerET != -1) {
-            THomeworkCameraItem item = itemList.get(showAnalysisET);
+            THomeworkCameraItem item = itemList.get(showAnswerET);
             item.setShitiAnswer(item.getShitiAnswer() + "<p>" + txt + "</p>");
             showAnswerET = -1;
         } else if (showAnalysisET != -1) {
@@ -193,6 +193,14 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
         }
         this.notifyDataSetChanged();
     }
+    private View.OnFocusChangeListener focusChangeListener = new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (hasFocus && v instanceof EditText) {
+                mCurrentFocusedEditText = (EditText) v;
+            }
+        }
+    };
 
     /**
      * 核心
@@ -454,6 +462,7 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
                     switch (view.getId()) {
 
                         case R.id.tv_answer_add:
+                            Log.d("hsk0520", "onClick: 点击事件已触发");
                             if (item.getBaseTypeId().equals("108") && (item.getTypeName().indexOf("阅读理解") != -1 || item.getTypeName().indexOf("完形填空") != -1)) {
                                 // 添加小题
                                 String answerStr = item.getShitiAnswer();
@@ -465,7 +474,6 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
                                 queNum += 1;
                                 item.setSmallQueNum(String.valueOf(queNum));
                             } else {
-
                                 // 添加选项
                                 ansNum += 1;
                                 item.setAnswerNum(String.valueOf(ansNum));
@@ -704,13 +712,13 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
                     /**
                      * 判断题型 专属
                      */
-                    rg_answer.removeAllViews();
+                    //rg_answer.removeAllViews();
 
                     String checkStr = "";
                     if (item.getShitiAnswer().length() > 0) {
                         checkStr = Jsoup.clean(item.getShitiAnswer(), Whitelist.none()).trim();
                     }
-
+                    Log.d("hsk0521","checkStr="+checkStr);
                     // 同步
                     if (checkStr.equals("对")) {
                         rb_true.setChecked(true);
@@ -897,7 +905,7 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
                                 }
                                 showAnswerET = -1;
                                 THomeworkCameraRecyclerAdapter.this.notifyDataSetChanged();
-                                Log.d("wen", "onEditorAction: " + item.getShitiShow());
+                                Log.d("wen", "onEditorAction: " + et_answer.getText().toString());
 
                                 return true;
                             }
@@ -949,9 +957,10 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
                     });
                     break;
             }
-
-            tv_answer_add.setOnClickListener(answerListener);
-            tv_answer_minus.setOnClickListener(answerListener);
+            if(!item.getBaseTypeId().equals("103")){
+                tv_answer_add.setOnClickListener(answerListener);
+                tv_answer_minus.setOnClickListener(answerListener);
+            }
             iv_up.setOnClickListener(answerListener);
             iv_down.setOnClickListener(answerListener);
             iv_delete.setOnClickListener(answerListener);
@@ -1021,6 +1030,7 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
                 ll_hide_analysis.setVisibility(View.GONE);
                 ll_show_analysis.setVisibility(View.VISIBLE);
             }
+
 
             // 捕获回车键
             et_timian.setOnEditorActionListener(new TextView.OnEditorActionListener() {

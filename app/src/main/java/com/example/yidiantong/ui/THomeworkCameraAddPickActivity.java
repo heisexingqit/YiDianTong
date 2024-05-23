@@ -602,6 +602,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
         switch (view.getId()) {
             case R.id.iv_add_question:
                 isTypeChange = false;
+                Log.d("HSK0520","onClick事件isTypeChange="+isTypeChange);
                 showTypeMenu();
                 break;
             case R.id.btn_save:
@@ -809,6 +810,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
     private void showTypeMenu() {
         if (typeView == null) {
             typeView = LayoutInflater.from(this).inflate(R.layout.menu_t_homework_camera_type, null, false);
+            Log.d("hsk0520","showTypeMenu()函数typeView="+typeView);
             fl_type = typeView.findViewById(R.id.fl_type);
             ll_hide = typeView.findViewById(R.id.ll_hide);
             ll_divide_hide = typeView.findViewById(R.id.ll_divide_hide);
@@ -832,7 +834,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                                 Toast.makeText(THomeworkCameraAddPickActivity.this, "请输入试题分数", Toast.LENGTH_SHORT).show();
                                 break;
                             }
-
+                            Log.d("hsk0520","tv_confirm事件isTypeChange="+isTypeChange);
                             THomeworkCameraItem newHomework;
                             if (isTypeChange) {
                                 newHomework = itemList.get(typeChangePos);
@@ -845,7 +847,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
 
                             // 构建试题对象
                             newHomework.setTypeName(type);
-
+                            Log.d("hsk0520","tv_confirm事件type="+type);
                             for (THomeworkCameraType item : typeList) {
                                 if (item.getTypeName().equals(type)) {
                                     newHomework.setBaseTypeId(item.getBaseTypeId());
@@ -858,13 +860,17 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                             if (newHomework.getBaseTypeId().equals("101") || newHomework.getBaseTypeId().equals("102")) {
                                 newHomework.setAnswerNum("4");
                                 newHomework.setScore(et_score.getText().toString());
-                            } else if (newHomework.getBaseTypeId().equals("108") && (newHomework.getTypeName().indexOf("阅读理解") != -1 || newHomework.getTypeName().indexOf("完形填空") != -1)) {
+                            }else if(newHomework.getBaseTypeId().equals("103")){
+                                newHomework.setAnswerNum("2");
+                                newHomework.setScore(et_score.getText().toString());
+                                Log.d("hsk0520","strAnswerNum"+newHomework.getBaseTypeId());
+                             }else if (newHomework.getBaseTypeId().equals("108") && (newHomework.getTypeName().indexOf("阅读理解") != -1 || newHomework.getTypeName().indexOf("完形填空") != -1)) {
                                 newHomework.setSmallQueNum(strAnswerNum);
                                 newHomework.setScore(String.valueOf(Integer.parseInt(strAnswerNum) * Integer.parseInt(strAnswerScore)));
                             } else {
                                 newHomework.setScore(et_score.getText().toString());
                             }
-
+                            Log.d("hsk0520","tv_confirm事件BaseTypeId="+newHomework.getBaseTypeId());
                             if (!isTypeChange) {
                                 itemList.add(newHomework);
                                 getQuestionId(itemList.size() - 1);

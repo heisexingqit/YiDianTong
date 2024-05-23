@@ -73,6 +73,12 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
         WebView wv_content2 = view.findViewById(R.id.wv_content2);
         WebView wv_content3 = view.findViewById(R.id.wv_content3);
         WebView wv_content4 = view.findViewById(R.id.wv_content4);
+        wv_content4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("HSK0522","照片点击");
+            }
+        });
         setHtmlOnWebView(wv_content, homeworkMarked.getTiMian());
         setHtmlOnWebView(wv_content4, homeworkMarked.getStuAnswer());
 

@@ -177,6 +177,7 @@
                             android:layout_height="wrap_content"
                             android:scrollbars="none" />
 
+                        <!-- 按钮组件 -->
                         <EditText
                             android:id="@+id/et_timian"
                             android:layout_width="match_parent"
@@ -188,7 +189,6 @@
                             android:singleLine="true"
                             android:textSize="15sp" />
 
-                        <!-- 按钮组件 -->
                         <LinearLayout
                             android:id="@+id/ll_show_timian"
                             android:layout_width="match_parent"

@@ -137,7 +137,7 @@ public class THomeworkImageMark extends AppCompatActivity {
                     customDraw.setMoveEnabled(true);
                     moveButton.setBackgroundResource(R.drawable.image_edit_move_on);
                     //提示消息
-                    Toast toast = Toast.makeText(THomeworkImageMark.this,"你可以通过双指来实现图片的放大与缩小！", Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(THomeworkImageMark.this,"您可以通过双指来实现图片的放大与缩小！", Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
                 }
@@ -390,7 +390,7 @@ public class THomeworkImageMark extends AppCompatActivity {
                     // 清空绘制路径列表，以便下次保存
                     finish();
                 }
-            }, (long) delay_time*1000); // 设置延迟时间为1.5秒
+            }, (long) delay_time*1000); // 设置延迟时间
         }
     }
     // 显示加载页面

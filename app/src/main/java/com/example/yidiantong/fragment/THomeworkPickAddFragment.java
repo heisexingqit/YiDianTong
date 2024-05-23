@@ -134,10 +134,12 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
 
         // 判断数据是否已存在
         if (adapter.itemList.size() == 0) {
+            Log.d("hsk0521", "初始化试题 ");
             loadItems_Net();
         } else {
             tv_hide.setVisibility(View.GONE);
         }
+
 
         tv_count.setText("(已选择" + pickList.size() + ")");
 
@@ -165,6 +167,7 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
 
     // 更新试题内容方法
     public void updateItem(String xd, String xk, String bb, String jc, String zsd, String type, String shareTag) {
+        Log.d("hsk0521", "更新试题 ");
         xueduan = xd;
         xueke = xk;
         banben = bb;
