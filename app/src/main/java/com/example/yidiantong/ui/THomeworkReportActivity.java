@@ -204,13 +204,24 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 if (homeworkReport.getStatus().equals("show")) {
 
-                    builder.setMessage("该作业答案已经公布");
-                    builder.setPositiveButton("确定", null);
+                    builder.setMessage("该作业答案已经公布，是否关闭？");
+                    builder.setNegativeButton("取消", null);
+
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            cancelAnswer();
+                        }
+                    });
                     AlertDialog dialog = builder.create();
                     dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
                     dialog.show();
                 } else if (un_submit * 1.0 / all_num > 0.2) {
-                    builder.setMessage("提交率不足80%，确定要公布答案吗？");
+                    if (un_submit * 1.0 / all_num > 0.2) {
+                        builder.setMessage("提交率不足80%，确定要公布答案吗？");
+                    }else{
+                        builder.setMessage("确定公布答案吗？");
+                    }
                     builder.setNegativeButton("取消", null);
                     builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
@@ -221,8 +232,6 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                     AlertDialog dialog = builder.create();
                     dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
                     dialog.show();
-                } else {
-                    publishAnswer();
                 }
                 break;
         }
@@ -240,6 +249,30 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                 if (isSuccess) {
                     homeworkReport.setStatus("show");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Log.e("volley", "Volley_Error: " + error.toString());
+
+        });
+
+        MyApplication.addRequest(request, TAG);
+    }
+
+    private void cancelAnswer() {
+        String mRequestUrl = Constant.API + Constant.CANCEL_ANSWER + "?userName=" + MyApplication.username + "&paperId=" + taskId;
+
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String message = json.getString("message");
+                Boolean isSuccess = json.getBoolean("success");
+                message = message.replace("。", "");
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                if (isSuccess) {
+                    homeworkReport.setStatus("");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

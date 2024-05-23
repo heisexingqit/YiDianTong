@@ -359,11 +359,11 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                     dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
                     dialog.show();
                 } else {
-                    addFragment = new THomeworkPickAddFragment(xueduanMap.get(xueduan), xuekeMap.get(xueke), banbenMap.get(banben), jiaocaiMap.get(jiaocai), zhishidianId, typeMap.get(type), "99");
+//                    addFragment = new THomeworkPickAddFragment(xueduanMap.get(xueduan), xuekeMap.get(xueke), banbenMap.get(banben), jiaocaiMap.get(jiaocai), zhishidianId, typeMap.get(type), "99");
+                    addFragment.updateItem(xueduanMap.get(xueduan), xuekeMap.get(xueke), banbenMap.get(banben), jiaocaiMap.get(jiaocai), zhishidianId, typeMap.get(type), shareTag);
                     //changeFragment = new THomeworkPickChangeFragment();
                     //assignFragment = new THomeworkPickAssignFragment();
                     getSupportFragmentManager().beginTransaction().replace(R.id.fl_main, addFragment).commit();
-                    //addFragment.updateItem(xueduanMap.get(xueduan), xuekeMap.get(xueke), banbenMap.get(banben), jiaocaiMap.get(jiaocai), zhishidianId, typeMap.get(type), shareTag);
                     window.dismiss();
                 }
                 break;

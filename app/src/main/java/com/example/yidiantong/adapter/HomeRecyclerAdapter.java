@@ -94,7 +94,6 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-
         return itemList.size() + 1;
     }
 
@@ -114,7 +113,6 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             } else {
                 isDown = 1;
             }
-
         }
         this.notifyDataSetChanged();
     }
