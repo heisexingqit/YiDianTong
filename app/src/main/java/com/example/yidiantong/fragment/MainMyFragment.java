@@ -38,15 +38,14 @@ import androidx.fragment.app.Fragment;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
-import com.bumptech.glide.Glide;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.PswDialog;
 import com.example.yidiantong.View.TouxiangDialog;
+import com.example.yidiantong.ui.AutoStudyActivity;
 import com.example.yidiantong.ui.LoginActivity;
 import com.example.yidiantong.ui.MyIntroductionActivity;
 import com.example.yidiantong.ui.SelectCourseActivity;
-import com.example.yidiantong.ui.TCameraShareActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.ImageUtils;
 import com.example.yidiantong.util.JsonUtils;
@@ -72,16 +71,17 @@ import java.util.Map;
 public class MainMyFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "MainMyFragment";
 
-    private LinearLayout f_ll_info;
-    private LinearLayout f_ll_us;
-    private LinearLayout f_ll_update;
-    private LinearLayout f_ll_psw;
-    private LinearLayout f_ll_center;
-    private Button fbtn_exit;
-    private ImageView fiv_my;
+    private LinearLayout f_ll_info;  // 账号信息
+    private LinearLayout f_ll_us;    // 关于我们
+    private LinearLayout f_ll_update;  // 检查更新
+    private LinearLayout f_ll_psw;   // 修改密码
+    private LinearLayout f_ll_auto_study;  // 自主学习
+    private LinearLayout f_ll_center;  // 选课中心
+    private Button fbtn_exit;  // 退出登录
+    private ImageView fiv_my;  // 头像
 
-    private int is_pw_show = 0;//0表示隐藏，1表示显示
-    private int is_pw_focus = 0;//0表示没有聚焦，1表示聚焦
+    private int is_pw_show = 0; //0表示隐藏，1表示显示
+    private int is_pw_focus = 0; //0表示没有聚焦，1表示聚焦
     private Button fbtn_cancel;
     private Button fbtn_confirm;
 
@@ -96,13 +96,11 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
     // 标识码（与权限对应）
     private static final int REQUEST_CODE_STORAGE = 1;
     private static final int REQUEST_CODE_CAMERA = 2;
+
     private String username;
     private String realName;
-
     private String imageBase64;
-
     private String newPW;
-
     private SharedPreferences preferences;
 
 
@@ -110,7 +108,7 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
     public static MainMyFragment newInstance() {
         MainMyFragment fragment = new MainMyFragment();
         Bundle args = new Bundle();
-        fragment.setArguments(args);
+        fragment.setArguments(args);  // 创建实例后可以通过gET
         return fragment;
     }
 
@@ -132,6 +130,8 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         f_ll_us = view.findViewById(R.id.f_ll_us);
         f_ll_update = view.findViewById(R.id.f_ll_update);
         f_ll_psw = view.findViewById(R.id.f_ll_psw);
+        f_ll_auto_study = view.findViewById(R.id.f_ll_auto_study);
+
         f_ll_center = view.findViewById(R.id.f_ll_center);
         fbtn_exit = view.findViewById(R.id.fbtn_exit);
         fbtn_cancel = view.findViewById(R.id.fbtn_cancel);
@@ -140,18 +140,16 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         TextView tv_version = view.findViewById(R.id.tv_version);
         tv_version.setText(MyApplication.versionName);
 
+
         // 点击头像
         fiv_my = view.findViewById(R.id.fiv_my);
-
-        // 获取图片
-        String picUrl = MyApplication.picUrl;
-        ImageLoader.getInstance().displayImage(picUrl, fiv_my, MyApplication.getLoaderOptions());
 
         // 设置点击事件
         f_ll_info.setOnClickListener(this);
         f_ll_us.setOnClickListener(this);
         f_ll_update.setOnClickListener(this);
         f_ll_psw.setOnClickListener(this);
+        f_ll_auto_study.setOnClickListener(this);
         f_ll_center.setOnClickListener(this);
         fbtn_exit.setOnClickListener(this);
         fiv_my.setOnClickListener(this);
@@ -252,6 +250,10 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         realName = MyApplication.cnName;
         tv_username.setText(realName + "(" + username + ")");
 
+        // 获取图片
+        String picUrl = MyApplication.picUrl;
+        ImageLoader.getInstance().displayImage(picUrl, fiv_my, MyApplication.getLoaderOptions());
+
         preferences = getActivity().getSharedPreferences("config", Context.MODE_PRIVATE);
 
         return view;
@@ -273,12 +275,12 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         }
     };
 
+    // 修改密码
     private void changePW() {
         String mRequestUrl = Constant.API + Constant.CHANGE_PW + "?passWord=" + newPW + "&userName=" + username;
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
-
                 Boolean isSuccess = json.getBoolean("success");
                 if (isSuccess) {
                     MyApplication.password = newPW;
@@ -286,6 +288,7 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putString("password", "");
                     editor.commit();
+                    // 修改密码成功后退出重新登录
                     fbtn_exit.callOnClick();
                 } else {
                     Toast.makeText(getActivity(), "修改密码失败", Toast.LENGTH_SHORT).show();
@@ -346,7 +349,6 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.f_ll_info:
-
                 break;
             case R.id.f_ll_us:
                 startActivity(new Intent(getActivity(), MyIntroductionActivity.class));
@@ -364,7 +366,6 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                     }
                 });
                 builder.setConfirm("confirm", new PswDialog.IOnConfirmListener() {
-
                     @Override
                     public void onConfirm(PswDialog dialog) {
                         String old_pw = dialog.old_pw;
@@ -379,6 +380,12 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                 });
                 // 修改密码弹窗弹出
                 builder.show();
+                break;
+            //自主学习
+            case R.id.f_ll_auto_study:
+                Intent intent_auto = new Intent(getActivity(), AutoStudyActivity.class);
+                intent_auto.putExtra("username", username);
+                startActivity(intent_auto);
                 break;
             case R.id.f_ll_center:
                 Intent intent_center = new Intent(getActivity(), SelectCourseActivity.class);
@@ -703,7 +710,6 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         Log.e("0124", "checkUpdate: " + mRequestUrl);
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
-
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 JSONObject data = json.getJSONObject("data");

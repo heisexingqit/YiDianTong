@@ -20,6 +20,7 @@ import com.example.yidiantong.bean.HomeItemEntity;
 
 import java.util.List;
 
+// Adapter 则负责数据和 UI 控件之间的数据绑定和交互，以实现数据展示和用户交互功能
 public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String TAG = "HomeRecyclerAdapter";
     // 打气筒

@@ -1,7 +1,6 @@
 package com.example.yidiantong.adapter;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -9,6 +8,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.yidiantong.fragment.BookDetailFragment;
+import com.example.yidiantong.fragment.BookExerciseFragment;
+import com.example.yidiantong.fragment.BookUpFragment;
 import com.example.yidiantong.fragment.MainBookFragment;
 import com.example.yidiantong.fragment.MainCourseFragment;
 import com.example.yidiantong.fragment.MainHomeFragment;
@@ -49,6 +50,10 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
             return MainMyFragment.newInstance();
         }else if(position == 5){
             return BookDetailFragment.newInstance();
+        }else if(position == 6){
+            return BookExerciseFragment.newInstance();
+        }else if(position == 7){
+            return BookUpFragment.newInstance();
         }else{
             return null;
         }
@@ -56,7 +61,7 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 6;
+        return 8;
     }
 
     @Override

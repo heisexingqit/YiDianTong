@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -15,7 +16,6 @@ import android.os.Message;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.AbsoluteSizeSpan;
-import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,7 +39,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookRecyclerEntity;
-import com.example.yidiantong.ui.BookExerciseActivity;
+import com.example.yidiantong.ui.MainBookExerciseActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.RecyclerInterface;
@@ -65,7 +65,12 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
     private LinearLayout fll_bd_analysis;
     private TextView ftv_br_title;
     private ImageView fiv_bd_mark;
+
     private ImageView fiv_bd_exercise;
+    private String userName;
+    private String subjectId;
+    private String courseName;
+    private Boolean exerciseType;
 
     int[] unselectIcons = {R.drawable.a_unselect, R.drawable.b_unselect, R.drawable.c_unselect, R.drawable.d_unselect};
     int[] selectIcons = {R.drawable.a_select, R.drawable.b_select, R.drawable.c_select, R.drawable.d_select};
@@ -90,10 +95,16 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
     private WebView wv_stu_answer;
     private WebView wv_shiti_answer;
 
-    public static BookDetailSubjectFragment newInstance(BookRecyclerEntity bookrecyclerEntity) {
+    private SharedPreferences preferences;
+
+    public static BookDetailSubjectFragment newInstance(BookRecyclerEntity bookrecyclerEntity, String userName, String subjectId, String courseName, Boolean exerciseType) {
         BookDetailSubjectFragment fragment = new BookDetailSubjectFragment();
         Bundle args = new Bundle();
         args.putSerializable("bookrecyclerEntity", bookrecyclerEntity);
+        args.putString("userName", userName);
+        args.putString("subjectId", subjectId);
+        args.putString("courseName", courseName);
+        args.putBoolean("exerciseType", exerciseType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -109,9 +120,14 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        preferences = getActivity().getSharedPreferences("book", Context.MODE_PRIVATE);
         //取出携带的参数
         Bundle arg = getArguments();
         bookrecyclerEntity = (BookRecyclerEntity) arg.getSerializable("bookrecyclerEntity");
+        userName = arg.getString("userName");
+        subjectId = arg.getString("subjectId");
+        courseName = arg.getString("courseName");
+        exerciseType = arg.getBoolean("exerciseType");
 
         //获取view
         View view = inflater.inflate(R.layout.fragment_book_detail_subject, container, false);
@@ -152,8 +168,9 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
 
 
         // 题号和平均分
+        currentpage = bookrecyclerEntity.getCurrentPage();  // 当前页数，题号
         ftv_bd_num = view.findViewById(R.id.ftv_bd_num);
-        ftv_bd_num.setText(bookrecyclerEntity.getNum());
+        ftv_bd_num.setText("第"+currentpage+"题");
         ftv_bd_score = view.findViewById(R.id.ftv_bd_score);
         ftv_bd_score.setText("得分: " + bookrecyclerEntity.getStuScore() + " 全班均分:" + bookrecyclerEntity.getAvgScore());
 
@@ -186,17 +203,6 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         spanString.setSpan(span1, 0, positionLen, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         ftv_pbd_quenum.setText(spanString);
 
-        // 标记掌握
-        fiv_bd_mark = getActivity().findViewById(R.id.fiv_bd_mark);
-        fiv_bd_mark.setOnClickListener(this);
-
-        // 提分练习
-        fiv_bd_exercise = getActivity().findViewById(R.id.fiv_bd_exercise);
-        fiv_bd_exercise.setOnClickListener(this);
-
-        setHasOptionsMenu(true);
-
-
         // 解析部分
         fll_bd_analysis = view.findViewById(R.id.fll_bd_analysis);
         ftv_bd_answer = view.findViewById(R.id.ftv_bd_answer);
@@ -219,35 +225,74 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         stuans = bookrecyclerEntity.getStuAnswer();
         cleanStuAnswer = bookrecyclerEntity.getStuScore();
 
-        // 修改模式
-        fll_br_model = getActivity().findViewById(R.id.fll_br_model);
-        fll_br_model.setOnClickListener(this);
-        ftv_br_mode = getActivity().findViewById(R.id.ftv_br_mode);
-        String modename = ftv_br_mode.getText().toString();
+        if (!exerciseType){
+            // 标记掌握
+            fiv_bd_mark = getActivity().findViewById(R.id.fiv_bd_mark);
+            fiv_bd_mark.setOnClickListener(this);
+            setHasOptionsMenu(true);
+            // 举一反三
+            fiv_bd_exercise = getActivity().findViewById(R.id.fiv_bd_exercise);
+            fiv_bd_exercise.setOnClickListener(this);
+            // 修改模式
+            fll_br_model = getActivity().findViewById(R.id.fll_br_model);
+            fll_br_model.setOnClickListener(this);
+            ftv_br_mode = getActivity().findViewById(R.id.ftv_br_mode);
+            String modename = ftv_br_mode.getText().toString();
 
-        // 模式初始化 默认学生作答
-        if (modename.equals("练习模式")) {
+            // 模式初始化 默认学生作答
+            if (modename.equals("练习模式")) {
+                fll_bd_analysis.setVisibility(View.GONE);
+                fll_bd_answer.setVisibility(View.VISIBLE);
+                mode = 0;
+            } else {
+                fll_bd_answer.setVisibility(View.GONE);
+                fll_bd_analysis.setVisibility(View.VISIBLE);
+                mode = 1;
+                if (stuans.length() == 0) {
+                    ftv_bd_stuans.setText("【你的作答】");
+                    fiv_bd_tf.setVisibility(View.GONE); // 隐藏对错图标
+                } else {
+                    ftv_bd_stuans.setText("【你的作答】");
+                    // 答案显示
+                    html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getStuAnswer() + "</body>";
+                    html = html_content.replace("#", "%23");
+                    wv_stu_answer.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
+                    fiv_bd_tf.setVisibility(View.VISIBLE); // 显示对错图标
+                }
+                mode_stuans();
+            }
+        }else {
             fll_bd_analysis.setVisibility(View.GONE);
             fll_bd_answer.setVisibility(View.VISIBLE);
-            mode = 0;
-        } else {
-            fll_bd_answer.setVisibility(View.GONE);
-            fll_bd_analysis.setVisibility(View.VISIBLE);
-            mode = 1;
-            if (stuans.length() == 0) {
-                ftv_bd_stuans.setText("【你的作答】");
-                fiv_bd_tf.setVisibility(View.GONE); // 隐藏对错图标
-            } else {
-                ftv_bd_stuans.setText("【你的作答】");
-                // 答案显示
-                html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getStuAnswer() + "</body>";
-                html = html_content.replace("#", "%23");
-                wv_stu_answer.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
-                fiv_bd_tf.setVisibility(View.VISIBLE); // 显示对错图标
-            }
-            mode_stuans();
+            // 隐藏知识点图标,得分
+            fiv_de_icon.setVisibility(View.GONE);
+            ftv_bd_score.setVisibility(View.GONE);
         }
+
+        // 显示学生本地保存的作答
+        showLoadAnswer();
         return view;
+    }
+
+    private void showLoadAnswer() {
+        // 显示学生本地保存的作答
+        String arrayString = preferences.getString("stuLoadAnswer", null);
+        if (arrayString != null) {
+            String[] stuLoadAnswer = arrayString.split(",");
+            String loadAnswer = stuLoadAnswer[Integer.parseInt(currentpage) - 1];
+            System.out.println("loadAnswer:" + loadAnswer);
+            if (!loadAnswer.equals("null")) {
+                fll_bd_answer.setVisibility(View.GONE);
+                fll_bd_analysis.setVisibility(View.VISIBLE);
+                ftv_bd_stuans.setText("【你的作答】" + loadAnswer);
+                // 判断答案是否相等
+                if (loadAnswer.equals(bookrecyclerEntity.getShitiAnswer())) {
+                    fiv_bd_tf.setImageResource(R.drawable.ansright);
+                } else {
+                    fiv_bd_tf.setImageResource(R.drawable.answrong);
+                }
+            }
+        }
     }
 
     @Override
@@ -305,15 +350,13 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                 //对话框弹出
                 builder.show();
                 break;
-            case R.id.fiv_bd_exercise:
-                // 弹出一个简单的Dialog提示 "功能完善中"
-//                AlertDialog.Builder builder_exercise = new AlertDialog.Builder(getActivity());
-//                builder_exercise.setMessage("功能完善中");
-//                builder_exercise.setPositiveButton("确定", null);
-//                builder_exercise.show();
-                Intent toExercise = new Intent(getActivity(), BookExerciseActivity.class);
-                toExercise.putExtra("questionId", bookrecyclerEntity.getQuestionId());
-                startActivity(toExercise);
+            case R.id.fiv_bd_exercise:  // 举一反三
+                Intent intent = new Intent(getActivity(), MainBookExerciseActivity.class);
+                intent.putExtra("userName", userName);  // 用户名
+                intent.putExtra("subjectId", subjectId);    // 学科id
+                intent.putExtra("courseName", courseName);  // 学科名
+                intent.putExtra("questionId", bookrecyclerEntity.getQuestionId());   // 题目id
+                startActivity(intent);
                 break;
             case R.id.fll_br_model:
                 AlertDialog.Builder builder_model = new AlertDialog.Builder(getActivity());
@@ -327,6 +370,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                             ftv_br_mode.setText("练习模式");
                             mode = 0;
                             dialog_model.dismiss();
+                            showLoadAnswer();
                         } else {
                             fll_bd_answer.setVisibility(View.GONE);
                             fll_bd_analysis.setVisibility(View.VISIBLE);

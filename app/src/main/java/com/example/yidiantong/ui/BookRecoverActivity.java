@@ -1,11 +1,5 @@
 package com.example.yidiantong.ui;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Build;
@@ -18,6 +12,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
@@ -74,11 +74,9 @@ public class BookRecoverActivity extends AppCompatActivity implements RemoveInte
         //RecyclerView两步必要配置
         frv_recover.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         frv_recover.setItemAnimator(new DefaultItemAnimator());
-
         // 获取Intent参数
         username = this.getIntent().getStringExtra("username");
         coures_id = this.getIntent().getStringExtra("subjectId");
-
         //设置RecyclerViewAdapter
         adapter = new BooksRecoverAdapter(this, errorList, itemList, quesList);
         frv_recover.setAdapter(adapter);
@@ -111,11 +109,12 @@ public class BookRecoverActivity extends AppCompatActivity implements RemoveInte
         Log.e("回收站mRequestUrl",""+mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
-                String itemString = "";
-                String itemStringnew = "";
+                String itemString = "";  // 所有题目表
+                String itemStringnew = "";  // 所有题目表
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 JSONArray error = json.getJSONArray("data");
                 item = json.getString("data");
+                System.out.println("item ^_^" + item);
                 String error1 = json.getString("data");
                 // 标题+所有题目表
                 for(int j=0; j<error.length();j++){
