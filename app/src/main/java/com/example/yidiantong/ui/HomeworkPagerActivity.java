@@ -351,7 +351,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
-                Log.e("wen0226", "loadItems_Net: " + json);
+                Log.e("wen0523", "loadItems_Net: " + json);
 
                 String itemString = json.getString("data");
                 Gson gson = new Gson();

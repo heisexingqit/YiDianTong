@@ -57,6 +57,7 @@ public class Constant {
 
     // 公布答案
     public static final String PUBLISH_ANSWER = "/AppServer/ajax/teacherApp_publishZYPaperAnwer.do";
+    public static final String CANCEL_ANSWER = "/AppServer/ajax/teacherApp_closeZYPaperAnwer.do";
 
     // 退出批改操作
     public static final String T_AFTER_MARKED = "/AppServer/ajax/teacherApp_deleteAccessControl.do";

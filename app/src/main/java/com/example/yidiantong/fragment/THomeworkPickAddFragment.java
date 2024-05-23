@@ -104,7 +104,7 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
+        Log.e("wen052321", "onCreateView: 启动");
         View view = inflater.inflate(R.layout.fragment_t_homework_pick_add, container, false);
         ll_loading = view.findViewById(R.id.ll_loading);
         ll_loading2 = view.findViewById(R.id.ll_loading2);
@@ -129,17 +129,18 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
         tv_count = view.findViewById(R.id.tv_count);
         iv_add = view.findViewById(R.id.iv_add);
         iv_add.setOnClickListener(this);
-        Log.e("wen", "启动页面 ");
+        Log.e("wen", "启动页面");
         Log.e("wen", "列表长度 " + adapter.itemList.size());
 
         // 判断数据是否已存在
         if (adapter.itemList.size() == 0) {
-            Log.d("hsk0521", "初始化试题 ");
             loadItems_Net();
         } else {
+            ll_loading.setVisibility(View.GONE);// 解除遮挡
+            ll_loading2.setVisibility(View.GONE);// 解除遮挡
             tv_hide.setVisibility(View.GONE);
         }
-
+        Log.e("wen0523", "onCreateView: " + adapter.itemList.size());
 
         tv_count.setText("(已选择" + pickList.size() + ")");
 
@@ -167,7 +168,7 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
 
     // 更新试题内容方法
     public void updateItem(String xd, String xk, String bb, String jc, String zsd, String type, String shareTag) {
-        Log.d("hsk0521", "更新试题 ");
+        Log.e("wen0523", "updateItem: " + xd + " " + xk + " " + bb + " "+ jc + " " + zsd + " " + type + " " + shareTag);
         xueduan = xd;
         xueke = xk;
         banben = bb;
@@ -210,6 +211,7 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
                     sortPickList();
                     iv_add.setImageResource(R.drawable.add_homework);
                 } else {
+                    Log.e("wen052321", "onClick: " + pickList);
                     pickList.add(adapter.itemList.get(nowPos));
                     sortPickList();
                     iv_add.setImageResource(R.drawable.minus_homework);

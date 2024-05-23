@@ -115,7 +115,7 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
             //设置title组件
             builder.setCustomTitle(tv);
             AlertDialog dialog = builder.create();
-            builder.setNegativeButton("ok", null);
+            builder.setNegativeButton("关闭", null);
             //禁止返回和外部点击
             builder.setCancelable(false);
             //对话框弹出
@@ -137,14 +137,14 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
             AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
             //自定义title样式
             TextView tv = new TextView(this);
-            tv.setText("已经最后一题了");    //内容
+            tv.setText("已经是最后一题了");    //内容
             tv.setTextSize(17);//字体大小
             tv.setPadding(30, 40, 30, 40);//位置
             tv.setTextColor(Color.parseColor("#000000"));//颜色
             //设置title组件
             builder.setCustomTitle(tv);
             AlertDialog dialog = builder.create();
-            builder.setNegativeButton("ok", null);
+            builder.setNegativeButton("关闭", null);
             //禁止返回和外部点击
             builder.setCancelable(false);
             //对话框弹出
