@@ -59,6 +59,7 @@ public class BookSelectorActivity extends AppCompatActivity implements View.OnCl
 
     private boolean showPicker = false;
     private RadioGroup rg_time;
+    private RadioGroup rg_error_times;
 
     private LinearLayout ll_time_picker;
     private TextView tv_empty;
@@ -69,6 +70,7 @@ public class BookSelectorActivity extends AppCompatActivity implements View.OnCl
 
     private String subjectId;
     private String subjectName;
+    private int errorNum = 1;
 
     private List<BookSelectorEntity> itemList = new ArrayList<>();
     private BookSelectorAdapter adapter;
@@ -122,6 +124,8 @@ public class BookSelectorActivity extends AppCompatActivity implements View.OnCl
         // 单选部分
         rg_time = findViewById(R.id.rg_time);
         rg_time.setOnCheckedChangeListener(new MyRadioChangeListener());
+        rg_error_times = findViewById(R.id.rg_error_times);
+        rg_error_times.setOnCheckedChangeListener(new MyTimesListener());
 
         // 多选部分
         cb_learn_plan = findViewById(R.id.cb_learn_plan);
@@ -132,7 +136,6 @@ public class BookSelectorActivity extends AppCompatActivity implements View.OnCl
         cb_class.setOnCheckedChangeListener(new MyCheckedChangeListener());
 
         tv_empty = findViewById(R.id.tv_empty);
-
 
         // 列表展示部分
         // 找到 ListView
@@ -157,7 +160,10 @@ public class BookSelectorActivity extends AppCompatActivity implements View.OnCl
         // 获取当前时间
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         tv_end.setText(sdf.format(new Date()));
-        getListData();
+//        getListData();
+
+        RadioButton defaultRadioButton = (RadioButton) rg_error_times.getChildAt(0); // 假设默认选中第一个
+        defaultRadioButton.setChecked(true);
     }
 
     // 自定义的RadioB状态变化监听器
@@ -199,6 +205,41 @@ public class BookSelectorActivity extends AppCompatActivity implements View.OnCl
             ll_time_picker.setVisibility(View.GONE);
             tv_start.setText("");
             tv_end.setText("");
+        }
+    }
+    // 自定义的RadioC状态变化监听器
+    private class MyTimesListener implements RadioGroup.OnCheckedChangeListener {
+
+        @Override
+        public void onCheckedChanged(RadioGroup radioGroup, int id) {
+            RadioButton btn = findViewById(id);
+
+            switch (btn.getText().toString()) {
+                case "一次错题":
+                    errorNum = 1;
+                    break;
+                case "二次错题":
+                    errorNum = 2;
+                    break;
+                case "三次错题":
+                    errorNum = 3;
+                    break;
+            }
+
+            // 设置选中的RadioButton文本颜色为蓝色
+            btn.setTextColor(getResources().getColor(R.color.blue_btn2));
+
+            // 遍历RadioGroup中的所有RadioButton，将未选中的文本颜色设置为黑色
+            for (int i = 0; i < rg_error_times.getChildCount(); i++) {
+                RadioButton radioButton = (RadioButton) rg_error_times.getChildAt(i);
+                Log.e("wen0524", "onCheckedChanged: " + radioButton.getId());
+                Log.e("wen0524", "id: " + id);
+                if (radioButton.getId() != id) {
+                    radioButton.setTextColor(getResources().getColor(R.color.default_gray));
+                }
+            }
+
+            getListData();
         }
     }
 
@@ -301,7 +342,13 @@ public class BookSelectorActivity extends AppCompatActivity implements View.OnCl
         }
 
         // 获取错题本信息
-        String mRequestUrl = Constant.API + Constant.ERROR_QUE_SELECTOR + "?timeType=" + timeType + "&subjectId=" + subjectId + "&userName=" + MyApplication.username + "&sourceType=" + sourceType + "&startTime=" + tv_start.getText() + "&endTime=" + tv_end.getText();
+        String mRequestUrl = Constant.API + Constant.ERROR_QUE_SELECTOR + "?timeType=" + timeType +
+                "&subjectId=" + subjectId +
+                "&userName=" + MyApplication.username +
+                "&sourceType=" + sourceType +
+                "&startTime=" + tv_start.getText() +
+                "&endTime=" + tv_end.getText() +
+                "&errorNum=" + errorNum;
         Log.e("0125", "getListData: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -338,6 +385,7 @@ public class BookSelectorActivity extends AppCompatActivity implements View.OnCl
     private void backMessage(String sourceId) {
         Intent intent = new Intent();
         intent.putExtra("sourceId", sourceId);
+        intent.putExtra("errorNum", errorNum);
         setResult(Activity.RESULT_OK, intent);
         finish();
     }

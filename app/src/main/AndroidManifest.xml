@@ -24,6 +24,7 @@
         android:theme="@style/Theme.YiDianTong"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
         <activity android:name=".ui.THomeworkImageMark"
             android:exported="false" />
         <activity
@@ -49,6 +50,9 @@
             android:exported="false" />
         <activity
             android:name=".ui.MainBookExerciseActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.BookExerciseActivity"
             android:exported="false" />
         <activity
             android:name=".ui.TCameraShareActivity"

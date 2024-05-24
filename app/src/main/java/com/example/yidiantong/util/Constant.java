@@ -293,5 +293,5 @@ public class Constant {
     public static final String T_REMOVE_GET_ANSWER_PARAMS = "/KeTangServer/ajax/hwp_getQueInfo.do";
 
     // 提分训练
-    public static final String T_GET_TIFEN_TRAIN = "/AppServer/ajax/studentApp_getRecommendQue.do";
+    public static final String T_GET_TIFEN_TRAIN = "/AppServer/ajax/studentApp_getRecommendQueByRn.do";
 }

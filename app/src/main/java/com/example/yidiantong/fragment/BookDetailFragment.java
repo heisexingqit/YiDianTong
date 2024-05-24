@@ -68,7 +68,7 @@ public class BookDetailFragment extends Fragment {
     private List<BookDetailEntity> itemList = new ArrayList<>();
     private List<BookDetailEntity.errorList> errorList = new ArrayList<>();
     private List<BookDetailEntity.errorList> quesList = new ArrayList<>();
-    BooksDetailAdapter adapter;
+    private BooksDetailAdapter adapter;
     private RecyclerView frv_detail;
 
     private LinearLayout fll_null;
@@ -76,6 +76,7 @@ public class BookDetailFragment extends Fragment {
     private String questionId;
 
     private String sourceId = "";
+    private int errorNum = 1;
 
     private ActivityResultLauncher<Intent> mResultLauncher;  //用于处理Intent的返回结果
 
@@ -196,7 +197,7 @@ public class BookDetailFragment extends Fragment {
             public void onActivityResult(ActivityResult result) {
                 if (result.getResultCode() == HomeworkPagerActivity.RESULT_OK) {
                     Intent intent = result.getData();
-                    selectorRefresh(intent.getStringExtra("sourceId"));
+                    selectorRefresh(intent.getStringExtra("sourceId"), intent.getIntExtra("errorNum", 1));
                 }
             }
         });
@@ -257,7 +258,11 @@ public class BookDetailFragment extends Fragment {
             return;
         }
         // 获取错题本信息
-        String mRequestUrl = Constant.API + Constant.ERROR_QUE_GET_QUESTION + "?userName=" + username + "&subjectId=" + coures_Id + "&currentPage=" + currentPage + "&sourceId=" + sourceId + "&errorNum=1";
+        String mRequestUrl = Constant.API + Constant.ERROR_QUE_GET_QUESTION + "?userName=" + username +
+                "&subjectId=" + coures_Id +
+                "&currentPage=" + currentPage +
+                "&sourceId=" + sourceId +
+                "&errorNum=" + errorNum;
         Log.e("wen0523", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -429,8 +434,9 @@ public class BookDetailFragment extends Fragment {
         }
     }
 
-    private void selectorRefresh(String sourceId) {
+    private void selectorRefresh(String sourceId, int errorNum) {
         this.sourceId = sourceId;
+        this.errorNum = errorNum;
     }
 
 }
