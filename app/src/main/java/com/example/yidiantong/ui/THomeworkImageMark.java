@@ -59,6 +59,7 @@ public class THomeworkImageMark extends AppCompatActivity {
 
     public static final String IMAGE_IS_EDIT = "image_is_edit";
     private RelativeLayout rl_submitting;
+    private static final int CHUNK_SIZE = 1024 * 1024 * 2; // 2MB 分块大小
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -325,7 +326,7 @@ public class THomeworkImageMark extends AppCompatActivity {
                 connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setDoOutput(true);
-               // Log.d("HSK", "filePath:" + filePath);
+                Log.d("HSK0522", "filePath:" + filePath);
                 // 构建请求参数
                 //String params_json = "type=save&imagePath=" + URLEncoder.encode(filePath, "UTF-8") + "&base64=" + URLEncoder.encode(base64, "UTF-8");
                 String params_json = "type=save&imagePath=" + URLEncoder.encode(filePath, "UTF-8") + "&baseData=" + URLEncoder.encode(base64, "UTF-8");
@@ -350,7 +351,7 @@ public class THomeworkImageMark extends AppCompatActivity {
                 Log.d("HSK0517","responseData:"+responseData);
                 JSONObject jsonObject = JsonUtils.getJsonObjectFromString(responseData);
                 newUrl = jsonObject.getString("url");
-                Log.d("HSK0517","url"+newUrl);
+                Log.d("HSK0517","url:"+newUrl);
             } catch (Exception e) {
                 Log.d("hsk0517","Exception"+e);
                 e.printStackTrace();
@@ -390,7 +391,7 @@ public class THomeworkImageMark extends AppCompatActivity {
                     // 清空绘制路径列表，以便下次保存
                     finish();
                 }
-            }, (long) delay_time*1000); // 设置延迟时间
+            }, (long)delay_time*1000); // 设置延迟时间
         }
     }
     // 显示加载页面
@@ -409,12 +410,13 @@ public class THomeworkImageMark extends AppCompatActivity {
 
         // 在缓存目录中创建一个临时文件
         File file = new File(filesDir, "marked.jpg");
-        Log.e("debug0116", "临时修改文件路径: " + file.getAbsolutePath());
+        Log.e("debug0116", "image.getByteCount(): " + image.getByteCount());
         try {
             FileOutputStream outputStream = new FileOutputStream(file);
 
             // 将 Bitmap 压缩为 JPEG 格式，并写入文件
-            image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+            image.compress(Bitmap.CompressFormat.PNG, 70, outputStream);
+            Log.e("debug0116", "image.getByteCount(): " + image.getByteCount());
             Log.e("debug0116", "临时修改文件路径: " + file.getAbsolutePath());
             // 关闭输出流
             outputStream.close();
@@ -427,5 +429,6 @@ public class THomeworkImageMark extends AppCompatActivity {
 
         return ImageUtils.Bitmap2StrByBase64(this, file);
     }
+
 
 }

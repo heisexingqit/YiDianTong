@@ -280,14 +280,36 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
             case R.id.btn_1:
                 changePopBtn(btn_1);
                 shareTag = "99";
+                loadType();
+                if(showPos==5){
+                    showPos=-1;
+                    fl_type.removeAllViews();
+                    iv_type.setImageResource(R.drawable.down_icon);
+                    tv_type_null.setVisibility(View.GONE);
+                }
+
                 break;
             case R.id.btn_2:
                 changePopBtn(btn_2);
                 shareTag = "10";
+                loadType();
+                if(showPos==5){
+                    showPos=-1;
+                    fl_type.removeAllViews();
+                    iv_type.setImageResource(R.drawable.down_icon);
+                    tv_type_null.setVisibility(View.GONE);
+                }
                 break;
             case R.id.btn_3:
                 changePopBtn(btn_3);
                 shareTag = "50";
+                loadType();
+                if(showPos==5){
+                    showPos=-1;
+                    fl_type.removeAllViews();
+                    iv_type.setImageResource(R.drawable.down_icon);
+                    tv_type_null.setVisibility(View.GONE);
+                }
                 break;
             case R.id.iv_xueduan:
                 showList(0);
@@ -1146,6 +1168,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void showType() {
+
         if (typeMap.size() == 0) {
             tv_type_null.setVisibility(View.VISIBLE);
         }
