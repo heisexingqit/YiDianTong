@@ -40,6 +40,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookRecyclerEntity;
+import com.example.yidiantong.ui.BookExerciseActivity;
 import com.example.yidiantong.ui.MainBookExerciseActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
@@ -65,6 +66,7 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
     private LinearLayout fll_bd_analysis;
     private TextView ftv_br_title;
     private ImageView fiv_bd_mark;
+    private ImageView iv_exercise_scores;
     private ImageView fiv_bd_exercise;// 举一反三
 
     private String userName; // 用户名
@@ -214,6 +216,10 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
         fwv_bd_analysis1.loadDataWithBaseURL(null, html1, "text/html", "utf-8", null);
 
         if (!exerciseType) {
+            // 提分练习
+            iv_exercise_scores = getActivity().findViewById(R.id.iv_exercise_scores);
+            iv_exercise_scores.setOnClickListener(this);
+            setHasOptionsMenu(true);
             // 标记掌握
             fiv_bd_mark = getActivity().findViewById(R.id.fiv_bd_mark);
             fiv_bd_mark.setOnClickListener(this);
@@ -366,6 +372,16 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
                 //对话框弹出
                 builder.show();
                 break;
+            case R.id.iv_exercise_scores:
+                // 弹出一个简单的Dialog提示 "功能完善中"
+//                AlertDialog.Builder builder_exercise = new AlertDialog.Builder(getActivity());
+//                builder_exercise.setMessage("功能完善中");
+//                builder_exercise.setPositiveButton("确定", null);
+//                builder_exercise.show();
+                Intent toExercise = new Intent(getActivity(), BookExerciseActivity.class);
+                toExercise.putExtra("questionId", bookrecyclerEntity.getQuestionId());
+                startActivity(toExercise);
+                break;
             case R.id.fiv_bd_exercise:  // 举一反三
                 Intent intent = new Intent(getActivity(), MainBookExerciseActivity.class);
                 intent.putExtra("userName", userName);  // 用户名
@@ -404,7 +420,6 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
                 dialog_model.show();
                 break;
         }
-
     }
 
     private void reviewShowAnswer() {

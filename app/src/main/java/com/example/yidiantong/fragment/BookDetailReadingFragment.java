@@ -41,6 +41,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookRecyclerEntity;
+import com.example.yidiantong.ui.BookExerciseActivity;
 import com.example.yidiantong.ui.MainBookExerciseActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
@@ -76,6 +77,7 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
     String[] option = {"A", "B", "C", "D", "E", "F", "G"};
 
     private ImageView fiv_bd_exercise; // 举一反三
+    private ImageView iv_exercise_scores; //
     private String userName;
     private String subjectId;
     private String courseName;
@@ -156,7 +158,6 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
         String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiShow() + "</body>";
         String html = html_content.replace("#", "%23");
         fwv_bd_content.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
-
 
         // 题号和平均分
         currentpage = bookrecyclerEntity.getCurrentPage();  // 当前页数，题号
@@ -261,6 +262,11 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
 
 
         if (!exerciseType) {
+            // 提分练习
+            iv_exercise_scores = getActivity().findViewById(R.id.iv_exercise_scores);
+            iv_exercise_scores.setOnClickListener(this);
+            setHasOptionsMenu(true);
+
             // 标记掌握
             fiv_bd_mark = getActivity().findViewById(R.id.fiv_bd_mark);
             fiv_bd_mark.setOnClickListener(this);
@@ -469,6 +475,17 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
                 //对话框弹出
                 builder.show();
                 break;
+            case R.id.iv_exercise_scores:
+                // 弹出一个简单的Dialog提示 "功能完善中"
+//                AlertDialog.Builder builder_exercise = new AlertDialog.Builder(getActivity());
+//                builder_exercise.setMessage("功能完善中");
+//                builder_exercise.setPositiveButton("确定", null);
+//                builder_exercise.show();
+                Intent toExercise = new Intent(getActivity(), BookExerciseActivity.class);
+                toExercise.putExtra("questionId", bookrecyclerEntity.getQuestionId());
+                startActivity(toExercise);
+                break;
+
             case R.id.fiv_bd_exercise:
                 Intent intent = new Intent(getActivity(), MainBookExerciseActivity.class);
                 intent.putExtra("userName", userName); // 用户名

@@ -205,6 +205,9 @@ public class BooksDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (this.isRefresh == 1) {
             this.quesList.clear();
         }
+        if(quesList.size() < 24){
+            isDown = 1;
+        }
         this.quesList.addAll(quesList);
         this.notifyDataSetChanged();
 

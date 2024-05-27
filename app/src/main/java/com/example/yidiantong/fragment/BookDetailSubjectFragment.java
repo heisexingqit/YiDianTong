@@ -39,6 +39,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookRecyclerEntity;
+import com.example.yidiantong.ui.BookExerciseActivity;
 import com.example.yidiantong.ui.MainBookExerciseActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
@@ -67,6 +68,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
     private ImageView fiv_bd_mark;
 
     private ImageView fiv_bd_exercise;
+    private ImageView iv_exercise_scores;
     private String userName;
     private String subjectId;
     private String courseName;
@@ -349,6 +351,16 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                 builder.setCancelable(false);
                 //对话框弹出
                 builder.show();
+                break;
+            case R.id.iv_exercise_scores:
+                // 弹出一个简单的Dialog提示 "功能完善中"
+//                AlertDialog.Builder builder_exercise = new AlertDialog.Builder(getActivity());
+//                builder_exercise.setMessage("功能完善中");
+//                builder_exercise.setPositiveButton("确定", null);
+//                builder_exercise.show();
+                Intent toExercise = new Intent(getActivity(), BookExerciseActivity.class);
+                toExercise.putExtra("questionId", bookrecyclerEntity.getQuestionId());
+                startActivity(toExercise);
                 break;
             case R.id.fiv_bd_exercise:  // 举一反三
                 Intent intent = new Intent(getActivity(), MainBookExerciseActivity.class);

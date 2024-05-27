@@ -40,6 +40,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.R;
 import com.example.yidiantong.bean.BookRecyclerEntity;
+import com.example.yidiantong.ui.BookExerciseActivity;
 import com.example.yidiantong.ui.MainBookExerciseActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
@@ -69,6 +70,7 @@ public class BookDetailClozeFragment extends Fragment implements View.OnClickLis
     private View view;
 
     private ImageView fiv_bd_exercise;// 举一反三
+    private ImageView iv_exercise_scores;//
     private String userName;// 用户名
     private String subjectId;// 学科id
     private String courseName;// 课程名
@@ -219,6 +221,10 @@ public class BookDetailClozeFragment extends Fragment implements View.OnClickLis
         cleanStuAnswer = stuans.replace(" ", "").replace(",", "");
 
         if (!exerciseType){
+            // 提分练习
+            iv_exercise_scores = getActivity().findViewById(R.id.iv_exercise_scores);
+            iv_exercise_scores.setOnClickListener(this);
+            setHasOptionsMenu(true);
             // 标记掌握
             fiv_bd_mark = getActivity().findViewById(R.id.fiv_bd_mark);
             fiv_bd_mark.setOnClickListener(this);
@@ -362,6 +368,16 @@ public class BookDetailClozeFragment extends Fragment implements View.OnClickLis
                 builder.setCancelable(false);
                 //对话框弹出
                 builder.show();
+                break;
+            case R.id.iv_exercise_scores:
+                // 弹出一个简单的Dialog提示 "功能完善中"
+//                AlertDialog.Builder builder_exercise = new AlertDialog.Builder(getActivity());
+//                builder_exercise.setMessage("功能完善中");
+//                builder_exercise.setPositiveButton("确定", null);
+//                builder_exercise.show();
+                Intent toExercise = new Intent(getActivity(), BookExerciseActivity.class);
+                toExercise.putExtra("questionId", bookrecyclerEntity.getQuestionId());
+                startActivity(toExercise);
                 break;
             case R.id.fiv_bd_exercise:  // 举一反三
                 Intent intent = new Intent(getActivity(), MainBookExerciseActivity.class);

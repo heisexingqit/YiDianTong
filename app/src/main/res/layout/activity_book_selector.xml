@@ -47,6 +47,51 @@
         android:orientation="vertical"
         android:padding="10dp">
 
+        <!-- 次数 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="次数:" />
+
+            <RadioGroup
+                android:id="@+id/rg_error_times"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    style="@style/CustomRadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="一次错题"
+                    android:textColor="@color/default_gray" />
+
+                <RadioButton
+                    style="@style/CustomRadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="二次错题"
+
+                    android:textColor="@color/default_gray" />
+
+                <RadioButton
+                    style="@style/CustomRadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="三次错题"
+                    android:textColor="@color/default_gray" />
+            </RadioGroup>
+        </LinearLayout>
+
         <!-- 类型行 -->
         <LinearLayout
             android:layout_width="match_parent"
