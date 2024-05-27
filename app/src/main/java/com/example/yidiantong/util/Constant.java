@@ -294,4 +294,6 @@ public class Constant {
 
     // 提分训练
     public static final String T_GET_TIFEN_TRAIN = "/AppServer/ajax/studentApp_getRecommendQue.do";
+    //学霸答案
+    public static final String XUEBA_ANSWER = "/AppServer/ajax/studentApp_getXuebaQueAnswer.do";
 }

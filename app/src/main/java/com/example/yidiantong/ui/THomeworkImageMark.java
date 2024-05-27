@@ -382,7 +382,8 @@ public class THomeworkImageMark extends AppCompatActivity {
             }
             // 显示加载页面
             showSubmittingLayout();
-            float delay_time = (float) base64.length()/20000;
+            float delay_time = Math.min(((float) base64.length()/20000),5);
+            Log.d("hsk0523", "delay_time: "+(long)delay_time*1000);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -415,7 +416,7 @@ public class THomeworkImageMark extends AppCompatActivity {
             FileOutputStream outputStream = new FileOutputStream(file);
 
             // 将 Bitmap 压缩为 JPEG 格式，并写入文件
-            image.compress(Bitmap.CompressFormat.PNG, 70, outputStream);
+            image.compress(Bitmap.CompressFormat.JPEG, 70, outputStream);
             Log.e("debug0116", "image.getByteCount(): " + image.getByteCount());
             Log.e("debug0116", "临时修改文件路径: " + file.getAbsolutePath());
             // 关闭输出流

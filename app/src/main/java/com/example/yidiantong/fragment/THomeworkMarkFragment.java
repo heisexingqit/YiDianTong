@@ -452,6 +452,10 @@ public class THomeworkMarkFragment extends Fragment {
             String newUrl = data.getStringExtra("newUrl");
             //int img_length = data.getIntExtra("img_length",0);
             stuStr = homeworkMarked.getStuAnswer().trim().replace(oldUrl, newUrl);
+            homeworkMarked.setStuAnswer(stuStr);
+            Log.d("hsk0524","oldUrl:"+oldUrl);
+            Log.d("hsk0524","newUrl:"+newUrl);
+            Log.d("hsk0524","stuStr:"+stuStr);
             setHtmlOnWebView(wv_content2, stuStr);
 //            new Handler().postDelayed(new Runnable() {
 //                @Override
