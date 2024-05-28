@@ -13,6 +13,15 @@ public class HomeworkMarkedEntity implements Serializable {
     private String analysis;
     private String stuAnswer;
     private String showAnswerFlag;
+    private String questionId;
+
+    public String getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(String questionId) {
+        this.questionId = questionId;
+    }
 
     public String getShowAnswerFlag() {
         return showAnswerFlag;
@@ -93,7 +102,6 @@ public class HomeworkMarkedEntity implements Serializable {
     public void setStuAnswer(String stuAnswer) {
         this.stuAnswer = stuAnswer;
     }
-
     @Override
     public String toString() {
         return "HomeworkMarkedEntity{" +
@@ -107,6 +115,8 @@ public class HomeworkMarkedEntity implements Serializable {
                 ", analysis='" + analysis + '\'' +
                 ", stuAnswer='" + stuAnswer + '\'' +
                 ", showAnswerFlag='" + showAnswerFlag + '\'' +
+                ", questionId='" + questionId + '\'' +
                 '}';
     }
+
 }

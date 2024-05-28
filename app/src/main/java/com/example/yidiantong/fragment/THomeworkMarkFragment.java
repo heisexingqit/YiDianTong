@@ -395,30 +395,30 @@ public class THomeworkMarkFragment extends Fragment {
      * 申请读写文件权限
      */
     private void permissionOpenGallery(String url) {
+
         // 权限请求
-        oldUrl = url;
-        Intent intent = new Intent(getActivity(), THomeworkImageMark.class);
-        intent.putExtra("imageUrl", url); // 如果有需要传递的数据，可以使用 Intent 的 putExtra 方法
-        startActivityForResult(intent, REQUEST_CODE_EDIT_IMAGE);
-//        AndPermission.with(this)
-//                .runtime()
-//                .permission(Permission.Group.STORAGE)
-//                .onGranted(new Action<List<String>>() {
-//                    // 获取权限后
-//                    @Override
-//                    public void onAction(List<String> data) {
-//                        oldUrl = url;
-//                        EditImageActivity.start(getActivity(), THomeworkMarkFragment.this, url, null, 0);
-//                    }
-//                }).onDenied(new Action<List<String>>() {
-//                    @Override
-//                    public void onAction(List<String> data) {
-//                        // 判断是否点了永远拒绝，不再提示
-////
-//                    }
-//                })
-//                .rationale(rGallery)
-//                .start();
+        AndPermission.with(this)
+                .runtime()
+                .permission(Permission.Group.STORAGE)
+                .onGranted(new Action<List<String>>() {
+                    // 获取权限后
+                    @Override
+                    public void onAction(List<String> data) {
+
+                        oldUrl = url;
+                        Intent intent = new Intent(getActivity(), THomeworkImageMark.class);
+                        intent.putExtra("imageUrl", url); // 如果有需要传递的数据，可以使用 Intent 的 putExtra 方法
+                        startActivityForResult(intent, REQUEST_CODE_EDIT_IMAGE);
+                    }
+                }).onDenied(new Action<List<String>>() {
+                    @Override
+                    public void onAction(List<String> data) {
+                        // 判断是否点了永远拒绝，不再提示
+//
+                    }
+                })
+                .rationale(rGallery)
+                .start();
     }
 
     /**
