@@ -10,7 +10,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="15sp"
-        android:text="单元标题"/>
+        android:text="单元标题"
+        android:maxLines="1" />
     <TextView
         android:id="@+id/tv_num"
         android:layout_marginStart="15dp"

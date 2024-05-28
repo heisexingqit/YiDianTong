@@ -369,7 +369,9 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
                     isAll = true;
                     ll_loading.setVisibility(View.GONE);// 解除遮挡
                     ll_loading2.setVisibility(View.GONE);// 解除遮挡
-                    return;
+                    if(currentpage != 1){
+                        return;
+                    }
                 } else {
                     tv_hide.setVisibility(View.GONE);
                 }
