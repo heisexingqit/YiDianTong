@@ -287,6 +287,8 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                     iv_type.setImageResource(R.drawable.down_icon);
                     tv_type_null.setVisibility(View.GONE);
                 }
+                type = "";
+                tv_type.setText("");
 
                 break;
             case R.id.btn_2:
@@ -299,6 +301,8 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                     iv_type.setImageResource(R.drawable.down_icon);
                     tv_type_null.setVisibility(View.GONE);
                 }
+                type = "";
+                tv_type.setText("");
                 break;
             case R.id.btn_3:
                 changePopBtn(btn_3);
@@ -310,6 +314,8 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                     iv_type.setImageResource(R.drawable.down_icon);
                     tv_type_null.setVisibility(View.GONE);
                 }
+                type = "";
+                tv_type.setText("");
                 break;
             case R.id.iv_xueduan:
                 showList(0);
@@ -852,7 +858,12 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                 JSONArray data = json.getJSONArray("data");
                 for (int i = 0; i < data.length(); ++i) {
                     JSONObject object = data.getJSONObject(i);
-                    xuekeMap.put(object.getString("subjectName").substring(2), object.getString("subjectId"));
+                    String text = object.getString("subjectName");
+                    if(text.startsWith(xueduan)){
+                        text = text.substring(xueduan.length());
+                    }
+                    Log.e("wen", "loadXueKe: " + text);
+                    xuekeMap.put(text, object.getString("subjectId"));
                 }
 
                 Log.d("wen", "学科: " + xuekeMap);
@@ -1132,14 +1143,26 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                 Log.d("wenbb", "loadType: " + data);
                 if (data != null && !data.equals("null")) {
                     typeMap.put("全部", "all");
-                    for (String row : data.split("\\],\\[")) {
-                        String[] values = row.replaceAll("\\[|\\]|\"", "").split(",");
+                    if(shareTag.equals("50")){
+                        String[] values = data.replaceAll("\\[|\\]|\"", "").split(",");
                         if (values.length >= 2) { // 添加这一行来检查数组长度
-                            typeMap.put(values[1], values[1]);
-                            Log.e(TAG, "loadType: " + values[1]);
+                            for (String value : values){
+                                typeMap.put(value, value);
+                            }
                         } else {
                             // 处理数组长度不足的情况，可以输出日志或者其他处理方式
                             Log.e(TAG, "loadType: values数组长度不足");
+                        }
+                    }else{
+                        for (String row : data.split("\\],\\[")) {
+                            String[] values = row.replaceAll("\\[|\\]|\"", "").split(",");
+                            if (values.length >= 2) { // 添加这一行来检查数组长度
+                                typeMap.put(values[1], values[1]);
+                                Log.e(TAG, "loadType: " + values[1]);
+                            } else {
+                                // 处理数组长度不足的情况，可以输出日志或者其他处理方式
+                                Log.e(TAG, "loadType: values数组长度不足");
+                            }
                         }
                     }
                 }

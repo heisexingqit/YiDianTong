@@ -215,6 +215,7 @@ public class BookDetailFragment extends Fragment {
     private void refreshList() {
         Log.e("wen0523", "refreshList: 刷新");
         currentPage = 1;
+        adapter.isDown = 0;
         adapter.isRefresh = 1;
         loadItems_Net();
         frv_detail.scrollToPosition(0);
@@ -334,6 +335,7 @@ public class BookDetailFragment extends Fragment {
                 } else {
                     fll_null.setVisibility(View.GONE);
                 }
+
                 if(adapter.isDown == 1){
                     return;
                 }

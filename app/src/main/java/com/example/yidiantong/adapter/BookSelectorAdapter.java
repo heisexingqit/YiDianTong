@@ -41,7 +41,11 @@ public class BookSelectorAdapter extends BaseAdapter {
         View view = LayoutInflater.from(context).inflate(R.layout.book_selector_item, null);
         TextView tv_name = view.findViewById(R.id.tv_name);
         TextView tv_num = view.findViewById(R.id.tv_num);
-        tv_name.setText(itemList.get(i).getSourceName());
+        String sourceName = itemList.get(i).getSourceName();
+        if (sourceName.length() > 24) {
+            sourceName = sourceName.substring(0, 24) + "...";
+        }
+        tv_name.setText(sourceName);
         tv_num.setText(itemList.get(i).getNum());
         return view;
     }

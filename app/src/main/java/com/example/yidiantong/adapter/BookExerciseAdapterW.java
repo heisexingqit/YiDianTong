@@ -196,6 +196,8 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
         }
 
         public void update(int pos, RecyclerView.ViewHolder holder) {
+            // 初始化UI
+            btn_submit.setVisibility(View.VISIBLE);
             BookExerciseEntity item = itemList.get(pos); // 获取当前item
             Log.e("wen0524", "update: " + item.getStuAnswer());
             tv_type_name.setText(item.typeName); // 设置题目类型名称

@@ -221,7 +221,7 @@ public class BookSelectorActivity extends AppCompatActivity implements View.OnCl
                 case "二次错题":
                     errorNum = 2;
                     break;
-                case "三次错题":
+                case "三次及以上错题":
                     errorNum = 3;
                     break;
             }
