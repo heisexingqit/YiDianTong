@@ -22,9 +22,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="5dp"
         android:background="@color/white"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="5dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -85,6 +85,7 @@
 
                     <com.example.yidiantong.View.ClickableImageView
                         android:id="@+id/iv_camera"
+                        android:layout_marginStart="20dp"
                         android:layout_width="20dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="15dp"
@@ -102,6 +103,7 @@
                 </LinearLayout>
 
             </RelativeLayout>
+
             <LinearLayout
                 android:id="@+id/ll_input_image"
                 android:layout_width="match_parent"
@@ -118,6 +120,7 @@
                     tools:ignore="WebViewLayout" />
 
             </LinearLayout>
+
             <Button
                 android:id="@+id/btn_submit"
                 android:layout_width="match_parent"
@@ -146,8 +149,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    >
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/tv_stu_answer"
@@ -169,6 +171,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="【参考答案】" />
+
                 <WebView
                     android:id="@+id/wv_answer"
                     android:layout_width="wrap_content"

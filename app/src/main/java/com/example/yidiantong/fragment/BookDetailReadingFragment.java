@@ -284,8 +284,8 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
                 fll_bd_analysis.setVisibility(View.GONE);
                 fll_bd_answer.setVisibility(View.VISIBLE);
                 mode = 0;
-                // 显示学生本地保存的答案
-                showLoadAnswer();
+//                // 显示学生本地保存的答案
+//                showLoadAnswer();
             } else {
                 fll_bd_answer.setVisibility(View.GONE);
                 fll_bd_analysis.setVisibility(View.VISIBLE);
@@ -417,7 +417,7 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
                     //设置title组件
                     builder.setCustomTitle(tv);
                     AlertDialog dialog = builder.create();
-                    builder.setNegativeButton("ok", null);
+                    builder.setNegativeButton("关闭", null);
                     //禁止返回和外部点击
                     builder.setCancelable(false);
                     //对话框弹出

@@ -1,18 +1,24 @@
 package com.example.yidiantong.fragment;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.AbsoluteSizeSpan;
@@ -29,26 +35,47 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookRecyclerEntity;
 import com.example.yidiantong.ui.BookExerciseActivity;
 import com.example.yidiantong.ui.MainBookExerciseActivity;
 import com.example.yidiantong.util.Constant;
+import com.example.yidiantong.util.ImageUtils;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.RecyclerInterface;
+import com.yanzhenjie.permission.Action;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.Rationale;
+import com.yanzhenjie.permission.RequestExecutor;
+import com.yanzhenjie.permission.runtime.Permission;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class BookDetailSubjectFragment extends Fragment implements View.OnClickListener {
 
@@ -99,6 +126,14 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
 
     private SharedPreferences preferences;
 
+    private ActivityResultLauncher<Intent> mResultLauncher;
+    private ActivityResultLauncher<Intent> mResultLauncher2;
+    private ActivityResultLauncher<Intent> mResultLauncherCrop;
+    private LinearLayout ll_input_image;
+    private WebView wv_stu_answer1;
+    private ImageView iv_gallery;
+    private ImageView iv_camera;
+
     public static BookDetailSubjectFragment newInstance(BookRecyclerEntity bookrecyclerEntity, String userName, String subjectId, String courseName, Boolean exerciseType) {
         BookDetailSubjectFragment fragment = new BookDetailSubjectFragment();
         Bundle args = new Bundle();
@@ -111,6 +146,13 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         return fragment;
     }
 
+    private Uri picUri, imageUri, cropUri;
+    private String imageBase64;
+    //标识码
+    private static final int REQUEST_CODE_STORAGE = 1;
+    private static final int REQUEST_CODE_CAMERA = 2;
+    private String exercise_stu_answer = "";
+
     //绑定Activity的接口类，实现调用
     @Override
     public void onAttach(@NonNull Context context) {
@@ -122,6 +164,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         preferences = getActivity().getSharedPreferences("book", Context.MODE_PRIVATE);
         //取出携带的参数
         Bundle arg = getArguments();
@@ -134,10 +177,14 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         //获取view
         View view = inflater.inflate(R.layout.fragment_book_detail_subject, container, false);
 
+        ll_input_image = view.findViewById(R.id.ll_input_image);
+        wv_stu_answer = view.findViewById(R.id.wv_stu_answer);
+        iv_camera = view.findViewById(R.id.iv_camera);
+        iv_camera.setOnClickListener(this);
+        iv_gallery = view.findViewById(R.id.iv_gallery);
+        iv_gallery.setOnClickListener(this);
         // 学生输入
         et_student_answer = view.findViewById(R.id.et_stu_answer);
-        // 学生答案
-        wv_stu_answer = view.findViewById(R.id.wv_stu_answer);
         // 标准答案
         wv_shiti_answer = view.findViewById(R.id.wv_shiti_answer);
 
@@ -172,7 +219,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         // 题号和平均分
         currentpage = bookrecyclerEntity.getCurrentPage();  // 当前页数，题号
         ftv_bd_num = view.findViewById(R.id.ftv_bd_num);
-        ftv_bd_num.setText("第"+currentpage+"题");
+        ftv_bd_num.setText("第" + currentpage + "题");
         ftv_bd_score = view.findViewById(R.id.ftv_bd_score);
         ftv_bd_score.setText("得分: " + bookrecyclerEntity.getStuScore() + " 全班均分:" + bookrecyclerEntity.getAvgScore());
 
@@ -224,10 +271,14 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         String html1 = html_analysis.replace("#", "%23");
         fwv_bd_analysis1.loadDataWithBaseURL(null, html1, "text/html", "utf-8", null);
 
-        stuans = bookrecyclerEntity.getStuAnswer();
+//        stuans = bookrecyclerEntity.getStuAnswer();
         cleanStuAnswer = bookrecyclerEntity.getStuScore();
 
-        if (!exerciseType){
+        if (!exerciseType) {
+            // 提分练习
+            iv_exercise_scores = getActivity().findViewById(R.id.iv_exercise_scores);
+            iv_exercise_scores.setOnClickListener(this);
+            setHasOptionsMenu(true);
             // 标记掌握
             fiv_bd_mark = getActivity().findViewById(R.id.fiv_bd_mark);
             fiv_bd_mark.setOnClickListener(this);
@@ -246,6 +297,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                 fll_bd_analysis.setVisibility(View.GONE);
                 fll_bd_answer.setVisibility(View.VISIBLE);
                 mode = 0;
+
             } else {
                 fll_bd_answer.setVisibility(View.GONE);
                 fll_bd_analysis.setVisibility(View.VISIBLE);
@@ -258,12 +310,12 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                     // 答案显示
                     html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getStuAnswer() + "</body>";
                     html = html_content.replace("#", "%23");
-                    wv_stu_answer.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
+                    wv_stu_answer1.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
                     fiv_bd_tf.setVisibility(View.VISIBLE); // 显示对错图标
                 }
                 mode_stuans();
             }
-        }else {
+        } else {
             fll_bd_analysis.setVisibility(View.GONE);
             fll_bd_answer.setVisibility(View.VISIBLE);
             // 隐藏知识点图标,得分
@@ -272,7 +324,98 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         }
 
         // 显示学生本地保存的作答
-        showLoadAnswer();
+//        showLoadAnswer();
+        // 拍照和相册copy代码=============================
+        // 注册Gallery回调组件 NEW
+        mResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == RESULT_OK) {
+                    Intent intent = result.getData();
+                    //Uri和path相似，都是定位路径，属于一步到位方式 =》 如果是path 则 Uri.parse(path)
+//                    picUri = intent.getData();
+                    Uri uri = intent.getData();
+                    if (uri != null) {
+                        /**
+                         * 这里做了统一化操作：创建一个output.jpg文件，并将uri写入新文件，并将picUri赋给新文件（与拍照逻辑相似）
+                         * 一是为了简化方法；
+                         * 二是因为适配问题，有些手机应用不能返回数据，只能与拍照类似的调用方式才行；
+                         * 三是因为获取本地图片只能返回uri，而不像拍照那样可以选择写入，因此需要手动。
+                         */
+                        File Image = new File(getActivity().getExternalCacheDir(), "output_image.jpg");
+                        if (Image.exists()) {
+                            Image.delete();
+                        }
+                        try {
+                            Image.createNewFile();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        // 兼容方式获取文件Uri
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            picUri = FileProvider.getUriForFile(getActivity(),
+                                    "com.example.yidiantong.fileprovider", Image);
+                        } else {
+                            picUri = Uri.fromFile(Image);
+                        }
+
+                        // uri写入文件Image
+                        FileOutputStream outputStream = null;
+                        FileInputStream inputStream = null;
+                        try {
+                            outputStream = new FileOutputStream(Image);
+                            inputStream = (FileInputStream) getActivity().getContentResolver().openInputStream(uri);
+
+                            byte[] buffer = new byte[1024];
+                            int length;
+                            while ((length = inputStream.read(buffer)) > 0) {
+                                outputStream.write(buffer, 0, length);
+                            }
+                            inputStream.close();
+                            outputStream.close();
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        /**
+                         * 统一化操作结束++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                         */
+
+                        Crop(picUri); // 裁剪图片
+                    }
+
+                }
+            }
+        });
+
+        // 注册Camera回调组件 NEW
+        mResultLauncher2 = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == RESULT_OK) {
+//                    Intent intent = new Intent(getActivity(), DoodleActivity.class);
+//                    intent.putExtra("uri", imageUri.toString());
+//                    mResultLauncher3.launch(intent);
+                    Crop(imageUri); // 裁剪图片
+                }
+            }
+        });
+
+        /**
+         * 注册通用裁切回调：与通用裁切方法对应。NEW
+         */
+        mResultLauncherCrop = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == RESULT_OK) {
+                    File Image = new File(getActivity().getExternalCacheDir(), "output_temp.jpg");
+                    imageBase64 = ImageUtils.Bitmap2StrByBase64(getActivity(), Image);
+                    uploadImage();
+                }
+            }
+        });
+
         return view;
     }
 
@@ -308,21 +451,39 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                 pageing.pageNext(currentpage, allpage);
                 return;
             case R.id.fb_bd_sumbit:
-
-                fll_bd_answer.setVisibility(View.GONE);
-                fll_bd_analysis.setVisibility(View.VISIBLE);
-                ftv_bd_stuans.setText("【你的作答】");
-                String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getStuAnswer() + "</body>";
-                String html = html_content.replace("#", "%23");
-                wv_stu_answer.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
-
-                // 判断答案是半对还是全对
-                if (Float.parseFloat(cleanStuAnswer) < 0.3) {
-                    fiv_bd_tf.setImageResource(R.drawable.answrong);
+                if (stuans.length() == 0) {
+                    // 答案为空
+                    //建立对话框
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), AlertDialog.THEME_HOLO_LIGHT);
+                    //自定义title样式
+                    TextView tv = new TextView(getActivity());
+                    tv.setText("请输入答案!");    //内容
+                    tv.setTextSize(17);//字体大小
+                    tv.setPadding(30, 40, 30, 40);//位置
+                    tv.setTextColor(Color.parseColor("#000000"));//颜色
+                    //设置title组件
+                    builder.setCustomTitle(tv);
+                    AlertDialog dialog = builder.create();
+                    builder.setNegativeButton("关闭", null);
+                    //禁止返回和外部点击
+                    builder.setCancelable(false);
+                    //对话框弹出
+                    builder.show();
                 } else {
-                    fiv_bd_tf.setImageResource(R.drawable.anshalf);
-                }
+                    fll_bd_answer.setVisibility(View.GONE);
+                    fll_bd_analysis.setVisibility(View.VISIBLE);
+                    ftv_bd_stuans.setText("【你的作答】");
+                    String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getStuAnswer() + "</body>";
+                    String html = html_content.replace("#", "%23");
+                    wv_stu_answer.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
 
+                    // 判断答案是半对还是全对
+                    if (Float.parseFloat(cleanStuAnswer) < 0.3) {
+                        fiv_bd_tf.setImageResource(R.drawable.answrong);
+                    } else {
+                        fiv_bd_tf.setImageResource(R.drawable.anshalf);
+                    }
+                }
                 break;
             case R.id.fiv_bd_mark:
                 //建立对话框
@@ -382,6 +543,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                             ftv_br_mode.setText("练习模式");
                             mode = 0;
                             dialog_model.dismiss();
+                            exercise_stu_answer = "";
                             showLoadAnswer();
                         } else {
                             fll_bd_answer.setVisibility(View.GONE);
@@ -407,10 +569,16 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                 dialog_model = builder_model.create();
                 dialog_model.show();
                 break;
+            case R.id.iv_camera:
+                permissionOpenCamera();
+                break;
+            case R.id.iv_gallery:
+                permissionOpenGallery();
+                break;
         }
     }
 
-    private final Handler handler = new Handler(Looper.getMainLooper()) {
+    private Handler handler = new Handler(Looper.getMainLooper()) {
         @RequiresApi(api = Build.VERSION_CODES.N)
         @SuppressLint("NotifyDataSetChanged")
         @Override
@@ -423,7 +591,16 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                 } else {
                     Toast.makeText(getContext(), "提交成功！", Toast.LENGTH_SHORT).show();
                 }
+            } else if (message.what == 101) {
+                String url = (String) message.obj;
+                Log.d("wen", "handleMessage: " + url);
+//                adapter.updateData(url_list);// 关键
+                exercise_stu_answer += "<img onclick='bigimage(this)' src='" + url + "' style=\"max-width:80px\">";
+                wv_stu_answer.loadDataWithBaseURL(null, exercise_stu_answer, "text/html", "utf-8", null);
+                ll_input_image.setVisibility(View.VISIBLE);
+//                transmit.offLoading();
             }
+
         }
     };
 
@@ -472,4 +649,260 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
 
         }
     }
+
+    /**
+     * 通用裁切方法。传输、读取文件、裁切、写入文件,最终以cropUri形式显示NEW
+     *
+     * @param uri 裁切前的图片Uri（pic：相册；image：照片）
+     */
+    private void Crop(Uri uri) {
+
+        File Image = new File(getActivity().getExternalCacheDir(), "output_temp.jpg");
+        if (Image.exists()) {
+            Image.delete();
+        }
+        try {
+            Image.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // 兼容方式获取文件Uri
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            cropUri = FileProvider.getUriForFile(getActivity(),
+                    "com.example.yidiantong.fileprovider", Image);
+        } else {
+            cropUri = Uri.fromFile(Image);
+        }
+
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        // 读写权限：要裁切需要先读取（读），后写入（写）
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        intent.setDataAndType(uri, "image/*");
+        // crop为true是设置在开启的intent中设置显示的view可以剪裁
+        intent.putExtra("crop", "true");
+
+        // <关键>两步：目标URI转换为剪贴板数据 并设置给Intent
+        ClipData clipData = ClipData.newUri(getActivity().getContentResolver(), "A photo", cropUri);
+        intent.setClipData(clipData);
+
+//        // aspectX aspectY 是宽高的比例
+//        intent.putExtra("aspectX", 1);
+//        intent.putExtra("aspectY", 1);
+//
+//        // outputX,outputY 是剪裁图片的宽高
+//        intent.putExtra("outputX", 300);
+//        intent.putExtra("outputY", 300);
+
+        // 设置输出文件位置和格式
+        intent.putExtra("return-data", false);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, cropUri);
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG);
+        intent.putExtra("noFaceDetection", true);
+
+        mResultLauncherCrop.launch(intent);
+    }
+
+    // 图片上传
+    private void uploadImage() {
+//        transmit.onLoading();
+        String mRequestUrl = Constant.API + Constant.UPLOAD_IMAGE;
+
+        Map<String, String> params = new HashMap<>();
+        Log.e("wen0221", "uploadImage: " + imageBase64);
+        params.put("baseCode", imageBase64);
+        params.put("leanPlanId", "");
+        params.put("userId", MyApplication.username);
+
+        StringRequest request = new StringRequest(Request.Method.POST, mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+
+                String url = json.getString("data");
+                Boolean isSuccess = json.getBoolean("success");
+                Toast.makeText(getActivity(), json.getString("message"), Toast.LENGTH_SHORT).show();
+
+                //封装消息，传递给主线程
+                Message message = Message.obtain();
+
+                message.obj = url;
+                // 发送消息给主线程
+                //标识线程
+                message.what = 101;
+                handler.sendMessage(message);
+            } catch (JSONException e) {
+//                transmit.offLoading();
+                e.printStackTrace();
+            }
+        }, error -> {
+//            transmit.offLoading();
+            Log.d("wen", "Volley_Error: " + error.toString());
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                return params;
+            }
+        };
+        MyApplication.addRequest(request, TAG);
+    }
+
+
+    /**
+     * 第三方权限申请包AndPermission: 自带权限组名，可直接在Fragment中回调
+     * 申请拍照权限
+     */
+    private void permissionOpenCamera() {
+        // 权限请求
+        AndPermission.with(this)
+                .runtime()
+                .permission(Permission.Group.CAMERA, Permission.Group.STORAGE)
+                .onGranted(new Action<List<String>>() {
+                    // 获得权限后
+                    @Override
+                    public void onAction(List<String> data) {
+                        openCamera();
+                    }
+                }).onDenied(new Action<List<String>>() {
+                    @Override
+                    public void onAction(List<String> data) {
+                        //判断是否点了永远拒绝，不再提示
+                        if (AndPermission.hasAlwaysDeniedPermission(getActivity(), data)) {
+                            new androidx.appcompat.app.AlertDialog.Builder(getActivity())
+                                    .setTitle("权限被禁用")
+                                    .setMessage("拍照权限被禁用，请到APP设置页面手动开启！")
+                                    .setPositiveButton("跳转", (dialog, which) -> {
+                                        AndPermission.with(getActivity())
+                                                .runtime()
+                                                .setting()
+                                                .start(REQUEST_CODE_CAMERA);
+                                    })
+                                    .setNegativeButton("取消", (dialog, which) -> {
+
+                                    })
+                                    .show();
+                        }
+                    }
+                })
+                .rationale(rCamera)
+                .start();
+    }
+
+    private void openCamera() {
+        /*
+        第一步
+        创建File对象，用于存储拍照后的照片，并将它存放在手机SD卡的应用关联缓存目录下。
+        应用关联缓存目录：指SD卡中专门用于存放当前应用缓存数据的位置，调用getExternalCacheDir()方法可以得到该目录。
+        具体的路径是/sdcard/Android/data/<package name>/cache .
+        */
+        File outputImage = new File(getActivity().getExternalCacheDir(), "output_image.jpg");
+        if (outputImage.exists()) {
+            outputImage.delete();
+        }
+        try {
+            outputImage.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        /*
+        第二步
+        对当前运行设备的系统版本进行判断，低于Android7.0，就调用Uri.fromFile(outputImage);
+        否则，就调用FileProvider的getUriForFile()方法
+        */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            imageUri = FileProvider.getUriForFile(getActivity(),
+                    "com.example.yidiantong.fileprovider", outputImage);
+        } else {
+            imageUri = Uri.fromFile(outputImage);
+        }
+        //启动相机程序
+        Intent intent2 = new Intent("android.media.action.IMAGE_CAPTURE");
+        intent2.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        mResultLauncher2.launch(intent2);
+    }
+
+    /**
+     * 第三方权限申请包AndPermission: 自带权限组名，可直接在Fragment中回调
+     * 申请读写文件权限
+     */
+    private void permissionOpenGallery() {
+        // 权限请求
+        AndPermission.with(this)
+                .runtime()
+                .permission(Permission.Group.STORAGE)
+                .onGranted(new Action<List<String>>() {
+                    // 获取权限后
+                    @Override
+                    public void onAction(List<String> data) {
+
+                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                        // 选择图片文件类型
+                        intent.setType("image/*");
+                        // 跳转到本地存储
+                        mResultLauncher.launch(intent);
+                    }
+                }).onDenied(new Action<List<String>>() {
+                    @Override
+                    public void onAction(List<String> data) {
+//                        // 判断是否点了永远拒绝，不再提示
+//                        if (AndPermission.hasAlwaysDeniedPermission(getActivity(), data)) {
+//                            new AlertDialog.Builder(getActivity())
+//                                    .setTitle("权限被禁用")
+//                                    .setMessage("读写文件权限被禁用，请到APP设置页面手动开启！")
+//                                    .setPositiveButton("跳转", (dialog, which) -> {
+//                                        AndPermission.with(HomeworkTranslationFragment.this)
+//                                                .runtime()
+//                                                .setting()
+//                                                .start(REQUEST_CODE_STORAGE);
+//                                    })
+//                                    .setNegativeButton("取消", (dialog, which) -> {
+//
+//                                    })
+//                                    .show();
+//                        }
+                    }
+                })
+                .rationale(rGallery)
+                .start();
+    }
+
+    /**
+     * 第三方权限申请包-自定义权限提示，出现在首次拒绝后。拍照申请
+     */
+    private Rationale rCamera = new Rationale() {
+        @Override
+        public void showRationale(Context context, Object data, RequestExecutor executor) {
+            new androidx.appcompat.app.AlertDialog.Builder(getActivity())
+                    .setTitle("提示")
+                    .setMessage("开启拍照权限才能拍照上传！")
+                    .setPositiveButton("知道了", (dialog, which) -> {
+                        executor.execute();
+                    })
+                    .setNegativeButton("拒绝", (dialog, which) -> {
+                        executor.cancel();
+                    })
+                    .show();
+
+        }
+    };
+
+    /**
+     * 第三方权限申请包-自定义权限提示，出现在首次拒绝后。读写文件申请
+     */
+    private Rationale rGallery = new Rationale() {
+        @Override
+        public void showRationale(Context context, Object data, RequestExecutor executor) {
+            new androidx.appcompat.app.AlertDialog.Builder(getActivity())
+                    .setTitle("提示")
+                    .setMessage("开启读写文件权限才能上传图片！")
+                    .setPositiveButton("知道了", (dialog, which) -> {
+                        executor.execute();
+                    })
+                    .setNegativeButton("拒绝", (dialog, which) -> {
+                        executor.cancel();
+                    })
+                    .show();
+        }
+    };
+
 }

@@ -37,15 +37,11 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
-import com.example.yidiantong.adapter.BookExerciseAdapter;
 import com.example.yidiantong.adapter.BookExerciseAdapterW;
 import com.example.yidiantong.bean.BookExerciseEntity;
-import com.example.yidiantong.bean.HomeItemEntity;
-import com.example.yidiantong.fragment.HomeworkTranslationFragment;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.ImageUtils;
 import com.example.yidiantong.util.JsonUtils;
-import com.example.yidiantong.util.LogUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yanzhenjie.permission.Action;
@@ -248,7 +244,7 @@ public class BookExerciseActivity extends AppCompatActivity {
 
                 JSONObject data = json.getJSONObject("data");
                 // 新数据同步
-                if(currentPage == 0){
+                if (currentPage == 0) {
                     recommendNum = data.getInt("recommendNum");
                     searchNum = data.getInt("searchNum");
                     qIds = data.getString("qIds");
@@ -287,7 +283,7 @@ public class BookExerciseActivity extends AppCompatActivity {
                 String url = (String) message.obj;
                 Log.d("wen", "handleMessage: " + url);
 //                adapter.updateData(url_list);// 关键
-               moreList.get(pos_iamge).stuHtml  += "<img onclick='bigimage(this)' src='" + url + "' style=\"max-width:80px\">";
+                moreList.get(pos_iamge).stuHtml += "<img onclick='bigimage(this)' src='" + url + "' style=\"max-width:80px\">";
                 wv_image.loadDataWithBaseURL(null, moreList.get(pos_iamge).stuHtml, "text/html", "utf-8", null);
                 ll_image.setVisibility(View.VISIBLE);
 //                transmit.offLoading();
@@ -329,7 +325,7 @@ public class BookExerciseActivity extends AppCompatActivity {
         }, error -> {
 //            transmit.offLoading();
             Log.d("wen", "Volley_Error: " + error.toString());
-        }){
+        }) {
             @Override
             protected Map<String, String> getParams() {
                 return params;

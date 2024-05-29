@@ -13,8 +13,49 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!--顶部标题栏-->
-        <include layout="@layout/bar_top_homework_title2"/>
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@color/white"
+            android:paddingStart="5dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="10dp">
+
+            <!--左-->
+            <com.example.yidiantong.View.ClickableImageView
+                android:id="@+id/iv_back"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/left_ex2" />
+            <!--中-->
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center_horizontal"
+                android:singleLine="true"
+                android:text="22级测试-题目"
+                android:textColor="@color/main_bg_title"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <com.example.yidiantong.View.ClickableTextView
+                android:id="@+id/tv_content"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:text="@string/content"
+                android:textColor="@color/main_bg_title"
+                android:textSize="17sp" />
+        </RelativeLayout>
 
         <!--分隔线-->
         <LinearLayout
@@ -31,13 +72,15 @@
         <!--加载-->
         <include
             layout="@layout/loading_page"
+            android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible" />
+            android:layout_marginBottom="60dp"/>
     </LinearLayout>
 
     <!--遮蔽-->
-    <include layout="@layout/submitting_page"
-        android:visibility="gone"/>
+    <include
+        layout="@layout/submitting_page"
+        android:visibility="gone" />
 
 </RelativeLayout>
