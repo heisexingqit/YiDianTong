@@ -95,6 +95,7 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
     private LinearLayout ll_xueba1;
     private LinearLayout ll_xueba2;
     private LinearLayout ll_xueba3;
+    private TextView xueba;
 
     public static HomeworkFinishFragment newInstance(HomeworkMarkedEntity homeworkMarked, int position, int size, String paperId) {
         HomeworkFinishFragment fragment = new HomeworkFinishFragment();
@@ -143,6 +144,7 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
         WebView wv_content2 = view.findViewById(R.id.wv_content2);
         WebView wv_content3 = view.findViewById(R.id.wv_content3);
         WebView wv_content4 = view.findViewById(R.id.wv_content4);
+        xueba = view.findViewById(R.id.tv_xueba);//学霸答案标题
         wv_xuebaAnswer1 = view.findViewById(R.id.wv_xuebaAnswer1);
         wv_xuebaAnswer1.addJavascriptInterface(
                 new Object() {
@@ -447,29 +449,34 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
 
             }
             else if (message.what == 102){
+                //学霸答案展示
                 List<XueBaAnswerEntity> list = (List<XueBaAnswerEntity>) message.obj;
-                if(list.size()>0){
-                    ll_xueba1.setVisibility(View.VISIBLE);
-                    xuebaName1=list.get(0).getStuName();
-                    xuebaAnswer1=list.get(0).getStuAnswer();
-                    tv_xuebaName1.setText("学霸"+xuebaName1+"答案");
-                    setHtmlOnWebView(wv_xuebaAnswer1, html_answer_head+xuebaAnswer1);
+                if(!(homeworkMarked.getShowAnswerFlag().equals("0"))&&list.size()>0){
+                    xueba.setVisibility(View.VISIBLE);
+                    if(list.size()>0){
+                        ll_xueba1.setVisibility(View.VISIBLE);
+                        xuebaName1=list.get(0).getStuName();
+                        xuebaAnswer1=list.get(0).getStuAnswer();
+                        tv_xuebaName1.setText(xuebaName1+"的做答");
+                        setHtmlOnWebView(wv_xuebaAnswer1, html_answer_head+xuebaAnswer1);
 
+                    }
+                    if(list.size()>1){
+                        ll_xueba2.setVisibility(View.VISIBLE);
+                        xuebaName2=list.get(1).getStuName();
+                        xuebaAnswer2=list.get(1).getStuAnswer();
+                        tv_xuebaName2.setText(xuebaName2+"的做答");
+                        setHtmlOnWebView(wv_xuebaAnswer2, html_answer_head+xuebaAnswer2);
+                    }
+                    if(list.size()>2){
+                        ll_xueba3.setVisibility(View.VISIBLE);
+                        xuebaName3=list.get(2).getStuName();
+                        xuebaAnswer3=list.get(2).getStuAnswer();
+                        tv_xuebaName3.setText(xuebaName3+"的做答");
+                        setHtmlOnWebView(wv_xuebaAnswer3, html_answer_head+xuebaAnswer3);
+                    }
                 }
-                if(list.size()>1){
-                    ll_xueba2.setVisibility(View.VISIBLE);
-                    xuebaName2=list.get(1).getStuName();
-                    xuebaAnswer2=list.get(1).getStuAnswer();
-                    tv_xuebaName2.setText("学霸"+xuebaName2+"答案");
-                    setHtmlOnWebView(wv_xuebaAnswer2, html_answer_head+xuebaAnswer2);
-                }
-                if(list.size()>2){
-                    ll_xueba3.setVisibility(View.VISIBLE);
-                    xuebaName3=list.get(2).getStuName();
-                    xuebaAnswer3=list.get(2).getStuAnswer();
-                    tv_xuebaName3.setText("学霸"+xuebaName3+"答案");
-                    setHtmlOnWebView(wv_xuebaAnswer3, html_answer_head+xuebaAnswer3);
-                }
+
             }
 
         }
