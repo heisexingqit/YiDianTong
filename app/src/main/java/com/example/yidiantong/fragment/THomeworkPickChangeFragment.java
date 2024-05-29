@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +56,7 @@ public class THomeworkPickChangeFragment extends Fragment implements View.OnClic
     // 底部Tag块
     private LinearLayout ll_bottom_tab;
     private HorizontalScrollView sv_bottom_tab;
+    private LinearLayout ll_bottom_block;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -62,7 +64,7 @@ public class THomeworkPickChangeFragment extends Fragment implements View.OnClic
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_t_homework_pick_change, container, false);
-
+        ll_bottom_block = view.findViewById(R.id.ll_bottom_block);
         ll_bottom_tab = view.findViewById(R.id.ll_bottom_tab);
         sv_bottom_tab = view.findViewById(R.id.sv_bottom_tab);
 
@@ -160,6 +162,7 @@ public class THomeworkPickChangeFragment extends Fragment implements View.OnClic
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void showQuestionBlock(List<THomeworkAddEntity> moreList) {
+        int myWidth = 0;
 
         ll_bottom_tab.removeAllViews();
         for (int i = 0; i < moreList.size(); ++i) {
@@ -209,7 +212,7 @@ public class THomeworkPickChangeFragment extends Fragment implements View.OnClic
 
             int dp_1 = PxUtils.dip2px(getActivity(), 1);
             int pxMargin = 3 * dp_1;
-            int myWidth = sv_bottom_tab.getWidth() / 5 - 2 * pxMargin - 2 * dp_1;
+            myWidth = sv_bottom_tab.getWidth() / 5 - 2 * pxMargin - 2 * dp_1;
             ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(myWidth, myWidth);
             params.setMargins(pxMargin, pxMargin, pxMargin, pxMargin);
             imageView.setPadding(pxMargin, pxMargin, pxMargin, pxMargin);
@@ -233,5 +236,15 @@ public class THomeworkPickChangeFragment extends Fragment implements View.OnClic
             });
             ll_bottom_tab.addView(imageView);
         }
+        // 创建或获取RelativeLayout的LayoutParams对象
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) ll_bottom_block.getLayoutParams();
+
+        layoutParams.height = myWidth + PxUtils.dip2px(getActivity(), 20); // 使用像素值
+        // 如果你想使用 wrap_content 或 match_parent，可以这样设置：
+        // layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        // layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+
+        // 应用修改后的LayoutParams
+        ll_bottom_block.setLayoutParams(layoutParams);
     }
 }

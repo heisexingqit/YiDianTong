@@ -155,8 +155,9 @@
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_book_detail_judge.xml" value="0.264" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_book_detail_multiple.xml" value="0.2609375" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_book_detail_reading.xml" value="0.264" />
+        <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_book_detail_seven2five.xml" value="0.2713541666666667" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_book_detail_single.xml" value="0.2609375" />
-        <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_book_detail_subject.xml" value="0.24270833333333333" />
+        <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_book_detail_subject.xml" value="0.264" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_book_detail_translation.xml" value="0.2609375" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_book_exercise.xml" value="0.23645833333333333" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_book_judge_single.xml" value="0.11875" />
@@ -176,7 +177,7 @@
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_t_bell_notice_update.xml" value="0.23854166666666668" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_t_homework_add_item.xml" value="0.2028985507246377" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_t_homework_mark.xml" value="0.26380368098159507" />
-        <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_t_homework_pick_add.xml" value="0.152" />
+        <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_t_homework_pick_add.xml" value="0.264" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_t_homework_pick_assign.xml" value="0.4" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_t_homework_pick_change.xml" value="0.21041666666666667" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_t_learn_plan_add_ppt.xml" value="0.19322916666666667" />

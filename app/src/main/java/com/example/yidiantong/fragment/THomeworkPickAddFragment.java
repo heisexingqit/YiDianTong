@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -87,8 +88,9 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
     String type = "";
     String shareTag = "";
 
-    private LinearLayout ll_loading;
+    private RelativeLayout ll_loading;
     private LinearLayout ll_loading2;
+    private RelativeLayout rl_bottom_block;
 
     public THomeworkPickAddFragment(String xd, String xk, String bb, String jc, String zsd, String type, String shareTag) {
         xueduan = xd;
@@ -106,6 +108,7 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
 
         Log.e("wen052321", "onCreateView: 启动");
         View view = inflater.inflate(R.layout.fragment_t_homework_pick_add, container, false);
+        rl_bottom_block = view.findViewById(R.id.rl_bottom_block);
         ll_loading = view.findViewById(R.id.ll_loading);
         ll_loading2 = view.findViewById(R.id.ll_loading2);
 
@@ -168,7 +171,7 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
 
     // 更新试题内容方法
     public void updateItem(String xd, String xk, String bb, String jc, String zsd, String type, String shareTag) {
-        Log.e("wen0523", "updateItem: " + xd + " " + xk + " " + bb + " "+ jc + " " + zsd + " " + type + " " + shareTag);
+        Log.e("wen0523", "updateItem: " + xd + " " + xk + " " + bb + " " + jc + " " + zsd + " " + type + " " + shareTag);
         xueduan = xd;
         xueke = xk;
         banben = bb;
@@ -225,6 +228,7 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void showQuestionBlock(List<THomeworkAddEntity> moreList) {
+        int myWidth = 0;
 
         ll_bottom_tab.removeAllViews();
         for (int i = 0; i < moreList.size(); ++i) {
@@ -274,7 +278,7 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
 
             int dp_1 = PxUtils.dip2px(getActivity(), 1);
             int pxMargin = 3 * dp_1;
-            int myWidth = sv_bottom_tab.getWidth() / 5 - 2 * pxMargin - 2 * dp_1;
+            myWidth = sv_bottom_tab.getWidth() / 5 - 2 * pxMargin - 2 * dp_1;
             ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(myWidth, myWidth);
             params.setMargins(pxMargin, pxMargin, pxMargin, pxMargin);
             imageView.setPadding(pxMargin, pxMargin, pxMargin, pxMargin);
@@ -309,6 +313,16 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
             });
             ll_bottom_tab.addView(imageView);
         }
+        // 创建或获取RelativeLayout的LayoutParams对象
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) rl_bottom_block.getLayoutParams();
+
+        layoutParams.height = myWidth + PxUtils.dip2px(getActivity(), 20); // 使用像素值
+        // 如果你想使用 wrap_content 或 match_parent，可以这样设置：
+        // layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        // layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+
+        // 应用修改后的LayoutParams
+        rl_bottom_block.setLayoutParams(layoutParams);
     }
 
     private Handler handler = new Handler(Looper.getMainLooper()) {
@@ -369,7 +383,7 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
                     isAll = true;
                     ll_loading.setVisibility(View.GONE);// 解除遮挡
                     ll_loading2.setVisibility(View.GONE);// 解除遮挡
-                    if(currentpage != 1){
+                    if (currentpage != 1) {
                         return;
                     }
                 } else {

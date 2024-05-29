@@ -211,9 +211,6 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
                 List<BookRecyclerEntity> itemList = gson.fromJson(itemString, new TypeToken<List<BookRecyclerEntity>>() {}.getType());
-                System.out.println("wen0223 ^-^:" + itemList.size());
-                System.out.println("wen0223 ^-^:" + itemList.get(0).getAllPage());
-                System.out.println("wen0223 ^-^:  " + itemList.get(0));
                 Log.e("wen0223", "loadItems_Net: " + itemList);
                 //封装消息，传递给主线程
                 Message message = Message.obtain();

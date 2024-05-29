@@ -11,8 +11,14 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,12 +27,14 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.HomeworkFinishPagerAdapter;
+import com.example.yidiantong.adapter.MyArrayAdapter;
 import com.example.yidiantong.bean.HomeworkMarkedEntity;
 import com.example.yidiantong.bean.XueBaAnswerEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.FixedSpeedScroller;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.PagingInterface;
+import com.example.yidiantong.util.PxUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -52,7 +60,11 @@ public class HomeworkPagerFinishActivity extends AppCompatActivity implements Vi
 
     // 页面信息
     private int pageCount = 0;
-
+    private TextView tv_content;
+    private View contentView = null;
+    private List<String> question_types = new ArrayList<>();
+    MyArrayAdapter myArrayAdapter = new MyArrayAdapter(this, question_types);
+    private PopupWindow window;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +117,8 @@ public class HomeworkPagerFinishActivity extends AppCompatActivity implements Vi
                     new AccelerateInterpolator());
             field.set(vp_homework, scroller);
             scroller.setmDuration(400);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         /**
          * 其他
@@ -114,6 +127,9 @@ public class HomeworkPagerFinishActivity extends AppCompatActivity implements Vi
         findViewById(R.id.iv_back).setOnClickListener(v -> {
             this.finish();
         });
+        // 顶栏目录
+        tv_content = findViewById(R.id.tv_content);
+        tv_content.setOnClickListener(this);
 
         // 数据请求
         loadItems_Net();
@@ -136,6 +152,11 @@ public class HomeworkPagerFinishActivity extends AppCompatActivity implements Vi
                  * 题面信息
                  */
                 List<HomeworkMarkedEntity> list = (List<HomeworkMarkedEntity>) message.obj;
+                for (int i = 0; i < list.size(); ++i) {
+                    // 顶部目录菜单内容
+                    question_types.add((i+1) + "." + list.get(i).getTypeName());
+                    // 题面类型
+                }
                 Log.d("wen", "批改信息: " + list.toString());
                 rl_loading.setVisibility(View.GONE);
                 adapter.update(list,learnPlanId);
@@ -185,7 +206,6 @@ public class HomeworkPagerFinishActivity extends AppCompatActivity implements Vi
 
 
 
-
     @Override
     public void pageLast() {
         if (currentItem == 0) {
@@ -208,6 +228,57 @@ public class HomeworkPagerFinishActivity extends AppCompatActivity implements Vi
 
     @Override
     public void onClick(View view) {
+        switch (view.getId()) {
+            //目录切换作业题面
+            case R.id.tv_content:
+                if (contentView == null) {
+                    contentView = LayoutInflater.from(this).inflate(R.layout.menu_homework, null, false);
 
+                    ListView lv_homework = contentView.findViewById(R.id.lv_homework);
+                    lv_homework.getLayoutParams().width = PxUtils.dip2px(this, 180);
+
+                    lv_homework.setAdapter(myArrayAdapter);
+                    lv_homework.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                            //切换页+消除选项口
+                            currentItem = i;
+                            vp_homework.setCurrentItem(currentItem);
+                            window.dismiss();
+                        }
+                    });
+
+                    /**
+                     * 设置MaxHeight,先显示才能获取高度
+                     */
+                    lv_homework.post(() -> {
+                        int maxHeight = PxUtils.dip2px(HomeworkPagerFinishActivity.this, 245);
+                        // 获取ListView的子项数目
+                        int itemCount = lv_homework.getAdapter().getCount();
+
+                        // 计算ListView的高度
+                        int listViewHeight = 0;
+                        int desiredWidth = View.MeasureSpec.makeMeasureSpec(lv_homework.getWidth(), View.MeasureSpec.AT_MOST);
+
+                        for (int i = 0; i < itemCount; i++) {
+                            View listItem = lv_homework.getAdapter().getView(i, null, lv_homework);
+                            listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+                            listViewHeight += listItem.getMeasuredHeight();
+                        }
+
+                        // 如果计算出的高度超过最大高度，则设置为最大高度
+                        ViewGroup.LayoutParams layoutParams = lv_homework.getLayoutParams();
+                        if (listViewHeight > maxHeight) {
+                            layoutParams.height = maxHeight;
+                        }
+                    });
+
+
+                    window = new PopupWindow(contentView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
+                    window.setTouchable(true);
+                }
+                window.showAsDropDown(tv_content, -220, 5);
+                break;
+        }
     }
 }
