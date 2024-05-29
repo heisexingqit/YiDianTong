@@ -29,6 +29,7 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.HomeworkFinishPagerAdapter;
 import com.example.yidiantong.adapter.MyArrayAdapter;
 import com.example.yidiantong.bean.HomeworkMarkedEntity;
+import com.example.yidiantong.bean.XueBaAnswerEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.FixedSpeedScroller;
 import com.example.yidiantong.util.JsonUtils;
@@ -158,7 +159,7 @@ public class HomeworkPagerFinishActivity extends AppCompatActivity implements Vi
                 }
                 Log.d("wen", "批改信息: " + list.toString());
                 rl_loading.setVisibility(View.GONE);
-                adapter.update(list);
+                adapter.update(list,learnPlanId);
 
                 pageCount = list.size();
             }
@@ -202,39 +203,7 @@ public class HomeworkPagerFinishActivity extends AppCompatActivity implements Vi
         MyApplication.addRequest(request, TAG);
     }
 
-    private void loadAnswer_Net() {
 
-        String mRequestUrl = Constant.API + Constant.XUEBA_ANSWER + "?paperId=" + learnPlanId + "&questionId=" + username + "&learnPlanType=paper";
-
-        Log.d("wen", "loadItems_Net: " + mRequestUrl);
-        StringRequest request = new StringRequest(mRequestUrl, response -> {
-            try {
-                JSONObject json = JsonUtils.getJsonObjectFromString(response);
-
-                String itemString = json.getString("data");
-                Gson gson = new Gson();
-                //使用Gson框架转换Json字符串为列表
-                List<HomeworkMarkedEntity> itemList = gson.fromJson(itemString, new TypeToken<List<HomeworkMarkedEntity>>() {
-                }.getType());
-                //封装消息，传递给主线程
-                Message message = Message.obtain();
-
-                message.obj = itemList;
-                // 发送消息给主线程
-
-                //标识线程
-                message.what = 100;
-                handler.sendMessage(message);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }, error -> {
-            Log.e("volley", "Volley_Error: " + error.toString());
-
-        });
-        MyApplication.addRequest(request, TAG);
-    }
 
 
     @Override

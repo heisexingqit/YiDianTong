@@ -1,6 +1,7 @@
 package com.example.yidiantong.adapter;
 
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -25,20 +26,23 @@ import java.util.List;
 public class HomeworkFinishPagerAdapter extends FragmentPagerAdapter {
 
     private List<HomeworkMarkedEntity> itemList = new ArrayList<>();// 批改内容
+    private String paperId;
 
+    @SuppressLint("WrongConstant")
     public HomeworkFinishPagerAdapter(@NonNull FragmentManager fm) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
     }
 
-    public void update(List<HomeworkMarkedEntity> itemList) {
+    public void update(List<HomeworkMarkedEntity> itemList,String paperId) {
         this.itemList = itemList;
+        this.paperId=paperId;
         this.notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        return HomeworkFinishFragment.newInstance(itemList.get(position), position, itemList.size());
+        return HomeworkFinishFragment.newInstance(itemList.get(position), position, itemList.size(),paperId);
     }
 
     @Override

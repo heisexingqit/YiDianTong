@@ -305,12 +305,11 @@ public class THomeworkImageMark extends AppCompatActivity {
     }
 
     private class SaveImageTask extends AsyncTask<Void, Void, String> {
-        private  String base64=null;
+        private  String base64;
         @Override
         protected String doInBackground(Void... voids) {
             Bitmap drawnBitmap = customDraw.getDrawnBitmap(); // 获取绘制后的图片
             base64 = Bitmap2StrByBase64(drawnBitmap);
-            Log.d("HSK0517","base64:"+base64.length());
 
             HttpURLConnection connection = null;
             BufferedReader reader = null;

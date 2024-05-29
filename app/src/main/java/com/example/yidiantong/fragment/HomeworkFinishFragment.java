@@ -25,14 +25,23 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.ImagePagerAdapter;
 import com.example.yidiantong.bean.HomeworkMarkedEntity;
+import com.example.yidiantong.bean.XueBaAnswerEntity;
+import com.example.yidiantong.util.Constant;
+import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.StringUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.text.StringEscapeUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -42,11 +51,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeworkFinishFragment extends Fragment implements View.OnClickListener {
+    private static final String TAG = "HomeworkFinishFragment";
     private List<String> url_list = new ArrayList<>();
     private PagingInterface pageing;
     private View contentView = null;
     private ImagePagerAdapter adapter;
     private PopupWindow window;
+    private String xuebaName1;
+    private String xuebaName2;
+    private String xuebaName3;
+    private String xuebaAnswer1;
+    private String xuebaAnswer2;
+    private String xuebaAnswer3;
+
 
     private String html_answer_head = "<head>\n" +
             "    <style>\n" +
@@ -68,13 +85,24 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
             "<body onclick=\"bigimage(this)\">\n";
     //接口需要
     private HomeworkMarkedEntity homeworkMarked;
+    private String paperId;
+    private WebView wv_xuebaAnswer1;
+    private WebView wv_xuebaAnswer2;
+    private WebView wv_xuebaAnswer3;
+    private TextView tv_xuebaName1;
+    private TextView tv_xuebaName2;
+    private TextView tv_xuebaName3;
+    private LinearLayout ll_xueba1;
+    private LinearLayout ll_xueba2;
+    private LinearLayout ll_xueba3;
 
-    public static HomeworkFinishFragment newInstance(HomeworkMarkedEntity homeworkMarked, int position, int size) {
+    public static HomeworkFinishFragment newInstance(HomeworkMarkedEntity homeworkMarked, int position, int size, String paperId) {
         HomeworkFinishFragment fragment = new HomeworkFinishFragment();
         Bundle args = new Bundle();
         args.putSerializable("homeworkMarked", homeworkMarked);
         args.putInt("position", position);
         args.putInt("size", size);
+        args.putString("paperId", paperId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -94,8 +122,10 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
         Bundle arg = getArguments();
         int position = arg.getInt("position") + 1;
         int size = arg.getInt("size");
+        paperId = arg.getString("paperId");
         homeworkMarked = (HomeworkMarkedEntity) arg.getSerializable("homeworkMarked");
         adapter = new ImagePagerAdapter(getActivity(), url_list);
+        loadAnswer_Net();
         //获取view
         View view = inflater.inflate(R.layout.fragment_homework_finish, container, false);
         TextView tv_question_number = view.findViewById(R.id.tv_question_number);
@@ -113,19 +143,106 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
         WebView wv_content2 = view.findViewById(R.id.wv_content2);
         WebView wv_content3 = view.findViewById(R.id.wv_content3);
         WebView wv_content4 = view.findViewById(R.id.wv_content4);
+        wv_xuebaAnswer1 = view.findViewById(R.id.wv_xuebaAnswer1);
+        wv_xuebaAnswer1.addJavascriptInterface(
+                new Object() {
+                    @JavascriptInterface
+                    @SuppressLint("JavascriptInterface")
+                    public void bigPic() {
+                        /**
+                         * Js注册的方法无法修改主UI，需要Handler
+                         */
+                        Message message = Message.obtain();
+                        // 发送消息给主线程
+                        //标识线程
+                        Log.d("hsk0522","图片放大");
+                        String htmlContent = xuebaAnswer1; // 或者是从网络请求得到的HTML
+                        Document doc = Jsoup.parse(htmlContent); // 或 Jsoup.connect(url).get();
+
+// 选择所有的img标签
+                        Elements imgElements = doc.select("img");
+                        url_list.clear();
+                        for (Element imgElement : imgElements) {
+                            String imgSrc = imgElement.absUrl("src"); // 获取绝对URL
+                            url_list.add(imgSrc);
+                            adapter.updateData(url_list);// 关键
+                        }
+                        message.what = 101;
+                        handler.sendMessage(message);
+                    }
+                }
+                , "myInterface");
+        wv_xuebaAnswer2 = view.findViewById(R.id.wv_xuebaAnswer2);
+        wv_xuebaAnswer2.addJavascriptInterface(
+                new Object() {
+                    @JavascriptInterface
+                    @SuppressLint("JavascriptInterface")
+                    public void bigPic() {
+                        /**
+                         * Js注册的方法无法修改主UI，需要Handler
+                         */
+                        Message message = Message.obtain();
+                        // 发送消息给主线程
+                        //标识线程
+                        Log.d("hsk0522","图片放大");
+                        String htmlContent = xuebaAnswer2; // 或者是从网络请求得到的HTML
+                        Document doc = Jsoup.parse(htmlContent); // 或 Jsoup.connect(url).get();
+
+// 选择所有的img标签
+                        Elements imgElements = doc.select("img");
+                        url_list.clear();
+                        for (Element imgElement : imgElements) {
+                            String imgSrc = imgElement.absUrl("src"); // 获取绝对URL
+                            url_list.add(imgSrc);
+                            adapter.updateData(url_list);// 关键
+                        }
+                        message.what = 101;
+                        handler.sendMessage(message);
+                    }
+                }
+                , "myInterface");
+        wv_xuebaAnswer3 = view.findViewById(R.id.wv_xuebaAnswer3);
+        wv_xuebaAnswer3.addJavascriptInterface(
+                new Object() {
+                    @JavascriptInterface
+                    @SuppressLint("JavascriptInterface")
+                    public void bigPic() {
+                        /**
+                         * Js注册的方法无法修改主UI，需要Handler
+                         */
+                        Message message = Message.obtain();
+                        // 发送消息给主线程
+                        //标识线程
+                        Log.d("hsk0522","图片放大");
+                        String htmlContent = xuebaAnswer3; // 或者是从网络请求得到的HTML
+                        Document doc = Jsoup.parse(htmlContent); // 或 Jsoup.connect(url).get();
+
+// 选择所有的img标签
+                        Elements imgElements = doc.select("img");
+                        url_list.clear();
+                        for (Element imgElement : imgElements) {
+                            String imgSrc = imgElement.absUrl("src"); // 获取绝对URL
+                            url_list.add(imgSrc);
+                            adapter.updateData(url_list);// 关键
+                        }
+                        message.what = 101;
+                        handler.sendMessage(message);
+                    }
+                }
+                , "myInterface");
+        tv_xuebaName1 = view.findViewById(R.id.tv_xuebaName1);
+        tv_xuebaName2 = view.findViewById(R.id.tv_xuebaName2);
+        tv_xuebaName3 = view.findViewById(R.id.tv_xuebaName3);
+        /**
+         *  数据显示，三个学霸答案页面
+         */
+        ll_xueba1 = view.findViewById(R.id.ll_xueba1);
+        ll_xueba2 = view.findViewById(R.id.ll_xueba2);
+        ll_xueba3 = view.findViewById(R.id.ll_xueba3);
 
         setHtmlOnWebView(wv_content, homeworkMarked.getTiMian());
         setHtmlOnWebView(wv_content4, html_answer_head+homeworkMarked.getStuAnswer());
-        String htmlContent = homeworkMarked.getStuAnswer(); // 或者是从网络请求得到的HTML
-        Document doc = Jsoup.parse(htmlContent); // 或 Jsoup.connect(url).get();
 
-// 选择所有的img标签
-        Elements imgElements = doc.select("img");
-        for (Element imgElement : imgElements) {
-            String imgSrc = imgElement.absUrl("src"); // 获取绝对URL
-            url_list.add(imgSrc);
-            adapter.updateData(url_list);// 关键
-        }
         wv_content4.addJavascriptInterface(
                 new Object() {
                     @JavascriptInterface
@@ -138,6 +255,17 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
                         // 发送消息给主线程
                         //标识线程
                         Log.d("hsk0522","图片放大");
+                        url_list.clear();
+                        String htmlContent = homeworkMarked.getStuAnswer(); // 或者是从网络请求得到的HTML
+                        Document doc = Jsoup.parse(htmlContent); // 或 Jsoup.connect(url).get();
+
+// 选择所有的img标签
+                        Elements imgElements = doc.select("img");
+                        for (Element imgElement : imgElements) {
+                            String imgSrc = imgElement.absUrl("src"); // 获取绝对URL
+                            url_list.add(imgSrc);
+                            adapter.updateData(url_list);// 关键
+                        }
                         message.what = 101;
                         handler.sendMessage(message);
                     }
@@ -145,6 +273,7 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
                 , "myInterface");
         String answerString = homeworkMarked.getStandardAnswer();
         String analysisString = homeworkMarked.getAnalysis();
+
         Log.e("wen0222", "onCreateView: " + homeworkMarked);
 
         /**
@@ -317,8 +446,67 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
                 window.showAtLocation(getActivity().getWindow().getDecorView(), Gravity.CENTER, 0, 0);
 
             }
+            else if (message.what == 102){
+                List<XueBaAnswerEntity> list = (List<XueBaAnswerEntity>) message.obj;
+                if(list.size()>0){
+                    ll_xueba1.setVisibility(View.VISIBLE);
+                    xuebaName1=list.get(0).getStuName();
+                    xuebaAnswer1=list.get(0).getStuAnswer();
+                    tv_xuebaName1.setText("学霸"+xuebaName1+"答案");
+                    setHtmlOnWebView(wv_xuebaAnswer1, html_answer_head+xuebaAnswer1);
+
+                }
+                if(list.size()>1){
+                    ll_xueba2.setVisibility(View.VISIBLE);
+                    xuebaName2=list.get(1).getStuName();
+                    xuebaAnswer2=list.get(1).getStuAnswer();
+                    tv_xuebaName2.setText("学霸"+xuebaName2+"答案");
+                    setHtmlOnWebView(wv_xuebaAnswer2, html_answer_head+xuebaAnswer2);
+                }
+                if(list.size()>2){
+                    ll_xueba3.setVisibility(View.VISIBLE);
+                    xuebaName3=list.get(2).getStuName();
+                    xuebaAnswer3=list.get(2).getStuAnswer();
+                    tv_xuebaName3.setText("学霸"+xuebaName3+"答案");
+                    setHtmlOnWebView(wv_xuebaAnswer3, html_answer_head+xuebaAnswer3);
+                }
+            }
 
         }
     };
+    private void loadAnswer_Net() {
+
+        String mRequestUrl = Constant.API + Constant.XUEBA_ANSWER + "?paperId=" + paperId + "&questionId=" + homeworkMarked.getQuestionId();
+
+        Log.d("wen", "loadItems_Net: " + mRequestUrl);
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+
+                String itemString = json.getString("data");
+                Gson gson = new Gson();
+                //使用Gson框架转换Json字符串为列表
+                List<XueBaAnswerEntity> itemList = gson.fromJson(itemString, new TypeToken<List<XueBaAnswerEntity>>() {
+                }.getType());
+                Log.d("hsk0527","学霸答案："+itemList);
+                //封装消息，传递给主线程
+                Message message = Message.obtain();
+
+                message.obj = itemList;
+                // 发送消息给主线程
+
+                //标识线程
+                message.what = 102;
+                handler.sendMessage(message);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }, error -> {
+            Log.e("volley", "Volley_Error: " + error.toString());
+
+        });
+        MyApplication.addRequest(request, TAG);
+    }
 
 }
