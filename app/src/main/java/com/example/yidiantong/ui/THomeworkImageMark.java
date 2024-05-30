@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -38,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -325,7 +327,6 @@ public class THomeworkImageMark extends AppCompatActivity {
                 connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setDoOutput(true);
-                Log.d("HSK0522", "filePath:" + filePath);
                 // 构建请求参数
                 //String params_json = "type=save&imagePath=" + URLEncoder.encode(filePath, "UTF-8") + "&base64=" + URLEncoder.encode(base64, "UTF-8");
                 String params_json = "type=save&imagePath=" + URLEncoder.encode(filePath, "UTF-8") + "&baseData=" + URLEncoder.encode(base64, "UTF-8");
@@ -347,12 +348,9 @@ public class THomeworkImageMark extends AppCompatActivity {
 
                 // 输出响应数据
                 String responseData = response.toString();
-                Log.d("HSK0517","responseData:"+responseData);
                 JSONObject jsonObject = JsonUtils.getJsonObjectFromString(responseData);
                 newUrl = jsonObject.getString("url");
-                Log.d("HSK0517","url:"+newUrl);
             } catch (Exception e) {
-                Log.d("hsk0517","Exception"+e);
                 e.printStackTrace();
             } finally {
                 // 关闭连接和输入流
@@ -376,7 +374,6 @@ public class THomeworkImageMark extends AppCompatActivity {
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("newUrl", result);
                 //returnIntent.putExtra("img_length",base64.length());
-                Log.d("hsk0516", "返回的newUrl:" + result);
                 setResult(RESULT_OK, returnIntent);
             }
             // 显示加载页面
@@ -403,32 +400,54 @@ public class THomeworkImageMark extends AppCompatActivity {
     private void hideSubmittingLayout() {
         rl_submitting.setVisibility(View.GONE);
     }
-
     public String Bitmap2StrByBase64(Bitmap image) {
-        // 获取应用的缓存目录
-        File filesDir = this.getFilesDir();
-
-        // 在缓存目录中创建一个临时文件
-        File file = new File(filesDir, "marked.jpg");
-        Log.e("debug0116", "image.getByteCount(): " + image.getByteCount());
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
-            FileOutputStream outputStream = new FileOutputStream(file);
+            // 将 Bitmap 压缩为 JPEG 格式，并写入 ByteArrayOutputStream
+            image.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream);
 
-            // 将 Bitmap 压缩为 JPEG 格式，并写入文件
-            image.compress(Bitmap.CompressFormat.JPEG, 70, outputStream);
-            Log.e("debug0116", "image.getByteCount(): " + image.getByteCount());
-            Log.e("debug0116", "临时修改文件路径: " + file.getAbsolutePath());
-            // 关闭输出流
-            outputStream.close();
-        }  catch (IOException e) {
+            // 将 ByteArrayOutputStream 转换为 byte 数组
+            byte[] byteArray = byteArrayOutputStream.toByteArray();
+
+            // 将 byte 数组编码为 Base64 字符串
+            return Base64.encodeToString(byteArray, Base64.NO_WRAP);
+        } catch (Exception e) {
             e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                byteArrayOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        if(file.exists() && file.length() > 0){
-            Log.e("debug0116", "OK了: " + file.length());
-        }
-
-        return ImageUtils.Bitmap2StrByBase64(this, file);
     }
+
+//    public String Bitmap2StrByBase64(Bitmap image) {
+//        // 获取应用的缓存目录
+//        File filesDir = this.getFilesDir();
+//
+//        // 在缓存目录中创建一个临时文件
+//        File file = new File(filesDir, "marked.jpg");
+//        Log.e("debug0116", "image.getByteCount(): " + image.getByteCount());
+//        try {
+//            FileOutputStream outputStream = new FileOutputStream(file);
+//
+//            // 将 Bitmap 压缩为 JPEG 格式，并写入文件
+//            image.compress(Bitmap.CompressFormat.JPEG, 70, outputStream);
+//            Log.e("debug0116", "image.getByteCount(): " + image.getByteCount());
+//            Log.e("debug0116", "临时修改文件路径: " + file.getAbsolutePath());
+//            // 关闭输出流
+//            outputStream.close();
+//        }  catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        if(file.exists() && file.length() > 0){
+//            Log.e("debug0116", "OK了: " + file.length());
+//        }
+//
+//        return ImageUtils.Bitmap2StrByBase64(this, file);
+//    }
 
 
 }

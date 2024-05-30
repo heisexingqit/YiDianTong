@@ -424,6 +424,7 @@ public class THomeworkMarkFragment extends Fragment {
     /**
      * 第三方权限申请包-自定义权限提示，出现在首次拒绝后。读写文件申请
      */
+
     /**
      * 第三方权限申请包-自定义权限提示，出现在首次拒绝后。拍照申请
      */
