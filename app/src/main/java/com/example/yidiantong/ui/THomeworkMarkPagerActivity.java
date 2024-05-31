@@ -250,7 +250,6 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
                 if (currentItem == pageCount - 1) {
                     jumpToSubmit();
                 } else {
-
                     currentItem += 1;
                     vp_homework.setCurrentItem(currentItem);
                     Log.d("wen", "Activity: " + moreList.get(currentItem).getOrder());
