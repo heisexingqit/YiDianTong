@@ -55,6 +55,8 @@ public class BookRecyclerEntity implements Serializable {
     // 习题类型
     public String typeName;
 
+    public String stuHtml;
+
     public String getQuestionId() {
         return questionId;
     }

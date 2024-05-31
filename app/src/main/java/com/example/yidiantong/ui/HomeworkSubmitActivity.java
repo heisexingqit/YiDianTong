@@ -73,7 +73,7 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
 
         //ListView设置
         ListView lv_show_stuAns = findViewById(R.id.lv_show_stuAns);
-        ShowStuAnsAdapter adapter = new ShowStuAnsAdapter(this, stuAnswer, questionTypes);
+        ShowStuAnsAdapter adapter = new ShowStuAnsAdapter(this, stuAnswer);
         lv_show_stuAns.setAdapter(adapter);
 
         lv_show_stuAns.setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -243,7 +243,7 @@ public class BookDetailClozeFragment extends Fragment implements View.OnClickLis
                 fll_bd_answer.setVisibility(View.VISIBLE);
                 mode = 0;
                 // 显示学生本地保存的作答
-                showLoadAnswer();
+//                showLoadAnswer();
             } else {
                 fll_bd_answer.setVisibility(View.GONE);
                 fll_bd_analysis.setVisibility(View.VISIBLE);
