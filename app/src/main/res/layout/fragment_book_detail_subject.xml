@@ -168,7 +168,7 @@
                     android:id="@+id/fb_bd_sumbit"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
-                    android:background="@color/f_blue"
+                    android:background="@color/blue_btn"
                     android:text="提交答案"
                     android:textColor="@color/white" />
 

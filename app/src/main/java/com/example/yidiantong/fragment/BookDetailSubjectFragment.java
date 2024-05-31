@@ -19,8 +19,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.TextWatcher;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
@@ -152,6 +154,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
     private static final int REQUEST_CODE_STORAGE = 1;
     private static final int REQUEST_CODE_CAMERA = 2;
     private String exercise_stu_answer = "";
+    private String exercise_stu_html = "";
 
     //绑定Activity的接口类，实现调用
     @Override
@@ -185,6 +188,27 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         iv_gallery.setOnClickListener(this);
         // 学生输入
         et_student_answer = view.findViewById(R.id.et_stu_answer);
+        et_student_answer.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // 在文本内容发生改变之前调用
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // 在文本内容发生改变时调用
+                String inputText = s.toString();
+                // 实时获取输入框内容，可以在这里进行相应处理
+                // 例如，可以将输入内容显示在 Logcat 中
+                exercise_stu_answer = inputText;
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+
+        });
         // 标准答案
         wv_shiti_answer = view.findViewById(R.id.wv_shiti_answer);
 
@@ -215,7 +239,6 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         String html = html_content.replace("#", "%23");
         fwv_bd_content.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
 
-
         // 题号和平均分
         currentpage = bookrecyclerEntity.getCurrentPage();  // 当前页数，题号
         ftv_bd_num = view.findViewById(R.id.ftv_bd_num);
@@ -230,7 +253,6 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         iv_pager_next.setAlpha(0.9f);
         iv_pager_last.setOnClickListener(this);
         iv_pager_next.setOnClickListener(this);
-
 
         // 提交答案按钮
         fb_bd_sumbit = view.findViewById(R.id.fb_bd_sumbit);
@@ -275,6 +297,8 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         cleanStuAnswer = bookrecyclerEntity.getStuScore();
 
         if (!exerciseType) {
+            exercise_stu_answer = "";
+            exercise_stu_html = "";
             // 提分练习
             iv_exercise_scores = getActivity().findViewById(R.id.iv_exercise_scores);
             iv_exercise_scores.setOnClickListener(this);
@@ -324,7 +348,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         }
 
         // 显示学生本地保存的作答
-//        showLoadAnswer();
+        // showLoadAnswer();
         // 拍照和相册copy代码=============================
         // 注册Gallery回调组件 NEW
         mResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -451,7 +475,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                 pageing.pageNext(currentpage, allpage);
                 return;
             case R.id.fb_bd_sumbit:
-                if (stuans.length() == 0) {
+                if (exercise_stu_answer.length() == 0 && exercise_stu_html.length() == 0) {
                     // 答案为空
                     //建立对话框
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), AlertDialog.THEME_HOLO_LIGHT);
@@ -595,8 +619,8 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                 String url = (String) message.obj;
                 Log.d("wen", "handleMessage: " + url);
 //                adapter.updateData(url_list);// 关键
-                exercise_stu_answer += "<img onclick='bigimage(this)' src='" + url + "' style=\"max-width:80px\">";
-                wv_stu_answer.loadDataWithBaseURL(null, exercise_stu_answer, "text/html", "utf-8", null);
+                exercise_stu_html += "<img onclick='bigimage(this)' src='" + url + "' style=\"max-width:80px\">";
+                wv_stu_answer.loadDataWithBaseURL(null, exercise_stu_html, "text/html", "utf-8", null);
                 ll_input_image.setVisibility(View.VISIBLE);
 //                transmit.offLoading();
             }

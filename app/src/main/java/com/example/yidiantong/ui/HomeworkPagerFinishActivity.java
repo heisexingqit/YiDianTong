@@ -1,10 +1,7 @@
 package com.example.yidiantong.ui;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
-
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,13 +20,20 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
+
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.HomeworkFinishPagerAdapter;
 import com.example.yidiantong.adapter.MyArrayAdapter;
 import com.example.yidiantong.bean.HomeworkMarkedEntity;
-import com.example.yidiantong.bean.XueBaAnswerEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.FixedSpeedScroller;
 import com.example.yidiantong.util.JsonUtils;
@@ -66,6 +70,9 @@ public class HomeworkPagerFinishActivity extends AppCompatActivity implements Vi
     MyArrayAdapter myArrayAdapter = new MyArrayAdapter(this, question_types);
     private PopupWindow window;
 
+    private ActivityResultLauncher<Intent> mResultLauncher;
+
+    private String[] stuAnswer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,6 +137,24 @@ public class HomeworkPagerFinishActivity extends AppCompatActivity implements Vi
         // 顶栏目录
         tv_content = findViewById(R.id.tv_content);
         tv_content.setOnClickListener(this);
+        // 顶栏眼睛
+        findViewById(R.id.iv_eye).setOnClickListener(this);
+        // 提交页面回调
+        mResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == HomeworkPagerActivity.RESULT_OK) {
+                    Intent intent = result.getData();
+                    int index = intent.getIntExtra("currentItem", 0);
+                    if (index == -1) {
+                        finish();
+                    } else {
+                        currentItem = index;
+                        vp_homework.setCurrentItem(currentItem);
+                    }
+                }
+            }
+        });
 
         // 数据请求
         loadItems_Net();
@@ -152,9 +177,11 @@ public class HomeworkPagerFinishActivity extends AppCompatActivity implements Vi
                  * 题面信息
                  */
                 List<HomeworkMarkedEntity> list = (List<HomeworkMarkedEntity>) message.obj;
+                stuAnswer = new String[list.size()];
                 for (int i = 0; i < list.size(); ++i) {
                     // 顶部目录菜单内容
                     question_types.add((i+1) + "." + list.get(i).getTypeName());
+                    stuAnswer[i] = list.get(i).getStuAnswer();
                     // 题面类型
                 }
                 Log.d("wen", "批改信息: " + list.toString());
@@ -202,8 +229,6 @@ public class HomeworkPagerFinishActivity extends AppCompatActivity implements Vi
         });
         MyApplication.addRequest(request, TAG);
     }
-
-
 
 
     @Override
@@ -279,6 +304,16 @@ public class HomeworkPagerFinishActivity extends AppCompatActivity implements Vi
                 }
                 window.showAsDropDown(tv_content, -220, 5);
                 break;
+            case R.id.iv_eye:
+                jumpToSubmitPage();
+                break;
         }
+    }
+    //跳转至提交作业页面
+    private void jumpToSubmitPage() {
+        Intent intent = new Intent(HomeworkPagerFinishActivity.this, HomeworkFinishSubmitActivity.class);
+        intent.putExtra("title", title);
+        intent.putExtra("stuAnswer", stuAnswer);
+        mResultLauncher.launch(intent);
     }
 }

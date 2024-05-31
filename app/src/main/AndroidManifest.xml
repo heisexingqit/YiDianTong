@@ -24,8 +24,11 @@
         android:theme="@style/Theme.YiDianTong"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-
-        <activity android:name=".ui.THomeworkImageMark"
+        <activity
+            android:name=".ui.HomeworkFinishSubmitActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.THomeworkImageMark"
             android:exported="false" />
         <activity
             android:name=".ui.KnowledgeShiTiDetailActivity"

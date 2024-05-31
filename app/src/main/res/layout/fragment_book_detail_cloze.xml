@@ -124,7 +124,7 @@
                     android:id="@+id/fb_bd_sumbit"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
-                    android:background="@color/f_blue"
+                    android:background="@color/blue_btn"
                     android:text="@string/f_submit"
                     android:textColor="@color/white" />
 

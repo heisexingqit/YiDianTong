@@ -111,7 +111,6 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main_home, container, false);
-
         //获取组件
         rv_home = view.findViewById(R.id.rv_home);
 
@@ -335,10 +334,11 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
     }
 
     //刷新列表
-    private void refreshList() {
+    public void refreshList() {
         currentPage = 1;
         adapter.isRefresh = 1;
         loadItems_Net();
+        Log.e("wen0531", "refreshList: 刷新成功");
         rv_home.scrollToPosition(0);
     }
 
