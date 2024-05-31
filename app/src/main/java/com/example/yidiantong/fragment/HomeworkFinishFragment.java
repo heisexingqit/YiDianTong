@@ -457,7 +457,7 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
                         ll_xueba1.setVisibility(View.VISIBLE);
                         xuebaName1=list.get(0).getStuName();
                         xuebaAnswer1=list.get(0).getStuAnswer();
-                        tv_xuebaName1.setText(xuebaName1+"的做答");
+                        tv_xuebaName1.setText(xuebaName1+"的作答");
                         setHtmlOnWebView(wv_xuebaAnswer1, html_answer_head+xuebaAnswer1);
 
                     }
@@ -465,14 +465,14 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
                         ll_xueba2.setVisibility(View.VISIBLE);
                         xuebaName2=list.get(1).getStuName();
                         xuebaAnswer2=list.get(1).getStuAnswer();
-                        tv_xuebaName2.setText(xuebaName2+"的做答");
+                        tv_xuebaName2.setText(xuebaName2+"的作答");
                         setHtmlOnWebView(wv_xuebaAnswer2, html_answer_head+xuebaAnswer2);
                     }
                     if(list.size()>2){
                         ll_xueba3.setVisibility(View.VISIBLE);
                         xuebaName3=list.get(2).getStuName();
                         xuebaAnswer3=list.get(2).getStuAnswer();
-                        tv_xuebaName3.setText(xuebaName3+"的做答");
+                        tv_xuebaName3.setText(xuebaName3+"的作答");
                         setHtmlOnWebView(wv_xuebaAnswer3, html_answer_head+xuebaAnswer3);
                     }
                 }

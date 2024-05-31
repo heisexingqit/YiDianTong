@@ -95,6 +95,7 @@ public class BookExerciseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_book_exercise);
         questionId = getIntent().getStringExtra("questionId");
         Log.e("wen0314", "onCreate: " + questionId);
+        Log.e("wen0314", "BookExerciseActivity:提分练习 " );
 
         findViewById(R.id.iv_back).setOnClickListener(v -> finish());
         findViewById(R.id.ll_refresh).setOnClickListener(v -> loadItems_Net());
@@ -260,7 +261,14 @@ public class BookExerciseActivity extends AppCompatActivity {
                 }.getType());
                 Log.e("wen0524", "moreList: " + moreList.size());
 
-                adapter.update(moreList);
+                //封装消息，传递给主线程
+                Message message = Message.obtain();
+
+                message.obj = moreList;
+                // 发送消息给主线程
+                //标识线程
+                message.what = 101;
+                handler.sendMessage(message);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -287,7 +295,13 @@ public class BookExerciseActivity extends AppCompatActivity {
                 wv_image.loadDataWithBaseURL(null, moreList.get(pos_iamge).stuHtml, "text/html", "utf-8", null);
                 ll_image.setVisibility(View.VISIBLE);
 //                transmit.offLoading();
+            }else if(message.what==101){
+                List<BookExerciseEntity> moreList = (List<BookExerciseEntity>) message.obj;
+                adapter.update(moreList);
+                adapter.notifyDataSetChanged();
+
             }
+
         }
     };
 
