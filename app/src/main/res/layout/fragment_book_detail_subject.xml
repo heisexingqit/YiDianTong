@@ -263,9 +263,104 @@
                         android:scrollbars="none" />
 
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_xueba"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:visibility="gone"
+                    android:text="【学霸答案】" />
+                <TextView
+                    android:id="@+id/ftv_xuebaName1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:visibility="gone"
+                    android:text="  学霸答案1" />
+                <LinearLayout
+                    android:id="@+id/ll_xueba1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginEnd="10dp"
+                    tools:ignore="WebViewLayout"
+                    android:visibility="gone"
+                    android:background="@drawable/book_detail">
+
+                    <WebView
+                        android:id="@+id/fwv_xuebaAnswer1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_marginBottom="3dp"
+                        android:scrollbars="none" />
+
+
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/ftv_xuebaName2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:visibility="gone"
+                    android:text="  学霸答案2" />
+                <LinearLayout
+                    android:id="@+id/ll_xueba2"
+                    tools:ignore="WebViewLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginEnd="10dp"
+                    android:visibility="gone"
+                    android:background="@drawable/book_detail">
+
+                    <WebView
+                        android:id="@+id/fwv_xuebaAnswer2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_marginBottom="3dp"
+                        android:scrollbars="none" />
+
+
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/ftv_xuebaName3"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:text="  学霸答案3" />
+                <LinearLayout
+                    android:id="@+id/ll_xueba3"
+                    android:visibility="gone"
+                    tools:ignore="WebViewLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/book_detail">
+
+                    <WebView
+                        android:id="@+id/fwv_xuebaAnswer3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_marginBottom="3dp"
+                        android:scrollbars="none" />
+                </LinearLayout>
+
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
-
 </RelativeLayout>
