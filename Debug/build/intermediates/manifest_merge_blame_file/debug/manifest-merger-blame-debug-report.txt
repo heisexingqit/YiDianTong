@@ -4,11 +4,20 @@
 4
 5    <uses-sdk
 6        android:minSdkVersion="23"
+<<<<<<< HEAD
 6-->D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml
 7        android:targetSdkVersion="32" />
 7-->D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml
 8
 9    <application />
 9-->D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml:4:5-32
+=======
+6-->E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
+7        android:targetSdkVersion="32" />
+7-->E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
+8
+9    <application />
+9-->E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml:4:5-32
+>>>>>>> 01b5d97e9ed08866f5adc108e379135fed82b5e2
 10
 11</manifest>

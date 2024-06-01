@@ -14,12 +14,14 @@ import android.os.Handler;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -62,6 +64,10 @@ public class THomeworkImageMark extends AppCompatActivity {
     public static final String IMAGE_IS_EDIT = "image_is_edit";
     private RelativeLayout rl_submitting;
     private static final int CHUNK_SIZE = 1024 * 1024 * 2; // 2MB 分块大小
+    private RadioButton btn_border1;
+    private RadioButton btn_border2;
+    private RadioButton btn_border3;
+    private RadioButton btn_border4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +118,36 @@ public class THomeworkImageMark extends AppCompatActivity {
         RadioButton blueButton = findViewById(R.id.btn_color_blue);
         RadioButton greenButton = findViewById(R.id.btn_color_green);
         RadioButton blackButton = findViewById(R.id.btn_color_black);
+        RelativeLayout rl_main = findViewById(R.id.rl_ColorAndStroke);
+        LinearLayout ll_ColorAndStroke = findViewById(R.id.ll_ColorAndStroke);
+        btn_border1 = findViewById(R.id.btn_border1);
+        btn_border2 = findViewById(R.id.btn_border2);
+        btn_border3 = findViewById(R.id.btn_border3);
+        btn_border4 = findViewById(R.id.btn_border4);
+        frameLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // 获取LinearLayout的位置信息
+                int[] linearLayoutLocation = new int[2];
+                ll_ColorAndStroke.getLocationOnScreen(linearLayoutLocation);
+
+                // 获取LinearLayout的宽度和高度
+                int linearLayoutWidth = ll_ColorAndStroke.getWidth();
+                int linearLayoutHeight = ll_ColorAndStroke.getHeight();
+
+                // 判断触摸点是否在LinearLayout之外
+                if (event.getRawX() < linearLayoutLocation[0] ||
+                        event.getRawX() > (linearLayoutLocation[0] + linearLayoutWidth) ||
+                        event.getRawY() < linearLayoutLocation[1] ||
+                        event.getRawY() > (linearLayoutLocation[1] + linearLayoutHeight)) {
+                    // 触摸点在LinearLayout之外，隐藏FrameLayout
+                    frameLayout.setVisibility(View.GONE);
+                    return true; // 消费这个事件，防止其他触摸事件被触发
+                } else {
+                    return false; // 不消费事件，让LinearLayout可以处理触摸
+                }
+            }
+        });
         //绘画按钮
         toggleDrawingButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -211,10 +247,7 @@ public class THomeworkImageMark extends AppCompatActivity {
         radioGroupBorder.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-                RadioButton btn_border1 = findViewById(R.id.btn_border1);
-                RadioButton btn_border2 = findViewById(R.id.btn_border2);
-                RadioButton btn_border3 = findViewById(R.id.btn_border3);
-                RadioButton btn_border4 = findViewById(R.id.btn_border4);
+
                 switch (checkedId) {
                     case R.id.btn_border1:
                         customDraw.setPenStrokeWidth(1); // 设置画笔粗细为1
@@ -253,6 +286,7 @@ public class THomeworkImageMark extends AppCompatActivity {
         radioGroupColor.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+
                 int color = 0;
                 // 设置所有按钮为未选中状态
                 switch (checkedId) {
@@ -448,6 +482,7 @@ public class THomeworkImageMark extends AppCompatActivity {
 //
 //        return ImageUtils.Bitmap2StrByBase64(this, file);
 //    }
+
 
 
 }

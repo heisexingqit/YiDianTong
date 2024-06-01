@@ -1,17 +1,22 @@
 package com.example.yidiantong.adapter;
 
 import android.content.Context;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +35,8 @@ import java.util.List;
 
 public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private LinearLayout ll_timu;
+
     private List<BookExerciseEntity> itemList;
     private Context mContext;
     private LayoutInflater layoutInflater;
@@ -38,6 +45,8 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
         this.layoutInflater = LayoutInflater.from(context);
         this.itemList = itemList;
         mContext = context;
+        // 获取屏幕尺寸
+
     }
     private ExerciseInterface myInterface;
     public void setOnclickListener(ExerciseInterface e){
@@ -46,7 +55,6 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
 
     public void update(List<BookExerciseEntity> itemList) {
         this.itemList = itemList;
-        notifyDataSetChanged();
     }
 
     @Override
@@ -84,6 +92,7 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
                 v = layoutInflater.inflate(R.layout.item_book_exercise_cloze, parent, false);
                 break;
         }
+
         return new MyViewHolder(v);
     }
 
@@ -119,6 +128,7 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
         private WebView wv_stu_answer; // 主观题 图片展示
         private ClickableImageView iv_camera, iv_gallery; // 主观题图片按钮
         private EditText et_stu_answer;
+        private RelativeLayout rl_submitting;
 
 
         public MyViewHolder(@NonNull View itemView) {
@@ -193,7 +203,12 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
             iv_camera = itemView.findViewById(R.id.iv_camera);
             iv_gallery = itemView.findViewById(R.id.iv_gallery);
             et_stu_answer = itemView.findViewById(R.id.et_stu_answer);
+            //加载页面
+            rl_submitting = itemView.findViewById(R.id.rl_submitting);
+            ll_timu = itemView.findViewById(R.id.ll_timu);
+
         }
+
 
         public void update(int pos, RecyclerView.ViewHolder holder) {
             // 初始化UI
@@ -546,6 +561,7 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
                             }
                             // 学生作答显示
                             tv_stu_answer.setText("【你的答案】" + item.stuAnswer);
+
                             break;
 
 
@@ -562,8 +578,35 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
                             break;
 
                     }
-                    btn_submit.setVisibility(View.GONE);
-                    ll_answer_analysis.setVisibility(View.VISIBLE); // 显示答案解析
+                    DisplayMetrics displayMetrics = mContext.getResources().getDisplayMetrics();
+                    int llTimuWidth = displayMetrics.widthPixels;
+                    int llTimuHeight = displayMetrics.heightPixels;
+
+//                    int llTimuWidth = ll_timu.getMeasuredWidth();
+//                    int llTimuHeight = ll_timu.getMeasuredHeight();
+                    // 这里再进行高度相关的操作
+                    // 设置rl_submitting的大小与ll_timu相同
+                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                            llTimuWidth, // 设置宽度与ll_timu相同
+                            llTimuHeight // 设置高度与ll_timu相同
+                    );
+
+//                     如果需要考虑内边距或外边距，可以通过layoutParams加上相应的Margin或Padding
+//
+//                     应用新的布局参数到rl_submitting
+                    rl_submitting.setLayoutParams(layoutParams);
+                    rl_submitting.setVisibility(View.VISIBLE);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            // 隐藏加载页面
+                            rl_submitting.setVisibility(View.GONE);
+
+                            btn_submit.setVisibility(View.GONE);
+                            ll_answer_analysis.setVisibility(View.VISIBLE); // 显示答案解析
+                        }
+                    }, 1000); // 设置延迟时间
+
                 }
             });
 
@@ -711,9 +754,12 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
                 return 0; // 全错误
             }
         }
+
+
     }
     public interface ExerciseInterface {
         void openDrawCamera(int pos, WebView wb, LinearLayout ll);
         void openDrawGallery(int pos, WebView wb, LinearLayout ll);
     }
+
 }

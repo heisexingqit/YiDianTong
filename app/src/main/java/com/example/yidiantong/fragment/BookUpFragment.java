@@ -92,6 +92,7 @@ public class BookUpFragment extends Fragment {
                              Bundle savedInstanceState) {
         preferences = getActivity().getSharedPreferences("shiti", Context.MODE_PRIVATE);
         View view = inflater.inflate(R.layout.fragment_book_up, container, false);
+        Log.e("wen","BookUpFragment:巩固提升");
         //顶栏返回按钮
         view.findViewById(R.id.fiv_back).setOnClickListener(v -> {
             getActivity().finish();
