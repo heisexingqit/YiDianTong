@@ -474,7 +474,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="7dp"
                         android:layout_weight="1"
-                        android:background="@drawable/t_homework_add_select"
+                        android:background="@drawable/t_homework_add_unselect"
                         android:gravity="center"
                         android:paddingStart="2dp"
                         android:paddingTop="6dp"
@@ -482,7 +482,7 @@
                         android:paddingBottom="6dp"
                         android:singleLine="true"
                         android:text="全部"
-                        android:textColor="@color/red"
+                        android:textColor="@color/default_gray"
                         android:textSize="13sp" />
 
                     <TextView
@@ -525,7 +525,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="7dp"
                         android:layout_weight="1"
-                        android:background="@drawable/t_homework_add_unselect"
+                        android:background="@drawable/t_homework_add_select"
                         android:gravity="center"
                         android:paddingStart="2dp"
                         android:paddingTop="6dp"
@@ -533,7 +533,7 @@
                         android:paddingBottom="6dp"
                         android:singleLine="true"
                         android:text="资源"
-                        android:textColor="@color/default_gray"
+                        android:textColor="@color/red"
                         android:textSize="13sp" />
 
                 </LinearLayout>
@@ -558,9 +558,9 @@
 
 
     <LinearLayout
-        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
         android:gravity="bottom|center_horizontal">
 
         <TextView

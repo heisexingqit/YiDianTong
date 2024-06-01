@@ -234,11 +234,16 @@ public class BookDetailJudgeFragment extends Fragment implements View.OnClickLis
         ftv_bd_stuans = view.findViewById(R.id.ftv_bd_stuans);
         fwv_bd_analysis1 = view.findViewById(R.id.fwv_bd_analysis);
         fiv_bd_tf = view.findViewById(R.id.fiv_bd_tf);
-
-        String html_analysis = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiAnalysis() + "</body>";
-        String html1 = html_analysis.replace("#","%23");
-        fwv_bd_analysis1.loadDataWithBaseURL(null, html1, "text/html", "utf-8", null);
-
+        TextView tv_shiti_analysis = view.findViewById(R.id.tv_shiti_analysis);
+        LinearLayout ll_shiti_analysis = view.findViewById(R.id.ll_shiti_analysis);
+        if(bookrecyclerEntity.getShitiAnalysis() == null || bookrecyclerEntity.getShitiAnalysis().length() == 0){
+            tv_shiti_analysis.setVisibility(View.GONE);
+            ll_shiti_analysis.setVisibility(View.GONE);
+        }else {
+            String html_analysis = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiAnalysis() + "</body>";
+            String html1 = html_analysis.replace("#", "%23");
+            fwv_bd_analysis1.loadDataWithBaseURL(null, html1, "text/html", "utf-8", null);
+        }
         if (!exerciseType){  // 错题本模式,需要获取切换模式,标记掌握,巩固提高组件,并设置监听
             // 提分练习
             iv_exercise_scores = getActivity().findViewById(R.id.iv_exercise_scores);

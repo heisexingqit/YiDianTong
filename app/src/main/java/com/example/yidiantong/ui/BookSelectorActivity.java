@@ -159,8 +159,21 @@ public class BookSelectorActivity extends AppCompatActivity implements View.OnCl
         // 今天时间
         // 获取当前时间
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        tv_end.setText(sdf.format(new Date()));
-//        getListData();
+        // 获取当前日期
+        Date currentDate = new Date();
+
+        // 使用Calendar类来获取前一个月的日期
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.MONTH, -1); // 减去一个月
+        Date previousMonthDate = calendar.getTime();
+
+        // 设置tv_end为当前日期
+        tv_end.setText(sdf.format(currentDate));
+
+        // 设置tv_start为前一个月的日期
+        tv_start.setText(sdf.format(previousMonthDate));
+        // getListData();
 
         RadioButton defaultRadioButton = (RadioButton) rg_error_times.getChildAt(0); // 假设默认选中第一个
         defaultRadioButton.setChecked(true);

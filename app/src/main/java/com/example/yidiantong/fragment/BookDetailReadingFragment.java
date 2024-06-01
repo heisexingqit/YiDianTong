@@ -292,8 +292,21 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
         fll_bd_analysis = view.findViewById(R.id.fll_bd_analysis);
         fwv_wb_answer = view.findViewById(R.id.fwv_wb_answer);
         ftv_bd_stuans = view.findViewById(R.id.ftv_bd_stuans);
+
+        WebView fwv_bd_analysis = view.findViewById(R.id.fwv_bd_analysis);
+        TextView tv_shiti_analysis = view.findViewById(R.id.tv_shiti_analysis);
+        LinearLayout ll_shiti_analysis = view.findViewById(R.id.ll_shiti_analysis);
+        if(bookrecyclerEntity.getShitiAnalysis() == null || bookrecyclerEntity.getShitiAnalysis().length() == 0){
+            tv_shiti_analysis.setVisibility(View.GONE);
+            ll_shiti_analysis.setVisibility(View.GONE);
+        }else {
+            String html_analysis = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiAnalysis() + "</body>";
+            fwv_bd_analysis.loadDataWithBaseURL(null, html_analysis, "text/html", "utf-8", null);
+        }
+
         String html_analysis = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiAnswer() + "</body>";
         fwv_wb_answer.loadDataWithBaseURL(null, html_analysis, "text/html", "utf-8", null);
+
         fiv_bd_tf = view.findViewById(R.id.fiv_bd_tf);
 
 

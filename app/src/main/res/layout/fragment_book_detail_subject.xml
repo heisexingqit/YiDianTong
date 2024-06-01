@@ -153,7 +153,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/book_detail"
-                    android:visibility="gone">
+                    android:visibility="gone"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="5dp">
 
                     <WebView
                         android:id="@+id/wv_stu_answer"
@@ -238,12 +241,14 @@
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/tv_shiti_analysis"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="3dp"
                     android:text="@string/f_analysis" />
 
                 <LinearLayout
+                    android:id="@+id/ll_shiti_analysis"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginStart="10dp"

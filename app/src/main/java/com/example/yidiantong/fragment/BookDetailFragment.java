@@ -134,6 +134,8 @@ public class BookDetailFragment extends Fragment {
                 LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
                 assert lm != null;
                 lastVisibleItem = lm.findLastVisibleItemPosition();
+//                Log.e("wen0601", "onScrolled: 位置 " + lastVisibleItem + "/" + adapter.getItemCount());
+
             }
         });
 
@@ -188,7 +190,6 @@ public class BookDetailFragment extends Fragment {
             intent.putExtra("questionId", questionId);
             getActivity().startActivity(intent);
         });
-
 
         // 筛选器部分
         // 提交页面回调
@@ -264,7 +265,7 @@ public class BookDetailFragment extends Fragment {
                 "&currentPage=" + currentPage +
                 "&sourceId=" + sourceId +
                 "&errorNum=" + errorNum;
-        Log.e("wen0523", "loadItems_Net: " + mRequestUrl);
+        Log.e("wen0621", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 String itemString = "";

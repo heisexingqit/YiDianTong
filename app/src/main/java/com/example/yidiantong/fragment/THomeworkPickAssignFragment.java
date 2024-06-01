@@ -315,12 +315,12 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
                     String id = personMap.get(key);
                     String name = key;
                     if (result.length() > 0) {
-                        result.append(", "); // 在每个值之前添加逗号和空格
+                        result.append(","); // 在每个值之前添加逗号和空格
                     }
                     result.append(id);
 
                     if (result2.length() > 0) {
-                        result2.append(", ");
+                        result2.append(",");
                     }
                     result2.append(name);
 
