@@ -87,7 +87,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
     private String zhishidian = "";
     private String zhishidianData = "知识点列表未获取到或者为空";
     private String zhishidianId = "";
-    private String type = "0";
+    private String type = "resource";
     private String typeSub = "";
     private String shareTag = "";
 
@@ -228,7 +228,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
 
         // 添加子页面Fragment
         // 默认参数
-        this.type = "0";
+        this.type = "resource";
         shareTag = "99";
         addFragment = new TLearnPlanPickAddFragment(xueduan, xueduanId, xueke, xuekeId, banben, banbenId, jiaocai, jiaocaiId, zhishidian, zhishidianId, this.type, typeSub, shareTag);
         changeFragment = new TLearnPlanPickChangeFragment();

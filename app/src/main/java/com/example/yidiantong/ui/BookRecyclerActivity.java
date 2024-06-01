@@ -47,7 +47,6 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
     private int pageCount = 0;
     private boolean exerciseType = false;  //是否是巩固提升
 
-
     // 接口参数
     String sourceId;  //单元ID
     String userName;  //用户名
@@ -55,7 +54,6 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
     String questionId; //题目ID
     private String pos; //题目位置
     private String num;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +81,6 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
         currentItem = Integer.valueOf(pos);
         fvp_book_recycle.setCurrentItem(currentItem);
 
-
         loadItems_Net(currentItem);
 
         //ViewPager滑动变速
@@ -96,7 +93,6 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
             scroller.setmDuration(400);
         } catch (Exception e) {
         }
-
     }
 
     // 回到上一题
@@ -202,7 +198,7 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
     // 获取错题详情信息
     private void loadItems_Net(int pos) {
         String mRequestUrl = Constant.API + Constant.ERROR_QUE_ANSWER_QUESTION + "?sourceId=" + sourceId +"&userName=" +userName +"&subjectId=" + subjectId +"&currentPage=" + pos + "&questionId=" + questionId;
-        Log.e("wen0223", "详细信息单题请求" + mRequestUrl);
+        Log.e("wen0601", "详细信息单题请求" + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);

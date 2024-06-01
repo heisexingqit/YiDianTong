@@ -650,8 +650,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
                     android:background="@drawable/book_detail"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
+                    android:padding="5dp"
                     android:text="A"
                     android:textSize="16sp" />
 
@@ -682,6 +681,32 @@
                             android:scrollbars="none"
                             tools:ignore="WebViewLayout" />
                     </LinearLayout>
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_shiti_analysis"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="@string/f_analysis" />
+
+                <LinearLayout
+                    android:id="@+id/ll_shiti_analysis"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginTop="3dp"
+                    android:background="@drawable/book_detail">
+
+                    <WebView
+                        android:id="@+id/fwv_bd_analysis"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginRight="3dp"
+                        android:scrollbars="none"
+                        tools:ignore="WebViewLayout" />
 
                 </LinearLayout>
             </LinearLayout>

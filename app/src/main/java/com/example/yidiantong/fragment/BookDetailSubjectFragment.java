@@ -167,7 +167,6 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         preferences = getActivity().getSharedPreferences("book", Context.MODE_PRIVATE);
         //取出携带的参数
         Bundle arg = getArguments();
@@ -188,6 +187,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         iv_gallery.setOnClickListener(this);
         // 学生输入
         et_student_answer = view.findViewById(R.id.et_stu_answer);
+
         et_student_answer.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -201,13 +201,13 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                 // 实时获取输入框内容，可以在这里进行相应处理
                 // 例如，可以将输入内容显示在 Logcat 中
                 exercise_stu_answer = inputText;
+                Log.e("wen0601", "onTextChanged: " + exercise_stu_answer);
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
 
             }
-
         });
         // 标准答案
         wv_shiti_answer = view.findViewById(R.id.wv_shiti_answer);
@@ -279,19 +279,28 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         ftv_bd_answer = view.findViewById(R.id.ftv_bd_answer);
 
         // html清洗
-        cleanShitiAnswer = Jsoup.clean(bookrecyclerEntity.getShitiAnswer(), Whitelist.none()).trim().replace("&nbsp;", "");
+//        cleanShitiAnswer = Jsoup.clean(bookrecyclerEntity.getShitiAnswer(), Whitelist.none()).trim().replace("&nbsp;", "");
+        String html_answer = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiAnswer() + "</body>";
+        String html0 = html_answer.replace("#", "%23");
 
         ftv_bd_answer.setText("【参考答案】 ");
-        wv_shiti_answer.loadDataWithBaseURL(null, bookrecyclerEntity.getShitiAnswer(), "text/html", "utf-8", null);
+        wv_shiti_answer.loadDataWithBaseURL(null, html0, "text/html", "utf-8", null);
 
 
         ftv_bd_stuans = view.findViewById(R.id.ftv_bd_stuans);
         fwv_bd_analysis1 = view.findViewById(R.id.fwv_bd_analysis);
         fiv_bd_tf = view.findViewById(R.id.fiv_bd_tf);
+        TextView tv_shiti_analysis = view.findViewById(R.id.tv_shiti_analysis);
+        LinearLayout ll_shiti_analysis = view.findViewById(R.id.ll_shiti_analysis);
+        if(bookrecyclerEntity.getShitiAnalysis() == null || bookrecyclerEntity.getShitiAnalysis().length() == 0){
+            tv_shiti_analysis.setVisibility(View.GONE);
+            ll_shiti_analysis.setVisibility(View.GONE);
+        }else{
+            String html_analysis = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiAnalysis() + "</body>";
+            String html1 = html_analysis.replace("#", "%23");
+            fwv_bd_analysis1.loadDataWithBaseURL(null, html1, "text/html", "utf-8", null);
+        }
 
-        String html_analysis = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiAnalysis() + "</body>";
-        String html1 = html_analysis.replace("#", "%23");
-        fwv_bd_analysis1.loadDataWithBaseURL(null, html1, "text/html", "utf-8", null);
 
 //        stuans = bookrecyclerEntity.getStuAnswer();
         cleanStuAnswer = bookrecyclerEntity.getStuScore();
@@ -321,7 +330,6 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                 fll_bd_analysis.setVisibility(View.GONE);
                 fll_bd_answer.setVisibility(View.VISIBLE);
                 mode = 0;
-
             } else {
                 fll_bd_answer.setVisibility(View.GONE);
                 fll_bd_analysis.setVisibility(View.VISIBLE);
@@ -494,19 +502,20 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                     //对话框弹出
                     builder.show();
                 } else {
-                    fll_bd_answer.setVisibility(View.GONE);
+                    et_student_answer.clearFocus();
+                    fb_bd_sumbit.setVisibility(View.GONE);
                     fll_bd_analysis.setVisibility(View.VISIBLE);
-                    ftv_bd_stuans.setText("【你的作答】");
-                    String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getStuAnswer() + "</body>";
-                    String html = html_content.replace("#", "%23");
-                    wv_stu_answer.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
+//                    ftv_bd_stuans.setText("【你的作答】");
+//                    String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getStuAnswer() + "</body>";
+//                    String html = html_content.replace("#", "%23");
+//                    wv_stu_answer.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
 
                     // 判断答案是半对还是全对
-                    if (Float.parseFloat(cleanStuAnswer) < 0.3) {
-                        fiv_bd_tf.setImageResource(R.drawable.answrong);
-                    } else {
-                        fiv_bd_tf.setImageResource(R.drawable.anshalf);
-                    }
+//                    if (Float.parseFloat(cleanStuAnswer) < 0.3) {
+//                        fiv_bd_tf.setImageResource(R.drawable.answrong);
+//                    } else {
+//                        fiv_bd_tf.setImageResource(R.drawable.anshalf);
+//                    }
                 }
                 break;
             case R.id.fiv_bd_mark:
@@ -929,4 +938,9 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         }
     };
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        et_student_answer.setText("");
+    }
 }

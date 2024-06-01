@@ -88,9 +88,9 @@ public class BooksRecyclerAdapter extends FragmentStatePagerAdapter {
                 case "109":
                     fragment = BookDetailReadingFragment.newInstance(itemList1.get(position),userName,subjectId,courseName,exerciseType);
                     break;
-                case "104":
-                    fragment = BookDetailClozeFragment.newInstance(itemList1.get(position),userName,subjectId,courseName,exerciseType);
-                    break;
+//                case "104":
+//                    fragment = BookDetailClozeFragment.newInstance(itemList1.get(position),userName,subjectId,courseName,exerciseType);
+//                    break;
                 default:
                     fragment = BookDetailSubjectFragment.newInstance(itemList1.get(position),userName,subjectId,courseName,exerciseType);
                     break;

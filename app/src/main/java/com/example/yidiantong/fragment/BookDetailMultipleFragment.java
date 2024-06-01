@@ -199,8 +199,15 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
         ftv_bd_answer.setText("【参考答案】"+ bookrecyclerEntity.getShitiAnswer());
         ftv_bd_stuans = view.findViewById(R.id.ftv_bd_stuans);
         fwv_bd_analysis1 = view.findViewById(R.id.fwv_bd_analysis);
-        String html_analysis = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiAnalysis() + "</body>";
-        fwv_bd_analysis1.loadDataWithBaseURL(null, html_analysis, "text/html", "utf-8", null);
+        TextView tv_shiti_analysis = view.findViewById(R.id.tv_shiti_analysis);
+        LinearLayout ll_shiti_analysis = view.findViewById(R.id.ll_shiti_analysis);
+        if(bookrecyclerEntity.getShitiAnalysis() == null || bookrecyclerEntity.getShitiAnalysis().length() == 0){
+            tv_shiti_analysis.setVisibility(View.GONE);
+            ll_shiti_analysis.setVisibility(View.GONE);
+        }else {
+            String html_analysis = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiAnalysis() + "</body>";
+            fwv_bd_analysis1.loadDataWithBaseURL(null, html_analysis, "text/html", "utf-8", null);
+        }
         fiv_bd_tf = view.findViewById(R.id.fiv_bd_tf);
         // 题目数量
         int positionLen = String.valueOf(bookrecyclerEntity.getCurrentPage()).length();

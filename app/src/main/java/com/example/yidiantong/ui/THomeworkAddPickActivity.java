@@ -35,6 +35,7 @@ import com.example.yidiantong.fragment.THomeworkPickAssignFragment;
 import com.example.yidiantong.fragment.THomeworkPickChangeFragment;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
+import com.example.yidiantong.util.LogUtils;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
 import com.example.yidiantong.util.THomeworkAddInterface;
@@ -485,14 +486,14 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag) {
-        Log.e(TAG, "start: ==================================");
-        Log.e(TAG, "ketang: " + ketang);
-        Log.e(TAG, "ketangId: " + ketangId);
-        Log.e(TAG, "clas: " + clas);
-        Log.e(TAG, "classId: " + classId);
-        Log.e(TAG, "stuIds: " + stuIds);
-        Log.e(TAG, "stuNames: " + stuNames);
-        Log.e(TAG, "end: ==================================");
+        Log.e("wen0601", "start: ==================================");
+        Log.e("wen0601", "ketang: " + ketang);
+        Log.e("wen0601", "ketangId: " + ketangId);
+        Log.e("wen0601", "clas: " + clas);
+        Log.e("wen0601", "classId: " + classId);
+        Log.e("wen0601", "stuIds: " + stuIds);
+        Log.e("wen0601", "stuNames: " + stuNames);
+        Log.e("wen0601", "end: ==================================");
         List<String> ketangNameList = new ArrayList<>(Arrays.asList(ketang.split(", ")));
         List<String> ketangIdList = new ArrayList<>(Arrays.asList(ketangId.split(", ")));
         List<String> clasList = new ArrayList<>(Arrays.asList(clas.split(", ")));
@@ -560,7 +561,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                         "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classOrGroupId=" + classId +
                         "&classOrGroupName=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
                         "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=" + jsonString;
-
+//                LogUtils.writeLogToFile("wen0601.txt", mRequestUrl, true, this);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
