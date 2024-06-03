@@ -93,7 +93,7 @@
             android:id="@+id/fvp_book_recycle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/ll_bottom_block"/>
+            android:layout_above="@+id/ll_bottom_block" />
 
         <LinearLayout
             android:id="@+id/ll_bottom_block"
