@@ -26,14 +26,18 @@ import android.text.TextWatcher;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +49,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -53,6 +58,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
+import com.example.yidiantong.adapter.ImagePagerAdapter;
 import com.example.yidiantong.bean.BookRecyclerEntity;
 import com.example.yidiantong.bean.XueBaAnswerEntity;
 import com.example.yidiantong.ui.BookExerciseActivity;
@@ -73,12 +79,16 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.safety.Whitelist;
+import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -139,6 +149,8 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
     private WebView wv_stu_answer1;
     private ImageView iv_gallery;
     private ImageView iv_camera;
+    private TextView tv_stu_answer;
+    private TextWatcher myWatcher;
 
     //学霸答案
     private TextView tv_xueba;
@@ -172,6 +184,28 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
     private static final int REQUEST_CODE_CAMERA = 2;
     private String exercise_stu_answer = "";
     private String exercise_stu_html = "";
+    //答题区域HTML头
+    private String html_head = "<head>\n" +
+            "    <style>\n" +
+            "        body {\n" +
+            "            color: rgb(117, 117, 117);\n" +
+            "            word-wrap: break-word;\n" +
+            "            font-size: 14px;" +
+            "        }\n" +
+            "    </style>\n" +
+            "    <script>\n" +
+            "        function bigimage(x) {\n" +
+            "            myInterface.bigPic()\n" +
+            "        }\n" +
+            "    </script>\n" +
+            "</head>\n" +
+            "\n" +
+            "<body onclick=\"bigimage(this)\">\n";
+    private List<String> url_list = new ArrayList<>();
+
+    private ImagePagerAdapter adapter;
+    private PopupWindow window;
+    private View contentView = null;
 
     //绑定Activity的接口类，实现调用
     @Override
@@ -184,9 +218,11 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        preferences = getActivity().getSharedPreferences("book", Context.MODE_PRIVATE);
+
+//        preferences = getActivity().getSharedPreferences("book", Context.MODE_PRIVATE);
         //取出携带的参数
         Bundle arg = getArguments();
+//        Log.e("wen0603", "onCreateView: 新建了1" + exercise_stu_answer);
         bookrecyclerEntity = (BookRecyclerEntity) arg.getSerializable("bookrecyclerEntity");
         userName = arg.getString("userName");
         subjectId = arg.getString("subjectId");
@@ -195,17 +231,40 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
 
         //获取view
         View view = inflater.inflate(R.layout.fragment_book_detail_subject, container, false);
+        tv_stu_answer = view.findViewById(R.id.tv_stu_answer);
 
         ll_input_image = view.findViewById(R.id.ll_input_image);
+        ll_input_image.setOnClickListener(this);
         wv_stu_answer = view.findViewById(R.id.wv_stu_answer);
+        WebSettings webSettings = wv_stu_answer.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        wv_stu_answer.addJavascriptInterface(
+                new Object() {
+                    @JavascriptInterface
+                    @SuppressLint("JavascriptInterface")
+                    public void bigPic() {
+                        /**
+                         * Js注册的方法无法修改主UI，需要Handler
+                         */
+                        Message message = Message.obtain();
+                        // 发送消息给主线程
+                        //标识线程
+                        message.what = 102;
+                        handler.sendMessage(message);
+                    }
+                }
+                , "myInterface");
         iv_camera = view.findViewById(R.id.iv_camera);
         iv_camera.setOnClickListener(this);
         iv_gallery = view.findViewById(R.id.iv_gallery);
         iv_gallery.setOnClickListener(this);
         // 学生输入
         et_student_answer = view.findViewById(R.id.et_stu_answer);
+//        Log.e("wen0603", "onCreateView: 新建了2" + et_student_answer.getText().toString());
 
-        et_student_answer.addTextChangedListener(new TextWatcher() {
+
+        // 手动清空 EditText 的内容
+        myWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 // 在文本内容发生改变之前调用
@@ -218,14 +277,15 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                 // 实时获取输入框内容，可以在这里进行相应处理
                 // 例如，可以将输入内容显示在 Logcat 中
                 exercise_stu_answer = inputText;
-                Log.e("wen0601", "onTextChanged: " + exercise_stu_answer);
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
 
             }
-        });
+        };
+        et_student_answer.addTextChangedListener(myWatcher);
+
         // 标准答案
         wv_shiti_answer = view.findViewById(R.id.wv_shiti_answer);
 
@@ -343,7 +403,6 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         cleanStuAnswer = bookrecyclerEntity.getStuScore();
 
         if (!exerciseType) {
-            exercise_stu_answer = "";
             exercise_stu_html = "";
             // 提分练习
             iv_exercise_scores = getActivity().findViewById(R.id.iv_exercise_scores);
@@ -379,7 +438,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                     // 答案显示
                     html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getStuAnswer() + "</body>";
                     html = html_content.replace("#", "%23");
-                    wv_stu_answer1.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
+                    wv_stu_answer.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
                     fiv_bd_tf.setVisibility(View.VISIBLE); // 显示对错图标
                 }
                 mode_stuans();
@@ -484,30 +543,31 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                 }
             }
         });
-
+        // 提前创建Adapter
+        adapter = new ImagePagerAdapter(getActivity(), url_list);
         return view;
     }
 
-    private void showLoadAnswer() {
-        // 显示学生本地保存的作答
-        String arrayString = preferences.getString("stuLoadAnswer", null);
-        if (arrayString != null) {
-            String[] stuLoadAnswer = arrayString.split(",");
-            String loadAnswer = stuLoadAnswer[Integer.parseInt(currentpage) - 1];
-            System.out.println("loadAnswer:" + loadAnswer);
-            if (!loadAnswer.equals("null")) {
-                fll_bd_answer.setVisibility(View.GONE);
-                fll_bd_analysis.setVisibility(View.VISIBLE);
-                ftv_bd_stuans.setText("【你的作答】" + loadAnswer);
-                // 判断答案是否相等
-                if (loadAnswer.equals(bookrecyclerEntity.getShitiAnswer())) {
-                    fiv_bd_tf.setImageResource(R.drawable.ansright);
-                } else {
-                    fiv_bd_tf.setImageResource(R.drawable.answrong);
-                }
-            }
-        }
-    }
+//    private void showLoadAnswer() {
+//        // 显示学生本地保存的作答
+//        String arrayString = preferences.getString("stuLoadAnswer", null);
+//        if (arrayString != null) {
+//            String[] stuLoadAnswer = arrayString.split(",");
+//            String loadAnswer = stuLoadAnswer[Integer.parseInt(currentpage) - 1];
+//            System.out.println("loadAnswer:" + loadAnswer);
+//            if (!loadAnswer.equals("null")) {
+//                fll_bd_answer.setVisibility(View.GONE);
+//                fll_bd_analysis.setVisibility(View.VISIBLE);
+//                ftv_bd_stuans.setText("【你的作答】" + loadAnswer);
+//                // 判断答案是否相等
+//                if (loadAnswer.equals(bookrecyclerEntity.getShitiAnswer())) {
+//                    fiv_bd_tf.setImageResource(R.drawable.ansright);
+//                } else {
+//                    fiv_bd_tf.setImageResource(R.drawable.answrong);
+//                }
+//            }
+//        }
+//    }
 
     @Override
     public void onClick(View view) {
@@ -515,9 +575,13 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         switch (view.getId()) {
             case R.id.iv_page_last:
                 pageing.pageLast(currentpage, allpage);
+                et_student_answer.setText("");
+
                 return;
             case R.id.iv_page_next:
                 pageing.pageNext(currentpage, allpage);
+                et_student_answer.setText("");
+
                 return;
             case R.id.fb_bd_sumbit:
                 if (exercise_stu_answer.length() == 0 && exercise_stu_html.length() == 0) {
@@ -539,9 +603,11 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                     //对话框弹出
                     builder.show();
                 } else {
+                    tv_stu_answer.setText("【你的作答】");
+                    iv_camera.setVisibility(View.GONE);
+                    iv_gallery.setVisibility(View.GONE);
                     show_xueba=true;
                     fll_bd_answer.setVisibility(View.GONE);
-
                     et_student_answer.clearFocus();
                     fb_bd_sumbit.setVisibility(View.GONE);
 
@@ -618,7 +684,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                             mode = 0;
                             dialog_model.dismiss();
                             exercise_stu_answer = "";
-                            showLoadAnswer();
+//                            showLoadAnswer();
                         } else {
                             fll_bd_answer.setVisibility(View.GONE);
                             fll_bd_analysis.setVisibility(View.VISIBLE);
@@ -644,10 +710,109 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                 dialog_model.show();
                 break;
             case R.id.iv_camera:
+                et_student_answer.clearFocus();
                 permissionOpenCamera();
                 break;
             case R.id.iv_gallery:
+                et_student_answer.clearFocus();
                 permissionOpenGallery();
+                break;
+            case R.id.ll_input_image:
+                Log.e("wen0603", "onClick: ");
+
+                url_list.clear();
+                Document document = Jsoup.parse(exercise_stu_html);
+                Elements imgElements = document.getElementsByTag("img");
+
+                for (Element imgElement : imgElements) {
+                    String src = imgElement.attr("src");
+                    url_list.add(src);
+                }
+                if (contentView == null) {
+                    if (url_list.size() == 0) return;
+                    contentView = LayoutInflater.from(getActivity()).inflate(R.layout.picture_menu, null, false);
+                    ViewPager vp_pic = contentView.findViewById(R.id.vp_picture);
+//                    LinearLayout ll_selector = contentView.findViewById(R.id.ll_selector);
+                    //  回显方法
+                    //  回显方法
+                    //  回显方法
+//                    contentView.findViewById(R.id.btn_save).setOnClickListener(v -> {
+//                        Log.d(TAG, "onClick: ");
+//                        html_answer = html_answer.replace(originUrl, identifyUrl);
+//                        wv_answer.loadDataWithBaseURL(null, getHtmlAnswer(), "text/html", "utf-8", null);
+//
+//                        transmit.setStuAnswer(stuAnswerEntity.getOrder(), html_answer);
+//                        window.dismiss();
+//                    });
+//                    contentView.findViewById(R.id.btn_cancel).setOnClickListener(v -> {
+//                        window.dismiss();
+//                    });
+                    vp_pic.setAdapter(adapter);
+
+                    //顶部标签
+                    tv = contentView.findViewById(R.id.tv_picNum);
+                    tv.setText("1/" + url_list.size());
+                    window = new PopupWindow(contentView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
+                    window.setTouchable(true);
+
+                    adapter.setClickListener(new ImagePagerAdapter.MyItemClickListener() {
+                        @Override
+                        public void onItemClick() {
+                            vp_pic.setCurrentItem(0);
+                            window.dismiss();
+                        }
+// // 手写公式识别-弃
+//                        @Override
+//                        public void onLongItemClick(int pos) {
+//                            Toast.makeText(getActivity(), "长按", Toast.LENGTH_SHORT).show();
+//                            if (contentView2 == null) {
+//                                contentView2 = LayoutInflater.from(getActivity()).inflate(R.layout.menu_pic_identify, null, false);
+//                                //绑定点击事件
+//                                contentView2.findViewById(R.id.tv_all).setOnClickListener(v -> {
+//                                    identifyUrl = picIdentify(url_list.get(pos));
+//                                    originUrl = url_list.get(pos);
+//                                    url_list.set(pos, identifyUrl);
+//                                    adapter.notifyDataSetChanged();
+//                                    ll_selector.setVisibility(View.VISIBLE);
+//
+//                                    window2.dismiss();
+//                                });
+//
+//                                window2 = new PopupWindow(contentView2, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
+//                                window2.setTouchable(true);
+//                            }
+//                            window2.showAtLocation(contentView2, Gravity.CENTER, 0, 0);
+//
+//                        }
+                    });
+
+                    vp_pic.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+                        @Override
+                        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                        }
+
+                        @Override
+                        public void onPageSelected(int position) {
+                            tv.setText(position + 1 + "/" + url_list.size());
+                        }
+
+                        @Override
+                        public void onPageScrollStateChanged(int state) {
+
+                        }
+                    });
+                }
+                else{
+                    //顶部标签
+                    tv = contentView.findViewById(R.id.tv_picNum);
+                    tv.setText("1/" + url_list.size());
+                }
+
+                adapter.notifyDataSetChanged();
+
+                window.showAtLocation(getActivity().getWindow().getDecorView(), Gravity.CENTER, 0, 0);
                 break;
         }
     }
@@ -670,9 +835,13 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                 Log.d("wen", "handleMessage: " + url);
 //                adapter.updateData(url_list);// 关键
                 exercise_stu_html += "<img onclick='bigimage(this)' src='" + url + "' style=\"max-width:80px\">";
-                wv_stu_answer.loadDataWithBaseURL(null, exercise_stu_html, "text/html", "utf-8", null);
+                wv_stu_answer.loadDataWithBaseURL(null, html_head + exercise_stu_html, "text/html", "utf-8", null);
                 ll_input_image.setVisibility(View.VISIBLE);
 //                transmit.offLoading();
+            }else if(message.what == 102){
+                // 复用老代码 触发点击
+                ll_input_image.performClick();
+
             }
 
         }
@@ -730,7 +899,6 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
      * @param uri 裁切前的图片Uri（pic：相册；image：照片）
      */
     private void Crop(Uri uri) {
-
         File Image = new File(getActivity().getExternalCacheDir(), "output_temp.jpg");
         if (Image.exists()) {
             Image.delete();
@@ -908,7 +1076,6 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                     // 获取权限后
                     @Override
                     public void onAction(List<String> data) {
-
                         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                         // 选择图片文件类型
                         intent.setType("image/*");
@@ -1087,7 +1254,9 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
     @Override
     public void onResume() {
         super.onResume();
-        et_student_answer.setText("");
+        et_student_answer.setText(exercise_stu_answer);
+
+        Log.e("wen0603", "onResume: " + exercise_stu_answer);
     }
 
 }

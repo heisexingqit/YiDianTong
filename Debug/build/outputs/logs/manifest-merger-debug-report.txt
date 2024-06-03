@@ -1,5 +1,6 @@
 -- Merging decision tree log ---
 manifest
+<<<<<<< HEAD
 ADDED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml:1:1-6:12
 INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml:1:1-6:12
 INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml:1:1-6:12
@@ -25,3 +26,30 @@ INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
 		INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
 		ADDED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
 		INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
+=======
+ADDED from D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml:1:1-6:12
+INJECTED from D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml:1:1-6:12
+INJECTED from D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml:1:1-6:12
+	package
+		ADDED from D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml:1:11-45
+		INJECTED from D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml
+		INJECTED from D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml:1:1-6:12
+application
+ADDED from D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml:4:5-32
+uses-sdk
+INJECTED from D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml
+INJECTED from D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml
+INJECTED from D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml
+INJECTED from D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml
+		ADDED from D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml
+		INJECTED from D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml
+		ADDED from D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml
+		INJECTED from D:\AndroidProject\YiDianTong0913\Debug\src\main\AndroidManifest.xml
+>>>>>>> 105789b803bbfe8753550a3eb41c7314c2b50d99

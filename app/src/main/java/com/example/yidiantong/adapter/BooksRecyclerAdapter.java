@@ -1,6 +1,7 @@
 package com.example.yidiantong.adapter;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -72,6 +73,7 @@ public class BooksRecyclerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         Fragment fragment = null;
+        Log.e("wen0603", "getItem: " + exerciseType);
         if (!exerciseType){
             String baseTypeId = itemList1.get(position).getBaseTypeId();
             switch (baseTypeId){
