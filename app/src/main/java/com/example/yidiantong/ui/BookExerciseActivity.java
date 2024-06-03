@@ -16,8 +16,10 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -585,4 +587,5 @@ public class BookExerciseActivity extends AppCompatActivity {
     public void hade_rl_submitting(){
         rl_submitting.setVisibility(View.GONE);
     }
+
 }

@@ -57,6 +57,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:orientation="vertical"
+
             android:paddingBottom="5dp">
 
             <TextView
@@ -76,6 +77,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/book_detail"
+                    android:focusableInTouchMode="true"
                     android:paddingStart="15dp"
                     android:paddingEnd="15dp"
                     android:textSize="15sp" />
@@ -128,6 +130,7 @@
                 android:id="@+id/btn_submit"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
+                android:focusable="true"
                 android:background="@drawable/blue_btn"
                 android:text="@string/f_submit"
                 android:textColor="@color/white" />
