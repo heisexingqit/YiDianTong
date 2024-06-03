@@ -20,6 +20,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -87,6 +88,7 @@ public class BookExerciseActivity extends AppCompatActivity {
     private int searchNum = -1;
     private String qIds = "";
     private String qDbids = "";
+    private RelativeLayout rl_submitting;
 
 
     @Override
@@ -102,7 +104,7 @@ public class BookExerciseActivity extends AppCompatActivity {
 
         //获取组件
         rv_main = findViewById(R.id.rv_main);
-
+        rl_submitting = findViewById(R.id.rl_submitting);
         //RecyclerView两步必要配置
         rv_main.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         rv_main.setItemAnimator(new DefaultItemAnimator());
@@ -576,5 +578,11 @@ public class BookExerciseActivity extends AppCompatActivity {
             }
         }
         return super.dispatchTouchEvent(ev);
+    }
+    public void show_rl_submitting(){
+        rl_submitting.setVisibility(View.VISIBLE);
+    }
+    public void hade_rl_submitting(){
+        rl_submitting.setVisibility(View.GONE);
     }
 }

@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookExerciseEntity;
+import com.example.yidiantong.ui.BookExerciseActivity;
 
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
@@ -208,7 +209,14 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
             ll_timu = itemView.findViewById(R.id.ll_timu);
 
         }
-
+        private class TimianWebViewClient extends WebViewClient {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                // 当WebView加载完成时，调整rl_submitting的大小
+                adjustLoadingLayoutSize();
+            }
+        }
 
         public void update(int pos, RecyclerView.ViewHolder holder) {
             // 初始化UI
@@ -216,10 +224,16 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
             BookExerciseEntity item = itemList.get(pos); // 获取当前item
             Log.e("wen0524", "update: " + item.getStuAnswer());
             tv_type_name.setText(item.typeName); // 设置题目类型名称
+
+            // 设置WebViewClient以便监听加载完成事件
+            wv_timian.setWebViewClient(new TimianWebViewClient());
+
             // 题面设置
             String html_content = "<body style=\"color: rgb(100, 100, 100); font-size: 14px;line-height: 20px;\">" + item.shiTiShow + "</body>";
             String html = html_content.replace("#", "%23");
             wv_timian.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
+
+
 
             // 解析设置
             String html_content_analysis = "<body style=\"color: rgb(100, 100, 100); font-size: 14px;line-height: 20px;\">" + item.shiTiAnalysis + "</body>";
@@ -578,29 +592,16 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
                             break;
 
                     }
-                    DisplayMetrics displayMetrics = mContext.getResources().getDisplayMetrics();
-                    int llTimuWidth = displayMetrics.widthPixels;
-                    int llTimuHeight = displayMetrics.heightPixels;
 
-//                    int llTimuWidth = ll_timu.getMeasuredWidth();
-//                    int llTimuHeight = ll_timu.getMeasuredHeight();
-                    // 这里再进行高度相关的操作
-                    // 设置rl_submitting的大小与ll_timu相同
-                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                            llTimuWidth, // 设置宽度与ll_timu相同
-                            llTimuHeight // 设置高度与ll_timu相同
-                    );
 
-//                     如果需要考虑内边距或外边距，可以通过layoutParams加上相应的Margin或Padding
-//
-//                     应用新的布局参数到rl_submitting
-                    rl_submitting.setLayoutParams(layoutParams);
-                    rl_submitting.setVisibility(View.VISIBLE);
+                    ((BookExerciseActivity)mContext).show_rl_submitting();
+                    Log.d("hsk0601","高："+rl_submitting.getHeight());
+                    Log.d("hsk0601","高："+rl_submitting.getWidth());
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             // 隐藏加载页面
-                            rl_submitting.setVisibility(View.GONE);
+                            ((BookExerciseActivity)mContext).hade_rl_submitting();
 
                             btn_submit.setVisibility(View.GONE);
                             ll_answer_analysis.setVisibility(View.VISIBLE); // 显示答案解析
@@ -611,7 +612,21 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
             });
 
         }
+        private void adjustLoadingLayoutSize() {
+//            int llTimuWidth = ll_timu.getMeasuredWidth();
+//            int llTimuHeight = ll_timu.getMeasuredHeight();
+//            // 设置rl_submitting的大小，确保在WebView内容加载完成后执行
+            DisplayMetrics displayMetrics = mContext.getResources().getDisplayMetrics();
+            int llTimuWidth = displayMetrics.widthPixels;
+            int llTimuHeight = displayMetrics.heightPixels;
 
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                    llTimuWidth, // 设置宽度与ll_timu相同
+                    llTimuHeight // 设置高度与ll_timu相同
+            );
+            rl_submitting.setLayoutParams(layoutParams);
+            // 如果需要立即显示rl_submitting，可以在这里设置其可见性
+        }
         private void showDanxuanBtn(String showAnswer) {
             iv_a.setImageResource(R.drawable.a_unselect);
             iv_b.setImageResource(R.drawable.b_unselect);
@@ -757,6 +772,7 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
 
 
     }
+
     public interface ExerciseInterface {
         void openDrawCamera(int pos, WebView wb, LinearLayout ll);
         void openDrawGallery(int pos, WebView wb, LinearLayout ll);

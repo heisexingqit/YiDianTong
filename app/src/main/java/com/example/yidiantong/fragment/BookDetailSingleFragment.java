@@ -37,17 +37,24 @@ import androidx.fragment.app.Fragment;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookRecyclerEntity;
+import com.example.yidiantong.bean.XueBaAnswerEntity;
 import com.example.yidiantong.ui.BookExerciseActivity;
 import com.example.yidiantong.ui.MainBookExerciseActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.RecyclerInterface;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 // 单选题详情界面, 用于展示单选题详情,举一反三,标记掌握,模式切换
 public class BookDetailSingleFragment extends Fragment implements View.OnClickListener {
@@ -73,6 +80,18 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
     private String subjectId; // 学科ID
     private String courseName; // 课程名
     private Boolean exerciseType; // 是否是举一反三or巩固提升
+
+    //学霸答案
+    private TextView tv_xueba;
+    private TextView ftv_xuebaName1;
+    private TextView ftv_xuebaName2;
+    private TextView ftv_xuebaName3;
+    private WebView fwv_xuebaAnswer1;
+    private WebView fwv_xuebaAnswer2;
+    private WebView fwv_xuebaAnswer3;
+    private LinearLayout ll_xueba3;
+    private LinearLayout ll_xueba1;
+    private LinearLayout ll_xueba2;
 
     SharedPreferences preferences;
 
@@ -154,6 +173,21 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
         String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiShow() + "</body>";
         String html = html_content.replace("#", "%23");
         fwv_bd_content.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
+
+        //学霸答案显示
+        tv_xueba = view.findViewById(R.id.tv_xueba);
+        ftv_xuebaName1 = view.findViewById(R.id.ftv_xuebaName1);
+        ftv_xuebaName2 = view.findViewById(R.id.ftv_xuebaName2);
+        ftv_xuebaName3 = view.findViewById(R.id.ftv_xuebaName3);
+        fwv_xuebaAnswer1 = view.findViewById(R.id.fwv_xuebaAnswer1);
+        fwv_xuebaAnswer2 = view.findViewById(R.id.fwv_xuebaAnswer2);
+        fwv_xuebaAnswer3 = view.findViewById(R.id.fwv_xuebaAnswer3);
+        ll_xueba1 = view.findViewById(R.id.ll_xueba1);
+        ll_xueba2 = view.findViewById(R.id.ll_xueba2);
+        ll_xueba3 = view.findViewById(R.id.ll_xueba3);
+
+        //加载学霸答案
+        loadAnswer_Net();
 
         // 题号和平均分
         currentpage = bookrecyclerEntity.getCurrentPage();  // 当前页数，题号
@@ -479,7 +513,7 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
         String subjectId = getActivity().getIntent().getStringExtra("subjectId");
         String questionId = bookrecyclerEntity.getQuestionId();
         String userName = getActivity().getIntent().getStringExtra("username");
-        String mRequestUrl = Constant.API + Constant.ERROR_QUE_BIAOJI + "?sourceId=" + sourceId + "&userName=" + userName + "&subjectId=" + subjectId + "&questionId=" + questionId;
+        String mRequestUrl = Constant.API + Constant.ERROR_QUE_BIAOJI + "?sourceId=" + sourceId + "&userName=" + userName + "&subjectId=" + subjectId + "&questionId=" +  bookrecyclerEntity.getQuestionId();
         Log.e("具体错mRequestUrl", "" + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -520,4 +554,109 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
     private void mode_stuans() {
 
     }
+    private void setHtmlOnWebView(WebView wb, String str){
+        str = StringEscapeUtils.unescapeHtml4(str);
+        // 定义图片点击放大的JavaScript函数
+
+        String html_content = "<head><style>" +
+                " p {\n" +
+                "   margin: 0px;" +
+                "   line-height: 30px;" +
+                "   }" +
+                "</style>" +
+                "</head><body style=\"color: rgb(117, 117, 117); font-size: 14px; margin: 0px; padding: 0px\">" + str + "</body>";
+        wb.getSettings().setJavaScriptEnabled(true); // 确保JavaScript可用
+        wb.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
+    }
+    private Handler handler_xueba = new Handler(Looper.getMainLooper()) {
+        public void handleMessage(Message message) {
+            super.handleMessage(message);
+            if (message.what == 102) {
+                String html_answer_head = "<head>\n" +
+                        "    <style>\n" +
+                        "        body {\n" +
+                        "            color: rgb(117, 117, 117);\n" +
+                        "            word-wrap: break-word;\n" +
+                        "            font-size: 14px;" +
+                        "        }\n" +
+                        "    </style>\n" +
+                        "    <script>\n" +
+                        "        function lookImage(x) {\n" +
+                        "        }\n" +
+                        "        function bigimage(x) {\n" +
+                        "            myInterface.bigPic()\n" +
+                        "        }\n" +
+                        "    </script>\n" +
+                        "</head>\n" +
+                        "\n" +
+                        "<body onclick=\"bigimage(this)\">\n";
+                //学霸答案展示
+                List<XueBaAnswerEntity> list = (List<XueBaAnswerEntity>) message.obj;
+                if (stuans != -1) {
+                    if (list.size() > 0) {
+                        tv_xueba.setVisibility(View.VISIBLE);
+                        ftv_xuebaName1.setVisibility(View.VISIBLE);
+                        ll_xueba1.setVisibility(View.VISIBLE);
+                        String xuebaName1 = list.get(0).getStuName();
+                        String xuebaAnswer1 = list.get(0).getStuAnswer();
+                        ftv_xuebaName1.setText(xuebaName1 + "的作答");
+                        setHtmlOnWebView(fwv_xuebaAnswer1, html_answer_head+xuebaAnswer1);
+
+                    }
+                    if (list.size() > 1) {
+                        ftv_xuebaName2.setVisibility(View.VISIBLE);
+                        ll_xueba2.setVisibility(View.VISIBLE);
+                        String xuebaName2 = list.get(0).getStuName();
+                        String xuebaAnswer2 = list.get(0).getStuAnswer();
+                        ftv_xuebaName2.setText(xuebaName2 + "的作答");
+                        setHtmlOnWebView(fwv_xuebaAnswer2, html_answer_head+xuebaAnswer2);
+                    }
+                    if (list.size() > 2) {
+                        ftv_xuebaName3.setVisibility(View.VISIBLE);
+                        ll_xueba3.setVisibility(View.VISIBLE);
+                        String xuebaName3 = list.get(0).getStuName();
+                        String xuebaAnswer3 = list.get(0).getStuAnswer();
+                        ftv_xuebaName3.setText(xuebaName3 + "的作答");
+                        setHtmlOnWebView(fwv_xuebaAnswer3, html_answer_head+xuebaAnswer3);
+                    }
+                }
+            }
+        }
+    };
+    private void loadAnswer_Net() {
+        String sourceId = getActivity().getIntent().getStringExtra("sourceId");  // 单元id
+        String mRequestUrl = Constant.API + Constant.XUEBA_ANSWER + "?paperId=" + sourceId + "&questionId=" + questionId;
+
+        Log.d("wen", "loadItems_Net: " + mRequestUrl);
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+
+                String itemString = json.getString("data");
+                Gson gson = new Gson();
+                //使用Gson框架转换Json字符串为列表
+                List<XueBaAnswerEntity> itemList = gson.fromJson(itemString, new TypeToken<List<XueBaAnswerEntity>>() {
+                }.getType());
+                Log.d("hsk0527","学霸答案："+itemList);
+                //封装消息，传递给主线程
+                Message message = Message.obtain();
+
+                message.obj = itemList;
+                // 发送消息给主线程
+
+                //标识线程
+                message.what = 102;
+                handler_xueba.sendMessage(message);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }, error -> {
+            Log.e("volley", "Volley_Error: " + error.toString());
+
+        });
+        MyApplication.addRequest(request, TAG);
+    }
+
+
 }
