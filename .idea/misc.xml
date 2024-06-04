@@ -206,6 +206,7 @@
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/item_book_recover_list.xml" value="0.284375" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/item_home_list.xml" value="0.24583333333333332" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/item_show_photo.xml" value="0.2630208333333333" />
+        <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/item_t_home_list.xml" value="0.24427083333333333" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/item_t_homework_add_block.xml" value="0.8455056179775281" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/item_t_homework_add_camera_block.xml" value="0.25729166666666664" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/item_t_homework_add_show_zsd.xml" value="0.21920289855072464" />
@@ -229,6 +230,7 @@
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/menu_t_homework_camera_type.xml" value="0.2609375" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/menu_t_search_select3.xml" value="0.22916666666666666" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/menu_t_setting_select.xml" value="0.22916666666666666" />
+        <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/menu_t_xueba_replace.xml" value="0.30185185185185187" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/my_component.xml" value="0.165625" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/my_update_psw.xml" value="0.20833333333333334" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/pageing_homework.xml" value="0.24583333333333332" />

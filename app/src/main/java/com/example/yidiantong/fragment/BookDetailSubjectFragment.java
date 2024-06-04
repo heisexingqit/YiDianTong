@@ -606,7 +606,12 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                     tv_stu_answer.setText("【你的作答】");
                     iv_camera.setVisibility(View.GONE);
                     iv_gallery.setVisibility(View.GONE);
+<<<<<<< HEAD
                     loadAnswer_Net();
+=======
+                    show_xueba=true;
+
+>>>>>>> 706d89b2e4afe6274ac50293b877252c5696ea0c
 //                    fll_bd_answer.setVisibility(View.GONE);
                     et_student_answer.clearFocus();
                     fb_bd_sumbit.setVisibility(View.GONE);

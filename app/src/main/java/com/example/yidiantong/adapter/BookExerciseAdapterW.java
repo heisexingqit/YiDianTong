@@ -584,6 +584,7 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
 
 
                         default: // 主观题
+                            Log.e("wen0601", "onClick: 点击触发");
 //                            InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
 //                            if (imm != null) {
 //                                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);

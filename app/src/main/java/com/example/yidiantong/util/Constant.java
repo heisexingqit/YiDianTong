@@ -298,4 +298,13 @@ public class Constant {
     //学霸答案
     public static final String XUEBA_ANSWER = "/AppServer/ajax/studentApp_getXuebaQueAnswer.do";
 
+    // 判断是否学霸答案
+    public static final String T_CHECK_XUEBA_ANSWER = "/AppServer/ajax/teacherApp_getXuebaQueAnswer.do";
+
+    // 设置取消学霸答案
+    public static final String T_SET_XUEBA_ANSWER = "/AppServer/ajax/teacherApp_saveOrdeleteXuebaAnswer.do";
+
+    // 替换学霸答案
+    public static final String T_REPLACE_XUEBA_ANSWER = "/AppServer/ajax/teacherApp_replaceXuebaAnswer.do";
+
 }

@@ -62,6 +62,7 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
     private String status = "0";    // 批改状态，2未批改；4以批改，空或者0代表全部
     private String searchStr = "";
     private String mode = "2";      // 模式：1逐题批阅；2只显示需手工批阅试题
+    private String homeworkName;
 
     // 页面组件
     private Button btn_report;
@@ -99,6 +100,7 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
         taskId = intent.getStringExtra("taskId");
         teacherId = intent.getStringExtra("teacherId");
         type = intent.getStringExtra("type");
+        homeworkName = intent.getStringExtra("homeworkName");
 
         // 组件获取
         btn_report = findViewById(R.id.btn_report);
@@ -165,6 +167,7 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
                 intent2.putExtra("canMark", !adapter.itemList.get(pos).getStatus().equals("5"));
                 intent2.putExtra("type", type);
                 intent2.putExtra("mode", mode);
+                intent2.putExtra("homeworkName", homeworkName);
                 mResultLauncher.launch(intent2);
             }
         });
@@ -331,6 +334,8 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
                     intent2.putExtra("canMark", !adapter.itemList.get(pos).getStatus().equals("5"));
                     intent2.putExtra("type", type);
                     intent2.putExtra("mode", mode);
+                    intent2.putExtra("homeworkName", homeworkName);
+
                     mResultLauncher.launch(intent2);
                 }
             }
