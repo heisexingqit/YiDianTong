@@ -1,15 +1,18 @@
 package com.example.yidiantong.adapter;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -518,6 +521,7 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
                         }
 
                     });
+
                     et_stu_answer.setText(item.stuAnswer);
                     if(item.stuHtml == null || item.stuHtml.length() == 0){
                         ll_input_image.setVisibility(View.GONE);
@@ -539,7 +543,7 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
             btn_submit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    Log.d("hsk0603","按钮点击");
                     switch (item.baseTypeId) {
                         case "101": // 单选题
                         case "102": // 多选题
@@ -581,6 +585,12 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
 
                         default: // 主观题
                             Log.e("wen0601", "onClick: 点击触发");
+//                            InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+//                            if (imm != null) {
+//                                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+//                            }
+//                            // 清除 EditText 的焦点，使光标不再闪烁
+                            et_stu_answer.clearFocus();
                             if ((item.stuAnswer == null || item.stuAnswer.length() == 0) && (item.stuHtml == null || item.stuHtml.length() == 0)) {
                                 Toast.makeText(mContext, "请填写答案", Toast.LENGTH_SHORT).show();
                                 return;
@@ -588,8 +598,6 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
                             tv_stu_answer.setVisibility(View.GONE);
                             iv_result.setVisibility(View.GONE);
                             // 取消输入框焦点
-                            // 清除 EditText 的焦点，使光标不再闪烁
-                            et_stu_answer.clearFocus();
                             break;
 
                     }
@@ -613,6 +621,9 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
             });
 
         }
+
+
+
         private void adjustLoadingLayoutSize() {
 //            int llTimuWidth = ll_timu.getMeasuredWidth();
 //            int llTimuHeight = ll_timu.getMeasuredHeight();
@@ -778,5 +789,6 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
         void openDrawCamera(int pos, WebView wb, LinearLayout ll);
         void openDrawGallery(int pos, WebView wb, LinearLayout ll);
     }
+
 
 }

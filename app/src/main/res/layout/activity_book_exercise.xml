@@ -58,7 +58,8 @@
     </RelativeLayout>
     <RelativeLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+        >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -94,6 +95,7 @@
                 android:paddingEnd="10dp"
                 android:textColor="@color/red"/>
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

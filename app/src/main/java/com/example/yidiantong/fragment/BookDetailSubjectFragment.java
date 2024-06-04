@@ -1146,7 +1146,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                     .show();
         }
     };
-    
+
     private void setHtmlOnWebView(WebView wb, String str){
         str = StringEscapeUtils.unescapeHtml4(str);
         // 定义图片点击放大的JavaScript函数

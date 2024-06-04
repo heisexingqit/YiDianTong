@@ -625,8 +625,9 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
     };
     private void loadAnswer_Net() {
         String sourceId = getActivity().getIntent().getStringExtra("sourceId");  // 单元id
-        String mRequestUrl = Constant.API + Constant.XUEBA_ANSWER + "?paperId=" + sourceId + "&questionId=" + questionId;
-
+        Log.d("hsk0603","sourceId:"+sourceId);
+        String mRequestUrl = Constant.API + Constant.XUEBA_ANSWER + "?paperId=" + sourceId + "&questionId=" + bookrecyclerEntity.getQuestionId();
+        Log.d("hsk0603","mRequestUrl:"+mRequestUrl);
         Log.d("wen", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
