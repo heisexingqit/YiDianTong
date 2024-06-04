@@ -607,7 +607,8 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                     iv_camera.setVisibility(View.GONE);
                     iv_gallery.setVisibility(View.GONE);
                     show_xueba=true;
-                    fll_bd_answer.setVisibility(View.GONE);
+
+//                    fll_bd_answer.setVisibility(View.GONE);
                     et_student_answer.clearFocus();
                     fb_bd_sumbit.setVisibility(View.GONE);
 

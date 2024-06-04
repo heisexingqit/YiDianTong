@@ -580,6 +580,7 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
 
 
                         default: // 主观题
+                            Log.e("wen0601", "onClick: 点击触发");
                             if ((item.stuAnswer == null || item.stuAnswer.length() == 0) && (item.stuHtml == null || item.stuHtml.length() == 0)) {
                                 Toast.makeText(mContext, "请填写答案", Toast.LENGTH_SHORT).show();
                                 return;

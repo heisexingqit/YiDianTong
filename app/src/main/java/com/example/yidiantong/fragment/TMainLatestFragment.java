@@ -161,6 +161,7 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
 
                         intent.putExtra("taskId", adapter.itemList.get(pos).getfId());
                         intent.putExtra("type", "paper");
+                        intent.putExtra("homeworkName", adapter.itemList.get(pos).getfName());
                         startActivity(intent);
                         break;
                     case "3":

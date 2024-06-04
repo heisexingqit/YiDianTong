@@ -58,7 +58,7 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
 
     // 参数相关
     private THomeworkStudentItemEntity itemEntity;
-    private String name;
+    public String name;
     private int pageCount = 0;
     private int pageCountAll = 0;
     private String scoreCount;
@@ -75,8 +75,8 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
     private Button btn_next;
 
     // 请求参数
-    private String taskId;
-    private String stuName;
+    public String taskId;
+    public String stuName;
 
     // 跳转
     ActivityResultLauncher mResultLauncher;
@@ -91,6 +91,7 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
 
     // ViewPagerAdapter中列表
     List<THomeworkMarkedEntity> moreList;
+    public String homeworkName;
 
     private boolean isAll = false; // 标记ViewPager是否已经是全部题目
 
@@ -109,7 +110,7 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
         canMark = intent.getBooleanExtra("canMark", true);
         mode = intent.getStringExtra("mode");
         type = intent.getStringExtra("type");
-
+        homeworkName = intent.getStringExtra("homeworkName");
         findViewById(R.id.iv_eye).setOnClickListener(this);
 
         // 获取组件

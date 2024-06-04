@@ -5,6 +5,15 @@ import java.io.Serializable;
 public class XueBaAnswerEntity {
     private String stuName;
     private String stuAnswer;
+    private String stuId;
+
+    public String getStuId() {
+        return stuId;
+    }
+
+    public void setStuId(String stuId) {
+        this.stuId = stuId;
+    }
 
     public XueBaAnswerEntity() {
     }
