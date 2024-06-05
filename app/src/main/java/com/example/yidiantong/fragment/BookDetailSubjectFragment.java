@@ -38,6 +38,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -164,6 +165,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
     private LinearLayout ll_xueba1;
     private LinearLayout ll_xueba2;
     private boolean show_xueba = false;
+    private RelativeLayout ll_tiankong;
 
     public static BookDetailSubjectFragment newInstance(BookRecyclerEntity bookrecyclerEntity, String userName, String subjectId, String courseName, Boolean exerciseType) {
         BookDetailSubjectFragment fragment = new BookDetailSubjectFragment();
@@ -231,6 +233,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
 
         //获取view
         View view = inflater.inflate(R.layout.fragment_book_detail_subject, container, false);
+        ll_tiankong = view.findViewById(R.id.ll_tiankong);
         tv_stu_answer = view.findViewById(R.id.tv_stu_answer);
 
         ll_input_image = view.findViewById(R.id.ll_input_image);
@@ -369,10 +372,10 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         fiv_bd_tf = view.findViewById(R.id.fiv_bd_tf);
         TextView tv_shiti_analysis = view.findViewById(R.id.tv_shiti_analysis);
         LinearLayout ll_shiti_analysis = view.findViewById(R.id.ll_shiti_analysis);
-        if(bookrecyclerEntity.getShitiAnalysis() == null || bookrecyclerEntity.getShitiAnalysis().length() == 0){
+        if (bookrecyclerEntity.getShitiAnalysis() == null || bookrecyclerEntity.getShitiAnalysis().length() == 0) {
             tv_shiti_analysis.setVisibility(View.GONE);
             ll_shiti_analysis.setVisibility(View.GONE);
-        }else{
+        } else {
             String html_analysis = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiAnalysis() + "</body>";
             String html1 = html_analysis.replace("#", "%23");
             fwv_bd_analysis1.loadDataWithBaseURL(null, html1, "text/html", "utf-8", null);
@@ -427,7 +430,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                 fll_bd_answer.setVisibility(View.VISIBLE);
                 mode = 0;
             } else {
-                fll_bd_answer.setVisibility(View.GONE);
+//                fll_bd_answer.setVisibility(View.GONE);
                 fll_bd_analysis.setVisibility(View.VISIBLE);
                 mode = 1;
                 if (stuans.length() == 0) {
@@ -606,7 +609,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                     tv_stu_answer.setText("【你的作答】");
                     iv_camera.setVisibility(View.GONE);
                     iv_gallery.setVisibility(View.GONE);
-                    show_xueba=true;
+                    show_xueba = true;
 
 //                    fll_bd_answer.setVisibility(View.GONE);
                     et_student_answer.clearFocus();
@@ -682,24 +685,34 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                             fll_bd_answer.setVisibility(View.VISIBLE);
                             fll_bd_analysis.setVisibility(View.GONE);
                             ftv_br_mode.setText("练习模式");
+                            tv_stu_answer.setText("  请输入答案:");
+                            ll_tiankong.setVisibility(View.VISIBLE);
+                            ll_input_image.setVisibility(View.GONE);
+                            fb_bd_sumbit.setVisibility(View.VISIBLE);
                             mode = 0;
                             dialog_model.dismiss();
-                            exercise_stu_answer = "";
+                            et_student_answer.setText("");
+                            exercise_stu_html = "";
 //                            showLoadAnswer();
                         } else {
-                            fll_bd_answer.setVisibility(View.GONE);
+                            Log.e("wen0601", "onClick: 复习模式选择触发");
+                            ll_tiankong.setVisibility(View.GONE);
+                            wv_stu_answer.setVisibility(View.VISIBLE);
                             fll_bd_analysis.setVisibility(View.VISIBLE);
-                            if (stuans.length() == 0) {
-                                ftv_bd_stuans.setText("【你的作答】");
-                                fiv_bd_tf.setVisibility(View.GONE);
-                            } else {
-                                ftv_bd_stuans.setText("【你的作答】");
-                                String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getStuAnswer() + "</body>";
-                                String html = html_content.replace("#", "%23");
-                                wv_stu_answer.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
+                            tv_stu_answer.setText("【你的作答】");
+                            fb_bd_sumbit.setVisibility(View.GONE);
 
-                                fiv_bd_tf.setVisibility(View.VISIBLE);
-                            }
+//                            if (stuans.length() == 0) {
+//                                ftv_bd_stuans.setText("【你的作答】");
+//                                fiv_bd_tf.setVisibility(View.GONE);
+//                            } else {
+//                                ftv_bd_stuans.setText("【你的作答】");
+//                                String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getStuAnswer() + "</body>";
+//                                String html = html_content.replace("#", "%23");
+//                                wv_stu_answer.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
+//
+//                                fiv_bd_tf.setVisibility(View.VISIBLE);
+//                            }
                             ftv_br_mode.setText("复习模式");
                             mode = 1;
                             dialog_model.dismiss();
@@ -719,7 +732,6 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                 permissionOpenGallery();
                 break;
             case R.id.ll_input_image:
-                Log.e("wen0603", "onClick: ");
 
                 url_list.clear();
                 Document document = Jsoup.parse(exercise_stu_html);
@@ -804,8 +816,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
 
                         }
                     });
-                }
-                else{
+                } else {
                     //顶部标签
                     tv = contentView.findViewById(R.id.tv_picNum);
                     tv.setText("1/" + url_list.size());
@@ -839,7 +850,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                 wv_stu_answer.loadDataWithBaseURL(null, html_head + exercise_stu_html, "text/html", "utf-8", null);
                 ll_input_image.setVisibility(View.VISIBLE);
 //                transmit.offLoading();
-            }else if(message.what == 102){
+            } else if (message.what == 102) {
                 // 复用老代码 触发点击
                 ll_input_image.performClick();
 
@@ -881,6 +892,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
 
     //复习模式你的作答
     private void mode_stuans() {
+        ll_input_image.setVisibility(View.VISIBLE);
         String html_content = "", html = "";
         if (bookrecyclerEntity.getStuAnswer().length() == 0) {
             html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\"><p style=\"color: red;\">未答</p></body>";
@@ -1147,7 +1159,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         }
     };
 
-    private void setHtmlOnWebView(WebView wb, String str){
+    private void setHtmlOnWebView(WebView wb, String str) {
         str = StringEscapeUtils.unescapeHtml4(str);
         // 定义图片点击放大的JavaScript函数
 
@@ -1161,6 +1173,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         wb.getSettings().setJavaScriptEnabled(true); // 确保JavaScript可用
         wb.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
     }
+
     private Handler handler_xueba = new Handler(Looper.getMainLooper()) {
         public void handleMessage(Message message) {
             super.handleMessage(message);
@@ -1193,7 +1206,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                         String xuebaName1 = list.get(0).getStuName();
                         String xuebaAnswer1 = list.get(0).getStuAnswer();
                         ftv_xuebaName1.setText(xuebaName1 + "的作答");
-                        setHtmlOnWebView(fwv_xuebaAnswer1, html_answer_head+xuebaAnswer1);
+                        setHtmlOnWebView(fwv_xuebaAnswer1, html_answer_head + xuebaAnswer1);
 
                     }
                     if (list.size() > 1) {
@@ -1202,7 +1215,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                         String xuebaName2 = list.get(0).getStuName();
                         String xuebaAnswer2 = list.get(0).getStuAnswer();
                         ftv_xuebaName2.setText(xuebaName2 + "的作答");
-                        setHtmlOnWebView(fwv_xuebaAnswer2, html_answer_head+xuebaAnswer2);
+                        setHtmlOnWebView(fwv_xuebaAnswer2, html_answer_head + xuebaAnswer2);
                     }
                     if (list.size() > 2) {
                         ftv_xuebaName3.setVisibility(View.VISIBLE);
@@ -1210,12 +1223,13 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                         String xuebaName3 = list.get(0).getStuName();
                         String xuebaAnswer3 = list.get(0).getStuAnswer();
                         ftv_xuebaName3.setText(xuebaName3 + "的作答");
-                        setHtmlOnWebView(fwv_xuebaAnswer3, html_answer_head+xuebaAnswer3);
+                        setHtmlOnWebView(fwv_xuebaAnswer3, html_answer_head + xuebaAnswer3);
                     }
                 }
             }
         }
     };
+
     private void loadAnswer_Net() {
         String sourceId = getActivity().getIntent().getStringExtra("sourceId");  // 单元id
         String mRequestUrl = Constant.API + Constant.XUEBA_ANSWER + "?paperId=" + sourceId + "&questionId=" + bookrecyclerEntity.getQuestionId();
@@ -1230,7 +1244,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                 //使用Gson框架转换Json字符串为列表
                 List<XueBaAnswerEntity> itemList = gson.fromJson(itemString, new TypeToken<List<XueBaAnswerEntity>>() {
                 }.getType());
-                Log.d("hsk0527","学霸答案："+itemList);
+                Log.d("hsk0527", "学霸答案：" + itemList);
                 //封装消息，传递给主线程
                 Message message = Message.obtain();
 

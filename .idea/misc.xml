@@ -125,6 +125,7 @@
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/activity_thomework_add_pick.xml" value="0.2028985507246377" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/activity_thomework_camera_add_pick.xml" value="0.2554347826086957" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/activity_thomework_mark.xml" value="0.209375" />
+        <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/activity_thomework_mark_submit.xml" value="0.3958333333333333" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/activity_thomework_report.xml" value="0.21145833333333333" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/activity_tlearn_plan_add.xml" value="0.4" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/activity_tlearn_plan_add_pick.xml" value="0.2" />
@@ -216,6 +217,7 @@
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/item_t_homework_camera_list_reading.xml" value="0.23802083333333332" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/item_t_homework_camera_list_seven.xml" value="0.37743589743589745" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/item_t_homework_camera_list_translation.xml" value="0.37743589743589745" />
+        <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/item_t_homework_mark_submit.xml" value="0.3958333333333333" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/item_t_homework_report_student.xml" value="0.165625" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/item_t_homework_stu.xml" value="0.3220108695652174" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/item_t_score_btn.xml" value="0.2515625" />
