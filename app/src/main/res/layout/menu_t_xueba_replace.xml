@@ -21,10 +21,10 @@
                 android:id="@+id/tv_xueba"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:text="@string/xueba_answer"
+                android:layout_marginBottom="10dp"
                 android:textColor="@color/black"
-                android:textSize="20sp"
+                android:text="该试题已经设置了3个学霸答案，如果需要设置新的学霸答案，需要从下面三位同学中选择一位进行替换。"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <LinearLayout
