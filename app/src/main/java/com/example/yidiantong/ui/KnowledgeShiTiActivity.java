@@ -28,6 +28,7 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.adapter.BookAutoAdapter;
 import com.example.yidiantong.bean.BookExerciseEntity;
+import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -179,7 +180,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
             fll_null.setVisibility(View.GONE);
             rl_loading.setVisibility(View.VISIBLE);
         }
-        String mRequestUrl = "http://www.cn901.net:8111/AppServer/ajax/studentApp_getQuestionsZZXX.do?subjectId=" + subjectId + "&catalogId=" + zhishidianId;
+        String mRequestUrl = Constant.API+"/AppServer/ajax/studentApp_getQuestionsZZXX.do?subjectId=" + subjectId + "&catalogId=" + zhishidianId;
         Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {

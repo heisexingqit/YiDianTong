@@ -34,6 +34,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.CustomDraw;
+import com.example.yidiantong.util.Constant;
 import com.xinlan.imageeditlibrary.editimage.JsonUtils;
 import com.xinlan.imageeditlibrary.editimage.utils.ImageUtils;
 
@@ -355,7 +356,7 @@ public class THomeworkImageMark extends AppCompatActivity {
             try {
                 // 创建一个URL对象，替换为您要请求的URL
                 //URL url = new URL("http://www.cn901.net:8111/AppServer/ajax/userManage_saveCanvasImageFromRn.do");
-                URL url = new URL("http://www.cn901.net:8111/AppServer/ajax/teacherApp_saveCanvasImageFromRn.do");
+                URL url = new URL(Constant.API+"/AppServer/ajax/teacherApp_saveCanvasImageFromRn.do");
                 Log.d("HSK0517","url:"+url);
                 // 打开连接
                 connection = (HttpURLConnection) url.openConnection();

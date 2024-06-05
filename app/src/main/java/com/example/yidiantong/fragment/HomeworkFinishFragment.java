@@ -65,24 +65,6 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
     private String xuebaAnswer3;
 
 
-    private String html_answer_head = "<head>\n" +
-            "    <style>\n" +
-            "        body {\n" +
-            "            color: rgb(117, 117, 117);\n" +
-            "            word-wrap: break-word;\n" +
-            "            font-size: 14px;" +
-            "        }\n" +
-            "    </style>\n" +
-            "    <script>\n" +
-            "        function lookImage(x) {\n" +
-            "        }\n" +
-            "        function bigimage(x) {\n" +
-            "            myInterface.bigPic()\n" +
-            "        }\n" +
-            "    </script>\n" +
-            "</head>\n" +
-            "\n" +
-            "<body onclick=\"bigimage(this)\">\n";
     //接口需要
     private HomeworkMarkedEntity homeworkMarked;
     private String paperId;
@@ -157,7 +139,7 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
                         Message message = Message.obtain();
                         // 发送消息给主线程
                         //标识线程
-                        Log.d("hsk0522","图片放大");
+                        Log.d("hsk0522", "图片放大");
                         String htmlContent = xuebaAnswer1; // 或者是从网络请求得到的HTML
                         Document doc = Jsoup.parse(htmlContent); // 或 Jsoup.connect(url).get();
 
@@ -186,7 +168,7 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
                         Message message = Message.obtain();
                         // 发送消息给主线程
                         //标识线程
-                        Log.d("hsk0522","图片放大");
+                        Log.d("hsk0522", "图片放大");
                         String htmlContent = xuebaAnswer2; // 或者是从网络请求得到的HTML
                         Document doc = Jsoup.parse(htmlContent); // 或 Jsoup.connect(url).get();
 
@@ -215,7 +197,7 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
                         Message message = Message.obtain();
                         // 发送消息给主线程
                         //标识线程
-                        Log.d("hsk0522","图片放大");
+                        Log.d("hsk0522", "图片放大");
                         String htmlContent = xuebaAnswer3; // 或者是从网络请求得到的HTML
                         Document doc = Jsoup.parse(htmlContent); // 或 Jsoup.connect(url).get();
 
@@ -243,7 +225,7 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
         ll_xueba3 = view.findViewById(R.id.ll_xueba3);
 
         setHtmlOnWebView(wv_content, homeworkMarked.getTiMian());
-        setHtmlOnWebView(wv_content4, html_answer_head+homeworkMarked.getStuAnswer());
+        setHtmlOnWebView(wv_content4, homeworkMarked.getStuAnswer());
 
         wv_content4.addJavascriptInterface(
                 new Object() {
@@ -256,7 +238,7 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
                         Message message = Message.obtain();
                         // 发送消息给主线程
                         //标识线程
-                        Log.d("hsk0522","图片放大");
+                        Log.d("hsk0522", "图片放大");
                         url_list.clear();
                         String htmlContent = homeworkMarked.getStuAnswer(); // 或者是从网络请求得到的HTML
                         Document doc = Jsoup.parse(htmlContent); // 或 Jsoup.connect(url).get();
@@ -282,7 +264,7 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
          * 简单判断答案是否为不可见
          */
         boolean isWatch = !"******".equals(homeworkMarked.getStandardAnswer());
-        if(homeworkMarked.getShowAnswerFlag().equals("0")){
+        if (homeworkMarked.getShowAnswerFlag().equals("0")) {
             isWatch = false;
             answerString = "******";
             analysisString = "******";
@@ -291,7 +273,7 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
         setHtmlOnWebView(wv_content2, answerString);
         setHtmlOnWebView(wv_content3, analysisString);
 
-        if(isWatch){
+        if (isWatch) {
             // 显示底部一栏
             LinearLayout ll_watch = view.findViewById(R.id.ll_watch);
             ll_watch.setVisibility(View.VISIBLE);
@@ -300,11 +282,11 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
             TextView tv_stu_scores = view.findViewById(R.id.tv_stu_scores);
             tv_stu_scores.setText("得分:" + homeworkMarked.getScore());
             ImageView iv_stu_scores = view.findViewById(R.id.iv_stu_scores);
-            if(Math.abs(homeworkMarked.getScore() - homeworkMarked.getFullScore()) < 0.00001){
+            if (Math.abs(homeworkMarked.getScore() - homeworkMarked.getFullScore()) < 0.00001) {
                 iv_stu_scores.setImageResource(R.drawable.right);
-            }else if(homeworkMarked.getScore() > 0){
+            } else if (homeworkMarked.getScore() > 0) {
                 iv_stu_scores.setImageResource(R.drawable.half_right);
-            }else{
+            } else {
                 iv_stu_scores.setImageResource(R.drawable.error);
             }
         }
@@ -338,23 +320,36 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
 
     /**
      * 将HTML内容显示在WebView中，包含转义和样式
-     * @param wb WebView组件对象
+     *
+     * @param wb  WebView组件对象
      * @param str 原始HTML数据
      */
-    private void setHtmlOnWebView(WebView wb, String str){
+    private void setHtmlOnWebView(WebView wb, String str) {
         str = StringEscapeUtils.unescapeHtml4(str);
         // 定义图片点击放大的JavaScript函数
-
         String html_content = "<head><style>" +
                 " p {\n" +
                 "   margin: 0px;" +
                 "   line-height: 30px;" +
                 "   }" +
+                "body {\n" +
+                "            color: rgb(117, 117, 117);\n" +
+                "            word-wrap: break-word;\n" +
+                "            font-size: 14px;" +
+                "        }\n" +
                 "</style>" +
-                "</head><body style=\"color: rgb(117, 117, 117); font-size: 14px; margin: 0px; padding: 0px\">" + str + "</body>";
+                "    <script>\n" +
+                "        function lookImage(x) {\n" +
+                "        }\n" +
+                "        function bigimage(x) {\n" +
+                "            myInterface.bigPic()\n" +
+                "        }\n" +
+                "    </script>\n" +
+                "</head><body>" + str + "</body>";
         wb.getSettings().setJavaScriptEnabled(true); // 确保JavaScript可用
         wb.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
     }
+
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @SuppressLint("NotifyDataSetChanged")
         @Override
@@ -447,33 +442,32 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
 
                 window.showAtLocation(getActivity().getWindow().getDecorView(), Gravity.CENTER, 0, 0);
 
-            }
-            else if (message.what == 102){
+            } else if (message.what == 102) {
                 //学霸答案展示
                 List<XueBaAnswerEntity> list = (List<XueBaAnswerEntity>) message.obj;
-                if(!(homeworkMarked.getShowAnswerFlag().equals("0"))&&list.size()>0){
+                if (!(homeworkMarked.getShowAnswerFlag().equals("0")) && list.size() > 0) {
                     xueba.setVisibility(View.VISIBLE);
-                    if(list.size()>0){
+                    if (list.size() > 0) {
                         ll_xueba1.setVisibility(View.VISIBLE);
-                        xuebaName1=list.get(0).getStuName();
-                        xuebaAnswer1=list.get(0).getStuAnswer();
-                        tv_xuebaName1.setText(xuebaName1+"的作答");
-                        setHtmlOnWebView(wv_xuebaAnswer1, html_answer_head+xuebaAnswer1);
+                        xuebaName1 = list.get(0).getStuName();
+                        xuebaAnswer1 = list.get(0).getStuAnswer();
+                        tv_xuebaName1.setText(xuebaName1 + "的作答");
+                        setHtmlOnWebView(wv_xuebaAnswer1, xuebaAnswer1);
 
                     }
-                    if(list.size()>1){
+                    if (list.size() > 1) {
                         ll_xueba2.setVisibility(View.VISIBLE);
-                        xuebaName2=list.get(1).getStuName();
-                        xuebaAnswer2=list.get(1).getStuAnswer();
-                        tv_xuebaName2.setText(xuebaName2+"的作答");
-                        setHtmlOnWebView(wv_xuebaAnswer2, html_answer_head+xuebaAnswer2);
+                        xuebaName2 = list.get(1).getStuName();
+                        xuebaAnswer2 = list.get(1).getStuAnswer();
+                        tv_xuebaName2.setText(xuebaName2 + "的作答");
+                        setHtmlOnWebView(wv_xuebaAnswer2, xuebaAnswer2);
                     }
-                    if(list.size()>2){
+                    if (list.size() > 2) {
                         ll_xueba3.setVisibility(View.VISIBLE);
-                        xuebaName3=list.get(2).getStuName();
-                        xuebaAnswer3=list.get(2).getStuAnswer();
-                        tv_xuebaName3.setText(xuebaName3+"的作答");
-                        setHtmlOnWebView(wv_xuebaAnswer3, html_answer_head+xuebaAnswer3);
+                        xuebaName3 = list.get(2).getStuName();
+                        xuebaAnswer3 = list.get(2).getStuAnswer();
+                        tv_xuebaName3.setText(xuebaName3 + "的作答");
+                        setHtmlOnWebView(wv_xuebaAnswer3,  xuebaAnswer3);
                     }
                 }
 
@@ -481,6 +475,7 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
 
         }
     };
+
     private void loadAnswer_Net() {
 
         String mRequestUrl = Constant.API + Constant.XUEBA_ANSWER + "?paperId=" + paperId + "&questionId=" + homeworkMarked.getQuestionId();
@@ -495,7 +490,7 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
                 //使用Gson框架转换Json字符串为列表
                 List<XueBaAnswerEntity> itemList = gson.fromJson(itemString, new TypeToken<List<XueBaAnswerEntity>>() {
                 }.getType());
-                Log.d("hsk0527","学霸答案："+itemList);
+                Log.d("hsk0527", "学霸答案：" + itemList);
                 //封装消息，传递给主线程
                 Message message = Message.obtain();
 

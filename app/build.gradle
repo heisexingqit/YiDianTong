@@ -10,8 +10,8 @@ android {
         applicationId "com.example.yidiantong"
         minSdk 23
         targetSdk 32
-        versionCode 19
-        versionName "6.1.9"
+        versionCode 20
+        versionName "6.2.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     android {

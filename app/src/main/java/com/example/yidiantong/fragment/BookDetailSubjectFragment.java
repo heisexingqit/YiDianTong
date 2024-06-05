@@ -392,7 +392,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         ll_xueba3 = view.findViewById(R.id.ll_xueba3);
 
         //加载学霸答案
-        //loadAnswer_Net();
+        loadAnswer_Net();
 
         String html_analysis = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiAnalysis() + "</body>";
         String html1 = html_analysis.replace("#", "%23");
@@ -607,8 +607,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                     iv_camera.setVisibility(View.GONE);
                     iv_gallery.setVisibility(View.GONE);
 
-                    loadAnswer_Net();
-                    
+
 //                    fll_bd_answer.setVisibility(View.GONE);
                     et_student_answer.clearFocus();
                     fb_bd_sumbit.setVisibility(View.GONE);
