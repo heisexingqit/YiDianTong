@@ -104,18 +104,6 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
     private String keywordStr;
     private LinearLayout fll_bd_vedio;
 
-    //学霸答案
-    private TextView tv_xueba;
-    private TextView ftv_xuebaName1;
-    private TextView ftv_xuebaName2;
-    private TextView ftv_xuebaName3;
-    private WebView fwv_xuebaAnswer1;
-    private WebView fwv_xuebaAnswer2;
-    private WebView fwv_xuebaAnswer3;
-    private LinearLayout ll_xueba3;
-    private LinearLayout ll_xueba1;
-    private LinearLayout ll_xueba2;
-    private String questionId;
 
 
     public static BookDetailReadingFragment newInstance(BookRecyclerEntity bookrecyclerEntity, String userName, String subjectId, String courseName, Boolean exerciseType) {
@@ -148,7 +136,6 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
         subjectId = arg.getString("subjectId");
         courseName = arg.getString("courseName");
         exerciseType = arg.getBoolean("exerciseType");
-        questionId = arg.getString("subjectId");
 
         //获取view
         View view = inflater.inflate(R.layout.fragment_book_detail_seven2five, container, false);
@@ -187,20 +174,7 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
         ftv_bd_score = view.findViewById(R.id.ftv_bd_score);
         ftv_bd_score.setText("得分: " + bookrecyclerEntity.getStuScore() + " 全班均分:" + bookrecyclerEntity.getAvgScore());
 
-        //学霸答案显示
-        tv_xueba = view.findViewById(R.id.tv_xueba);
-        ftv_xuebaName1 = view.findViewById(R.id.ftv_xuebaName1);
-        ftv_xuebaName2 = view.findViewById(R.id.ftv_xuebaName2);
-        ftv_xuebaName3 = view.findViewById(R.id.ftv_xuebaName3);
-        fwv_xuebaAnswer1 = view.findViewById(R.id.fwv_xuebaAnswer1);
-        fwv_xuebaAnswer2 = view.findViewById(R.id.fwv_xuebaAnswer2);
-        fwv_xuebaAnswer3 = view.findViewById(R.id.fwv_xuebaAnswer3);
-        ll_xueba1 = view.findViewById(R.id.ll_xueba1);
-        ll_xueba2 = view.findViewById(R.id.ll_xueba2);
-        ll_xueba3 = view.findViewById(R.id.ll_xueba3);
 
-        //加载学霸答案
-        loadAnswer_Net();
 
         //翻页组件
         ImageView iv_pager_last = getActivity().findViewById(R.id.iv_page_last);
@@ -679,107 +653,5 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
             }
         }
     }
-    private void setHtmlOnWebView(WebView wb, String str){
-        str = StringEscapeUtils.unescapeHtml4(str);
-        // 定义图片点击放大的JavaScript函数
 
-        String html_content = "<head><style>" +
-                " p {\n" +
-                "   margin: 0px;" +
-                "   line-height: 30px;" +
-                "   }" +
-                "</style>" +
-                "</head><body style=\"color: rgb(117, 117, 117); font-size: 14px; margin: 0px; padding: 0px\">" + str + "</body>";
-        wb.getSettings().setJavaScriptEnabled(true); // 确保JavaScript可用
-        wb.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
-    }
-    private Handler handler_xueba = new Handler(Looper.getMainLooper()) {
-        public void handleMessage(Message message) {
-            super.handleMessage(message);
-            if (message.what == 102) {
-                String html_answer_head = "<head>\n" +
-                        "    <style>\n" +
-                        "        body {\n" +
-                        "            color: rgb(117, 117, 117);\n" +
-                        "            word-wrap: break-word;\n" +
-                        "            font-size: 14px;" +
-                        "        }\n" +
-                        "    </style>\n" +
-                        "    <script>\n" +
-                        "        function lookImage(x) {\n" +
-                        "        }\n" +
-                        "        function bigimage(x) {\n" +
-                        "            myInterface.bigPic()\n" +
-                        "        }\n" +
-                        "    </script>\n" +
-                        "</head>\n" +
-                        "\n" +
-                        "<body onclick=\"bigimage(this)\">\n";
-                //学霸答案展示
-                List<XueBaAnswerEntity> list = (List<XueBaAnswerEntity>) message.obj;
-                if (stuans != -1) {
-                    if (list.size() > 0) {
-                        tv_xueba.setVisibility(View.VISIBLE);
-                        ftv_xuebaName1.setVisibility(View.VISIBLE);
-                        ll_xueba1.setVisibility(View.VISIBLE);
-                        String xuebaName1 = list.get(0).getStuName();
-                        String xuebaAnswer1 = list.get(0).getStuAnswer();
-                        ftv_xuebaName1.setText(xuebaName1 + "的作答");
-                        setHtmlOnWebView(fwv_xuebaAnswer1, html_answer_head+xuebaAnswer1);
-
-                    }
-                    if (list.size() > 1) {
-                        ftv_xuebaName2.setVisibility(View.VISIBLE);
-                        ll_xueba2.setVisibility(View.VISIBLE);
-                        String xuebaName2 = list.get(0).getStuName();
-                        String xuebaAnswer2 = list.get(0).getStuAnswer();
-                        ftv_xuebaName2.setText(xuebaName2 + "的作答");
-                        setHtmlOnWebView(fwv_xuebaAnswer2, html_answer_head+xuebaAnswer2);
-                    }
-                    if (list.size() > 2) {
-                        ftv_xuebaName3.setVisibility(View.VISIBLE);
-                        ll_xueba3.setVisibility(View.VISIBLE);
-                        String xuebaName3 = list.get(0).getStuName();
-                        String xuebaAnswer3 = list.get(0).getStuAnswer();
-                        ftv_xuebaName3.setText(xuebaName3 + "的作答");
-                        setHtmlOnWebView(fwv_xuebaAnswer3, html_answer_head+xuebaAnswer3);
-                    }
-                }
-            }
-        }
-    };
-    private void loadAnswer_Net() {
-        String sourceId = getActivity().getIntent().getStringExtra("sourceId");  // 单元id
-        String mRequestUrl = Constant.API + Constant.XUEBA_ANSWER + "?paperId=" + sourceId + "&questionId=" + bookrecyclerEntity.getQuestionId();
-
-        Log.d("wen", "loadItems_Net: " + mRequestUrl);
-        StringRequest request = new StringRequest(mRequestUrl, response -> {
-            try {
-                JSONObject json = JsonUtils.getJsonObjectFromString(response);
-
-                String itemString = json.getString("data");
-                Gson gson = new Gson();
-                //使用Gson框架转换Json字符串为列表
-                List<XueBaAnswerEntity> itemList = gson.fromJson(itemString, new TypeToken<List<XueBaAnswerEntity>>() {
-                }.getType());
-                Log.d("hsk0527","学霸答案："+itemList);
-                //封装消息，传递给主线程
-                Message message = Message.obtain();
-
-                message.obj = itemList;
-                // 发送消息给主线程
-
-                //标识线程
-                message.what = 102;
-                handler_xueba.sendMessage(message);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }, error -> {
-            Log.e("volley", "Volley_Error: " + error.toString());
-
-        });
-        MyApplication.addRequest(request, TAG);
-    }
 }

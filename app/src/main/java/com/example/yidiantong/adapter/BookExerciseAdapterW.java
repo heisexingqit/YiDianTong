@@ -601,11 +601,7 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
                             break;
 
                     }
-
-
                     ((BookExerciseActivity)mContext).show_rl_submitting();
-                    Log.d("hsk0601","高："+rl_submitting.getHeight());
-                    Log.d("hsk0601","高："+rl_submitting.getWidth());
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {

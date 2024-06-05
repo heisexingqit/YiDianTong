@@ -395,7 +395,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         ll_xueba3 = view.findViewById(R.id.ll_xueba3);
 
         //加载学霸答案
-        loadAnswer_Net();
+        //loadAnswer_Net();
 
         String html_analysis = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiAnalysis() + "</body>";
         String html1 = html_analysis.replace("#", "%23");
@@ -610,7 +610,8 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                     iv_camera.setVisibility(View.GONE);
                     iv_gallery.setVisibility(View.GONE);
                     show_xueba = true;
-
+                    loadAnswer_Net();
+                    
 //                    fll_bd_answer.setVisibility(View.GONE);
                     et_student_answer.clearFocus();
                     fb_bd_sumbit.setVisibility(View.GONE);
@@ -1198,7 +1199,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                         "<body onclick=\"bigimage(this)\">\n";
                 //学霸答案展示
                 List<XueBaAnswerEntity> list = (List<XueBaAnswerEntity>) message.obj;
-                if (show_xueba) {
+
                     if (list.size() > 0) {
                         tv_xueba.setVisibility(View.VISIBLE);
                         ftv_xuebaName1.setVisibility(View.VISIBLE);
@@ -1212,20 +1213,20 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                     if (list.size() > 1) {
                         ftv_xuebaName2.setVisibility(View.VISIBLE);
                         ll_xueba2.setVisibility(View.VISIBLE);
-                        String xuebaName2 = list.get(0).getStuName();
-                        String xuebaAnswer2 = list.get(0).getStuAnswer();
+                        String xuebaName2 = list.get(1).getStuName();
+                        String xuebaAnswer2 = list.get(1).getStuAnswer();
                         ftv_xuebaName2.setText(xuebaName2 + "的作答");
                         setHtmlOnWebView(fwv_xuebaAnswer2, html_answer_head + xuebaAnswer2);
                     }
                     if (list.size() > 2) {
                         ftv_xuebaName3.setVisibility(View.VISIBLE);
                         ll_xueba3.setVisibility(View.VISIBLE);
-                        String xuebaName3 = list.get(0).getStuName();
-                        String xuebaAnswer3 = list.get(0).getStuAnswer();
+                        String xuebaName3 = list.get(2).getStuName();
+                        String xuebaAnswer3 = list.get(2).getStuAnswer();
                         ftv_xuebaName3.setText(xuebaName3 + "的作答");
                         setHtmlOnWebView(fwv_xuebaAnswer3, html_answer_head + xuebaAnswer3);
                     }
-                }
+
             }
         }
     };
