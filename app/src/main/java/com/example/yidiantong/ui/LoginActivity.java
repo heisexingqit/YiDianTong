@@ -54,6 +54,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private SharedPreferences preferences;
     private LinearLayout ll_loading;
 
+    //ip修改
+    private EditText et_ip;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +84,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         //输入优化，点击外侧LL即获取焦点
         ll_username.setOnClickListener(this);
         ll_pw.setOnClickListener(this);
+
+        //ip获取
+        et_ip = findViewById(R.id.et_ip);
         // 组件样式 结束-----------------------------------------------------
 
         String user = null, pw = null;
@@ -154,6 +160,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 username = et_username.getText().toString().trim();
                 password = et_pw.getText().toString();
                 login();
+                String ip = et_ip.getText().toString();
+                if(ip.length()>0){
+                    Constant.API=ip;
+                }
                 break;
             case R.id.ll_username:
                 ll_username.requestFocus();

@@ -36,6 +36,7 @@ import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookExerciseEntity;
+import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.RecyclerInterface;
 
@@ -331,7 +332,7 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
     }
 
     private void saveAnswer2Server(String queAnswer, String stuAnswer,int type) {
-        String mRequestUrl = "http://www.cn901.net:8111/AppServer/ajax/studentApp_savePythonRecommendQueAnswer.do?userId=" +
+        String mRequestUrl = Constant.API+"/AppServer/ajax/studentApp_savePythonRecommendQueAnswer.do?userId=" +
                 "dlzx230123" + "&questionId=" + bookExerciseEntity.getQuestionId() + "&queAnswer=" + queAnswer + "&stuAnswer=" +
                 stuAnswer + "&baseTypeId=" + bookExerciseEntity.getBaseTypeId() + "&type=" + type;
         Log.e("wen0223", "loadItems_Net: " + mRequestUrl);

@@ -216,7 +216,7 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                     AlertDialog dialog = builder.create();
                     dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
                     dialog.show();
-                } else if (un_submit * 1.0 / all_num > 0.2) {
+                } else {
                     if (un_submit * 1.0 / all_num > 0.2) {
                         builder.setMessage("提交率不足80%，确定要公布答案吗？");
                     }else{

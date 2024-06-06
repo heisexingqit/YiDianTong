@@ -33,6 +33,7 @@ import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.adapter.BookExerciseAdapter;
 import com.example.yidiantong.bean.BookExerciseEntity;
 import com.example.yidiantong.ui.BookExerciseDetailActivity;
+import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -190,7 +191,7 @@ public class BookExerciseFragment extends Fragment {
             rl_loading.setVisibility(View.VISIBLE);
         }
 //        String mRequestUrl = Constant.API + "/AppServer/ajax/studentApp_getRecommendQue.do" + "?questionId=" + questionIdd;
-        String mRequestUrl = "http://www.cn901.net:8111/AppServer/ajax/studentApp_getQuestionsJYFS.do?questionId=" + questionIdd + "&currentPage=" + currentPage;
+        String mRequestUrl = Constant.API +"/AppServer/ajax/studentApp_getQuestionsJYFS.do?questionId=" + questionIdd + "&currentPage=" + currentPage;
         Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {

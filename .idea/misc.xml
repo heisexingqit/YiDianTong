@@ -265,6 +265,7 @@
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/drawable/btn_color_yellow.xml" value="0.273" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/drawable/edit_move.xml" value="0.273" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/drawable/edit_pen.xml" value="0.273" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/drawable/login_text_cursor.xml" value="0.281" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/drawable/radio_button_border.xml" value="0.273" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/drawable/radio_button_text_color.xml" value="0.2575" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/drawable/t_homework_report_unable.xml" value="0.264" />
@@ -272,12 +273,14 @@
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout-land/fragment_main_course.xml" value="0.3588235294117647" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout-land/picture_menu.xml" value="0.4739583333333333" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_book_exercise.xml" value="0.18518518518518517" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_book_exercise_detail.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_book_recycle.xml" value="0.24739583333333334" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_course_look.xml" value="0.35520833333333335" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_course_look_screen.xml" value="0.35520833333333335" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_course_question.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_homework_pager.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_homework_pager_finish.xml" value="0.3" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_login.xml" value="0.23651452282157676" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_main_book.xml" value="0.24739583333333334" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_main_pager.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_tcourse_scanner.xml" value="0.3" />
@@ -296,6 +299,7 @@
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_tremove_control.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/bar_bottom_navigation.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/bar_bottom_navigation2.xml" value="0.3" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/bar_top_homework_title3.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/bar_top_search2.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/bell_notice_look_stu_name.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/course_btn.xml" value="0.3" />
