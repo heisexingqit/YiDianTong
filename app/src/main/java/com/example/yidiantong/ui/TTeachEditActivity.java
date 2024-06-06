@@ -528,30 +528,167 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag) {
-        Intent intent = getIntent();
+    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag, int zouyeType, int zouyeFlag) {
+        if (zouyeFlag == 1) {
+            Intent intent = getIntent();
 
-        List<String> ketangNameList = new ArrayList<>(Arrays.asList(ketang.split(", ")));
-        List<String> ketangIdList = new ArrayList<>(Arrays.asList(ketangId.split(", ")));
-        List<String> clasList = new ArrayList<>(Arrays.asList(clas.split(", ")));
-        List<String> classIdList = new ArrayList<>(Arrays.asList(classId.split(", ")));
-        List<String> stuIdsList = new ArrayList<>(Arrays.asList(stuIds.split(", ")));
-        List<String> stuNamesList = new ArrayList<>(Arrays.asList(stuNames.split(", ")));
-        count = 0;
+            List<String> ketangNameList = new ArrayList<>(Arrays.asList(ketang.split(", ")));
+            List<String> ketangIdList = new ArrayList<>(Arrays.asList(ketangId.split(", ")));
+            List<String> clasList = new ArrayList<>(Arrays.asList(clas.split(", ")));
+            List<String> classIdList = new ArrayList<>(Arrays.asList(classId.split(", ")));
+            List<String> stuIdsList = new ArrayList<>(Arrays.asList(stuIds.split(", ")));
+            List<String> stuNamesList = new ArrayList<>(Arrays.asList(stuNames.split(", ")));
+            count = 0;
 
-        String assignType_ = assignType;
-        for (int i = 0; i < ketangNameList.size(); ++i) {
-            // 第一次保存+布置，后面直接布置即可
-            if (i > 0 && assignType.equals("1")) {
-                assignType_ = "2";
+            String assignType_ = assignType;
+            for (int i = 0; i < ketangNameList.size(); ++i) {
+                // 第一次保存+布置，后面直接布置即可
+                if (i > 0 && assignType.equals("1")) {
+                    assignType_ = "2";
+                }
+                ketang = ketangNameList.get(i);
+                ketangId = ketangIdList.get(i);
+                clas = clasList.get(i);
+                classId = classIdList.get(i);
+                stuIds = stuIdsList.get(i);
+                stuNames = stuNamesList.get(i);
+
+                // 导学案专属参数
+
+                String classHours = "";
+                String studyHours = "";
+
+                String Introduce = "";
+                String Goal = "";
+                String Emphasis = "";
+                String Difficulty = "";
+                String Extension = "";
+                String Summary = "";
+
+                // 真正数据
+                String xueduan = intent.getStringExtra("xueduan");
+                String xueduanCode = intent.getStringExtra("xueduanCode");
+                String xueke = intent.getStringExtra("xueke");
+                String xuekeCode = intent.getStringExtra("xuekeCode");
+                String banben = intent.getStringExtra("banben");
+                String banbenCode = intent.getStringExtra("banbenCode");
+                String jiaocai = intent.getStringExtra("jiaocai");
+                String jiaocaiCode = intent.getStringExtra("jiaocaiCode");
+                String zhishidian = intent.getStringExtra("zhishidian");
+                String zhishidianId = intent.getStringExtra("zhishidianId");
+
+
+                StringBuilder jsonStringBuilder = new StringBuilder();
+                String jsonString = "[";
+                List<LearnPlanAddItemEntity> pickList = addFragment.pickList;
+                for (int j = 0; j < pickList.size(); ++j) {
+                    LearnPlanAddItemEntity item = pickList.get(j);
+                    item.setOrder(j + 1);
+                    if (jsonStringBuilder.length() > 0) {
+                        jsonStringBuilder.append(", ");
+                    }
+                    jsonStringBuilder.append(item.toData());
+                }
+                jsonString += jsonStringBuilder.toString();
+                jsonString += "]";
+
+                Log.d("wen", "内容串: " + jsonString);
+                try {
+
+                    ketang = URLEncoder.encode(ketang, "UTF-8");
+                    clas = URLEncoder.encode(clas, "UTF-8");
+                    stuNames = URLEncoder.encode(stuNames, "UTF-8");
+                    jsonString = URLEncoder.encode(jsonString, "UTF-8");
+
+                    mRequestUrl = Constant.API + Constant.T_LEARN_PLAN_ASSIGN_SAVE + "?assignType=" + assignType_ +
+                            "&channelCode=" + xueduanCode + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") +
+                            "&subjectCode=" + xuekeCode + "&subjectName=" + URLEncoder.encode(xueke, "UTF-8") +
+                            "&textBookCode=" + banbenCode + "&textBookName=" + URLEncoder.encode(banben, "UTF-8") +
+                            "&gradeLevelCode=" + jiaocaiCode + "&gradeLevelName=" + URLEncoder.encode(jiaocai, "UTF-8") +
+                            "&pointCode=" + zhishidianId + "&pointName=" + URLEncoder.encode(zhishidian, "UTF-8") +
+
+                            "&type=" + learnPlanType + "&learnPlanType=" + "&classHours=" + classHours +
+                            "&studyHours=" + studyHours + "&Introduce=" + URLEncoder.encode(Introduce, "UTF-8") + "&Goal=" + URLEncoder.encode(Goal, "UTF-8") +
+                            "&Emphasis=" + URLEncoder.encode(Emphasis, "UTF-8") + "&Difficulty=" + URLEncoder.encode(Difficulty, "UTF-8") + "&Summary=" + URLEncoder.encode(Summary, "UTF-8") + "&Extension=" + URLEncoder.encode(Extension, "UTF-8") +
+
+                            "&startTime=" + startTime + "&endTime=" + endTime +
+                            "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classIds=" + classId +
+                            "&className=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
+                            "&roomType=" + learnType +
+
+                            "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
+                            "&learnPlanName=" + URLEncoder.encode(learnPlanName, "UTF-8") + "&flag=edit" + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;
+
+                    Log.d("wen", "URL: " + mRequestUrl);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                StringRequest request = new StringRequest(mRequestUrl, response -> {
+                    try {
+                        JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                        count++;
+
+                        Log.d(TAG, "submit: " + json);
+                        boolean success = json.getBoolean("success");
+                        String msg = json.getString("message");
+
+                        if (count == ketangNameList.size()) {
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                            builder.setTitle(learnPlanName);
+
+                            if (success) {
+                                if (learnPlanType.equals("1")) {
+                                    if (assignType.equals("3")) {
+                                        builder.setMessage("导学案保存成功");
+                                    } else {
+                                        builder.setMessage("导学案布置成功");
+                                    }
+                                } else {
+                                    if (assignType.equals("3")) {
+                                        builder.setMessage("微课保存成功");
+                                    } else {
+                                        builder.setMessage("微课布置成功");
+                                    }
+                                }
+                            } else {
+                                builder.setMessage(msg);
+                            }
+                            builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    rl_submitting.setVisibility(View.GONE);
+                                    Intent toHome = new Intent(TTeachEditActivity.this, TMainPagerActivity.class);
+                                    //两个一起用
+                                    toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+                                    startActivity(toHome);
+                                }
+                            });
+
+                            AlertDialog dialog = builder.create();
+                            dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+                            dialog.show();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }, error -> {
+                    Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+                    Log.d("wen", "Volley_Error: " + error.toString());
+                });
+                MyApplication.addRequest(request, TAG);
+                rl_submitting.setVisibility(View.VISIBLE);
+                try {
+                    // 休眠2秒钟，避免请求过快被丢弃
+                    Thread.sleep(100);
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-            ketang = ketangNameList.get(i);
-            ketangId = ketangIdList.get(i);
-            clas = clasList.get(i);
-            classId = classIdList.get(i);
-            stuIds = stuIdsList.get(i);
-            stuNames = stuNamesList.get(i);
-
+        } else {
+            Intent intent = getIntent();
             // 导学案专属参数
 
             String classHours = "";
@@ -595,11 +732,9 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
             try {
 
                 ketang = URLEncoder.encode(ketang, "UTF-8");
-                clas = URLEncoder.encode(clas, "UTF-8");
-                stuNames = URLEncoder.encode(stuNames, "UTF-8");
                 jsonString = URLEncoder.encode(jsonString, "UTF-8");
 
-                mRequestUrl = Constant.API + Constant.T_LEARN_PLAN_ASSIGN_SAVE + "?assignType=" + assignType_ +
+                mRequestUrl = Constant.API + Constant.T_LEARN_PLAN_ASSIGN_SAVE + "?assignType=" + assignType +
                         "&channelCode=" + xueduanCode + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") +
                         "&subjectCode=" + xuekeCode + "&subjectName=" + URLEncoder.encode(xueke, "UTF-8") +
                         "&textBookCode=" + banbenCode + "&textBookName=" + URLEncoder.encode(banben, "UTF-8") +
@@ -616,7 +751,7 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                         "&roomType=" + learnType +
 
                         "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                        "&learnPlanName=" + URLEncoder.encode(learnPlanName, "UTF-8") + "&flag=edit" + "&jsonStr=" + jsonString;
+                        "&learnPlanName=" + URLEncoder.encode(learnPlanName, "UTF-8") + "&flag=edit" + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;
 
                 Log.d("wen", "URL: " + mRequestUrl);
             } catch (UnsupportedEncodingException e) {
@@ -628,7 +763,6 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                     Log.d(TAG, "submit: " + json);
                     boolean success = json.getBoolean("success");
                     String msg = json.getString("message");
-
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setTitle(learnPlanName);
@@ -656,7 +790,7 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                             rl_submitting.setVisibility(View.GONE);
                             Intent toHome = new Intent(TTeachEditActivity.this, TMainPagerActivity.class);
                             //两个一起用
-                            toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
                             startActivity(toHome);
                         }
@@ -682,6 +816,8 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
+
         }
     }
 

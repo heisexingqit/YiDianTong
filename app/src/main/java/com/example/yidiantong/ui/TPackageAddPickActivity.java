@@ -429,7 +429,7 @@ public class TPackageAddPickActivity extends AppCompatActivity implements View.O
             return;
         }
 
-        submit("", "", "", "", "", "", "3", "", "", "", "save");
+        submit("", "", "", "", "", "", "3", "", "", "", "save", 0, 0);
     }
 
     /**
@@ -518,7 +518,7 @@ public class TPackageAddPickActivity extends AppCompatActivity implements View.O
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag) {
+    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag, int zouyeType, int zouyeFlag) {
         // --------------------------------//
         //  这部分是从AddActivity获取的属性值，
         //  与PopUpWindow中的数值不同
@@ -595,7 +595,7 @@ public class TPackageAddPickActivity extends AppCompatActivity implements View.O
                     "&roomType=" + learnType +
 
                     "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                    "&learnPlanName=" + learnPlanName + "&flag=" + flag + "&jsonStr=" + jsonString;
+                    "&learnPlanName=" + learnPlanName + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

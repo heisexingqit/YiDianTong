@@ -786,5 +786,4 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
         void openDrawGallery(int pos, WebView wb, LinearLayout ll);
     }
 
-
 }

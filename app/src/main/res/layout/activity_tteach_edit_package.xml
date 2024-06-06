@@ -86,7 +86,7 @@
         android:layout_below="@+id/ll_top" />
 
     <!--遮蔽-->
-    <include layout="@layout/loading_page"/>
+    <include layout="@layout/loading_page" />
     <include
         layout="@layout/submitting_page"
         android:visibility="gone"/>
