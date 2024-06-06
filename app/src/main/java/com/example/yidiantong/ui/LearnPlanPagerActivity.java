@@ -504,9 +504,7 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
     @Override
     public void uploadTime(long timeLong) {
         int pos = vp_homework.getCurrentItem();
-        String mRequestUrl = null;
-
-        mRequestUrl = Constant.API + Constant.LEARNPLAN_SUBMIT_TIME + "?learnPlanId=" + learnPlanId + "&contentId=" + adapter.itemList.get(pos).getResourceId() +
+        String mRequestUrl = Constant.API + Constant.LEARNPLAN_SUBMIT_TIME + "?learnPlanId=" + learnPlanId + "&contentId=" + adapter.itemList.get(pos).getResourceId() +
                 "&userName=" + username + "&useTime=" + timeLong;
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
@@ -517,7 +515,7 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
 
@@ -530,7 +528,6 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
         if (stuAnswer[pos] == null || stuAnswer[pos].equals(oldStuAnswer[pos])) {
             return;
         }
-        Log.d("wen", "uploadQuestion: " + stuAnswer[pos]);
 
         String mRequestUrl = null;
         try {

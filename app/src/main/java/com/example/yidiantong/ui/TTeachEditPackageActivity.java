@@ -430,7 +430,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
             return;
         }
 
-        submit("", "", "", "", "", "", "3", "", "", "", "edit");
+        submit("", "", "", "", "", "", "3", "", "", "", "edit", 0, 0);
 
     }
 
@@ -526,7 +526,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag) {
+    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag, int zouyeType, int zouyeFlag) {
         Intent intent = getIntent();
 
         // 导学案专属参数
@@ -592,7 +592,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                     "&roomType=" + learnType +
 
                     "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                    "&learnPlanName=" + URLEncoder.encode(learnPlanName, "UTF-8") + "&flag=edit" + "&jsonStr=" + jsonString;
+                    "&learnPlanName=" + URLEncoder.encode(learnPlanName, "UTF-8") + "&flag=edit" + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;
 
             Log.d("wen", "URL: " + mRequestUrl);
         } catch (UnsupportedEncodingException e) {

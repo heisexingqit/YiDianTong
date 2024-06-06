@@ -307,4 +307,9 @@ public class Constant {
     // 替换学霸答案
     public static final String T_REPLACE_XUEBA_ANSWER = "/AppServer/ajax/teacherApp_replaceXuebaAnswer.do";
 
+    // 协作组相关
+    public static final String T_HOMEWORK_ASSIGN_GET_XZ = "/AppServer/ajax/teacherApp_getXiezuozuList.do";
+
+    public static final String T_HOMEWORK_ASSIGN_GET_XZ_CLASS = "/AppServer/ajax/teacherApp_getXiezuozuMemberList.do";
+
 }
