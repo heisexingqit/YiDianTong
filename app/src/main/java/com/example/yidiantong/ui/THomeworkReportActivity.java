@@ -72,6 +72,8 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
     private FlexboxLayout fb_noCorrecting;
     private FlexboxLayout fb_noSubmit;
 
+    private String Deadline;
+
     THomeworkReportEntity homeworkReport;
 
     @Override
@@ -116,6 +118,8 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
         findViewById(R.id.iv_back).setOnClickListener(v -> finish());
 
         loadItems_Net();
+        //获取答案公布状态
+        getAnswerStatus();
 
     }
 
@@ -200,35 +204,61 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                 int all_num = Integer.parseInt(homeworkReport.getCorrecting());
                 all_num += Integer.parseInt(homeworkReport.getNoCorrecting());
                 all_num += un_submit;
+                int SubmissionRate = (all_num-un_submit)/all_num*100;
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 if (homeworkReport.getStatus().equals("show")) {
-
-                    builder.setMessage("该作业答案已经公布，是否关闭？");
-                    builder.setNegativeButton("取消", null);
-
-                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            cancelAnswer();
-                        }
-                    });
+                    if (un_submit == 0 || (SubmissionRate >= 80&&Deadline.equals("after"))) {
+                        builder.setMessage("答案已公布");
+                        builder.setNegativeButton("取消", null);
+                        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // 不做任何操作，仅关闭对话框
+                            }
+                        });
+                    } else {
+                        builder.setMessage("该作业答案已经公布，是否关闭？");
+                        builder.setNegativeButton("取消", null);
+                        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                cancelAnswer();
+                            }
+                        });
+                    }
                     AlertDialog dialog = builder.create();
                     dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
                     dialog.show();
                 } else {
-                    if (un_submit * 1.0 / all_num > 0.2) {
-                        builder.setMessage("提交率不足80%，确定要公布答案吗？");
-                    }else{
-                        builder.setMessage("确定公布答案吗？");
-                    }
-                    builder.setNegativeButton("取消", null);
-                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
+                    if(SubmissionRate >= 80){
+                        if(Deadline.equals("after")){
+                            builder.setMessage("答案已公布");
+                        }else {
+                            builder.setMessage("答案已公布");
                             publishAnswer();
                         }
-                    });
+                        builder.setNegativeButton("取消", null);
+                        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // 不做任何操作，仅关闭对话框
+                            }
+                        });
+                    }else {
+                        if(Deadline.equals("before")){
+                            builder.setMessage("提交率不足80%且作业未截止，确定公布答案？");
+                        }else {
+                            builder.setMessage("提交率不足80%，确定公布答案？");
+                        }
+                        builder.setNegativeButton("取消", null);
+                        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                publishAnswer();
+                            }
+                        });
+                    }
                     AlertDialog dialog = builder.create();
                     dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
                     dialog.show();
@@ -284,6 +314,27 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
 
         MyApplication.addRequest(request, TAG);
     }
+    private void getAnswerStatus(){
+        String mRequestUrl = Constant.API + Constant.GET_ANSWER_STATUS + "?paperId=" + taskId;
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String message = json.getString("message");
+                Boolean isSuccess = json.getBoolean("success");
+                String AnswerStatus = json.getString("data");
+                String[] str = AnswerStatus.split("_");
+                Deadline = str[0];
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Log.e("volley", "Volley_Error: " + error.toString());
+
+        });
+
+        MyApplication.addRequest(request, TAG);
+    }
+
 
     public void showList(int newPos) {
         View view = null;

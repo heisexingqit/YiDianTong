@@ -282,20 +282,28 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                  */
                 List<HomeworkEntity> list = (List<HomeworkEntity>) message.obj;
 
-                pageCount = list.size();
-                questionIds = new String[list.size()];
-                question_types_array = new String[list.size()];
-                for (int i = 0; i < list.size(); ++i) {
-                    // 顶部目录菜单内容
-                    question_types.add(list.get(i).getQuestionName());
-                    // 题面类型
-                    question_types_array[i] = list.get(i).getQuestionTypeName();
-                    // 题目ID
-                    questionIds[i] = list.get(i).getQuestionId();
+                // 确保list不为空再进行后续操作
+                if (!list.isEmpty()) {
+                    pageCount = list.size();
+                    questionIds = new String[list.size()];
+                    question_types_array = new String[list.size()];
+
+                    for (int i = 0; i < list.size(); ++i) {
+                        // 顶部目录菜单内容
+                        question_types.add(list.get(i).getQuestionName());
+                        // 题面类型
+                        question_types_array[i] = list.get(i).getQuestionTypeName();
+                        // 题目ID
+                        questionIds[i] = list.get(i).getQuestionId();
+                    }
+
+                    timianList = list;
+                    countReady += 1;
+                    Log.e("wen0221", "handleMessage: " + countReady);
+                } else {
+                    // 处理list为空的情况，比如给出提示或者采取其他措施
+                    Log.e("wen0221", "handleMessage: List is empty.");
                 }
-                timianList = list;
-                countReady += 1;
-                Log.e("wen0221", "handleMessage: " + countReady);
             } else if (message.what == 101) {
                 /**
                  * 学生作答信息
@@ -346,7 +354,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
     // 加载作业条目，进行ViewPager渲染；同时加载学生答题情况
     private void loadItems_Net() {
 
-        String mRequestUrl = Constant.API + Constant.HOMEWORK_ITEM + "?learnPlanId=" + learnPlanId;
+        String mRequestUrl = Constant.API + Constant.HOMEWORK_ITEM + "?learnPlanId=" + learnPlanId+"&userName=" + username;
         Log.d(TAG, "题目信息: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
