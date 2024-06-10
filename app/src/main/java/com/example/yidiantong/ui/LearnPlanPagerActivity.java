@@ -257,19 +257,14 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
 
     //跳转至提交作业页面
     private void jumpToSubmitPage() {
-        uploadQuestion();
-        String[] quesAnsList = new String[questionIdx.size()];
-        for (int i = 0; i < questionIdx.size(); ++i) {
-            quesAnsList[i] = stuAnswer[questionIdx.get(i)];
-        }
         Intent intent = new Intent(LearnPlanPagerActivity.this, LearnPlanSubmitActivity.class);
         intent.putExtra("title", title);
-        intent.putExtra("stuAnswer", quesAnsList);
+        intent.putExtra("stuAnswer", stuAnswer);
+        intent.putExtra("type", getIntent().getStringExtra("type"));
         intent.putExtra("learnPlanId", learnPlanId);
         intent.putExtra("username", username);
         intent.putExtra("questionIds", (Serializable) questionIds);
         intent.putExtra("questionIdx", (Serializable) questionIdx);
-        intent.putExtra("questionTypes", new ArrayList<>());
         intent.putExtra("isNew", isNew);
         mResultLauncher.launch(intent);
     }
@@ -351,9 +346,13 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
             }
         }
         for (int i = 0; i < moreList2.size(); ++i) {
-            // 学生作答内容
-            stuAnswer[i] = moreList2.get(i).getStuAnswer();
-            oldStuAnswer[i] = stuAnswer[i];
+            if (questionIdx.contains(i)) {
+                // 学生作答内容
+                stuAnswer[i] = moreList2.get(i).getStuAnswer();
+                oldStuAnswer[i] = stuAnswer[i];
+            } else {
+                stuAnswer[i] = moreList.get(i).getResourceName();
+            }
         }
     }
 
@@ -439,6 +438,7 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
                                 Log.d(TAG, "onItemClick: " + topPagerIdx.get(i));
                                 currentItem = topPagerIdx.get(i);
                                 vp_homework.setCurrentItem(currentItem);
+                                setTopNum();
                                 window.dismiss();
                             }
                         }
@@ -503,6 +503,8 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
 
     @Override
     public void uploadTime(long timeLong) {
+        Log.e("wen0610", "uploadTime: " );
+
         int pos = vp_homework.getCurrentItem();
         String mRequestUrl = Constant.API + Constant.LEARNPLAN_SUBMIT_TIME + "?learnPlanId=" + learnPlanId + "&contentId=" + adapter.itemList.get(pos).getResourceId() +
                 "&userName=" + username + "&useTime=" + timeLong;
@@ -525,9 +527,10 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
     // 上传试题
     private void uploadQuestion() {
         int pos = vp_homework.getCurrentItem();
-        if (stuAnswer[pos] == null || stuAnswer[pos].equals(oldStuAnswer[pos])) {
+        if (stuAnswer[pos] == null || stuAnswer[pos].equals(oldStuAnswer[pos]) || !questionIdx.contains(pos)) {
             return;
         }
+        Log.e("wen0610", "uploadQuestion: " + pos);
 
         String mRequestUrl = null;
         try {
@@ -546,7 +549,7 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
             Log.d("wen", "Volley_Error: " + error.toString());
         });
 

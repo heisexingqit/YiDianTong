@@ -230,6 +230,7 @@ public class THomeworkMarkFragment extends Fragment {
                     double nowScore = score + 0.5;
                     if (nowScore > Double.parseDouble(homeworkMarked.getQuestionScore())) {
                         zero5 = 0;
+                        checkBox.setChecked(false);
                         Toast.makeText(getActivity(), "分数超过上限", Toast.LENGTH_SHORT).show();
                         return;
                     } else {
@@ -349,6 +350,7 @@ public class THomeworkMarkFragment extends Fragment {
          */
         cb_xueba = view.findViewById(R.id.cb_xueba);
         tv_xueba = view.findViewById(R.id.tv_xueba);
+        Log.e("wen0607", "onCreateView: " + homeworkMarked.getQuestionType());
         if (homeworkMarked.getQuestionType().equals("104") || homeworkMarked.getQuestionType().equals("106")) {
             cb_xueba.setVisibility(View.VISIBLE);
             tv_xueba.setVisibility(View.VISIBLE);

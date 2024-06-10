@@ -528,7 +528,7 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag, int zouyeType, int zouyeFlag) {
+    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag, int zouyeType, int zouyeFlag, String xiezuozuId, String xiezuozuName) {
         if (zouyeFlag == 1) {
             Intent intent = getIntent();
 
@@ -733,6 +733,7 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
 
                 ketang = URLEncoder.encode(ketang, "UTF-8");
                 jsonString = URLEncoder.encode(jsonString, "UTF-8");
+                xiezuozuName = URLEncoder.encode(xiezuozuName, "UTF-8");
 
                 mRequestUrl = Constant.API + Constant.T_LEARN_PLAN_ASSIGN_SAVE + "?assignType=" + assignType +
                         "&channelCode=" + xueduanCode + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") +
@@ -751,7 +752,7 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                         "&roomType=" + learnType +
 
                         "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                        "&learnPlanName=" + URLEncoder.encode(learnPlanName, "UTF-8") + "&flag=edit" + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;
+                        "&learnPlanName=" + URLEncoder.encode(learnPlanName, "UTF-8") + "&flag=edit" + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
 
                 Log.d("wen", "URL: " + mRequestUrl);
             } catch (UnsupportedEncodingException e) {

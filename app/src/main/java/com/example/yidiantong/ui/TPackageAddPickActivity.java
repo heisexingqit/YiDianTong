@@ -429,7 +429,7 @@ public class TPackageAddPickActivity extends AppCompatActivity implements View.O
             return;
         }
 
-        submit("", "", "", "", "", "", "3", "", "", "", "save", 0, 0);
+        submit("", "", "", "", "", "", "3", "", "", "", "save", 0, 0, "", "");
     }
 
     /**
@@ -518,7 +518,7 @@ public class TPackageAddPickActivity extends AppCompatActivity implements View.O
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag, int zouyeType, int zouyeFlag) {
+    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag, int zouyeType, int zouyeFlag, String xiezuozuId, String xiezuozuName) {
         // --------------------------------//
         //  这部分是从AddActivity获取的属性值，
         //  与PopUpWindow中的数值不同

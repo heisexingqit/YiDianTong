@@ -451,7 +451,7 @@ public class TLearnPlanPickAssignFragment extends Fragment implements View.OnCli
             Log.d("wens", "submit: 学生id" + ids);
             Log.d("wens", "submit: 学生名" + names);
 
-            transmit.submit(tv_start.getText().toString() + ":00", tv_end.getText().toString() + ":00", ketangName, ketangIds, classGroupNames, classGroupIds, assignType, ids, names, leanType, "save", zouyeType, zouyeFlag);
+            transmit.submit(tv_start.getText().toString() + ":00", tv_end.getText().toString() + ":00", ketangName, ketangIds, classGroupNames, classGroupIds, assignType, ids, names, leanType, "save", zouyeType, zouyeFlag, "", "");
 
         } else {
             if (xiezuo == null || xiezuo.length() == 0) {
@@ -492,7 +492,7 @@ public class TLearnPlanPickAssignFragment extends Fragment implements View.OnCli
             }
 
 
-            transmit.submit(tv_start.getText().toString() + ":00", tv_end.getText().toString() + ":00", keName.toString(), keId.toString(), "", "", assignType, "", "", "70", "save", zouyeType, zouyeFlag);
+            transmit.submit(tv_start.getText().toString() + ":00", tv_end.getText().toString() + ":00", keName.toString(), keId.toString(), "", "", assignType, "", "", "70", "save", zouyeType, zouyeFlag, xiezuoMap.get(xiezuo), xiezuo);
 
         }
 

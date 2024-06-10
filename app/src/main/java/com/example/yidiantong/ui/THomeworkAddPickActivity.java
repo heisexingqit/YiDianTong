@@ -35,13 +35,10 @@ import com.example.yidiantong.fragment.THomeworkPickAssignFragment;
 import com.example.yidiantong.fragment.THomeworkPickChangeFragment;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
-import com.example.yidiantong.util.LogUtils;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
 import com.example.yidiantong.util.THomeworkAddInterface;
 import com.google.android.flexbox.FlexboxLayout;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONArray;
@@ -49,7 +46,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -485,7 +481,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag, int zouyeType, int zouyeFlag) {
+    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag, int zouyeType, int zouyeFlag, String xiezuozuId, String xiezuozuName) {
         if (zouyeFlag == 1) {
             Log.e("wen0601", "start: ==================================");
             Log.e("wen0601", "ketang: " + ketang);
@@ -641,7 +637,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                 clas = URLEncoder.encode(clas, "UTF-8");
                 stuNames = URLEncoder.encode(stuNames, "UTF-8");
                 jsonString = URLEncoder.encode(jsonString, "UTF-8");
-
+                xiezuozuName = URLEncoder.encode(xiezuozuName, "UTF-8");
                 mRequestUrl = Constant.API + Constant.T_HOMEWORK_ASSIGN_SAVE + "?assignType=" + assignType +
                         "&channelCode=" + xueduanId + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") +
                         "&subjectCode=" + xuekeId + "&subjectName=" + URLEncoder.encode(xueke, "UTF-8") +
@@ -652,7 +648,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                         "&paperId=" + paperId + "&startTime=" + startTime + "&endTime=" + endTime +
                         "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classOrGroupId=" + classId +
                         "&classOrGroupName=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
-                        "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;
+                        "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
 //                LogUtils.writeLogToFile("wen0601.txt", mRequestUrl, true, this);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -664,30 +660,30 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                     Log.d("wenss", "提交成功: " + json);
                     boolean success = json.getBoolean("success");
                     String message = json.getString("message");
-                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                        builder.setTitle(name);
-                        if (success) {
-                            if (assignType.equals("3")) {
-                                builder.setMessage("作业保存成功");
-                            } else {
-                                builder.setMessage("作业布置成功");
-                            }
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle(name);
+                    if (success) {
+                        if (assignType.equals("3")) {
+                            builder.setMessage("作业保存成功");
                         } else {
-                            builder.setMessage(message);
+                            builder.setMessage("作业布置成功");
                         }
+                    } else {
+                        builder.setMessage(message);
+                    }
 
-                        builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                rl_submitting.setVisibility(View.GONE);
-                                Intent toHome = new Intent(THomeworkAddPickActivity.this, TMainPagerActivity.class);
-                                toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                startActivity(toHome);
-                            }
-                        });
-                        AlertDialog dialog = builder.create();
-                        dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
-                        dialog.show();
+                    builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            rl_submitting.setVisibility(View.GONE);
+                            Intent toHome = new Intent(THomeworkAddPickActivity.this, TMainPagerActivity.class);
+                            toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            startActivity(toHome);
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+                    dialog.show();
 
                 } catch (JSONException e) {
                     e.printStackTrace();

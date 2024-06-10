@@ -457,7 +457,6 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
                     Log.d("wen", "Volley_Error: " + error.toString());
                 });
                 MyApplication.addRequest(request, TAG);
-
             }
         });
         return view;
@@ -608,6 +607,7 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
                 AlertDialog dialog = builder.create();
                 dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
                 dialog.show();
+                refreshList();
             }
         }
     };

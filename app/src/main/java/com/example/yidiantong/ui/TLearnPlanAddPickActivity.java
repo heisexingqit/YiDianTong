@@ -508,7 +508,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag, int zouyeType, int zouyeFlag) {
+    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag, int zouyeType, int zouyeFlag, String xiezuozuId, String xiezuozuName) {
         if (zouyeFlag == 1) {
             List<String> ketangNameList = new ArrayList<>(Arrays.asList(ketang.split(", ")));
             List<String> ketangIdList = new ArrayList<>(Arrays.asList(ketangId.split(", ")));
@@ -764,8 +764,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                 Emphasis = URLEncoder.encode(Emphasis, "UTF-8");
                 Difficulty = URLEncoder.encode(Difficulty, "UTF-8");
                 Extension = URLEncoder.encode(Extension, "UTF-8");
-
-
+                xiezuozuName = URLEncoder.encode(xiezuozuName, "UTF-8");
                 mRequestUrl = Constant.API + Constant.T_LEARN_PLAN_ASSIGN_SAVE + "?assignType=" + assignType +
                         "&channelCode=" + xueduanId + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") +
                         "&subjectCode=" + xuekeId + "&subjectName=" + URLEncoder.encode(xueke, "UTF-8") +
@@ -783,7 +782,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                         "&roomType=" + learnType +
 
                         "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                        "&learnPlanName=" + learnPlanName + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;
+                        "&learnPlanName=" + learnPlanName + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }

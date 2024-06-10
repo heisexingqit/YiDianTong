@@ -1,9 +1,5 @@
 package com.example.yidiantong.ui;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -16,15 +12,19 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
-import com.example.yidiantong.adapter.ShowStuAnsAdapter;
 import com.example.yidiantong.adapter.ShowStuAnsAdapter2;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
@@ -32,8 +32,6 @@ import com.example.yidiantong.util.JsonUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,7 +47,6 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
     private List<String> questionIds;//问题Id数组
     private List<Integer> questionIdx;
     private Boolean isNew;
-    private String[] questionTypes;
     private RelativeLayout rl_submitting;
     private RelativeLayout rl_loading;
     private String title;
@@ -65,8 +62,14 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
         learnPlanId = getIntent().getStringExtra("learnPlanId");
         questionIds = (ArrayList<String>) getIntent().getSerializableExtra("questionIds");
         isNew = getIntent().getBooleanExtra("isNew", true);
-        questionTypes = getIntent().getStringArrayExtra("questionTypes");
         questionIdx = (ArrayList<Integer>) getIntent().getSerializableExtra("questionIdx");
+        String type = getIntent().getStringExtra("type");
+        Button btn_submit = findViewById(R.id.btn_submit);
+        if (type.equals("learnPlan")) {
+            btn_submit.setText("交导学案");
+        } else if (type.equals("weike")) {
+            btn_submit.setText("交微课");
+        }
 
         //标题设置
         TextView tv_title = findViewById(R.id.tv_title);
@@ -74,7 +77,7 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
 
         //ListView设置
         ListView lv_show_stuAns = findViewById(R.id.lv_show_stuAns);
-        ShowStuAnsAdapter2 adapter = new ShowStuAnsAdapter2(this, stuAnswer, questionTypes, questionIdx);
+        ShowStuAnsAdapter2 adapter = new ShowStuAnsAdapter2(this, stuAnswer, questionIdx);
         lv_show_stuAns.setAdapter(adapter);
 
         lv_show_stuAns.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -82,7 +85,7 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent();
                 Log.d(TAG, "onItemClick: " + questionIdx.get(i));
-                intent.putExtra("currentItem", questionIdx.get(i));
+                intent.putExtra("currentItem", i);
                 setResult(Activity.RESULT_OK, intent);
                 finish();
             }

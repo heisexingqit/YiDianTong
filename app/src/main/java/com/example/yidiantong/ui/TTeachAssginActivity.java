@@ -466,7 +466,7 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
             String ketangIds = result.toString();
             String ketangName = String.join(", ", ketang);
 
-            submit(tv_start.getText().toString() + ":00", tv_end.getText().toString() + ":00", ketangName, ketangIds, classGroupNames, classGroupIds, assignType, ids, names, leanType, "save", zouyeType, zouyeFlag);
+            submit(tv_start.getText().toString() + ":00", tv_end.getText().toString() + ":00", ketangName, ketangIds, classGroupNames, classGroupIds, assignType, ids, names, leanType, "save", zouyeType, zouyeFlag, "", "");
         } else {
             if (xiezuo == null || xiezuo.length() == 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -508,7 +508,7 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
 
             }
 
-            submit(tv_start.getText().toString() + ":00", tv_end.getText().toString() + ":00", keName.toString(), keId.toString(), "", "", assignType, "", "", "70", "save", zouyeType, zouyeFlag);
+            submit(tv_start.getText().toString() + ":00", tv_end.getText().toString() + ":00", keName.toString(), keId.toString(), "", "", assignType, "", "", "70", "save", zouyeType, zouyeFlag, xiezuo, xiezuoMap.get(xiezuo));
         }
     }
 
@@ -993,7 +993,7 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
 
     // 最终提交
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag, int zouyeType, int zouyeFlag) {
+    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag, int zouyeType, int zouyeFlag, String xiezuozuId, String xiezuozuName) {
         if (zouyeFlag == 1) {
             String lpn = "";
             String json_zh = "";
@@ -1213,6 +1213,7 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                     stuNames = URLEncoder.encode(stuNames, "UTF-8");
                     lpn = URLEncoder.encode(learnPlanName, "UTF-8");
                     json_zh = URLEncoder.encode(jsonString, "UTF-8");
+                    xiezuozuName = URLEncoder.encode(xiezuozuName, "UTF-8");
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
@@ -1229,7 +1230,7 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                             "&paperId=" + learnPlanId + "&startTime=" + startTime + "&endTime=" + endTime +
                             "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classOrGroupId=" + classId +
                             "&classOrGroupName=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
-                            "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=" + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;
+                            "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=" + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
 
                 } else {
                     mRequestUrl = Constant.API + Constant.T_HOMEWORK_ASSIGN_SAVE + "?assignType=" + assignType +
@@ -1242,7 +1243,7 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                             "&paperId=" + learnPlanId + "&startTime=" + startTime + "&endTime=" + endTime +
                             "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classOrGroupId=" + classId +
                             "&classOrGroupName=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
-                            "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=" + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;
+                            "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=" + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
 
                 }
 
@@ -1330,7 +1331,7 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                             "&roomType=" + learnType +
 
                             "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                            "&learnPlanName=" + lpn + "&flag=" + flag + "&jsonStr=" + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;
+                            "&learnPlanName=" + lpn + "&flag=" + flag + "&jsonStr=" + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }

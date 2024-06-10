@@ -15,13 +15,11 @@ public class ShowStuAnsAdapter2 extends BaseAdapter {
 
     private Context context;
     private String[] ansArray;
-    private String[] questionTypes;
     private List<Integer> questionIdx;
 
-    public ShowStuAnsAdapter2(Context context, String[] ansArray, String[] questionTypes, List<Integer> questionIdx) {
+    public ShowStuAnsAdapter2(Context context, String[] ansArray, List<Integer> questionIdx) {
         this.context = context;
         this.ansArray = ansArray;
-        this.questionTypes = questionTypes;
         this.questionIdx = questionIdx;
     }
 
@@ -68,7 +66,7 @@ public class ShowStuAnsAdapter2 extends BaseAdapter {
         } else {
             showAns = ansArray[i];
         }
-        wv.loadDataWithBaseURL(null, " (" + (questionIdx.get(i) + 1) + ") " + html_answer_head + showAns + html_answer_tail, "text/html", "utf-8", null);
+        wv.loadDataWithBaseURL(null, " (" + (i + 1) + ") " + html_answer_head + showAns + html_answer_tail, "text/html", "utf-8", null);
 
         return v;
     }

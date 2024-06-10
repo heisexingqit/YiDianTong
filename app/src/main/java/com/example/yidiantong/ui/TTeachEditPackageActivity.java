@@ -430,7 +430,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
             return;
         }
 
-        submit("", "", "", "", "", "", "3", "", "", "", "edit", 0, 0);
+        submit("", "", "", "", "", "", "3", "", "", "", "edit", 0, 0, "", "");
 
     }
 
@@ -526,7 +526,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag, int zouyeType, int zouyeFlag) {
+    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag, int zouyeType, int zouyeFlag, String xiezuozuId, String xiezuozuName) {
         Intent intent = getIntent();
 
         // 导学案专属参数

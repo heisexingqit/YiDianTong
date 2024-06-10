@@ -71,7 +71,7 @@
 
                         <TextView
                             android:id="@+id/tv_stu_scores"
-                            android:layout_width="120dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:gravity="center_vertical|start"
                             android:paddingEnd="10dp"
@@ -113,7 +113,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:buttonTint="@color/checkbox_color"
-                            android:visibility="visible" />
+                            android:visibility="invisible" />
 
                         <TextView
                             android:id="@+id/tv_xueba"
@@ -126,7 +126,7 @@
                             android:text="设置为学霸答案"
                             android:textColor="@color/black"
                             android:textSize="16dp"
-                            android:visibility="visible" />
+                            android:visibility="invisible" />
                     </LinearLayout>
                     </LinearLayout>
 
