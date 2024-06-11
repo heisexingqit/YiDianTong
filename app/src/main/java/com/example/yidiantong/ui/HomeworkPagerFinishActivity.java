@@ -55,6 +55,7 @@ public class HomeworkPagerFinishActivity extends AppCompatActivity implements Vi
     private String learnPlanId;
     private String title;
     private String username;
+    private String type;
 
     // ViewPager相关
     private ViewPager vp_homework;
@@ -84,6 +85,7 @@ public class HomeworkPagerFinishActivity extends AppCompatActivity implements Vi
         learnPlanId = getIntent().getStringExtra("learnPlanId");
         title = getIntent().getStringExtra("title");
         username = getIntent().getStringExtra("username");
+        type = getIntent().getStringExtra("type");
 
         /**
          * 获取页面组件
@@ -198,7 +200,7 @@ public class HomeworkPagerFinishActivity extends AppCompatActivity implements Vi
      */
     private void loadItems_Net() {
 
-        String mRequestUrl = Constant.API + Constant.AFTER_MARKED + "?learnPlanId=" + learnPlanId + "&userName=" + username + "&learnPlanType=paper";
+        String mRequestUrl = Constant.API + Constant.AFTER_MARKED + "?learnPlanId=" + learnPlanId + "&userName=" + username + "&learnPlanType=" + type;
 
         Log.d("wen", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {

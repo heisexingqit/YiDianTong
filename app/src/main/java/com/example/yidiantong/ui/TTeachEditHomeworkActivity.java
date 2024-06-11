@@ -445,7 +445,7 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag, int zouyeType, int zouyeFlag) {
+    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag, int zouyeType, int zouyeFlag, String xiezuozuId, String xiezuozuName) {
         if (zouyeFlag == 1) {
 
             StringBuilder jsonStringBuilder = new StringBuilder();
@@ -474,7 +474,7 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
                         "&paperId=" + paperId + "&startTime=" + startTime + "&endTime=" + endTime +
                         "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classOrGroupId=" + classId +
                         "&classOrGroupName=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
-                        "&learnType=" + learnType + "&flag=edit" + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;;
+                        "&learnType=" + learnType + "&flag=edit" + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -543,6 +543,7 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
                 clas = URLEncoder.encode(clas, "UTF-8");
                 stuNames = URLEncoder.encode(stuNames, "UTF-8");
                 jsonString = URLEncoder.encode(jsonString, "UTF-8");
+                xiezuozuName = URLEncoder.encode(xiezuozuName, "UTF-8");
                 mRequestUrl = Constant.API + Constant.T_HOMEWORK_ASSIGN_SAVE + "?assignType=" + assignType +
                         "&channelCode=" + xueduanCode + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") +
                         "&subjectCode=" + xuekeCode + "&subjectName=" + URLEncoder.encode(xueke, "UTF-8") +
@@ -553,7 +554,7 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
                         "&paperId=" + paperId + "&startTime=" + startTime + "&endTime=" + endTime +
                         "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classOrGroupId=" + classId +
                         "&classOrGroupName=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
-                        "&learnType=" + learnType + "&flag=edit" + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;;
+                        "&learnType=" + learnType + "&flag=edit" + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId +"&xiezuozuName=" + xiezuozuName;
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }

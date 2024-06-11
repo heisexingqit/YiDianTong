@@ -172,7 +172,11 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                             startActivity(intent);
                         } else {
                             checkInPos = pos;
-                            checkInType = "导学案";
+                            if (adapter.itemList.get(pos).getType().equals("导学案")) {
+                                checkInType = "导学案";
+                            } else {
+                                checkInType = "微课";
+                            }
                             MyReadWriteLock.checkin(adapter.itemList.get(pos).getLearnId(), username, "student", "", handler, getActivity());
                         }
 
@@ -463,7 +467,11 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                         intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
                         intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
                         intent.putExtra("username", username);
-                        intent.putExtra("type", "learnPlan");
+                        if (checkInType.equals("导学案")) {
+                            intent.putExtra("type", "learnPlan");
+                        } else {
+                            intent.putExtra("type", "weike");
+                        }
                         intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
                         startActivity(intent);
                     }

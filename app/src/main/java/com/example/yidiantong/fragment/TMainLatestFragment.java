@@ -152,13 +152,17 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
                         intent = new Intent(getActivity(), THomeworkActivity.class);
                         intent.putExtra("teacherId", username);
                         intent.putExtra("taskId", adapter.itemList.get(pos).getfId());
-                        intent.putExtra("type", "learnPlan");
+                        if (adapter.itemList.get(pos).getfType().equals("7")) {
+                            intent.putExtra("type", "weike");
+                        } else {
+                            intent.putExtra("type", "learnPlan");
+                        }
+                        intent.putExtra("homeworkName", adapter.itemList.get(pos).getfName());
                         startActivity(intent);
                         break;
                     case "2":
                         intent = new Intent(getActivity(), THomeworkActivity.class);
                         intent.putExtra("teacherId", username);
-
                         intent.putExtra("taskId", adapter.itemList.get(pos).getfId());
                         intent.putExtra("type", "paper");
                         intent.putExtra("homeworkName", adapter.itemList.get(pos).getfName());
@@ -248,7 +252,7 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
                     //其次再做相应操作
                     if (!searchStr.equals(et_search.getText().toString())) {
                         //做相应的操作
-                       tv_search.callOnClick();
+                        tv_search.callOnClick();
                     }
                 }
                 return false;
@@ -495,7 +499,7 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
     @Override
     public void onResume() {
         super.onResume();
-        if(isRefresh){
+        if (isRefresh) {
             refreshList();
             isRefresh = false;
         }

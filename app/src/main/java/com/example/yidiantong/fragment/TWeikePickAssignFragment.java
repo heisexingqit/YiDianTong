@@ -115,6 +115,7 @@ public class TWeikePickAssignFragment extends Fragment implements View.OnClickLi
     private TextView tv_bz;
 
     private Boolean assignFlag = false;
+    private RadioButton rb_assign1;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -209,7 +210,8 @@ public class TWeikePickAssignFragment extends Fragment implements View.OnClickLi
 //        ((RadioButton) view.findViewById(R.id.rb_homework1)).setChecked(true);
         zouyeType = 0;
         assignFlag = false;
-        ((RadioButton) view.findViewById(R.id.rb_assign1)).setChecked(true);
+        rb_assign1 = view.findViewById(R.id.rb_assign1);
+        rb_assign1.setChecked(true);
         assignFlag = true;
 
         // 列表
@@ -230,13 +232,19 @@ public class TWeikePickAssignFragment extends Fragment implements View.OnClickLi
             tv_bz.setText("布置给:");
             cl_type.setVisibility(View.VISIBLE);
             rv_xiezuo.setVisibility(View.GONE);
+            tv_class_null.setVisibility(View.VISIBLE);
+            isFirst = true;
+            ketang.clear();
+            tv_class.callOnClick();
             showKeTang();
         } else {
             // 协作组课堂UI
             tv_kt.setText("选择协作组:");
             tv_bz.setText("布置范围:");
             cl_type.setVisibility(View.GONE);
+            adapter.update(new ArrayList<>());
             rv_xiezuo.setVisibility(View.VISIBLE);
+            tv_class_null.setVisibility(View.GONE);
             showXieZuo();
         }
     }
@@ -273,28 +281,27 @@ public class TWeikePickAssignFragment extends Fragment implements View.OnClickLi
             case R.id.tv_group:
                 changePopBtn(tv_group);
                 pos = 1;
-                showClass();
+                loadClass();
                 break;
             case R.id.tv_person:
                 changePopBtn(tv_person);
                 pos = 2;
-                showClass();
+                loadClass();
                 break;
             case R.id.tv_ketang:
                 iv_ketang.callOnClick();
                 break;
             case R.id.btn_reset:
-                tv_start.setText("");
-                tv_end.setText("");
+                Calendar startDate = Calendar.getInstance();
+                // 指定日期时间格式
+                dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                tv_start.setText(dateFormat.format(startDate.getTime()));
+                tv_end.setText(getTomorrow2359(tv_start.getText().toString()));
                 ketang.clear();
-                showKeTang();
-                tv_ketang_null.setVisibility(View.GONE);
-                iv_ketang.setImageResource(R.drawable.down_icon);
-                fl_ketang.removeAllViews();
-                tv_ketang.setText("");
-                changePopBtn(tv_class);
+                isFirst = true;
+//                rb_homework1.setChecked(true);
+                rb_assign1.setChecked(true);
                 pos = 0;
-                showClass();
                 break;
             case R.id.btn_confirm:
                 assignType = "1";
@@ -439,7 +446,7 @@ public class TWeikePickAssignFragment extends Fragment implements View.OnClickLi
             Log.d("wens", "submit: 班级Ids" + classGroupIds);
             Log.d("wens", "submit: 学生id" + ids);
             Log.d("wens", "submit: 学生名" + names);
-            transmit.submit(tv_start.getText().toString() + ":00", tv_end.getText().toString() + ":00", ketangName, ketangIds, classGroupNames, classGroupIds, assignType, ids, names, leanType, "save", zouyeType, zouyeFlag);
+            transmit.submit(tv_start.getText().toString() + ":00", tv_end.getText().toString() + ":00", ketangName, ketangIds, classGroupNames, classGroupIds, assignType, ids, names, leanType, "save", zouyeType, zouyeFlag, "", "");
         }else{
             if (xiezuo == null || xiezuo.length() == 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -479,7 +486,7 @@ public class TWeikePickAssignFragment extends Fragment implements View.OnClickLi
             }
 
 
-            transmit.submit(tv_start.getText().toString() + ":00", tv_end.getText().toString() + ":00", keName.toString(), keId.toString(), "", "", assignType, "", "", "70", "save", zouyeType, zouyeFlag);
+            transmit.submit(tv_start.getText().toString() + ":00", tv_end.getText().toString() + ":00", keName.toString(), keId.toString(), "", "", assignType, "", "", "70", "save", zouyeType, zouyeFlag, xiezuo, xiezuoMap.get(xiezuo));
         }
     }
 
@@ -765,12 +772,12 @@ public class TWeikePickAssignFragment extends Fragment implements View.OnClickLi
                                 lastKetang.clear();
                             }
                             lastKetang.add(tv_name);
+                            // 加载班级信息
+                            loadClass();
                         }
                         break;
                 }
-                // 加载班级信息
-                loadClass();
-//                tv_ketang.setText(ketang);
+
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
             params.width = fl_ketang.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 15);
@@ -838,7 +845,6 @@ public class TWeikePickAssignFragment extends Fragment implements View.OnClickLi
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Log.e(TAG, "loadClass: " + clas);
             }, error -> {
                 Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
                 Log.e("wen", "Volley_Error: " + error.toString());

@@ -171,12 +171,15 @@ public class TLearnPlanPickAddFragment extends Fragment implements View.OnClickL
         iv_add = view.findViewById(R.id.iv_add);
         iv_add.setOnClickListener(this);
 
+        // 判断数据是否已存在
         if (adapter.itemList.size() == 0) {
             loadItems_Net();
         } else {
+            ll_loading.setVisibility(View.GONE);// 解除遮挡
+            ll_loading2.setVisibility(View.GONE);// 解除遮挡
             tv_hide.setVisibility(View.GONE);
         }
-
+        Log.e("wen0523", "onCreateView: " + adapter.itemList.size());
         tv_count.setText("(已选择" + pickList.size() + ")");
 
         return view;
