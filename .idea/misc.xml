@@ -280,9 +280,12 @@
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_course_question.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_homework_pager.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_homework_pager_finish.xml" value="0.3" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_learn_plan_pager.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_login.xml" value="0.23651452282157676" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_main_book.xml" value="0.24739583333333334" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_main_pager.xml" value="0.3" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_resource_folder.xml" value="0.3" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_resource_folder_show.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_tcourse_scanner.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_thomework.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_thomework_add.xml" value="0.3" />
@@ -293,13 +296,17 @@
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_thomework_mark.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_thomework_mark_submit.xml" value="0.3333333333333333" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_thomework_report.xml" value="0.3" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_tlearn_plan_add.xml" value="0.3" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_tlearn_plan_add_pick.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_tlive_edit.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_tmain_pager.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_tpackage_add.xml" value="0.13271604938271606" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_tpackage_add_pick.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_tremove_control.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/bar_bottom_navigation.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/bar_bottom_navigation2.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/bar_top_homework_title3.xml" value="0.3" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/bar_top_search.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/bar_top_search2.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/bell_notice_look_stu_name.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/course_btn.xml" value="0.3" />
@@ -330,7 +337,7 @@
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_homework_single.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_homework_translation.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_learn_plan_paper.xml" value="0.3" />
-        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_learn_plan_ppt.xml" value="0.3" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_learn_plan_ppt.xml" value="0.4466666666666667" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_learn_plan_video.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_main_course.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_main_home.xml" value="0.3" />
@@ -384,6 +391,7 @@
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/item_t_statistic_report_board.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/loading_page.xml" value="0.2552083333333333" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/menu_homework.xml" value="0.3" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/menu_learn_plan.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/menu_search_select.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/menu_t_add_homework_selector.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/menu_t_home_add.xml" value="0.3" />

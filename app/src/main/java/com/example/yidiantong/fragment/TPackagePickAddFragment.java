@@ -145,7 +145,7 @@ public class TPackagePickAddFragment extends Fragment implements View.OnClickLis
         tv_hide = view.findViewById(R.id.tv_hide);
 
         vp_main = view.findViewById(R.id.vp_main);
-
+        rl_bottom_block = view.findViewById(R.id.rl_bottom_block);
 
         if (adapter == null) {
             adapter = new TLearnPlanAddPickPagerAdapter(getActivity().getSupportFragmentManager(), new ArrayList<>());

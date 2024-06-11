@@ -395,7 +395,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
     private void changeUI() {
         if (addFragment.pickList.size() == 0) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("暂无选中试题");
+            builder.setMessage("暂无选中内容");
             builder.setNegativeButton("关闭", null);
             AlertDialog dialog = builder.create();
             dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
@@ -422,7 +422,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
 
         if (addFragment.pickList.size() == 0) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("暂无选中试题");
+            builder.setMessage("暂无选中内容");
             builder.setNegativeButton("关闭", null);
             AlertDialog dialog = builder.create();
             dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
