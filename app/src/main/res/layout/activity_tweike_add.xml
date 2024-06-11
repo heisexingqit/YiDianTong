@@ -574,6 +574,7 @@
                         android:paddingEnd="15dp"
                         android:paddingBottom="10dp"
                         android:singleLine="true"
+                        android:text="1"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -605,6 +606,7 @@
                         android:paddingEnd="15dp"
                         android:paddingBottom="10dp"
                         android:singleLine="true"
+                        android:text="1"
                         android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -797,8 +799,8 @@
                     android:background="@drawable/default_edit_text"
                     android:paddingStart="15dp"
                     android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
                     android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
                     android:singleLine="true"
                     android:textSize="14sp" />
             </LinearLayout>

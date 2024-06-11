@@ -140,7 +140,7 @@ public class TWeikePickAddFragment extends Fragment implements View.OnClickListe
         View view = inflater.inflate(R.layout.fragment_t_weike_pick_add, container, false);
         ll_loading = view.findViewById(R.id.ll_loading);
         ll_loading2 = view.findViewById(R.id.ll_loading2);
-
+        rl_bottom_block = view.findViewById(R.id.rl_bottom_block);
         ll_bottom_tab = view.findViewById(R.id.ll_bottom_tab);
         sv_bottom_tab = view.findViewById(R.id.sv_bottom_tab);
         tv_hide = view.findViewById(R.id.tv_hide);

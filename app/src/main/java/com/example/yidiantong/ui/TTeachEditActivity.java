@@ -489,7 +489,7 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
         tv_type_question.setOnClickListener(this);
         tv_type_paper.setOnClickListener(this);
         tv_type_resource.setOnClickListener(this);
-        lastType = tv_type_all;
+        lastType = tv_type_resource;
 
         iv_xueduan = contentView.findViewById(R.id.iv_xueduan);
         iv_xueke = contentView.findViewById(R.id.iv_xueke);
@@ -617,7 +617,7 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                             "&roomType=" + learnType +
 
                             "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                            "&learnPlanName=" + URLEncoder.encode(learnPlanName, "UTF-8") + "&flag=edit" + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;
+                            "&learnPlanName=" + URLEncoder.encode(learnPlanName, "UTF-8") + "&flag=edit" + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&learnPlanFlag=" + zouyeFlag;
 
                     Log.d("wen", "URL: " + mRequestUrl);
                 } catch (UnsupportedEncodingException e) {
@@ -752,7 +752,7 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                         "&roomType=" + learnType +
 
                         "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                        "&learnPlanName=" + URLEncoder.encode(learnPlanName, "UTF-8") + "&flag=edit" + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
+                        "&learnPlanName=" + URLEncoder.encode(learnPlanName, "UTF-8") + "&flag=edit" + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&learnPlanFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
 
                 Log.d("wen", "URL: " + mRequestUrl);
             } catch (UnsupportedEncodingException e) {

@@ -186,7 +186,7 @@
 <!--            android:background="@color/tabbar_text_unselect" />-->
 
         <LinearLayout
-            android:visibility="gone"
+            android:id="@+id/ll_zuoye_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"

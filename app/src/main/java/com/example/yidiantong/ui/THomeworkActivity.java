@@ -182,7 +182,7 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
 
         // 请求数据同步
         loadItems_Net();
-        geteMode();
+        getMode();
 
         //搜索栏优化-小键盘回车搜索
         et_search.setOnKeyListener(new View.OnKeyListener() {
@@ -392,7 +392,7 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
     }
 
     // 获取模式
-    private void geteMode() {
+    private void getMode() {
         mRequestUrl = Constant.API + Constant.T_HOMEWORK_GET_MOLD + "?userName=" + teacherId + "&mode=" + mode;
 
         Log.d("wen", "获取模式: " + mRequestUrl);

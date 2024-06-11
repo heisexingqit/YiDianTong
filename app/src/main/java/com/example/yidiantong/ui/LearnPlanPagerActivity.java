@@ -257,6 +257,7 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
 
     //跳转至提交作业页面
     private void jumpToSubmitPage() {
+        uploadQuestion();
         Intent intent = new Intent(LearnPlanPagerActivity.this, LearnPlanSubmitActivity.class);
         intent.putExtra("title", title);
         intent.putExtra("stuAnswer", stuAnswer);

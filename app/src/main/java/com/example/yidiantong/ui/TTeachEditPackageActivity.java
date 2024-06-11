@@ -484,7 +484,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
         tv_type_question.setOnClickListener(this);
         tv_type_paper.setOnClickListener(this);
         tv_type_resource.setOnClickListener(this);
-        lastType = tv_type_all;
+        lastType = tv_type_resource;
 
         iv_xueduan = contentView.findViewById(R.id.iv_xueduan);
         iv_xueke = contentView.findViewById(R.id.iv_xueke);

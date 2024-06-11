@@ -485,7 +485,7 @@ public class TWeikeAddPickActivity extends AppCompatActivity implements View.OnC
         tv_type_question.setOnClickListener(this);
         tv_type_paper.setOnClickListener(this);
         tv_type_resource.setOnClickListener(this);
-        lastType = tv_type_all;
+        lastType = tv_type_resource;
 
         iv_xueduan = contentView.findViewById(R.id.iv_xueduan);
         iv_xueke = contentView.findViewById(R.id.iv_xueke);
@@ -625,7 +625,7 @@ public class TWeikeAddPickActivity extends AppCompatActivity implements View.OnC
                             "&roomType=" + learnType +
 
                             "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                            "&learnPlanName=" + learnPlanName + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;
+                            "&learnPlanName=" + learnPlanName + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&learnPlanFlag=" + zouyeFlag;
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
@@ -759,7 +759,7 @@ public class TWeikeAddPickActivity extends AppCompatActivity implements View.OnC
                         "&roomType=" + learnType +
 
                         "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                        "&learnPlanName=" + learnPlanName + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
+                        "&learnPlanName=" + learnPlanName + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&learnPlanFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }

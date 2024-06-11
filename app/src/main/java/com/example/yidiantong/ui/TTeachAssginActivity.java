@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -122,6 +123,8 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
     private TextView tv_bz;
 
     private Boolean assignFlag = false;
+    private RadioButton rb_assign1;
+    private RadioButton rb_homework1;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -162,13 +165,16 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
         tv_class_null = findViewById(R.id.tv_class_null);
         btn_reset = findViewById(R.id.btn_reset);
         btn_confirm = findViewById(R.id.btn_confirm);
+        LinearLayout ll_zuoye_type = findViewById(R.id.ll_zuoye_type);
         lastPopBtn = tv_class;
 
         tv_title = findViewById(R.id.tv_title);
         if (type.equals("1")) {
             tv_title.setText("布置导学案");
+            ll_zuoye_type.setVisibility(View.GONE);
         } else if (type.equals("2")) {
             tv_title.setText("布置微课");
+            ll_zuoye_type.setVisibility(View.GONE);
         } else {
             tv_title.setText("布置试卷");
         }
@@ -233,10 +239,12 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                 }
             }
         });
-//        ((RadioButton) findViewById(R.id.rb_homework1)).setChecked(true);
+        rb_homework1 = findViewById(R.id.rb_homework1);
+        rb_homework1.setChecked(true);
         zouyeType = 0;
         assignFlag = false;
-        ((RadioButton) findViewById(R.id.rb_assign1)).setChecked(true);
+        rb_assign1 = findViewById(R.id.rb_assign1);
+        rb_assign1.setChecked(true);
         assignFlag = true;
 
         // 列表
@@ -257,6 +265,10 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
             tv_bz.setText("布置给:");
             cl_type.setVisibility(View.VISIBLE);
             rv_xiezuo.setVisibility(View.GONE);
+            tv_class_null.setVisibility(View.VISIBLE);
+            isFirst = true;
+            ketang.clear();
+            tv_class.callOnClick();
             showKeTang();
         } else {
             // 协作组课堂UI
@@ -264,6 +276,7 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
             tv_bz.setText("布置范围:");
             cl_type.setVisibility(View.GONE);
             rv_xiezuo.setVisibility(View.VISIBLE);
+            tv_class_null.setVisibility(View.GONE);
             showXieZuo();
         }
     }
@@ -305,7 +318,7 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                 }
                 changePopBtn(tv_group);
                 pos = 1;
-                showClass();
+                loadClass();
                 break;
             case R.id.tv_person:
                 if (ketang.size() > 1) {
@@ -314,24 +327,23 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                 }
                 changePopBtn(tv_person);
                 pos = 2;
-                showClass();
+                loadClass();
                 break;
             case R.id.tv_ketang:
 //                iv_ketang.callOnClick();
                 break;
             case R.id.btn_reset:
-                tv_start.setText("");
-                tv_end.setText("");
+                // 当前时间
+                Calendar startDate = Calendar.getInstance();
+                // 指定日期时间格式
+                dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                tv_start.setText(dateFormat.format(startDate.getTime()));
+                tv_end.setText(getTomorrow2359(tv_start.getText().toString()));
                 ketang.clear();
                 isFirst = true;
-                showKeTang();
-//                tv_ketang_null.setVisibility(View.GONE);
-//                iv_ketang.setImageResource(R.drawable.down_icon);
-//                fl_ketang.removeAllViews();
-//                tv_ketang.setText("");
-                changePopBtn(tv_class);
+                rb_homework1.setChecked(true);
+                rb_assign1.setChecked(true);
                 pos = 0;
-                showClass();
                 break;
             case R.id.btn_confirm:
                 assignType = "2";
@@ -795,11 +807,13 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                                 lastKetang.clear();
                             }
                             lastKetang.add(tv_name);
+                            // 加载班级信息
+                            loadClass(); // 第三步
                         }
                         break;
+
                 }
-                // 加载班级信息
-                loadClass(); // 第三步
+
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
             params.width = fl_ketang.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 15);
@@ -1244,7 +1258,6 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                             "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classOrGroupId=" + classId +
                             "&classOrGroupName=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
                             "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=" + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
-
                 }
 
                 StringRequest request = new StringRequest(mRequestUrl, response -> {
@@ -1331,7 +1344,7 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                             "&roomType=" + learnType +
 
                             "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                            "&learnPlanName=" + lpn + "&flag=" + flag + "&jsonStr=" + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
+                            "&learnPlanName=" + lpn + "&flag=" + flag + "&jsonStr=" + "&zouyeType=" + zouyeType + "&learnPlanFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
