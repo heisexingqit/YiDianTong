@@ -452,12 +452,12 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
             String jsonString = "{\"data\":[";
             addFragment.pickList.forEach(item -> {
                 if (jsonStringBuilder.length() > 0) {
-                    jsonStringBuilder.append(", ");
+                    jsonStringBuilder.append(",");
                 }
                 jsonStringBuilder.append(item.toData());
             });
             jsonString += jsonStringBuilder.toString();
-            jsonString += "], \"paperId\":\"" + paperId + "\"}";
+            jsonString += "],\"paperId\":\"" + paperId + "\"}";
 
             try {
                 ketang = URLEncoder.encode(ketang, "UTF-8");
@@ -527,16 +527,18 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
             MyApplication.addRequest(request, TAG);
             rl_submitting.setVisibility(View.VISIBLE);
         }else{
+
+            // 新的协作组方式
             StringBuilder jsonStringBuilder = new StringBuilder();
             String jsonString = "{\"data\":[";
             addFragment.pickList.forEach(item -> {
                 if (jsonStringBuilder.length() > 0) {
-                    jsonStringBuilder.append(", ");
+                    jsonStringBuilder.append(",");
                 }
                 jsonStringBuilder.append(item.toData());
             });
             jsonString += jsonStringBuilder.toString();
-            jsonString += "], \"paperId\":\"" + paperId + "\"}";
+            jsonString += "],\"paperId\":\"" + paperId + "\"}";
 
             try {
                 ketang = URLEncoder.encode(ketang, "UTF-8");

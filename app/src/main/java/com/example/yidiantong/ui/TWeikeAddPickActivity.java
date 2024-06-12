@@ -520,172 +520,142 @@ public class TWeikeAddPickActivity extends AppCompatActivity implements View.OnC
         tv_type.setText(typeName);
     }
 
-    int count = 0; // 成功请求计数
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag, int zouyeType, int zouyeFlag, String xiezuozuId, String xiezuozuName) {
         if (zouyeFlag == 1) {
 
-            List<String> ketangNameList = new ArrayList<>(Arrays.asList(ketang.split(", ")));
-            List<String> ketangIdList = new ArrayList<>(Arrays.asList(ketangId.split(", ")));
-            List<String> clasList = new ArrayList<>(Arrays.asList(clas.split(", ")));
-            List<String> classIdList = new ArrayList<>(Arrays.asList(classId.split(", ")));
-            List<String> stuIdsList = new ArrayList<>(Arrays.asList(stuIds.split(", ")));
-            List<String> stuNamesList = new ArrayList<>(Arrays.asList(stuNames.split(", ")));
-            count = 0;
-            String assignType_ = assignType;
-            for (int i = 0; i < ketangNameList.size(); ++i) {
-                // 第一次保存+布置，后面直接布置即可
-                if (i > 0 && assignType.equals("1")) {
-                    assignType_ = "2";
+
+            // --------------------------------//
+            //  这部分是从AddActivity获取的属性值，
+            //  与PopUpWindow中的数值不同
+            //  必须从intent中直接获取
+            // --------------------------------//
+            Intent intent = getIntent();
+
+            String xueduan = intent.getStringExtra("xueduan");
+            String xueduanId = intent.getStringExtra("xueduanId");
+            String xueke = intent.getStringExtra("xueke");
+            String xuekeId = intent.getStringExtra("xuekeId");
+            String banben = intent.getStringExtra("banben");
+            String banbenId = intent.getStringExtra("banbenId");
+            String jiaocai = intent.getStringExtra("jiaocai");
+            String jiaocaiId = intent.getStringExtra("jiaocaiId");
+            String zhishidian = intent.getStringExtra("zhishidian");
+            String zhishidianId = intent.getStringExtra("zhishidianId");
+
+            // 导学案专属参数
+            String learnPlanName = intent.getStringExtra("learnPlanName");
+            String lpn = learnPlanName;
+            String learnPlanType = intent.getStringExtra("learnPlanType");
+            String classHours = intent.getStringExtra("classHours");
+            String studyHours = intent.getStringExtra("studyHours");
+            String Introduce = intent.getStringExtra("Introduce");
+            String Goal = intent.getStringExtra("Goal");
+            String Emphasis = intent.getStringExtra("Emphasis");
+            String Difficulty = intent.getStringExtra("Difficulty");
+            String Extension = intent.getStringExtra("Extension");
+            String Summary = intent.getStringExtra("Summary");
+
+            StringBuilder jsonStringBuilder = new StringBuilder();
+            String jsonString = "[";
+            List<LearnPlanAddItemEntity> pickList = addFragment.pickList;
+            for (int j = 0; j < pickList.size(); ++j) {
+                LearnPlanAddItemEntity item = pickList.get(j);
+                item.setOrder(j + 1);
+                if (jsonStringBuilder.length() > 0) {
+                    jsonStringBuilder.append(",");
                 }
-                ketang = ketangNameList.get(i);
-                ketangId = ketangIdList.get(i);
-                clas = clasList.get(i);
-                classId = classIdList.get(i);
-                stuIds = stuIdsList.get(i);
-                stuNames = stuNamesList.get(i);
-
-
-                // --------------------------------//
-                //  这部分是从AddActivity获取的属性值，
-                //  与PopUpWindow中的数值不同
-                //  必须从intent中直接获取
-                // --------------------------------//
-                Intent intent = getIntent();
-
-                String xueduan = intent.getStringExtra("xueduan");
-                String xueduanId = intent.getStringExtra("xueduanId");
-                String xueke = intent.getStringExtra("xueke");
-                String xuekeId = intent.getStringExtra("xuekeId");
-                String banben = intent.getStringExtra("banben");
-                String banbenId = intent.getStringExtra("banbenId");
-                String jiaocai = intent.getStringExtra("jiaocai");
-                String jiaocaiId = intent.getStringExtra("jiaocaiId");
-                String zhishidian = intent.getStringExtra("zhishidian");
-                String zhishidianId = intent.getStringExtra("zhishidianId");
-
-                // 导学案专属参数
-                String learnPlanName = intent.getStringExtra("learnPlanName");
-                String lpn = learnPlanName;
-                String learnPlanType = intent.getStringExtra("learnPlanType");
-                String classHours = intent.getStringExtra("classHours");
-                String studyHours = intent.getStringExtra("studyHours");
-                String Introduce = intent.getStringExtra("Introduce");
-                String Goal = intent.getStringExtra("Goal");
-                String Emphasis = intent.getStringExtra("Emphasis");
-                String Difficulty = intent.getStringExtra("Difficulty");
-                String Extension = intent.getStringExtra("Extension");
-                String Summary = intent.getStringExtra("Summary");
-
-                StringBuilder jsonStringBuilder = new StringBuilder();
-                String jsonString = "[";
-                List<LearnPlanAddItemEntity> pickList = addFragment.pickList;
-                for (int j = 0; j < pickList.size(); ++j) {
-                    LearnPlanAddItemEntity item = pickList.get(j);
-                    item.setOrder(j + 1);
-                    if (jsonStringBuilder.length() > 0) {
-                        jsonStringBuilder.append(", ");
-                    }
-                    jsonStringBuilder.append(item.toData());
-                }
-                jsonString += jsonStringBuilder.toString();
-                jsonString += "]";
-
-                Log.d("wen", "内容串: " + jsonString);
-                try {
-
-                    ketang = URLEncoder.encode(ketang, "UTF-8");
-                    clas = URLEncoder.encode(clas, "UTF-8");
-                    stuNames = URLEncoder.encode(stuNames, "UTF-8");
-
-                    jsonString = URLEncoder.encode(jsonString, "UTF-8");
-                    learnPlanName = URLEncoder.encode(learnPlanName, "UTF-8");
-                    Introduce = URLEncoder.encode(Introduce, "UTF-8");
-                    Goal = URLEncoder.encode(Goal, "UTF-8");
-                    Emphasis = URLEncoder.encode(Emphasis, "UTF-8");
-                    Difficulty = URLEncoder.encode(Difficulty, "UTF-8");
-                    Extension = URLEncoder.encode(Extension, "UTF-8");
-
-                    mRequestUrl = Constant.API + Constant.T_LEARN_PLAN_ASSIGN_SAVE + "?assignType=" + assignType_ +
-                            "&channelCode=" + xueduanId + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") +
-                            "&subjectCode=" + xuekeId + "&subjectName=" + URLEncoder.encode(xueke, "UTF-8") +
-                            "&textBookCode=" + banbenId + "&textBookName=" + URLEncoder.encode(banben, "UTF-8") +
-                            "&gradeLevelCode=" + jiaocaiId + "&gradeLevelName=" + URLEncoder.encode(jiaocai, "UTF-8") +
-                            "&pointCode=" + zhishidianId + "&pointName=" + URLEncoder.encode(zhishidian, "UTF-8") +
-
-                            "&type=2" + "&learnPlanType=" + learnPlanType + "&classHours=" + classHours +
-                            "&studyHours=" + studyHours + "&Introduce=" + Introduce + "&Goal=" + Goal +
-                            "&Emphasis=" + Emphasis + "&Difficulty=" + Difficulty + "&Summary=" + Summary + "&Extension=" + Extension +
-
-                            "&startTime=" + startTime + "&endTime=" + endTime +
-                            "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classIds=" + classId +
-                            "&className=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
-                            "&roomType=" + learnType +
-
-                            "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                            "&learnPlanName=" + learnPlanName + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&learnPlanFlag=" + zouyeFlag;
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                Log.d("wen", "URL: " + mRequestUrl);
-
-                StringRequest request = new StringRequest(mRequestUrl, response -> {
-                    try {
-                        JSONObject json = JsonUtils.getJsonObjectFromString(response);
-                        count++;
-                        Log.d(TAG, "submit: " + json);
-                        boolean success = json.getBoolean("success");
-                        if (count == ketangNameList.size()) {
-
-                            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                            builder.setTitle(lpn);
-
-                            if (success) {
-                                if (assignType.equals("3")) {
-                                    builder.setMessage("微课保存成功");
-                                } else {
-                                    builder.setMessage("微课布置成功");
-                                }
-
-                            } else {
-                                builder.setMessage("数据提交失败，请稍后重试");
-                            }
-
-                            builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    rl_submitting.setVisibility(View.GONE);
-                                    Intent toHome = new Intent(TWeikeAddPickActivity.this, TMainPagerActivity.class);
-                                    toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                    startActivity(toHome);
-
-                                }
-                            });
-
-                            AlertDialog dialog = builder.create();
-                            dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
-                            dialog.show();
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }, error -> {
-                    Log.e("volley", "Volley_Error: " + error.toString());
-
-                });
-                MyApplication.addRequest(request, TAG);
-                rl_submitting.setVisibility(View.VISIBLE);
-                try {
-                    // 休眠2秒钟，避免请求过快被丢弃
-                    Thread.sleep(100);
-
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                jsonStringBuilder.append(item.toData());
             }
+            jsonString += jsonStringBuilder.toString();
+            jsonString += "]";
+
+            Log.d("wen", "内容串: " + jsonString);
+            try {
+
+                ketang = URLEncoder.encode(ketang, "UTF-8");
+                clas = URLEncoder.encode(clas, "UTF-8");
+                stuNames = URLEncoder.encode(stuNames, "UTF-8");
+
+                jsonString = URLEncoder.encode(jsonString, "UTF-8");
+                learnPlanName = URLEncoder.encode(learnPlanName, "UTF-8");
+                Introduce = URLEncoder.encode(Introduce, "UTF-8");
+                Goal = URLEncoder.encode(Goal, "UTF-8");
+                Emphasis = URLEncoder.encode(Emphasis, "UTF-8");
+                Difficulty = URLEncoder.encode(Difficulty, "UTF-8");
+                Extension = URLEncoder.encode(Extension, "UTF-8");
+
+                mRequestUrl = Constant.API + Constant.T_LEARN_PLAN_ASSIGN_SAVE + "?assignType=" + assignType +
+                        "&channelCode=" + xueduanId + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") +
+                        "&subjectCode=" + xuekeId + "&subjectName=" + URLEncoder.encode(xueke, "UTF-8") +
+                        "&textBookCode=" + banbenId + "&textBookName=" + URLEncoder.encode(banben, "UTF-8") +
+                        "&gradeLevelCode=" + jiaocaiId + "&gradeLevelName=" + URLEncoder.encode(jiaocai, "UTF-8") +
+                        "&pointCode=" + zhishidianId + "&pointName=" + URLEncoder.encode(zhishidian, "UTF-8") +
+
+                        "&type=2" + "&learnPlanType=" + learnPlanType + "&classHours=" + classHours +
+                        "&studyHours=" + studyHours + "&Introduce=" + Introduce + "&Goal=" + Goal +
+                        "&Emphasis=" + Emphasis + "&Difficulty=" + Difficulty + "&Summary=" + Summary + "&Extension=" + Extension +
+
+                        "&startTime=" + startTime + "&endTime=" + endTime +
+                        "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classIds=" + classId +
+                        "&className=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
+                        "&roomType=" + learnType +
+
+                        "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
+                        "&learnPlanName=" + learnPlanName + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&learnPlanFlag=" + zouyeFlag;
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            Log.d("wen", "URL: " + mRequestUrl);
+
+            StringRequest request = new StringRequest(mRequestUrl, response -> {
+                try {
+                    JSONObject json = JsonUtils.getJsonObjectFromString(response);
+
+                    Log.d(TAG, "submit: " + json);
+                    boolean success = json.getBoolean("success");
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle(lpn);
+
+                    if (success) {
+                        if (assignType.equals("3")) {
+                            builder.setMessage("微课保存成功");
+                        } else {
+                            builder.setMessage("微课布置成功");
+                        }
+
+                    } else {
+                        builder.setMessage("数据提交失败，请稍后重试");
+                    }
+
+                    builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            rl_submitting.setVisibility(View.GONE);
+                            Intent toHome = new Intent(TWeikeAddPickActivity.this, TMainPagerActivity.class);
+                            toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            startActivity(toHome);
+
+                        }
+                    });
+
+                    AlertDialog dialog = builder.create();
+                    dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+                    dialog.show();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }, error -> {
+                Log.e("volley", "Volley_Error: " + error.toString());
+
+            });
+            MyApplication.addRequest(request, TAG);
+            rl_submitting.setVisibility(View.VISIBLE);
+
         } else {
             // --------------------------------//
             //  这部分是从AddActivity获取的属性值，

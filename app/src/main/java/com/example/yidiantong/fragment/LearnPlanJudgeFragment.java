@@ -20,6 +20,7 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.LearnPlanItemEntity;
 import com.example.yidiantong.bean.StuAnswerEntity;
+import com.example.yidiantong.util.LearnPlanInterface;
 import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.HomeworkInterface;
@@ -33,7 +34,7 @@ public class LearnPlanJudgeFragment extends Fragment implements View.OnClickList
     ClickableImageView[] iv_answer = new ClickableImageView[2];
     int answer = -1;
 
-    private HomeworkInterface transmit;
+    private LearnPlanInterface transmit;
 
     //接口需要
     private LearnPlanItemEntity learnPlanEntity;
@@ -55,7 +56,7 @@ public class LearnPlanJudgeFragment extends Fragment implements View.OnClickList
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         pageing = (PagingInterface) context;
-        transmit = (HomeworkInterface) context;
+        transmit = (LearnPlanInterface) context;
     }
 
     @Override
