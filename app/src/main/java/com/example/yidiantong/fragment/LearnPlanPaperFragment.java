@@ -101,7 +101,7 @@ public class LearnPlanPaperFragment extends Fragment implements View.OnClickList
                         @Override
                         public void onAction(List<String> data) {
                             // 获取资源的下载链接
-                            String downloadUrl = learnPlanEntity.getUrl();
+                            String downloadUrl = learnPlanEntity.getPath();
                             if (downloadUrl != null && !downloadUrl.isEmpty()) {
                                 // 创建DownloadManager请求
                                 DownloadManager.Request request = new DownloadManager.Request(Uri.parse(downloadUrl));
