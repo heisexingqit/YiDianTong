@@ -429,6 +429,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
             return;
         }
         changeBtn(btn_assign);
+        assignFragment = new TLearnPlanPickAssignFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.fl_main, assignFragment).commit();
         iv_search_select.setVisibility(View.INVISIBLE);
     }

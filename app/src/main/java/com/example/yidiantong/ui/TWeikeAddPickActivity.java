@@ -432,6 +432,7 @@ public class TWeikeAddPickActivity extends AppCompatActivity implements View.OnC
             return;
         }
         changeBtn(btn_assign);
+        assignFragment = new TWeikePickAssignFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.fl_main, assignFragment).commit();
         iv_search_select.setVisibility(View.INVISIBLE);
     }

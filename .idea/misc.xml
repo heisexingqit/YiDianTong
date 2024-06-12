@@ -309,6 +309,7 @@
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_tpackage_add.xml" value="0.13271604938271606" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_tpackage_add_pick.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_tremove_control.xml" value="0.3" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_tweike_add.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/bar_bottom_navigation.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/bar_bottom_navigation2.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/bar_top_homework_title3.xml" value="0.3" />
@@ -361,6 +362,7 @@
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_t_homework_camera_single.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_t_homework_mark.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_t_homework_pick_add.xml" value="0.3" />
+        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_t_homework_pick_assign.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_t_homework_pick_change.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_t_learn_plan_add_paper.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_t_learn_plan_add_ppt.xml" value="0.3" />

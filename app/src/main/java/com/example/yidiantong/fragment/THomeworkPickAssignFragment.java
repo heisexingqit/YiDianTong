@@ -163,7 +163,6 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
         btn_reset.setOnClickListener(this);
         btn_confirm.setOnClickListener(this);
         tv_save.setOnClickListener(this);
-
         // 当前时间
         Calendar startDate = Calendar.getInstance();
 
