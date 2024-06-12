@@ -561,7 +561,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
             LearnPlanAddItemEntity item = pickList.get(i);
             item.setOrder(i + 1);
             if (jsonStringBuilder.length() > 0) {
-                jsonStringBuilder.append(", ");
+                jsonStringBuilder.append(",");
             }
             jsonStringBuilder.append(item.toData());
         }

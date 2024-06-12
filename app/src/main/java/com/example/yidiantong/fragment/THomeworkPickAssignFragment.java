@@ -278,6 +278,7 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
             case R.id.tv_class:
                 changePopBtn(tv_class);
                 pos = 0;
+                showClass();
                 break;
             case R.id.tv_group:
                 if (ketang.size() > 1) {
@@ -329,7 +330,7 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
     private void submit() {
         if (zouyeFlag == 1) {
             if (assignType.equals("1")) {
-                if (StringUtils.hasEmptyString(tv_start.getText().toString(), tv_end.getText().toString()) || (pos == 0 && clas.size() == 0) || (pos == 1 && group.size() == 0) || (pos == 2 && person.size() == 0) || ketang.size() == 0) {
+                if (ketang.size() == 0 || (pos == 1 && group.size() == 0) || (pos == 2 && person.size() == 0)) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage("请选择以上属性");
                     builder.setNegativeButton("关闭", null);
@@ -346,37 +347,13 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
             StringBuilder result2 = new StringBuilder();
             StringBuilder result3 = new StringBuilder();
             StringBuilder result4 = new StringBuilder();
-            String leanType = "0";
+            String leanType = "";
             switch (pos) {
                 case 0:
-                    clas.forEach(key -> {
-                        String id = classMapStuIds.get(key);
-                        String name = classMapStuNames.get(key);
-                        if (result.length() > 0) {
-                            result.append(", "); // 在每个值之前添加逗号和空格
-                        }
-                        result.append(id);
-
-                        if (result2.length() > 0) {
-                            result2.append(", ");
-                        }
-                        result2.append(name);
-
-                        if (result3.length() > 0) {
-                            result3.append(", ");
-                        }
-                        result3.append(classMap.get(key));
-
-                        if (result4.length() > 0) {
-                            result4.append(", ");
-                        }
-                        result4.append(key);
-
-                    });
-                    ids = result.toString();
-                    names = result2.toString();
-                    classGroupIds = result3.toString();
-                    classGroupNames = result4.toString();
+                    ids = "";
+                    names = "";
+                    classGroupIds = "";
+                    classGroupNames = "";
                     leanType = "70";
                     break;
                 case 1:
@@ -388,22 +365,22 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
                         String id = groupMapStuIds.get(key);
                         String name = groupMapStuNames.get(key);
                         if (result.length() > 0) {
-                            result.append(", "); // 在每个值之前添加逗号和空格
+                            result.append(";"); // 在每个值之前添加逗号和空格
                         }
                         result.append(id);
 
                         if (result2.length() > 0) {
-                            result2.append(", ");
+                            result2.append(";");
                         }
                         result2.append(name);
 
                         if (result3.length() > 0) {
-                            result3.append(", ");
+                            result3.append(";");
                         }
                         result3.append(groupMap.get(key));
 
                         if (result4.length() > 0) {
-                            result4.append(", ");
+                            result4.append(";");
                         }
                         result4.append(key);
                     });
@@ -418,6 +395,7 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
                     result2.setLength(0);
                     result3.setLength(0);
                     result4.setLength(0);
+
                     person.forEach(key -> {
                         String id = personMap.get(key);
                         String name = key;
@@ -431,30 +409,40 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
                         }
                         result2.append(name);
 
+                    });
+                    clas.forEach(key -> {
                         if (result3.length() > 0) {
-                            result3.append(", ");
+                            result3.append(",");
                         }
+                        result3.append(classMap.get(key));
+
+                        if (result4.length() > 0) {
+                            result4.append(",");
+                        }
+                        result4.append(key);
                     });
                     ids = result.toString();
                     names = result2.toString();
+                    classGroupIds = result3.toString();
+                    classGroupNames = result4.toString();
                     break;
             }
             result.setLength(0);
             // 处理课堂名和课堂id
             ketang.forEach(key -> {
                 if (result.length() > 0) {
-                    result.append(", ");
+                    result.append(",");
                 }
                 result.append(ketangMap.get(key));
             });
             String ketangIds = result.toString();
-            String ketangName = String.join(", ", ketang);
-            Log.d("wens", "submit: " + ketangName);
-
-            Log.d("wens", "submit: 班级名称" + classGroupNames);
-            Log.d("wens", "submit: 班级Ids" + classGroupIds);
-            Log.d("wens", "submit: 学生id" + ids);
-            Log.d("wens", "submit: 学生名" + names);
+            String ketangName = String.join(",", ketang);
+//            Log.d("wens", "submit: " + ketangName);
+//
+//            Log.d("wens", "submit: 班级名称" + classGroupNames);
+//            Log.d("wens", "submit: 班级Ids" + classGroupIds);
+//            Log.d("wens", "submit: 学生id" + ids);
+//            Log.d("wens", "submit: 学生名" + names);
             transmit.submit(tv_start.getText().toString() + ":00", tv_end.getText().toString() + ":00", ketangName, ketangIds, classGroupNames, classGroupIds, assignType, ids, names, leanType, "save", zouyeType, zouyeFlag, "", "");
         } else {
             if (xiezuo == null || xiezuo.length() == 0) {
@@ -838,7 +826,7 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
 
                     for (int i = 0; i < groupList.length(); ++i) {
                         JSONObject object = groupList.getJSONObject(i);
-                        // 表示小组名-》班级id
+                        // 表示小组名-》小组id
                         groupMap.put(object.getString("value"), object.getString("id"));
                         // 表示小组名-》学生名【,】
                         groupMapStuNames.put(object.getString("value"), object.getString("name"));
@@ -871,13 +859,7 @@ public class THomeworkPickAssignFragment extends Fragment implements View.OnClic
         // 判断1：是否为空？
         switch (pos) {
             case 0:
-                if (classMap.size() == 0) {
-                    tv_class_null.setText("班级列表未获取到或者为空");
-                    tv_class_null.setVisibility(View.VISIBLE);
-                    return;
-                } else {
-                    tv_class_null.setVisibility(View.GONE);
-                }
+                tv_class_null.setVisibility(View.GONE);
                 break;
             case 1:
                 if (groupMap.size() == 0) {

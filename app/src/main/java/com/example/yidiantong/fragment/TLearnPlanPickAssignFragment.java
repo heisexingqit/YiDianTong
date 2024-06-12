@@ -298,7 +298,7 @@ public class TLearnPlanPickAssignFragment extends Fragment implements View.OnCli
                 loadClass();
                 break;
             case R.id.tv_ketang:
-                iv_ketang.callOnClick();
+//                iv_ketang.callOnClick();
                 break;
             case R.id.btn_reset:
                 Calendar startDate = Calendar.getInstance();
@@ -329,7 +329,7 @@ public class TLearnPlanPickAssignFragment extends Fragment implements View.OnCli
         if (zouyeFlag == 1) {
             if (assignType.equals("1")) {
                 Log.e(TAG, "pos: " + pos);
-                if (StringUtils.hasEmptyString(tv_start.getText().toString(), tv_end.getText().toString()) || (pos == 0 && clas.size() == 0) || (pos == 1 && group.size() == 0) || (pos == 2 && person.size() == 0) || ketang.size() == 0) {
+                if (ketang.size() == 0 || (pos == 1 && group.size() == 0) || (pos == 2 && person.size() == 0)) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage("请选择以上属性");
                     builder.setNegativeButton("关闭", null);
@@ -346,37 +346,13 @@ public class TLearnPlanPickAssignFragment extends Fragment implements View.OnCli
             StringBuilder result2 = new StringBuilder();
             StringBuilder result3 = new StringBuilder();
             StringBuilder result4 = new StringBuilder();
-            String leanType = "0";
+            String leanType = "";
             switch (pos) {
                 case 0:
-                    clas.forEach(key -> {
-                        String id = classMapStuIds.get(key);
-                        String name = classMapStuNames.get(key);
-                        if (result.length() > 0) {
-                            result.append(", "); // 在每个值之前添加逗号和空格
-                        }
-                        result.append(id);
-
-                        if (result2.length() > 0) {
-                            result2.append(", ");
-                        }
-                        result2.append(name);
-
-                        if (result3.length() > 0) {
-                            result3.append(", ");
-                        }
-                        result3.append(classMap.get(key));
-
-                        if (result4.length() > 0) {
-                            result4.append(", ");
-                        }
-                        result4.append(key);
-
-                    });
-                    ids = result.toString();
-                    names = result2.toString();
-                    classGroupIds = result3.toString();
-                    classGroupNames = result4.toString();
+                    ids = "";
+                    names = "";
+                    classGroupIds = "";
+                    classGroupNames = "";
                     leanType = "70";
                     break;
                 case 1:
@@ -388,22 +364,22 @@ public class TLearnPlanPickAssignFragment extends Fragment implements View.OnCli
                         String id = groupMapStuIds.get(key);
                         String name = groupMapStuNames.get(key);
                         if (result.length() > 0) {
-                            result.append(", "); // 在每个值之前添加逗号和空格
+                            result.append(";"); // 在每个值之前添加逗号和空格
                         }
                         result.append(id);
 
                         if (result2.length() > 0) {
-                            result2.append(", ");
+                            result2.append(";");
                         }
                         result2.append(name);
 
                         if (result3.length() > 0) {
-                            result3.append(", ");
+                            result3.append(";");
                         }
                         result3.append(groupMap.get(key));
 
                         if (result4.length() > 0) {
-                            result4.append(", ");
+                            result4.append(";");
                         }
                         result4.append(key);
                     });
@@ -422,33 +398,42 @@ public class TLearnPlanPickAssignFragment extends Fragment implements View.OnCli
                         String id = personMap.get(key);
                         String name = key;
                         if (result.length() > 0) {
-                            result.append(", "); // 在每个值之前添加逗号和空格
+                            result.append(","); // 在每个值之前添加逗号和空格
                         }
                         result.append(id);
 
                         if (result2.length() > 0) {
-                            result2.append(", ");
+                            result2.append(",");
                         }
                         result2.append(name);
-
+                    });
+                    clas.forEach(key -> {
                         if (result3.length() > 0) {
-                            result3.append(", ");
+                            result3.append(",");
                         }
+                        result3.append(classMap.get(key));
+
+                        if (result4.length() > 0) {
+                            result4.append(",");
+                        }
+                        result4.append(key);
                     });
                     ids = result.toString();
                     names = result2.toString();
+                    classGroupIds = result3.toString();
+                    classGroupNames = result4.toString();
                     break;
             }
             result.setLength(0);
             // 处理课堂名和课堂id
             ketang.forEach(key -> {
                 if (result.length() > 0) {
-                    result.append(", ");
+                    result.append(",");
                 }
                 result.append(ketangMap.get(key));
             });
             String ketangIds = result.toString();
-            String ketangName = String.join(", ", ketang);
+            String ketangName = String.join(",", ketang);
             Log.d("wens", "submit: " + ketangName);
 
             Log.d("wens", "submit: 班级名称" + classGroupNames);
@@ -874,13 +859,7 @@ public class TLearnPlanPickAssignFragment extends Fragment implements View.OnCli
         }
         switch (pos) {
             case 0:
-                if (classMap.size() == 0) {
-                    tv_class_null.setText("班级列表未获取到或者为空");
-                    tv_class_null.setVisibility(View.VISIBLE);
-                    return;
-                } else {
-                    tv_class_null.setVisibility(View.GONE);
-                }
+                tv_class_null.setVisibility(View.GONE);
                 break;
             case 1:
                 if (groupMap.size() == 0) {
