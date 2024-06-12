@@ -1,5 +1,6 @@
 package com.example.yidiantong.adapter;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -9,6 +10,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.yidiantong.bean.LearnPlanItemEntity;
 import com.example.yidiantong.bean.StuAnswerEntity;
+import com.example.yidiantong.fragment.HomeworkSeven2FiveFragment;
 import com.example.yidiantong.fragment.LearnPlanJudgeFragment;
 import com.example.yidiantong.fragment.LearnPlanMultipleFragment;
 import com.example.yidiantong.fragment.LearnPlanPPTFragment;
@@ -31,6 +33,7 @@ public class LearnPlanPagerAdapter extends FragmentPagerAdapter {
     //传递信息
     private String learnPlanId;
 
+    @SuppressLint("WrongConstant")
     public LearnPlanPagerAdapter(@NonNull FragmentManager fm, String learnPlanId) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         this.learnPlanId = learnPlanId;
@@ -49,30 +52,34 @@ public class LearnPlanPagerAdapter extends FragmentPagerAdapter {
         LearnPlanItemEntity item = itemList.get(position);
         switch (item.getResourceType()){
             case "01":
-                switch (item.getResourceName()) {
-                    case "单项选择题":
-                    case "单选题":
+                switch (item.getBaseTypeId()) {
+                    case "101":
                         fragment = LearnPlanSingleFragment.newInstance(itemList.get(position), position, itemList.size(), itemList2.get(position));
                         break;
-                    case "多项选择题":
+                    case "102":
                         fragment = LearnPlanMultipleFragment.newInstance(itemList.get(position), position, itemList.size(), itemList2.get(position));
                         break;
-                    case "判断题":
+                    case "103":
                         fragment = LearnPlanJudgeFragment.newInstance(itemList.get(position), position, itemList.size(), itemList2.get(position));
                         break;
-                    case "简答题":
-                    case "填空题":
-                    case "书面表达题":
-                    case "单词拼写":
-                    case "解答题":
+                    case "104":
+                    case "105":
+                    case "106":
+                    case "107":
+                    case "109":
+                    case "110":
+                    case "111":
+                    case "112":
                         fragment = LearnPlanTranslationFragment.newInstance(itemList.get(position), position, itemList.size(), learnPlanId, itemList2.get(position));
                         break;
                     case "七选五":
-                        fragment = LearnPlanSeven2FiveFragment.newInstance(itemList.get(position), position, itemList.size(), itemList2.get(position));
-                        break;
-                    case "阅读理解题":
-                    case "完形填空题":
-                        fragment = LearnPlanReadingFragment.newInstance(itemList.get(position), position, itemList.size(), itemList2.get(position));
+
+                    case "108":
+                        if(item.getResourceName().equals("七选五")){
+                            fragment = LearnPlanSeven2FiveFragment.newInstance(itemList.get(position), position, itemList.size(), itemList2.get(position));
+                        }else{
+                            fragment = LearnPlanReadingFragment.newInstance(itemList.get(position), position, itemList.size(), itemList2.get(position));
+                        }
                         break;
                     default:
                         Log.d("wen", "未知题型: " + itemList.get(position));
@@ -105,6 +112,9 @@ public class LearnPlanPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
+        Log.d("hsk0607", "itemList.size(): "+itemList.size());
+        Log.d("hsk0607", "itemList2.size(): "+itemList2.size());
         return itemList2.size();
+
     }
 }
