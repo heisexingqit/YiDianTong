@@ -313,4 +313,7 @@ public class Constant {
 
     public static final String T_HOMEWORK_ASSIGN_GET_XZ_CLASS = "/AppServer/ajax/teacherApp_getXiezuozuMemberList.do";
 
+    // 作业预览
+    public static final String T_HOMEWORK_PREVIEW = "/AppServer/ajax/teacherApp_lookZyDetial.do";
+
 }

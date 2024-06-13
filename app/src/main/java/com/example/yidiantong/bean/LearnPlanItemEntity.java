@@ -16,6 +16,15 @@ public class LearnPlanItemEntity implements Serializable {
     private String resourceName;
     private String url;
     private String resourceType;
+    private String analysis;
+
+    public String getAnalysis() {
+        return analysis;
+    }
+
+    public void setAnalysis(String analysis) {
+        this.analysis = analysis;
+    }
 
     public String getResourceId() {
         return resourceId;
