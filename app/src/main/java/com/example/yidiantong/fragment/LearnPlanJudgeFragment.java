@@ -40,6 +40,7 @@ public class LearnPlanJudgeFragment extends Fragment implements View.OnClickList
     private LearnPlanItemEntity learnPlanEntity;
     private StuAnswerEntity stuAnswerEntity;
 
+
     public static LearnPlanJudgeFragment newInstance(LearnPlanItemEntity learnPlanEntity, int position, int size, StuAnswerEntity stuAnswerEntity) {
         LearnPlanJudgeFragment fragment = new LearnPlanJudgeFragment();
         Bundle args = new Bundle();

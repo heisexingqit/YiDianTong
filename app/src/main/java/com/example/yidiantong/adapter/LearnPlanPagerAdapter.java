@@ -72,8 +72,6 @@ public class LearnPlanPagerAdapter extends FragmentPagerAdapter {
                     case "112":
                         fragment = LearnPlanTranslationFragment.newInstance(itemList.get(position), position, itemList.size(), learnPlanId, itemList2.get(position));
                         break;
-                    case "七选五":
-
                     case "108":
                         if(item.getResourceName().equals("七选五")){
                             fragment = LearnPlanSeven2FiveFragment.newInstance(itemList.get(position), position, itemList.size(), itemList2.get(position));

@@ -411,6 +411,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
             return;
         }
         changeBtn(btn_assign);
+        assignFragment = new THomeworkPickAssignFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.fl_main, assignFragment).commit();
         iv_search_select.setVisibility(View.INVISIBLE);
     }
@@ -1345,6 +1346,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
         tv.setBackgroundResource(R.drawable.t_homework_add_select);
         tv.setTextColor(getColor(R.color.red));
     }
+
 
     private void unselectedTv(TextView tv) {
         tv.setBackgroundResource(R.drawable.t_homework_add_unselect);
