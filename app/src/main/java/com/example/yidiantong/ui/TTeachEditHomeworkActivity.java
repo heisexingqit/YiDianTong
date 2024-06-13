@@ -474,7 +474,7 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
                         "&paperId=" + paperId + "&startTime=" + startTime + "&endTime=" + endTime +
                         "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classOrGroupId=" + classId +
                         "&classOrGroupName=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
-                        "&learnType=" + learnType + "&flag=edit" + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;
+                        "&learnType=" + learnType + "&flag=edit" + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId +"&xiezuozuName=" + xiezuozuName;
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }

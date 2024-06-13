@@ -595,7 +595,7 @@ public class TPackageAddPickActivity extends AppCompatActivity implements View.O
                     "&roomType=" + learnType +
 
                     "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                    "&learnPlanName=" + learnPlanName + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;
+                    "&learnPlanName=" + learnPlanName + "&flag=" + flag + "&jsonStr=" + jsonString;
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

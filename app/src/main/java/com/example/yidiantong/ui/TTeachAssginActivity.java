@@ -1012,7 +1012,7 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                             "&paperId=" + learnPlanId + "&startTime=" + startTime + "&endTime=" + endTime +
                             "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classOrGroupId=" + classId +
                             "&classOrGroupName=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
-                            "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=";
+                            "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=" + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
 
                 } else {
                     mRequestUrl = Constant.API + Constant.T_HOMEWORK_ASSIGN_SAVE + "?assignType=" + assignType +
@@ -1025,7 +1025,7 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                             "&paperId=" + learnPlanId + "&startTime=" + startTime + "&endTime=" + endTime +
                             "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classOrGroupId=" + classId +
                             "&classOrGroupName=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
-                            "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=";
+                            "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=" + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
 
                 }
 
@@ -1117,7 +1117,7 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
                             "&roomType=" + learnType +
 
                             "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                            "&learnPlanName=" + lpn + "&flag=" + flag + "&jsonStr=";
+                            "&learnPlanName=" + lpn + "&flag=" + flag + "&jsonStr=" + "&zouyeType=" + zouyeType + "&learnPlanFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }

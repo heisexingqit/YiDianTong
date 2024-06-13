@@ -630,7 +630,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                         "&roomType=" + learnType +
 
                         "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                        "&learnPlanName=" + learnPlanName + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;
+                        "&learnPlanName=" + learnPlanName + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&learnPlanFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -754,7 +754,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
                         "&roomType=" + learnType +
 
                         "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                        "&learnPlanName=" + learnPlanName + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
+                        "&learnPlanName=" + learnPlanName + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&learnPlanFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }

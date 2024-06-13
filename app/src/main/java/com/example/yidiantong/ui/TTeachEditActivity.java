@@ -592,7 +592,7 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
                         "&roomType=" + learnType +
 
                         "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                        "&learnPlanName=" + URLEncoder.encode(learnPlanName, "UTF-8") + "&flag=edit" + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&learnPlanFlag=" + zouyeFlag;
+                        "&learnPlanName=" + URLEncoder.encode(learnPlanName, "UTF-8") + "&flag=edit" + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&learnPlanFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;;
 
                 Log.d("wen", "URL: " + mRequestUrl);
             } catch (UnsupportedEncodingException e) {

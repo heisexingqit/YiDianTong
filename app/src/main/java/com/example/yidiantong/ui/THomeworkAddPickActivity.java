@@ -536,7 +536,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                         "&paperId=" + paperId + "&startTime=" + startTime + "&endTime=" + endTime +
                         "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classOrGroupId=" + classId +
                         "&classOrGroupName=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
-                        "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;
+                        "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
 //                LogUtils.writeLogToFile("wen0601.txt", mRequestUrl, true, this);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();

@@ -604,7 +604,7 @@ public class TWeikeAddPickActivity extends AppCompatActivity implements View.OnC
                         "&roomType=" + learnType +
 
                         "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                        "&learnPlanName=" + learnPlanName + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&learnPlanFlag=" + zouyeFlag;
+                        "&learnPlanName=" + learnPlanName + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&learnPlanFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }

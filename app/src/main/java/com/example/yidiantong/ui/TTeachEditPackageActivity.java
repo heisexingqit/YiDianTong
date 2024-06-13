@@ -592,7 +592,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                     "&roomType=" + learnType +
 
                     "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                    "&learnPlanName=" + URLEncoder.encode(learnPlanName, "UTF-8") + "&flag=edit" + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;
+                    "&learnPlanName=" + URLEncoder.encode(learnPlanName, "UTF-8") + "&flag=edit" + "&jsonStr=" + jsonString;
 
             Log.d("wen", "URL: " + mRequestUrl);
         } catch (UnsupportedEncodingException e) {
