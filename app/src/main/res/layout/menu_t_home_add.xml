@@ -114,6 +114,17 @@
             android:textColor="@color/gray_text" />
 
         <TextView
+            android:id="@+id/tv_add_read_aloud"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_select_item_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="10dp"
+            android:text="发布朗读任务"
+            android:textColor="@color/gray_text" />
+
+        <TextView
             android:id="@+id/tv_add_notice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -34,9 +34,9 @@
             <ImageView
                 android:layout_width="20sp"
                 android:layout_height="20sp"
+                android:layout_marginRight="8dp"
                 android:layout_toLeftOf="@+id/ftv_bd_user"
-                android:src="@drawable/te_name"
-                android:layout_marginRight="8dp"/>
+                android:src="@drawable/te_name" />
 
             <TextView
                 android:id="@+id/ftv_bd_user"

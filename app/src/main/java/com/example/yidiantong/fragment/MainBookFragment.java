@@ -21,7 +21,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
+import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.MyApplication;
@@ -168,6 +170,13 @@ public class MainBookFragment extends Fragment {
         }, error -> {
             Log.e("volley", "Volley_Error: " + error.toString());
         });
+        // 设置重试策略
+        int socketTimeout = 120000; // 2分钟
+        RetryPolicy policy = new DefaultRetryPolicy(
+                socketTimeout,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        request.setRetryPolicy(policy);
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         queue.add(request);
     }

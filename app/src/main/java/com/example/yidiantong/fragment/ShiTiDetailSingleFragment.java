@@ -3,6 +3,7 @@ package com.example.yidiantong.fragment;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -36,6 +37,9 @@ import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookExerciseEntity;
+import com.example.yidiantong.ui.AutoStudyActivity;
+import com.example.yidiantong.ui.KnowledgeShiTiActivity;
+import com.example.yidiantong.ui.MainBookUpActivity;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.RecyclerInterface;
 
@@ -62,6 +66,7 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
     private String userName; // 用户名
     private String subjectId; // 学科ID
     private String courseName; // 课程名
+    private String flag; // 模式标记
 
     SharedPreferences preferences;
 
@@ -76,7 +81,7 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
     private ImageView fiv_bd_tf;
     private String currentpage;
     private String allpage;
-    private int type;//1:举一反三 2:巩固提升 3:自主学习
+    private int type;//1:举一反三 2:巩固提升 3:自主学习 5:在线测试
 
 
     public static ShiTiDetailSingleFragment newInstance(BookExerciseEntity bookExerciseEntity, int type, String userName, String subjectId,
@@ -115,6 +120,7 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
         courseName = arg.getString("courseName");
         currentpage = arg.getString("currentPage");
         allpage = arg.getString("allpage");
+        flag = getActivity().getIntent().getStringExtra("flag");  // 自主学习 or 巩固提升
 
         //获取view
         View view = inflater.inflate(R.layout.fragment_book_detail_single, container, false);
@@ -131,7 +137,11 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
 
         // 题号和平均分
         ftv_bd_num = view.findViewById(R.id.ftv_bd_num);
-        ftv_bd_num.setText("第" + currentpage + "题");
+        if (bookExerciseEntity.getQuestionKeyword().equals("")) {
+            ftv_bd_num.setText("第" + currentpage + "题");
+        } else {
+            ftv_bd_num.setText("第" + currentpage + "题  (" + bookExerciseEntity.getQuestionKeyword() + "");
+        }
         ftv_bd_score = view.findViewById(R.id.ftv_bd_score);
         ftv_bd_score.setVisibility(View.GONE);
 
@@ -207,6 +217,9 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
                 break;
             case 3:
                 arrayString = preferences.getString("autoStuLoadAnswer", null);
+                break;
+            case 5:
+                arrayString = preferences.getString("OnlineTestAnswer", null);
                 break;
         }
         if (arrayString != null) {
@@ -323,6 +336,32 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
                                 editor2.commit();
                             }
                             break;
+                        case 5:
+                            arrayString = preferences.getString("OnlineTestAnswer", null);
+                            if (arrayString != null) {
+                                String[] OnlineTestAnswer = arrayString.split(",");
+                                OnlineTestAnswer[Integer.parseInt(currentpage) - 1] = option[stuans]; // 数组题号对应页数-1
+                                SharedPreferences.Editor editor3 = preferences.edit();
+                                arrayString = TextUtils.join(",", OnlineTestAnswer);
+                                System.out.println("arrayString: " + arrayString);
+                                editor3.putString("OnlineTestAnswer", arrayString);
+                                editor3.commit();
+                            }
+                            if (!arrayString.contains("null")) {
+                                Toast.makeText(getContext(), "测试完成！", Toast.LENGTH_SHORT).show();
+                                if (flag.equals("自主学习")){
+                                    Intent intent = new Intent(getActivity(), KnowledgeShiTiActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                    startActivity(intent);
+                                    getActivity().finish();
+                                }else if (flag.equals("巩固提升")){
+                                    Intent intent = new Intent(getActivity(), MainBookUpActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                    startActivity(intent);
+                                    getActivity().finish();
+                                }
+                            }
+                            break;
                     }
                 }
                 break;
@@ -332,20 +371,18 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
 
     private void saveAnswer2Server(String queAnswer, String stuAnswer,int type) {
         String mRequestUrl = "http://www.cn901.net:8111/AppServer/ajax/studentApp_savePythonRecommendQueAnswer.do?userId=" +
-                "dlzx230123" + "&questionId=" + bookExerciseEntity.getQuestionId() + "&queAnswer=" + queAnswer + "&stuAnswer=" +
+                userName + "&questionId=" + bookExerciseEntity.getQuestionId() + "&queAnswer=" + queAnswer + "&stuAnswer=" +
                 stuAnswer + "&baseTypeId=" + bookExerciseEntity.getBaseTypeId() + "&type=" + type;
         Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 String success = json.getString("success");
-                Log.e("wen0321", "success: " + success);
+                Log.d("wen0321", "success: " + success);
 
-                Bundle bundle = new Bundle();
-                bundle.putString("success", success);
                 //封装消息，传递给主线程
                 Message message = Message.obtain();
-                message.obj = bundle;
+                message.obj = success.equals("true");
                 //标识线程
                 message.what = 100;
                 handler.sendMessage(message);

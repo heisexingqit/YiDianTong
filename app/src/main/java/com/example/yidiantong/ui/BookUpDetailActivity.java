@@ -206,7 +206,8 @@ public class BookUpDetailActivity extends AppCompatActivity implements RecyclerI
     // 获取错题详情信息
     private void loadItems_Net(int pos) {
 //        String mRequestUrl = Constant.API + Constant.ERROR_QUE_ANSWER_QUESTION + "?sourceId=" + sourceId +"&userName=" +userName +"&subjectId=" + subjectId +"&currentPage=" + pos + "&questionId=" + questionId;
-        String mRequestUrl = "http://www.cn901.com//ShopGoods/ajax/learnPlan_getQuestion.do" + "?questionId=" + questionIds[pos-1];
+        String mRequestUrl = "http://www.cn901.com//ShopGoods/ajax/learnPlan_getQuestion.do"
+                + "?questionId=" + questionIds[pos-1];
         Log.e("wen0223", "详细信息单题请求" + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {

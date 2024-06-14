@@ -98,7 +98,15 @@ public class BookAutoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public void update(int pos) {
             BookExerciseEntity itemerror = itemList.get(pos);
             // 列表序号即错题序号
-            ftv_detail_num.setText("题目" + (pos + 1));
+            if (!itemerror.getQuestionKeyword().equals("")) {
+                //如果最后一个字符是逗号，去掉逗号
+                if (itemerror.getQuestionKeyword().substring(itemerror.getQuestionKeyword().length() - 1).equals(",")) {
+                    itemerror.setQuestionKeyword(itemerror.getQuestionKeyword().substring(0, itemerror.getQuestionKeyword().length() - 1));
+                }
+                ftv_detail_num.setText("题目" + (pos + 1) + "  (" + itemerror.getQuestionKeyword() + ")");
+            }else {
+                ftv_detail_num.setText("题目" + (pos + 1));
+            }
 
             //错题内容显示
             String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + itemerror.getShiTiShow() + "</body>";

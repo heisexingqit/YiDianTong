@@ -401,7 +401,6 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
     // 展现学科
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void showXueKe() {
-
         if (xuekeMap.size() == 0) {
             tv_xueke_null.setVisibility(View.VISIBLE);
         }
@@ -573,7 +572,6 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
         if (jiaocaiMap.size() == 0) {
             tv_jiaocai_null.setVisibility(View.VISIBLE);
         }
-
         lastJiaocai = null;
         jiaocaiMap.forEach((name, id) -> {
             view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_block, fl_jiaocai, false);

@@ -1,8 +1,10 @@
 package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +18,7 @@ import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -24,12 +27,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
+import com.example.yidiantong.bean.BookExerciseEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class KnowledgePointActivity extends AppCompatActivity {
     private static final String TAG = "KnowledgePointActivity";
@@ -49,6 +59,10 @@ public class KnowledgePointActivity extends AppCompatActivity {
     private String userName; //用户名
     private String course_Id;  //学科id
     private String course_name;  //学科名
+
+    // TODO 临时变量
+//    private List<BookExerciseEntity> itemList = new ArrayList<>();
+//    private String questionIds;
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -98,6 +112,7 @@ public class KnowledgePointActivity extends AppCompatActivity {
         public void handleMessage(Message message) {
             super.handleMessage(message);
             if (message.what == 100) {
+
                 Intent intent = new Intent(KnowledgePointActivity.this,
                         KnowledgeShiTiActivity.class);
                 intent.putExtra("userName", userName);  // 用户名
@@ -106,9 +121,103 @@ public class KnowledgePointActivity extends AppCompatActivity {
                 intent.putExtra("zhishidian", zhishidian);  // 知识点
                 intent.putExtra("zhishidianId", zhishidianId);  // 知识点id
                 startActivity(intent);
+
+                // TODO 临时变更
+//                loadZSDID();
+
             }
         }
     };
+
+    // TODO 加载知识点id "dlzx230240"
+//    private void loadZSDID() {
+//        String mRequestUrl = "http://www.cn901.net:8111/AppServer/ajax/studentApp_getQuestionsZZXX.do?" +
+//                "userId=" + userName + "&subjectId=" + course_Id + "&catalogId=" + zhishidianId;
+//        Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
+//        StringRequest request = new StringRequest(mRequestUrl, response -> {
+//            try {
+//                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+//                String itemString = json.getString("data");
+//                //TODO 汇报结束要进行修改
+////                itemString = "[]";
+//                //当试题列表为空时,需要跳转中间页进行处理
+//                if (itemString.equals("[]") || itemString.equals("") || itemString.equals("null")) {
+//                    Intent intent = new Intent(this, OnlineTestNullActivity.class);
+//                    intent.putExtra("userName", userName);
+//                    intent.putExtra("subjectId", course_Id);
+//                    intent.putExtra("courseName", course_name);
+//                    intent.putExtra("flag", "自主学习");
+//                    startActivity(intent);
+//                    finish();
+//                }
+//
+//                Log.d("wen0501", "itemString: " + itemString);
+//                Gson gson = new Gson();
+//                //使用Goson框架转换Json字符串为列表
+//                itemList = gson.fromJson(itemString, new TypeToken<List<BookExerciseEntity>>() {}.getType());
+//                questionIds = "";
+//                for (int i = 0; i < itemList.size(); i++) {
+//                    if (i == itemList.size() - 1) {
+//                        questionIds += itemList.get(i).questionId;
+//                    } else {
+//                        questionIds += itemList.get(i).questionId + ",";
+//                    }
+//                }
+//                System.out.println("questionIds:" + questionIds);
+//                System.out.println("itemList:" + itemList);
+//
+//                String message1 = json.getString("message");
+//                Log.d("song0321", "message: " + message1);
+//                Alert(message1);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }, error -> {
+//            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+//        });
+//        MyApplication.addRequest(request, TAG);
+//    }
+
+    // TODO 弹出提示框
+//    private void Alert(String alert) {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
+//
+//        // 自定义title样式
+//        TextView tv = new TextView(this);
+//        tv.setText(alert);    // 内容
+//        tv.setTextSize(17); // 字体大小
+//        tv.setPadding(30, 40, 30, 40); // 位置
+//        tv.setTextColor(Color.parseColor("#000000")); // 颜色
+//
+//        // 设置title组件
+//        builder.setCustomTitle(tv);
+//
+//        // 设置确定按钮及点击事件
+//        builder.setNegativeButton("ok", (dialog, which) -> {
+//            // 点击ok时执行的逻辑
+//            Intent intent = new Intent(KnowledgePointActivity.this,
+//                    KnowledgeShiTiDetailActivity.class);
+//            intent.putExtra("userName", userName);  // 用户名
+//            intent.putExtra("subjectId", course_Id);    // 学科id
+//            intent.putExtra("name", course_name);  // 学科名
+//            intent.putExtra("allpage", String.valueOf(itemList.size()));  // 总页数
+//            intent.putExtra("questionIds", questionIds);  // 试题id
+//            System.out.println("questionIds: " + questionIds);
+//            intent.putExtra("pos", "1");  // 试题id数组
+//            startActivity(intent);
+//
+//            // 关闭对话框
+//            dialog.dismiss();
+//        });
+//
+//        // 禁止返回和外部点击
+//        builder.setCancelable(false);
+//
+//        // 对话框弹出
+//        AlertDialog dialog = builder.create();
+//        dialog.show();
+//    }
+
 
     // Java接口注入到Js中
     public class MyJavaScriptInterface {
@@ -126,15 +235,14 @@ public class KnowledgePointActivity extends AppCompatActivity {
             zhishidianId = id;
             message.what = 100;
             handler.sendMessage(message);
-
         }
     }
 
 
     // 加载知识点
     private void loadZhiShiDian() {
-        mRequestUrl = Constant.API + Constant.T_HOMEWORK_ADD_ZHISHIDIAN
-                + "?userName=" + "m1001" + "&subjectCode=" + course_Id +
+        mRequestUrl = Constant.API + Constant.HOMEWORK_ADD_ZHISHIDIAN
+                + "?userName=" + userName + "&subjectCode=" + course_Id +
                 "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai;
         Log.d("wen", "loadZhiShiDian: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
@@ -192,5 +300,14 @@ public class KnowledgePointActivity extends AppCompatActivity {
                 "</head><body style=\"color: rgb(117, 117, 117); font-size: 16px; margin: 0px; padding: 0px\">" + modifiedStr +
                 "</body>";
         wb.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 确保Dialog存在且显示中才去dismiss，避免空指针异常
+        if (window != null && window.isShowing()) {
+            window.dismiss();
+        }
     }
 }
