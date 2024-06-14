@@ -1,8 +1,5 @@
 package com.example.yidiantong.ui;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,34 +8,28 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridLayout;
-import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
-import com.example.yidiantong.bean.THomeItemEntity;
 import com.example.yidiantong.bean.THomeworkReportEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.PxUtils;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.List;
-import java.util.zip.Inflater;
 
 public class THomeworkReportActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "THomeworkReportActivity";
@@ -72,6 +63,8 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
     private FlexboxLayout fb_noCorrecting;
     private FlexboxLayout fb_noSubmit;
 
+    private String Deadline;
+    private boolean status = false;
     THomeworkReportEntity homeworkReport;
 
     @Override
@@ -116,6 +109,8 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
         findViewById(R.id.iv_back).setOnClickListener(v -> finish());
 
         loadItems_Net();
+        //获取答案公布状态
+        getAnswerStatus();
 
     }
 
@@ -200,36 +195,72 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                 int all_num = Integer.parseInt(homeworkReport.getCorrecting());
                 all_num += Integer.parseInt(homeworkReport.getNoCorrecting());
                 all_num += un_submit;
-
+                int SubmissionRate = ((all_num - un_submit) * 100) / all_num;
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                if (homeworkReport.getStatus().equals("show")) {
 
-                    builder.setMessage("该作业答案已经公布");
-                    builder.setPositiveButton("确定", null);
-                    AlertDialog dialog = builder.create();
-                    dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
-                    dialog.show();
-                } else if (un_submit * 1.0 / all_num > 0.2) {
-                    builder.setMessage("提交率不足80%，确定要公布答案吗？");
-                    builder.setNegativeButton("取消", null);
-                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            publishAnswer();
+                if (status) {
+                    if (un_submit == 0 || (SubmissionRate >= 80 && Deadline.equals("after"))) {
+                        Toast.makeText(this, "答案已公布", Toast.LENGTH_SHORT).show();
+                    } else {
+
+                        if (type.equals("weike")) {
+                            builder.setMessage("该微课答案已经公布，是否关闭？");
+                        } else if (type.equals("learnPlan")) {
+                            builder.setMessage("该导学案答案已经公布，是否关闭？");
+                        } else {
+                            builder.setMessage("该作业答案已经公布，是否关闭？");
                         }
-                    });
-                    AlertDialog dialog = builder.create();
-                    dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
-                    dialog.show();
+                        builder.setNegativeButton("取消", null);
+                        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                cancelAnswer();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+                        dialog.show();
+                    }
+
                 } else {
-                    publishAnswer();
+                    if (SubmissionRate >= 80) {
+                        publishAnswer();
+                    } else {
+                        if (Deadline.equals("before")) {
+                            if (type.equals("weike")) {
+                                builder.setMessage("提交率不足80%且微课未截止，确定公布答案？");
+                            } else if (type.equals("learnPlan")) {
+                                builder.setMessage("提交率不足80%且导学案未截止，确定公布答案？");
+                            } else {
+                                builder.setMessage("提交率不足80%且作业未截止，确定公布答案？");
+                            }
+                        } else {
+                            builder.setMessage("提交率不足80%，确定公布答案？");
+                        }
+                        builder.setNegativeButton("取消", null);
+                        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                publishAnswer();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+                        dialog.show();
+                    }
+
                 }
                 break;
         }
     }
 
     private void publishAnswer() {
-        String mRequestUrl = Constant.API + Constant.PUBLISH_ANSWER + "?userName=" + MyApplication.username + "&paperId=" + taskId;
+        String type_ = type;
+        if(type.equals("weike")){
+            type_ = "learnPlan";
+        }
+
+        String mRequestUrl = Constant.API + Constant.PUBLISH_ANSWER + "?userName=" + MyApplication.username + "&paperId=" + taskId + "&type=" + type_;
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -237,9 +268,9 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
                 String message = json.getString("message");
                 Boolean isSuccess = json.getBoolean("success");
                 message = message.replace("。", "");
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                 if (isSuccess) {
-                    homeworkReport.setStatus("show");
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                    status = true;
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -251,6 +282,66 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
 
         MyApplication.addRequest(request, TAG);
     }
+
+    private void cancelAnswer() {
+        String type_ = type;
+        if(type.equals("weike")){
+            type_ = "learnPlan";
+        }
+
+        String mRequestUrl = Constant.API + Constant.CANCEL_ANSWER + "?userName=" + MyApplication.username + "&paperId=" + taskId + "&type=" + type_;
+
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String message = json.getString("message");
+                Boolean isSuccess = json.getBoolean("success");
+                message = message.replace("。", "");
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                if (isSuccess) {
+                    status = false;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Log.e("volley", "Volley_Error: " + error.toString());
+
+        });
+
+        MyApplication.addRequest(request, TAG);
+    }
+
+    private void getAnswerStatus() {
+        String type_ = type;
+        if(type.equals("weike")){
+            type_ = "learnPlan";
+        }
+        String mRequestUrl = Constant.API + Constant.GET_ANSWER_STATUS + "?paperId=" + taskId + "&type=" + type_;
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String message = json.getString("message");
+                Boolean isSuccess = json.getBoolean("success");
+                String AnswerStatus = json.getString("data");
+                String[] str = AnswerStatus.split("_");
+                Deadline = str[0];
+                if (str[1].equals("show")) {
+                    status = true;
+                } else {
+                    status = false;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Log.e("volley", "Volley_Error: " + error.toString());
+
+        });
+
+        MyApplication.addRequest(request, TAG);
+    }
+
 
     public void showList(int newPos) {
         View view = null;

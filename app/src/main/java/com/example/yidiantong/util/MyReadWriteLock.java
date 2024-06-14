@@ -50,7 +50,6 @@ public class MyReadWriteLock {
         Log.e("0110", "学生请求退出URL:" + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
 
-
         }, error -> {
             Log.e(TAG, "checkout: 网络连接失败");
         });

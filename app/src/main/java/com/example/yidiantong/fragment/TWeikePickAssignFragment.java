@@ -8,13 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.toolbox.StringRequest;
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
@@ -23,18 +29,23 @@ import com.bigkoo.pickerview.view.TimePickerView;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableTextView;
+import com.example.yidiantong.adapter.THomeworkXieZuoAdapter;
+import com.example.yidiantong.bean.HomeworkXieZuoEntity;
 import com.example.yidiantong.ui.TWeikeAddPickActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
 import com.google.android.flexbox.FlexboxLayout;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -90,6 +101,21 @@ public class TWeikePickAssignFragment extends Fragment implements View.OnClickLi
     private TWeikeAddPickActivity transmit;
 
     private boolean isFirst = true;
+    private RadioGroup rg_homework, rg_assign;
+
+    private int zouyeType = 1;
+    private int zouyeFlag = 1;
+    private TextView tv_kt;
+    private Map<String, String> xiezuoMap = new LinkedHashMap<>();
+    private TextView lastXieZuo;
+    private String xiezuo;
+    private RecyclerView rv_xiezuo;
+    private THomeworkXieZuoAdapter adapter;
+    private ConstraintLayout cl_type;
+    private TextView tv_bz;
+
+    private Boolean assignFlag = false;
+    private RadioButton rb_assign1;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -102,6 +128,14 @@ public class TWeikePickAssignFragment extends Fragment implements View.OnClickLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_t_weike_pick_assign, container, false);
+        tv_bz = view.findViewById(R.id.tv_bz);
+        cl_type = view.findViewById(R.id.cl_type);
+        tv_kt = view.findViewById(R.id.tv_kt);
+        rv_xiezuo = view.findViewById(R.id.rv_xiezuo);
+        rv_xiezuo.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        rv_xiezuo.setItemAnimator(new DefaultItemAnimator());
+        rg_homework = view.findViewById(R.id.rg_homework);
+        rg_assign = view.findViewById(R.id.rg_assign);
         tv_start = view.findViewById(R.id.tv_start);
         tv_end = view.findViewById(R.id.tv_end);
         fl_ketang = view.findViewById(R.id.fl_ketang);
@@ -140,7 +174,79 @@ public class TWeikePickAssignFragment extends Fragment implements View.OnClickLi
         view.findViewById(R.id.iv_end).setOnClickListener(this);
 
         loadKeTang();
+        loadXieZuo(); // 第一步2
+        // 单选框
+        rg_homework.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                switch (i) {
+                    case R.id.rb_homework1:
+                        zouyeType = 1;
+                        break;
+                    case R.id.rb_homework2:
+                        zouyeType = 2;
+                        break;
+                }
+            }
+        });
+        rg_assign.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+//                Log.e("wen0605", "onCheckedChanged: " + i);
+                if (assignFlag) {
+                    switch (i) {
+                        case R.id.rb_assign1:
+                            zouyeFlag = 1;
+                            changeUI();
+                            break;
+                        case R.id.rb_assign2:
+                            zouyeFlag = 2;
+                            changeUI();
+                            break;
+                    }
+                }
+            }
+        });
+//        ((RadioButton) view.findViewById(R.id.rb_homework1)).setChecked(true);
+        zouyeType = 0;
+        assignFlag = false;
+        rb_assign1 = view.findViewById(R.id.rb_assign1);
+        rb_assign1.setChecked(true);
+        assignFlag = true;
+
+        // 列表
+        rv_xiezuo.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        rv_xiezuo.setItemAnimator(new DefaultItemAnimator());
+
+        // Adapter
+        adapter = new THomeworkXieZuoAdapter(getActivity());
+        rv_xiezuo.setAdapter(adapter);
         return view;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void changeUI() {
+        if (zouyeFlag == 1) {
+            // 我的课堂UI
+            tv_kt.setText("选择课堂:");
+            tv_bz.setText("布置给:");
+            cl_type.setVisibility(View.VISIBLE);
+            rv_xiezuo.setVisibility(View.GONE);
+            tv_class_null.setVisibility(View.VISIBLE);
+            isFirst = true;
+            ketang.clear();
+            tv_class.callOnClick();
+            showKeTang();
+        } else {
+            // 协作组课堂UI
+            tv_kt.setText("选择协作组:");
+            tv_bz.setText("布置范围:");
+            cl_type.setVisibility(View.GONE);
+            adapter.update(new ArrayList<>());
+            rv_xiezuo.setVisibility(View.VISIBLE);
+            tv_class_null.setVisibility(View.GONE);
+            showXieZuo();
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -175,28 +281,27 @@ public class TWeikePickAssignFragment extends Fragment implements View.OnClickLi
             case R.id.tv_group:
                 changePopBtn(tv_group);
                 pos = 1;
-                showClass();
+                loadClass();
                 break;
             case R.id.tv_person:
                 changePopBtn(tv_person);
                 pos = 2;
-                showClass();
+                loadClass();
                 break;
             case R.id.tv_ketang:
                 iv_ketang.callOnClick();
                 break;
             case R.id.btn_reset:
-                tv_start.setText("");
-                tv_end.setText("");
+                Calendar startDate = Calendar.getInstance();
+                // 指定日期时间格式
+                dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                tv_start.setText(dateFormat.format(startDate.getTime()));
+                tv_end.setText(getTomorrow2359(tv_start.getText().toString()));
                 ketang.clear();
-                showKeTang();
-                tv_ketang_null.setVisibility(View.GONE);
-                iv_ketang.setImageResource(R.drawable.down_icon);
-                fl_ketang.removeAllViews();
-                tv_ketang.setText("");
-                changePopBtn(tv_class);
+                isFirst = true;
+//                rb_homework1.setChecked(true);
+                rb_assign1.setChecked(true);
                 pos = 0;
-                showClass();
                 break;
             case R.id.btn_confirm:
                 assignType = "1";
@@ -212,135 +317,161 @@ public class TWeikePickAssignFragment extends Fragment implements View.OnClickLi
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void submit() {
-        if (assignType.equals("1")) {
-            if (StringUtils.hasEmptyString(tv_start.getText().toString(), tv_end.getText().toString()) || (pos == 0 && clas.size() == 0) || (pos == 1 && group.size() == 0) || (pos == 2 && person.size() == 0) || ketang.size() == 0) {
+        if (zouyeFlag == 1) {
+            if (assignType.equals("1")) {
+                if (ketang.size() == 0 || (pos == 1 && group.size() == 0) || (pos == 2 && person.size() == 0)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("请选择以上属性");
+                    builder.setNegativeButton("关闭", null);
+                    AlertDialog dialog = builder.create();
+                    dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+                    dialog.show();
+                    return;
+                }
+            }
+
+            String classGroupIds = "", classGroupNames = "";
+            String ids = "", names = "";
+            StringBuilder result = new StringBuilder();
+            StringBuilder result2 = new StringBuilder();
+            StringBuilder result3 = new StringBuilder();
+            StringBuilder result4 = new StringBuilder();
+            String leanType = "";
+            switch (pos) {
+                case 0:
+                    ids = "";
+                    names = "";
+                    classGroupIds = "";
+                    classGroupNames = "";
+                    leanType = "70";
+                    break;
+                case 1:
+                    result.setLength(0);
+                    result2.setLength(0);
+                    result3.setLength(0);
+                    result4.setLength(0);
+                    group.forEach(key -> {
+                        String id = groupMapStuIds.get(key);
+                        String name = groupMapStuNames.get(key);
+                        if (result.length() > 0) {
+                            result.append(";"); // 在每个值之前添加逗号和空格
+                        }
+                        result.append(id);
+
+                        if (result2.length() > 0) {
+                            result2.append(";");
+                        }
+                        result2.append(name);
+
+                        if (result3.length() > 0) {
+                            result3.append(";");
+                        }
+                        result3.append(groupMap.get(key));
+
+                        if (result4.length() > 0) {
+                            result4.append(";");
+                        }
+                        result4.append(key);
+                    });
+                    ids = result.toString();
+                    names = result2.toString();
+                    classGroupIds = result3.toString();
+                    classGroupNames = result4.toString();
+                    leanType = "50";
+                    break;
+                case 2:
+                    result.setLength(0);
+                    result2.setLength(0);
+                    result3.setLength(0);
+                    result4.setLength(0);
+                    person.forEach(key -> {
+                        String id = personMap.get(key);
+                        String name = key;
+                        if (result.length() > 0) {
+                            result.append(","); // 在每个值之前添加逗号和空格
+                        }
+                        result.append(id);
+
+                        if (result2.length() > 0) {
+                            result2.append(",");
+                        }
+                        result2.append(name);
+                    });
+                    clas.forEach(key -> {
+                        if (result3.length() > 0) {
+                            result3.append(",");
+                        }
+                        result3.append(classMap.get(key));
+
+                        if (result4.length() > 0) {
+                            result4.append(",");
+                        }
+                        result4.append(key);
+                    });
+                    ids = result.toString();
+                    names = result2.toString();
+                    classGroupIds = result3.toString();
+                    classGroupNames = result4.toString();
+                    break;
+            }
+            result.setLength(0);
+            // 处理课堂名和课堂id
+            ketang.forEach(key -> {
+                if (result.length() > 0) {
+                    result.append(",");
+                }
+                result.append(ketangMap.get(key));
+            });
+            String ketangIds = result.toString();
+            String ketangName = String.join(",", ketang);
+            Log.d("wens", "submit: " + ketangName);
+
+            Log.d("wens", "submit: 班级名称" + classGroupNames);
+            Log.d("wens", "submit: 班级Ids" + classGroupIds);
+            Log.d("wens", "submit: 学生id" + ids);
+            Log.d("wens", "submit: 学生名" + names);
+            transmit.submit(tv_start.getText().toString() + ":00", tv_end.getText().toString() + ":00", ketangName, ketangIds, classGroupNames, classGroupIds, assignType, ids, names, leanType, "save", zouyeType, zouyeFlag, "", "");
+        }else{
+            if (xiezuo == null || xiezuo.length() == 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage("请选择以上属性");
+                builder.setMessage("请选择协作组");
                 builder.setNegativeButton("关闭", null);
                 AlertDialog dialog = builder.create();
                 dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
                 dialog.show();
                 return;
             }
-        }
-
-        String classGroupIds = "", classGroupNames = "";
-        String ids = "", names = "";
-        StringBuilder result = new StringBuilder();
-        StringBuilder result2 = new StringBuilder();
-        StringBuilder result3 = new StringBuilder();
-        StringBuilder result4 = new StringBuilder();
-        String leanType = "0";
-        switch (pos) {
-            case 0:
-                clas.forEach(key -> {
-                    String id = classMapStuIds.get(key);
-                    String name = classMapStuNames.get(key);
-                    if (result.length() > 0) {
-                        result.append(", "); // 在每个值之前添加逗号和空格
-                    }
-                    result.append(id);
-
-                    if (result2.length() > 0) {
-                        result2.append(", ");
-                    }
-                    result2.append(name);
-
-                    if (result3.length() > 0) {
-                        result3.append(", ");
-                    }
-                    result3.append(classMap.get(key));
-
-                    if (result4.length() > 0) {
-                        result4.append(", ");
-                    }
-                    result4.append(key);
-
-                });
-                ids = result.toString();
-                names = result2.toString();
-                classGroupIds = result3.toString();
-                classGroupNames = result4.toString();
-                leanType = "70";
-                break;
-            case 1:
-                result.setLength(0);
-                result2.setLength(0);
-                result3.setLength(0);
-                result4.setLength(0);
-                group.forEach(key -> {
-                    String id = groupMapStuIds.get(key);
-                    String name = groupMapStuNames.get(key);
-                    if (result.length() > 0) {
-                        result.append(", "); // 在每个值之前添加逗号和空格
-                    }
-                    result.append(id);
-
-                    if (result2.length() > 0) {
-                        result2.append(", ");
-                    }
-                    result2.append(name);
-
-                    if (result3.length() > 0) {
-                        result3.append(", ");
-                    }
-                    result3.append(groupMap.get(key));
-
-                    if (result4.length() > 0) {
-                        result4.append(", ");
-                    }
-                    result4.append(key);
-                });
-                ids = result.toString();
-                names = result2.toString();
-                classGroupIds = result3.toString();
-                classGroupNames = result4.toString();
-                leanType = "50";
-                break;
-            case 2:
-                result.setLength(0);
-                result2.setLength(0);
-                result3.setLength(0);
-                result4.setLength(0);
-                person.forEach(key -> {
-                    String id = personMap.get(key);
-                    String name = key;
-                    if (result.length() > 0) {
-                        result.append(", "); // 在每个值之前添加逗号和空格
-                    }
-                    result.append(id);
-
-                    if (result2.length() > 0) {
-                        result2.append(", ");
-                    }
-                    result2.append(name);
-
-                    if (result3.length() > 0) {
-                        result3.append(", ");
-                    }
-                });
-                ids = result.toString();
-                names = result2.toString();
-                break;
-        }
-        result.setLength(0);
-        // 处理课堂名和课堂id
-        ketang.forEach(key -> {
-            if (result.length() > 0) {
-                result.append(", ");
+            if (adapter.selectKTList.size() == 0) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("请选择布置范围");
+                builder.setNegativeButton("关闭", null);
+                AlertDialog dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+                dialog.show();
+                return;
             }
-            result.append(ketangMap.get(key));
-        });
-        String ketangIds = result.toString();
-        String ketangName = String.join(", ", ketang);
-        Log.d("wens", "submit: " + ketangName);
+            StringBuilder keName = new StringBuilder();
+            StringBuilder keId = new StringBuilder();
+            for (int i = 0; i < adapter.selectKTList.size(); ++i) {
+                HomeworkXieZuoEntity.Ketang kt = adapter.selectKTList.get(i);
+                if (i != 0) {
+                    keName.append(",");
+                    keId.append(",");
+                }
+                String v = "";
+                try {
+                    v = URLEncoder.encode(kt.value, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                keName.append(v);
+                keId.append(kt.key);
 
-        Log.d("wens", "submit: 班级名称" + classGroupNames);
-        Log.d("wens", "submit: 班级Ids" + classGroupIds);
-        Log.d("wens", "submit: 学生id" + ids);
-        Log.d("wens", "submit: 学生名" + names);
-        transmit.submit(tv_start.getText().toString() + ":00", tv_end.getText().toString() + ":00", ketangName, ketangIds, classGroupNames, classGroupIds, assignType, ids, names, leanType, "save");
+            }
 
+
+            transmit.submit(tv_start.getText().toString() + ":00", tv_end.getText().toString() + ":00", keName.toString(), keId.toString(), "", "", assignType, "", "", "70", "save", zouyeType, zouyeFlag, xiezuo, xiezuoMap.get(xiezuo));
+        }
     }
 
     public void timePickerShow(Calendar startDate, Calendar setDate, TextView tv) {
@@ -442,6 +573,94 @@ public class TWeikePickAssignFragment extends Fragment implements View.OnClickLi
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void loadXieZuo() {
+        mRequestUrl = Constant.API + Constant.T_HOMEWORK_ASSIGN_GET_XZ + "?teacherId=" + MyApplication.username;
+        xiezuoMap.clear();
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+
+                JSONArray data = json.getJSONArray("data");
+                for (int i = 0; i < data.length(); ++i) {
+                    JSONObject object = data.getJSONObject(i);
+                    xiezuoMap.put(object.getString("value"), object.getString("key"));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());
+        });
+        MyApplication.addRequest(request, TAG);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void showXieZuo() {
+        // 清空
+        fl_ketang.removeAllViews();
+        // 判断课堂是被否选择
+        if (xiezuoMap.size() == 0) {
+            tv_ketang_null.setVisibility(View.VISIBLE);
+        } else {
+            tv_ketang_null.setVisibility(View.GONE);
+        }
+        lastXieZuo = null;
+        xiezuo = "";
+        // 绘制课堂块
+        xiezuoMap.forEach((name, id) -> {
+            View view = LayoutInflater.from(getActivity()).inflate(R.layout.item_t_homework_add_block, fl_ketang, false);
+            TextView tv_name = view.findViewById(R.id.tv_name);
+            tv_name.setText(name);
+
+            // 点击
+            tv_name.setOnClickListener(v -> {
+                if (lastXieZuo != null && lastXieZuo == v) {
+                    return;
+                }
+                if (lastXieZuo != null) {
+                    unselectedTv(lastXieZuo);
+                }
+                selectedTv((TextView) v);
+                lastXieZuo = (TextView) v;
+                xiezuo = ((TextView) v).getText().toString();
+                loadXZClass();
+            });
+            ViewGroup.LayoutParams params = tv_name.getLayoutParams();
+            params.width = fl_ketang.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 15);
+            tv_name.setLayoutParams(params);
+            fl_ketang.addView(view);
+
+        });
+    }
+
+    private void loadXZClass() {
+        mRequestUrl = Constant.API + Constant.T_HOMEWORK_ASSIGN_GET_XZ_CLASS + "?roomId=" + xiezuoMap.get(xiezuo);
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+
+                String itemString = json.getString("data");
+                Gson gson = new Gson();
+                //使用Gson框架转换Json字符串为列表
+                List<HomeworkXieZuoEntity> itemList = gson.fromJson(itemString, new TypeToken<List<HomeworkXieZuoEntity>>() {
+                }.getType());
+
+                adapter.update(itemList);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());
+        });
+        MyApplication.addRequest(request, TAG);
+    }
+
     /**
      * 请求批改信息 将Handler内容写入，速度更快（如遇到报错，再用Handler）
      */
@@ -537,15 +756,15 @@ public class TWeikePickAssignFragment extends Fragment implements View.OnClickLi
                                 lastKetang.clear();
                             }
                             lastKetang.add(tv_name);
+                            // 加载班级信息
+                            loadClass();
                         }
                         break;
                 }
-                // 加载班级信息
-                loadClass();
-//                tv_ketang.setText(ketang);
+
             });
             ViewGroup.LayoutParams params = tv_name.getLayoutParams();
-            params.width = fl_ketang.getWidth() / 3  - PxUtils.dip2px(view.getContext(), 15);
+            params.width = fl_ketang.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 15);
             tv_name.setLayoutParams(params);
             fl_ketang.addView(view);
             if (isFirst) {
@@ -610,7 +829,6 @@ public class TWeikePickAssignFragment extends Fragment implements View.OnClickLi
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Log.e(TAG, "loadClass: " + clas);
             }, error -> {
                 Toast.makeText(getActivity(), "网络连接失败", Toast.LENGTH_SHORT).show();
                 Log.e("wen", "Volley_Error: " + error.toString());
@@ -629,13 +847,7 @@ public class TWeikePickAssignFragment extends Fragment implements View.OnClickLi
         }
         switch (pos) {
             case 0:
-                if (classMap.size() == 0) {
-                    tv_class_null.setText("班级列表未获取到或者为空");
-                    tv_class_null.setVisibility(View.VISIBLE);
-                    return;
-                } else {
-                    tv_class_null.setVisibility(View.GONE);
-                }
+                tv_class_null.setVisibility(View.GONE);
                 break;
             case 1:
                 if (groupMap.size() == 0) {

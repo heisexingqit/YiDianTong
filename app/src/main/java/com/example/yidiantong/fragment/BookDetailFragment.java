@@ -20,6 +20,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -67,7 +68,7 @@ public class BookDetailFragment extends Fragment {
     private List<BookDetailEntity> itemList = new ArrayList<>();
     private List<BookDetailEntity.errorList> errorList = new ArrayList<>();
     private List<BookDetailEntity.errorList> quesList = new ArrayList<>();
-    BooksDetailAdapter adapter;
+    private BooksDetailAdapter adapter;
     private RecyclerView frv_detail;
 
     private LinearLayout fll_null;
@@ -75,6 +76,7 @@ public class BookDetailFragment extends Fragment {
     private String questionId;
 
     private String sourceId = "";
+    private int errorNum = 1;
 
     private ActivityResultLauncher<Intent> mResultLauncher;  //用于处理Intent的返回结果
 
@@ -112,10 +114,43 @@ public class BookDetailFragment extends Fragment {
         fll_null = view.findViewById(R.id.fll_null);
 
         //设置RecyclerViewAdapter
-        adapter = new BooksDetailAdapter(getContext(), errorList, itemList, quesList,true);
+        adapter = new BooksDetailAdapter(getContext(), errorList, itemList, quesList, true);
         frv_detail.setAdapter(adapter);
+        frv_detail.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            //记录当前可见的底部item序号
+            int lastVisibleItem;
 
-        //refreshList();
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 >= adapter.getItemCount()) {
+                    loadItems_Net();
+                }
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
+                assert lm != null;
+                lastVisibleItem = lm.findLastVisibleItemPosition();
+//                Log.e("wen0601", "onScrolled: 位置 " + lastVisibleItem + "/" + adapter.getItemCount());
+
+            }
+        });
+
+//        //慢加载，请求数据放后面
+//        if (adapter.itemList.size() == 0) {
+//            loadItems_Net();
+//        }
+
+        //下拉刷新
+        swipeRf = view.findViewById(R.id.swipeRf);
+        swipeRf.setOnRefreshListener(() -> {
+            swipeRf.setRefreshing(true);
+            refreshList();
+            swipeRf.setRefreshing(false);
+        });
 
         //设置item点击事件
         adapter.setmItemClickListener((v, pos) -> {
@@ -156,7 +191,6 @@ public class BookDetailFragment extends Fragment {
             getActivity().startActivity(intent);
         });
 
-
         // 筛选器部分
         // 提交页面回调
         mResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -164,12 +198,12 @@ public class BookDetailFragment extends Fragment {
             public void onActivityResult(ActivityResult result) {
                 if (result.getResultCode() == HomeworkPagerActivity.RESULT_OK) {
                     Intent intent = result.getData();
-                    selectorRefresh(intent.getStringExtra("sourceId"));
+                    selectorRefresh(intent.getStringExtra("sourceId"), intent.getIntExtra("errorNum", 1));
                 }
             }
         });
 
-        view.findViewById(R.id.fiv_selector).setOnClickListener(v->{
+        view.findViewById(R.id.fiv_selector).setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), BookSelectorActivity.class);
             intent.putExtra("subjectId", coures_Id);
             intent.putExtra("subjectName", course_name);
@@ -180,7 +214,9 @@ public class BookDetailFragment extends Fragment {
 
     //刷新列表
     private void refreshList() {
+        Log.e("wen0523", "refreshList: 刷新");
         currentPage = 1;
+        adapter.isDown = 0;
         adapter.isRefresh = 1;
         loadItems_Net();
         frv_detail.scrollToPosition(0);
@@ -198,11 +234,17 @@ public class BookDetailFragment extends Fragment {
                 List<BookDetailEntity.errorList> moreList = (List<BookDetailEntity.errorList>) receivedBundle.getSerializable("moreList");
                 List<BookDetailEntity.errorList> quesList = (List<BookDetailEntity.errorList>) receivedBundle.getSerializable("quesList");
                 List<BookDetailEntity> almostList = (List<BookDetailEntity>) receivedBundle.getSerializable("almostList");
-                adapter.loadData(moreList);
+                Log.e("wen0523", "moreList: " + moreList.size());
+                Log.e("wen0523", "quesList: " + quesList.size());
+                Log.e("wen0523", "almostList: " + almostList.size());
                 adapter.loadData3(quesList);
+                adapter.loadData(moreList);
                 adapter.loadData2(almostList);
                 rl_loading.setVisibility(View.GONE);
-                currentPage += 1;
+                if (moreList.size() > 0) {
+                    // 只有非0才翻页，0不算
+                    currentPage += 1;
+                }
             }
         }
     };
@@ -213,9 +255,17 @@ public class BookDetailFragment extends Fragment {
             fll_null.setVisibility(View.GONE);
             rl_loading.setVisibility(View.VISIBLE);
         }
+        if(adapter.isRefresh == 0 && adapter.isDown == 1){
+            rl_loading.setVisibility(View.GONE);
+            return;
+        }
         // 获取错题本信息
-        String mRequestUrl = Constant.API + Constant.ERROR_QUE_GET_QUESTION + "?userName=" + username + "&subjectId=" + coures_Id + "&currentPage=1&sourceId=" + sourceId + "&errorNum=1";
-        Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
+        String mRequestUrl = Constant.API + Constant.ERROR_QUE_GET_QUESTION + "?userName=" + username +
+                "&subjectId=" + coures_Id +
+                "&currentPage=" + currentPage +
+                "&sourceId=" + sourceId +
+                "&errorNum=" + errorNum;
+        Log.e("wen0621", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 String itemString = "";
@@ -264,6 +314,8 @@ public class BookDetailFragment extends Fragment {
 
                 List<BookDetailEntity.errorList> quesList = gson.fromJson(itemStringnew, new TypeToken<List<BookDetailEntity.errorList>>() {
                 }.getType());
+                Log.e("wen0523", "loadItems_Netxxxxxxxxx: " + moreList.size());
+
 
                 //使用Goson框架转换Json字符串为列表
                 List<BookDetailEntity> almostList = gson.fromJson(item, new TypeToken<List<BookDetailEntity>>() {
@@ -278,11 +330,15 @@ public class BookDetailFragment extends Fragment {
                 message.obj = bundle;
 
                 // 发送消息给主线程
-                if (moreList == null || moreList.size() == 0 || itemString.equals("[]")) {
+                if (adapter.isRefresh == 1 && (moreList == null || moreList.size() == 0 || itemString.equals("[]"))) {
                     fll_null.setVisibility(View.VISIBLE);
                     return;
                 } else {
                     fll_null.setVisibility(View.GONE);
+                }
+
+                if(adapter.isDown == 1){
+                    return;
                 }
                 //标识线程
                 message.what = 100;
@@ -381,8 +437,9 @@ public class BookDetailFragment extends Fragment {
         }
     }
 
-    private void selectorRefresh(String sourceId){
+    private void selectorRefresh(String sourceId, int errorNum) {
         this.sourceId = sourceId;
+        this.errorNum = errorNum;
     }
 
 }

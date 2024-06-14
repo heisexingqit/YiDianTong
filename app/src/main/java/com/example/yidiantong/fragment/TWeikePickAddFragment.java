@@ -140,12 +140,14 @@ public class TWeikePickAddFragment extends Fragment implements View.OnClickListe
         View view = inflater.inflate(R.layout.fragment_t_weike_pick_add, container, false);
         ll_loading = view.findViewById(R.id.ll_loading);
         ll_loading2 = view.findViewById(R.id.ll_loading2);
-
+        rl_bottom_block = view.findViewById(R.id.rl_bottom_block);
         ll_bottom_tab = view.findViewById(R.id.ll_bottom_tab);
         sv_bottom_tab = view.findViewById(R.id.sv_bottom_tab);
         tv_hide = view.findViewById(R.id.tv_hide);
 
         vp_main = view.findViewById(R.id.vp_main);
+
+        rl_bottom_block = view.findViewById(R.id.rl_bottom_block);
 
         if (adapter == null) {
             adapter = new TLearnPlanAddPickPagerAdapter(getActivity().getSupportFragmentManager(), new ArrayList<>());
@@ -162,9 +164,12 @@ public class TWeikePickAddFragment extends Fragment implements View.OnClickListe
         iv_add = view.findViewById(R.id.iv_add);
         iv_add.setOnClickListener(this);
 
+        // 判断数据是否已存在
         if (adapter.itemList.size() == 0) {
             loadItems_Net();
-        }else{
+        } else {
+            ll_loading.setVisibility(View.GONE);// 解除遮挡
+            ll_loading2.setVisibility(View.GONE);// 解除遮挡
             tv_hide.setVisibility(View.GONE);
         }
 

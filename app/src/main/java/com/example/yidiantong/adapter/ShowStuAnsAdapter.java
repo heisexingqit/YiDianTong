@@ -19,12 +19,10 @@ public class ShowStuAnsAdapter extends BaseAdapter {
 
     private Context context;
     private String[] ansArray;
-    private String[] questionTypes;
 
-    public ShowStuAnsAdapter(Context context, String[] ansArray, String[] questionTypes) {
+    public ShowStuAnsAdapter(Context context, String[] ansArray) {
         this.context = context;
         this.ansArray = ansArray;
-        this.questionTypes = questionTypes;
     }
 
     private String html_answer_head = "<head>\n" +
@@ -65,7 +63,7 @@ public class ShowStuAnsAdapter extends BaseAdapter {
         ClickableWebView wv = v.findViewById(R.id.wv_content);
         wv.setFocusable(false);
         wv.setClickable(false);
-        if (ansArray[i].length() == 0) {
+        if (ansArray[i].length() == 0 || ansArray[i].equals("未答")) {
             showAns = "<span style=\"color: red\">未答</span>";
         } else {
             showAns = ansArray[i];

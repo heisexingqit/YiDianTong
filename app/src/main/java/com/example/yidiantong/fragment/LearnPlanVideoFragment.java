@@ -52,6 +52,13 @@ public class LearnPlanVideoFragment extends Fragment implements View.OnClickList
         fragment.setArguments(args);
         return fragment;
     }
+    public static LearnPlanVideoFragment newInstance(LearnPlanItemEntity learnPlanEntity) {
+        LearnPlanVideoFragment fragment = new LearnPlanVideoFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("learnPlanEntity", learnPlanEntity);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     //绑定Activity的接口类，实现调用
     @Override

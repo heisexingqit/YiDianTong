@@ -37,16 +37,24 @@ import androidx.fragment.app.Fragment;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookRecyclerEntity;
+import com.example.yidiantong.bean.XueBaAnswerEntity;
+import com.example.yidiantong.ui.BookExerciseActivity;
 import com.example.yidiantong.ui.MainBookExerciseActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.RecyclerInterface;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 // 单选题详情界面, 用于展示单选题详情,举一反三,标记掌握,模式切换
 public class BookDetailSingleFragment extends Fragment implements View.OnClickListener {
@@ -65,12 +73,25 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
     private LinearLayout fll_bd_analysis;
     private TextView ftv_br_title;
     private ImageView fiv_bd_mark;
+    private ImageView iv_exercise_scores;
     private ImageView fiv_bd_exercise;// 举一反三
 
     private String userName; // 用户名
     private String subjectId; // 学科ID
     private String courseName; // 课程名
     private Boolean exerciseType; // 是否是举一反三or巩固提升
+
+    //学霸答案
+    private TextView tv_xueba;
+    private TextView ftv_xuebaName1;
+    private TextView ftv_xuebaName2;
+    private TextView ftv_xuebaName3;
+    private WebView fwv_xuebaAnswer1;
+    private WebView fwv_xuebaAnswer2;
+    private WebView fwv_xuebaAnswer3;
+    private LinearLayout ll_xueba3;
+    private LinearLayout ll_xueba1;
+    private LinearLayout ll_xueba2;
 
     SharedPreferences preferences;
 
@@ -153,6 +174,8 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
         String html = html_content.replace("#", "%23");
         fwv_bd_content.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
 
+
+
         // 题号和平均分
         currentpage = bookrecyclerEntity.getCurrentPage();  // 当前页数，题号
         ftv_bd_num = view.findViewById(R.id.ftv_bd_num);
@@ -208,12 +231,21 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
         ftv_bd_stuans = view.findViewById(R.id.ftv_bd_stuans);
         fwv_bd_analysis1 = view.findViewById(R.id.fwv_bd_analysis);
         fiv_bd_tf = view.findViewById(R.id.fiv_bd_tf);
-
-        String html_analysis = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiAnalysis() + "</body>";
-        String html1 = html_analysis.replace("#", "%23");
-        fwv_bd_analysis1.loadDataWithBaseURL(null, html1, "text/html", "utf-8", null);
-
+        TextView tv_shiti_analysis = view.findViewById(R.id.tv_shiti_analysis);
+        LinearLayout ll_shiti_analysis = view.findViewById(R.id.ll_shiti_analysis);
+        if(bookrecyclerEntity.getShitiAnalysis() == null || bookrecyclerEntity.getShitiAnalysis().length() == 0){
+            tv_shiti_analysis.setVisibility(View.GONE);
+            ll_shiti_analysis.setVisibility(View.GONE);
+        }else {
+            String html_analysis = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiAnalysis() + "</body>";
+            String html1 = html_analysis.replace("#", "%23");
+            fwv_bd_analysis1.loadDataWithBaseURL(null, html1, "text/html", "utf-8", null);
+        }
         if (!exerciseType) {
+            // 提分练习
+            iv_exercise_scores = getActivity().findViewById(R.id.iv_exercise_scores);
+            iv_exercise_scores.setOnClickListener(this);
+            setHasOptionsMenu(true);
             // 标记掌握
             fiv_bd_mark = getActivity().findViewById(R.id.fiv_bd_mark);
             fiv_bd_mark.setOnClickListener(this);
@@ -231,8 +263,8 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
                 fll_bd_analysis.setVisibility(View.GONE);
                 fll_bd_answer.setVisibility(View.VISIBLE);
                 mode = 0;
-                // 显示学生本地保存的作答
-                showLoadAnswer();
+//                // 显示学生本地保存的作答
+//                showLoadAnswer();
             } else {
                 fll_bd_answer.setVisibility(View.GONE);
                 fll_bd_analysis.setVisibility(View.VISIBLE);
@@ -309,7 +341,7 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
                     //设置title组件
                     builder.setCustomTitle(tv);
                     AlertDialog dialog = builder.create();
-                    builder.setNegativeButton("ok", null);
+                    builder.setNegativeButton("关闭", null);
                     //禁止返回和外部点击
                     builder.setCancelable(false);
                     //对话框弹出
@@ -366,6 +398,16 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
                 //对话框弹出
                 builder.show();
                 break;
+            case R.id.iv_exercise_scores:
+                // 弹出一个简单的Dialog提示 "功能完善中"
+//                AlertDialog.Builder builder_exercise = new AlertDialog.Builder(getActivity());
+//                builder_exercise.setMessage("功能完善中");
+//                builder_exercise.setPositiveButton("确定", null);
+//                builder_exercise.show();
+                Intent toExercise = new Intent(getActivity(), BookExerciseActivity.class);
+                toExercise.putExtra("questionId", bookrecyclerEntity.getQuestionId());
+                startActivity(toExercise);
+                break;
             case R.id.fiv_bd_exercise:  // 举一反三
                 Intent intent = new Intent(getActivity(), MainBookExerciseActivity.class);
                 intent.putExtra("userName", userName);  // 用户名
@@ -404,7 +446,6 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
                 dialog_model.show();
                 break;
         }
-
     }
 
     private void reviewShowAnswer() {
@@ -459,7 +500,7 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
         String subjectId = getActivity().getIntent().getStringExtra("subjectId");
         String questionId = bookrecyclerEntity.getQuestionId();
         String userName = getActivity().getIntent().getStringExtra("username");
-        String mRequestUrl = Constant.API + Constant.ERROR_QUE_BIAOJI + "?sourceId=" + sourceId + "&userName=" + userName + "&subjectId=" + subjectId + "&questionId=" + questionId;
+        String mRequestUrl = Constant.API + Constant.ERROR_QUE_BIAOJI + "?sourceId=" + sourceId + "&userName=" + userName + "&subjectId=" + subjectId + "&questionId=" +  bookrecyclerEntity.getQuestionId();
         Log.e("具体错mRequestUrl", "" + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -500,4 +541,6 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
     private void mode_stuans() {
 
     }
+
+
 }

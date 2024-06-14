@@ -12,9 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <!--顶部标题栏-->
-        <include layout="@layout/bar_top_homework_title2"/>
+        <include
+            android:id="@+id/top"
+            layout="@layout/bar_top_homework_title" />
 
         <!--分隔线-->
         <LinearLayout
@@ -31,13 +31,15 @@
         <!--加载-->
         <include
             layout="@layout/loading_page"
+            android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible" />
+            android:layout_marginBottom="60dp"/>
     </LinearLayout>
 
     <!--遮蔽-->
-    <include layout="@layout/submitting_page"
-        android:visibility="gone"/>
+    <include
+        layout="@layout/submitting_page"
+        android:visibility="gone" />
 
 </RelativeLayout>

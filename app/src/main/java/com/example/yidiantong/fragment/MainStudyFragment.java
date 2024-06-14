@@ -153,12 +153,21 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
                             intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
                             intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
                             intent.putExtra("username", username);
-                            intent.putExtra("type", "learnPlan");
+                            if (adapter.itemList.get(pos).getType().equals("导学案")) {
+                                intent.putExtra("type", "learnPlan");
+                            } else {
+                                intent.putExtra("type", "weike");
+                            }
                             intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
                             startActivity(intent);
                         } else {
                             checkInPos = pos;
-                            checkInType = "导学案";
+                            if (adapter.itemList.get(pos).getType().equals("导学案")) {
+                                checkInType = "导学案";
+                            } else {
+                                checkInType = "微课";
+                            }
+
                             MyReadWriteLock.checkin(adapter.itemList.get(pos).getLearnId(), username, "student", "", handler, getActivity());
                         }
                         break;
@@ -316,7 +325,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
                     // 只有非0才翻页，0不算
                     currentPage += 1;
                 }
-            }else if(message.what == 110){
+            } else if (message.what == 110) {
                 boolean canCheckIn = (Boolean) message.obj;
                 if (!canCheckIn) {
                     Toast.makeText(getActivity(), "老师正在批改中，无法进行修改!", Toast.LENGTH_SHORT).show();
@@ -342,7 +351,11 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
                         intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
                         intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
                         intent.putExtra("username", username);
-                        intent.putExtra("type", "learnPlan");
+                        if (checkInType.equals("导学案")) {
+                            intent.putExtra("type", "learnPlan");
+                        } else {
+                            intent.putExtra("type", "weike");
+                        }
                         intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
                         startActivity(intent);
                     }

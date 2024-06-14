@@ -11,14 +11,17 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -31,6 +34,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.CustomDraw;
+import com.example.yidiantong.util.Constant;
 import com.xinlan.imageeditlibrary.editimage.JsonUtils;
 import com.xinlan.imageeditlibrary.editimage.utils.ImageUtils;
 
@@ -38,6 +42,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -59,6 +64,11 @@ public class THomeworkImageMark extends AppCompatActivity {
 
     public static final String IMAGE_IS_EDIT = "image_is_edit";
     private RelativeLayout rl_submitting;
+    private static final int CHUNK_SIZE = 1024 * 1024 * 2; // 2MB 分块大小
+    private RadioButton btn_border1;
+    private RadioButton btn_border2;
+    private RadioButton btn_border3;
+    private RadioButton btn_border4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +119,36 @@ public class THomeworkImageMark extends AppCompatActivity {
         RadioButton blueButton = findViewById(R.id.btn_color_blue);
         RadioButton greenButton = findViewById(R.id.btn_color_green);
         RadioButton blackButton = findViewById(R.id.btn_color_black);
+        RelativeLayout rl_main = findViewById(R.id.rl_ColorAndStroke);
+        LinearLayout ll_ColorAndStroke = findViewById(R.id.ll_ColorAndStroke);
+        btn_border1 = findViewById(R.id.btn_border1);
+        btn_border2 = findViewById(R.id.btn_border2);
+        btn_border3 = findViewById(R.id.btn_border3);
+        btn_border4 = findViewById(R.id.btn_border4);
+        frameLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // 获取LinearLayout的位置信息
+                int[] linearLayoutLocation = new int[2];
+                ll_ColorAndStroke.getLocationOnScreen(linearLayoutLocation);
+
+                // 获取LinearLayout的宽度和高度
+                int linearLayoutWidth = ll_ColorAndStroke.getWidth();
+                int linearLayoutHeight = ll_ColorAndStroke.getHeight();
+
+                // 判断触摸点是否在LinearLayout之外
+                if (event.getRawX() < linearLayoutLocation[0] ||
+                        event.getRawX() > (linearLayoutLocation[0] + linearLayoutWidth) ||
+                        event.getRawY() < linearLayoutLocation[1] ||
+                        event.getRawY() > (linearLayoutLocation[1] + linearLayoutHeight)) {
+                    // 触摸点在LinearLayout之外，隐藏FrameLayout
+                    frameLayout.setVisibility(View.GONE);
+                    return true; // 消费这个事件，防止其他触摸事件被触发
+                } else {
+                    return false; // 不消费事件，让LinearLayout可以处理触摸
+                }
+            }
+        });
         //绘画按钮
         toggleDrawingButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,7 +177,7 @@ public class THomeworkImageMark extends AppCompatActivity {
                     customDraw.setMoveEnabled(true);
                     moveButton.setBackgroundResource(R.drawable.image_edit_move_on);
                     //提示消息
-                    Toast toast = Toast.makeText(THomeworkImageMark.this,"你可以通过双指来实现图片的放大与缩小！", Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(THomeworkImageMark.this,"您可以通过双指来实现图片的放大与缩小！", Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
                 }
@@ -208,10 +248,7 @@ public class THomeworkImageMark extends AppCompatActivity {
         radioGroupBorder.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-                RadioButton btn_border1 = findViewById(R.id.btn_border1);
-                RadioButton btn_border2 = findViewById(R.id.btn_border2);
-                RadioButton btn_border3 = findViewById(R.id.btn_border3);
-                RadioButton btn_border4 = findViewById(R.id.btn_border4);
+
                 switch (checkedId) {
                     case R.id.btn_border1:
                         customDraw.setPenStrokeWidth(1); // 设置画笔粗细为1
@@ -250,6 +287,7 @@ public class THomeworkImageMark extends AppCompatActivity {
         radioGroupColor.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+
                 int color = 0;
                 // 设置所有按钮为未选中状态
                 switch (checkedId) {
@@ -304,12 +342,11 @@ public class THomeworkImageMark extends AppCompatActivity {
     }
 
     private class SaveImageTask extends AsyncTask<Void, Void, String> {
-        private  String base64=null;
+        private  String base64;
         @Override
         protected String doInBackground(Void... voids) {
             Bitmap drawnBitmap = customDraw.getDrawnBitmap(); // 获取绘制后的图片
             base64 = Bitmap2StrByBase64(drawnBitmap);
-            Log.d("HSK0517","base64:"+base64.length());
 
             HttpURLConnection connection = null;
             BufferedReader reader = null;
@@ -319,13 +356,12 @@ public class THomeworkImageMark extends AppCompatActivity {
             try {
                 // 创建一个URL对象，替换为您要请求的URL
                 //URL url = new URL("http://www.cn901.net:8111/AppServer/ajax/userManage_saveCanvasImageFromRn.do");
-                URL url = new URL("http://www.cn901.net:8111/AppServer/ajax/teacherApp_saveCanvasImageFromRn.do");
+                URL url = new URL(Constant.API+"/AppServer/ajax/teacherApp_saveCanvasImageFromRn.do");
                 Log.d("HSK0517","url:"+url);
                 // 打开连接
                 connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setDoOutput(true);
-               // Log.d("HSK", "filePath:" + filePath);
                 // 构建请求参数
                 //String params_json = "type=save&imagePath=" + URLEncoder.encode(filePath, "UTF-8") + "&base64=" + URLEncoder.encode(base64, "UTF-8");
                 String params_json = "type=save&imagePath=" + URLEncoder.encode(filePath, "UTF-8") + "&baseData=" + URLEncoder.encode(base64, "UTF-8");
@@ -347,12 +383,9 @@ public class THomeworkImageMark extends AppCompatActivity {
 
                 // 输出响应数据
                 String responseData = response.toString();
-                Log.d("HSK0517","responseData:"+responseData);
                 JSONObject jsonObject = JsonUtils.getJsonObjectFromString(responseData);
                 newUrl = jsonObject.getString("url");
-                Log.d("HSK0517","url"+newUrl);
             } catch (Exception e) {
-                Log.d("hsk0517","Exception"+e);
                 e.printStackTrace();
             } finally {
                 // 关闭连接和输入流
@@ -376,12 +409,12 @@ public class THomeworkImageMark extends AppCompatActivity {
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("newUrl", result);
                 //returnIntent.putExtra("img_length",base64.length());
-                Log.d("hsk0516", "返回的newUrl:" + result);
                 setResult(RESULT_OK, returnIntent);
             }
             // 显示加载页面
             showSubmittingLayout();
-            float delay_time = (float) base64.length()/20000;
+            float delay_time = Math.min(((float) base64.length()/20000),5);
+            Log.d("hsk0523", "delay_time: "+(long)delay_time*1000);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -390,7 +423,7 @@ public class THomeworkImageMark extends AppCompatActivity {
                     // 清空绘制路径列表，以便下次保存
                     finish();
                 }
-            }, (long) delay_time*1000); // 设置延迟时间为1.5秒
+            }, (long)delay_time*1000); // 设置延迟时间
         }
     }
     // 显示加载页面
@@ -402,30 +435,55 @@ public class THomeworkImageMark extends AppCompatActivity {
     private void hideSubmittingLayout() {
         rl_submitting.setVisibility(View.GONE);
     }
-
     public String Bitmap2StrByBase64(Bitmap image) {
-        // 获取应用的缓存目录
-        File filesDir = this.getFilesDir();
-
-        // 在缓存目录中创建一个临时文件
-        File file = new File(filesDir, "marked.jpg");
-        Log.e("debug0116", "临时修改文件路径: " + file.getAbsolutePath());
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
-            FileOutputStream outputStream = new FileOutputStream(file);
+            // 将 Bitmap 压缩为 JPEG 格式，并写入 ByteArrayOutputStream
+            image.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream);
 
-            // 将 Bitmap 压缩为 JPEG 格式，并写入文件
-            image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-            Log.e("debug0116", "临时修改文件路径: " + file.getAbsolutePath());
-            // 关闭输出流
-            outputStream.close();
-        }  catch (IOException e) {
+            // 将 ByteArrayOutputStream 转换为 byte 数组
+            byte[] byteArray = byteArrayOutputStream.toByteArray();
+
+            // 将 byte 数组编码为 Base64 字符串
+            return Base64.encodeToString(byteArray, Base64.NO_WRAP);
+        } catch (Exception e) {
             e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                byteArrayOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        if(file.exists() && file.length() > 0){
-            Log.e("debug0116", "OK了: " + file.length());
-        }
-
-        return ImageUtils.Bitmap2StrByBase64(this, file);
     }
+
+//    public String Bitmap2StrByBase64(Bitmap image) {
+//        // 获取应用的缓存目录
+//        File filesDir = this.getFilesDir();
+//
+//        // 在缓存目录中创建一个临时文件
+//        File file = new File(filesDir, "marked.jpg");
+//        Log.e("debug0116", "image.getByteCount(): " + image.getByteCount());
+//        try {
+//            FileOutputStream outputStream = new FileOutputStream(file);
+//
+//            // 将 Bitmap 压缩为 JPEG 格式，并写入文件
+//            image.compress(Bitmap.CompressFormat.JPEG, 70, outputStream);
+//            Log.e("debug0116", "image.getByteCount(): " + image.getByteCount());
+//            Log.e("debug0116", "临时修改文件路径: " + file.getAbsolutePath());
+//            // 关闭输出流
+//            outputStream.close();
+//        }  catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        if(file.exists() && file.length() > 0){
+//            Log.e("debug0116", "OK了: " + file.length());
+//        }
+//
+//        return ImageUtils.Bitmap2StrByBase64(this, file);
+//    }
+
+
 
 }

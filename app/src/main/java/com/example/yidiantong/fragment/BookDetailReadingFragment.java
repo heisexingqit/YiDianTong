@@ -38,16 +38,24 @@ import androidx.fragment.app.Fragment;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookRecyclerEntity;
+import com.example.yidiantong.bean.XueBaAnswerEntity;
+import com.example.yidiantong.ui.BookExerciseActivity;
 import com.example.yidiantong.ui.MainBookExerciseActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.RecyclerInterface;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 public class BookDetailReadingFragment extends Fragment implements View.OnClickListener {
 
@@ -76,6 +84,7 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
     String[] option = {"A", "B", "C", "D", "E", "F", "G"};
 
     private ImageView fiv_bd_exercise; // 举一反三
+    private ImageView iv_exercise_scores; //
     private String userName;
     private String subjectId;
     private String courseName;
@@ -94,6 +103,7 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
     private String shitianswer2;
     private String keywordStr;
     private LinearLayout fll_bd_vedio;
+
 
 
     public static BookDetailReadingFragment newInstance(BookRecyclerEntity bookrecyclerEntity, String userName, String subjectId, String courseName, Boolean exerciseType) {
@@ -157,13 +167,14 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
         String html = html_content.replace("#", "%23");
         fwv_bd_content.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
 
-
         // 题号和平均分
         currentpage = bookrecyclerEntity.getCurrentPage();  // 当前页数，题号
         ftv_bd_num = view.findViewById(R.id.ftv_bd_num);
         ftv_bd_num.setText("第" + currentpage + "题");
         ftv_bd_score = view.findViewById(R.id.ftv_bd_score);
         ftv_bd_score.setText("得分: " + bookrecyclerEntity.getStuScore() + " 全班均分:" + bookrecyclerEntity.getAvgScore());
+
+
 
         //翻页组件
         ImageView iv_pager_last = getActivity().findViewById(R.id.iv_page_last);
@@ -255,12 +266,30 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
         fll_bd_analysis = view.findViewById(R.id.fll_bd_analysis);
         fwv_wb_answer = view.findViewById(R.id.fwv_wb_answer);
         ftv_bd_stuans = view.findViewById(R.id.ftv_bd_stuans);
+
+        WebView fwv_bd_analysis = view.findViewById(R.id.fwv_bd_analysis);
+        TextView tv_shiti_analysis = view.findViewById(R.id.tv_shiti_analysis);
+        LinearLayout ll_shiti_analysis = view.findViewById(R.id.ll_shiti_analysis);
+        if(bookrecyclerEntity.getShitiAnalysis() == null || bookrecyclerEntity.getShitiAnalysis().length() == 0){
+            tv_shiti_analysis.setVisibility(View.GONE);
+            ll_shiti_analysis.setVisibility(View.GONE);
+        }else {
+            String html_analysis = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiAnalysis() + "</body>";
+            fwv_bd_analysis.loadDataWithBaseURL(null, html_analysis, "text/html", "utf-8", null);
+        }
+
         String html_analysis = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiAnswer() + "</body>";
         fwv_wb_answer.loadDataWithBaseURL(null, html_analysis, "text/html", "utf-8", null);
+
         fiv_bd_tf = view.findViewById(R.id.fiv_bd_tf);
 
 
         if (!exerciseType) {
+            // 提分练习
+            iv_exercise_scores = getActivity().findViewById(R.id.iv_exercise_scores);
+            iv_exercise_scores.setOnClickListener(this);
+            setHasOptionsMenu(true);
+
             // 标记掌握
             fiv_bd_mark = getActivity().findViewById(R.id.fiv_bd_mark);
             fiv_bd_mark.setOnClickListener(this);
@@ -278,8 +307,8 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
                 fll_bd_analysis.setVisibility(View.GONE);
                 fll_bd_answer.setVisibility(View.VISIBLE);
                 mode = 0;
-                // 显示学生本地保存的答案
-                showLoadAnswer();
+//                // 显示学生本地保存的答案
+//                showLoadAnswer();
             } else {
                 fll_bd_answer.setVisibility(View.GONE);
                 fll_bd_analysis.setVisibility(View.VISIBLE);
@@ -411,7 +440,7 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
                     //设置title组件
                     builder.setCustomTitle(tv);
                     AlertDialog dialog = builder.create();
-                    builder.setNegativeButton("ok", null);
+                    builder.setNegativeButton("关闭", null);
                     //禁止返回和外部点击
                     builder.setCancelable(false);
                     //对话框弹出
@@ -469,6 +498,17 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
                 //对话框弹出
                 builder.show();
                 break;
+            case R.id.iv_exercise_scores:
+                // 弹出一个简单的Dialog提示 "功能完善中"
+//                AlertDialog.Builder builder_exercise = new AlertDialog.Builder(getActivity());
+//                builder_exercise.setMessage("功能完善中");
+//                builder_exercise.setPositiveButton("确定", null);
+//                builder_exercise.show();
+                Intent toExercise = new Intent(getActivity(), BookExerciseActivity.class);
+                toExercise.putExtra("questionId", bookrecyclerEntity.getQuestionId());
+                startActivity(toExercise);
+                break;
+
             case R.id.fiv_bd_exercise:
                 Intent intent = new Intent(getActivity(), MainBookExerciseActivity.class);
                 intent.putExtra("userName", userName); // 用户名
@@ -613,4 +653,5 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
             }
         }
     }
+
 }

@@ -128,7 +128,7 @@
             android:paddingEnd="5dp"
             android:src="@drawable/right_ex" />
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/ll_loading"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -138,10 +138,11 @@
             <ProgressBar
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:layout_centerInParent="true"
                 android:layout_gravity="center"
                 android:layout_marginTop="30dp"
                 android:indeterminateTint="@color/main_blue" />
-        </LinearLayout>
+        </RelativeLayout>
     </RelativeLayout>
 
 </RelativeLayout>

@@ -35,6 +35,7 @@ import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.adapter.BookExerciseAdapter;
 import com.example.yidiantong.bean.BookExerciseEntity;
 import com.example.yidiantong.ui.BookExerciseDetailActivity;
+import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

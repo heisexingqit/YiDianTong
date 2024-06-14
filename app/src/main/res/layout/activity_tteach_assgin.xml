@@ -54,6 +54,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/ll_top_divider"
+        android:layout_marginBottom="70dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -130,8 +131,8 @@
                 android:id="@+id/iv_start"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:padding="5dp"
                 android:adjustViewBounds="true"
+                android:padding="5dp"
                 android:src="@drawable/calendar_icon" />
         </LinearLayout>
 
@@ -173,9 +174,115 @@
                 android:id="@+id/iv_end"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:padding="5dp"
                 android:adjustViewBounds="true"
+                android:padding="5dp"
                 android:src="@drawable/calendar_icon" />
+        </LinearLayout>
+
+        <!-- 分割线 -->
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="1dp"-->
+<!--            android:background="@color/tabbar_text_unselect" />-->
+
+        <LinearLayout
+            android:id="@+id/ll_zuoye_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="15dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="15dp"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="作业类型:"
+                android:textSize="15sp" />
+
+            <RadioGroup
+                android:id="@+id/rg_homework"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rb_homework1"
+                    style="@style/CustomRadioButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="作业"
+                    android:textColor="@color/default_gray" />
+
+                <RadioButton
+                    android:id="@+id/rb_homework2"
+                    style="@style/CustomRadioButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="周检测"
+                    android:textColor="@color/default_gray" />
+            </RadioGroup>
+        </LinearLayout>
+        <!-- 分割线 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/tabbar_text_unselect" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="15dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="5dp"
+                android:paddingBottom="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="布置类型:"
+                    android:textSize="15sp" />
+
+                <RadioGroup
+                    android:id="@+id/rg_assign"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="20dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <RadioButton
+                        android:id="@+id/rb_assign1"
+                        style="@style/CustomRadioButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="给自己课堂学生布置"
+                        android:textColor="@color/default_gray" />
+
+                    <RadioButton
+                        android:id="@+id/rb_assign2"
+                        style="@style/CustomRadioButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="给协作组教师课堂布置"
+                        android:textColor="@color/default_gray" />
+                </RadioGroup>
+            </LinearLayout>
+
         </LinearLayout>
 
         <!-- 分割线 -->
@@ -187,8 +294,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -221,7 +327,8 @@
                     android:id="@+id/iv_ketang"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:src="@drawable/down_icon" />
+                    android:src="@drawable/down_icon"
+                    android:visibility="gone" />
             </LinearLayout>
 
             <TextView
@@ -274,12 +381,13 @@
                     android:id="@+id/tv_bz"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
                     android:layout_marginEnd="10dp"
+                    android:gravity="center_vertical"
                     android:text="布置给:"
                     android:textSize="15sp" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_type"
                     android:layout_width="match_parent"
                     android:layout_height="30dp">
 
@@ -333,11 +441,14 @@
                 android:text="请先选择课堂"
                 android:textColor="@color/black"
                 android:textSize="15sp" />
-
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_xiezuo"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:layout_height="wrap_content"/>
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="70dp"
                 android:scrollbars="none">
 
                 <com.google.android.flexbox.FlexboxLayout
@@ -361,7 +472,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="70dp"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal">
 

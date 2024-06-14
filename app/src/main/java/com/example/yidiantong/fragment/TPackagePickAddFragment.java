@@ -145,7 +145,7 @@ public class TPackagePickAddFragment extends Fragment implements View.OnClickLis
         tv_hide = view.findViewById(R.id.tv_hide);
 
         vp_main = view.findViewById(R.id.vp_main);
-
+        rl_bottom_block = view.findViewById(R.id.rl_bottom_block);
 
         if (adapter == null) {
             adapter = new TLearnPlanAddPickPagerAdapter(getActivity().getSupportFragmentManager(), new ArrayList<>());
@@ -162,9 +162,12 @@ public class TPackagePickAddFragment extends Fragment implements View.OnClickLis
         iv_add = view.findViewById(R.id.iv_add);
         iv_add.setOnClickListener(this);
 
+        // 判断数据是否已存在
         if (adapter.itemList.size() == 0) {
             loadItems_Net();
-        }else{
+        } else {
+            ll_loading.setVisibility(View.GONE);// 解除遮挡
+            ll_loading2.setVisibility(View.GONE);// 解除遮挡
             tv_hide.setVisibility(View.GONE);
         }
 

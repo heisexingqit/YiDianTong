@@ -112,7 +112,6 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main_home, container, false);
-
         //获取组件
         rv_home = view.findViewById(R.id.rv_home);
 
@@ -173,7 +172,11 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                             startActivity(intent);
                         } else {
                             checkInPos = pos;
-                            checkInType = "导学案";
+                            if (adapter.itemList.get(pos).getType().equals("导学案")) {
+                                checkInType = "导学案";
+                            } else {
+                                checkInType = "微课";
+                            }
                             MyReadWriteLock.checkin(adapter.itemList.get(pos).getLearnId(), username, "student", "", handler, getActivity());
                         }
                         break;
@@ -343,10 +346,11 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
     }
 
     //刷新列表
-    private void refreshList() {
+    public void refreshList() {
         currentPage = 1;
         adapter.isRefresh = 1;
         loadItems_Net();
+        Log.e("wen0531", "refreshList: 刷新成功");
         rv_home.scrollToPosition(0);
     }
 
@@ -471,7 +475,11 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                         intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
                         intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
                         intent.putExtra("username", username);
-                        intent.putExtra("type", "learnPlan");
+                        if (checkInType.equals("导学案")) {
+                            intent.putExtra("type", "learnPlan");
+                        } else {
+                            intent.putExtra("type", "weike");
+                        }
                         intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
                         startActivity(intent);
                     }

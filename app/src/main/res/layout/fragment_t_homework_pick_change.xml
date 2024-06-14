@@ -70,6 +70,7 @@
         android:layout_height="1dp"
         android:background="@color/light_gray" />
     <LinearLayout
+        android:id="@+id/ll_bottom_block"
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:background="@color/white"

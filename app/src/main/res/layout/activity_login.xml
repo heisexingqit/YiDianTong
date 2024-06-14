@@ -108,6 +108,40 @@
                     android:src="@drawable/eye_close" />
 
             </LinearLayout>
+            <!--ip输入栏-->
+            <LinearLayout
+                android:id="@+id/ll_ip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/login_et_border_unfocus"
+                android:gravity="center"
+                android:padding="10dp">
+
+                <ImageView
+                    android:id="@+id/iv_ip"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/ip_icon_unfocus" />
+
+                <EditText
+                    android:id="@+id/et_ip"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:height="40dp"
+                    android:background="@null"
+                    android:hint="请输入ip"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textColorHint="#8F9BB3"
+                    android:textCursorDrawable="@drawable/login_text_cursor"
+                    android:textSize="17sp" />
+
+
+            </LinearLayout>
 
             <!--登录按钮-->
             <Button

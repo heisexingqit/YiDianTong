@@ -45,8 +45,8 @@ public class CustomDraw extends View {
     private PointF initialTouch = new PointF(); // 用于保存初始触摸点的坐标
     private Matrix rotationMatrix;
     private int originalWidth = 0;
-    private int mode;
-    private static final long DOUBLE_TAP_TIMEOUT = 100; // 毫秒
+    private int mode=0;
+    private static final long DOUBLE_TAP_TIMEOUT = 200; // 毫秒
     private boolean isSingleTap = true;
     private Handler handler = new Handler();
     private int left;
@@ -234,89 +234,6 @@ public class CustomDraw extends View {
             });
         }
     }
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (isDrawingEnabled) {
-            float x = event.getX();
-            float y = event.getY();
-            // 检查触摸坐标是否在背景图的范围内
-            if (!isWithinBackgroundBounds(x, y)) {
-                return false; // 如果在背景范围外，退出onTouchEvent
-            }
-
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    // 对触摸点进行逆变换
-                    float[] downPoint = {x, y};
-                    Matrix savedMatrix = new Matrix(matrix);
-                    savedMatrix.invert(savedMatrix);
-                    savedMatrix.mapPoints(downPoint);
-                    path = new Path();
-                    path.moveTo(downPoint[0], downPoint[1]);
-                    paths.add(new Pair<>(path, new PathAttributes(paint.getColor(), paint.getStrokeWidth()))); // 记录当前画笔的颜色和粗细
-                    currentPathIndex++;
-                    return true;
-                case MotionEvent.ACTION_MOVE:
-                    // 对触摸点进行逆变换
-                    float[] movePoint = {x, y};
-                    savedMatrix = new Matrix(matrix);
-                    savedMatrix.invert(savedMatrix);
-                    savedMatrix.mapPoints(movePoint);
-                    path.lineTo(movePoint[0], movePoint[1]);
-                    // 恢复原始矩阵
-                    break;
-                default:
-                    return false;
-            }
-            // 强制重绘视图
-            invalidate();
-        }
-        if (isMoveEnabled) {
-            switch (event.getActionMasked()) {
-                case MotionEvent.ACTION_DOWN:
-                    if (event.getPointerCount() == 1) {
-                        isSingleTap = true;//单指操作
-                        startPoint.set(event.getX(), event.getY());//获取手指坐标
-                        currentPoint.set(startPoint);
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (isSingleTap) {
-                                    // 如果在规定时间内没有第二个手指按下，则切换为单指拖动模式
-                                    mode = 1;
-                                }
-                            }
-                        }, DOUBLE_TAP_TIMEOUT);
-                    }
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    if (mode == 1) { // 单指拖动
-                        float dx = event.getX() - currentPoint.x;
-                        float dy = event.getY() - currentPoint.y;
-                        if (Math.hypot(dx, dy) >= touchSlop) {
-                            matrix.postTranslate(dx, dy);
-                            invalidate();
-                            currentPoint.set(event.getX(), event.getY());
-                        }
-                    }
-                    if (isMoveEnabled && event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
-                        mode = 0; // 结束拖动模式
-                    }
-                    //双指缩放
-                    scaleGestureDetector.onTouchEvent(event);
-                    break;
-                case MotionEvent.ACTION_UP:
-                    mode = 0;
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        return true;
-
-    }
-
 //    @Override
 //    public boolean onTouchEvent(MotionEvent event) {
 //        if (isDrawingEnabled) {
@@ -331,23 +248,22 @@ public class CustomDraw extends View {
 //                case MotionEvent.ACTION_DOWN:
 //                    // 对触摸点进行逆变换
 //                    float[] downPoint = {x, y};
-//                    matrix.invert(matrix);
-//                    matrix.mapPoints(downPoint);
+//                    Matrix savedMatrix = new Matrix(matrix);
+//                    savedMatrix.invert(savedMatrix);
+//                    savedMatrix.mapPoints(downPoint);
 //                    path = new Path();
 //                    path.moveTo(downPoint[0], downPoint[1]);
 //                    paths.add(new Pair<>(path, new PathAttributes(paint.getColor(), paint.getStrokeWidth()))); // 记录当前画笔的颜色和粗细
 //                    currentPathIndex++;
-//                    // 恢复原始矩阵
-//                    matrix.invert(matrix);
 //                    return true;
 //                case MotionEvent.ACTION_MOVE:
 //                    // 对触摸点进行逆变换
 //                    float[] movePoint = {x, y};
-//                    matrix.invert(matrix);
-//                    matrix.mapPoints(movePoint);
+//                    savedMatrix = new Matrix(matrix);
+//                    savedMatrix.invert(savedMatrix);
+//                    savedMatrix.mapPoints(movePoint);
 //                    path.lineTo(movePoint[0], movePoint[1]);
 //                    // 恢复原始矩阵
-//                    matrix.invert(matrix);
 //                    break;
 //                default:
 //                    return false;
@@ -368,11 +284,14 @@ public class CustomDraw extends View {
 //                                if (isSingleTap) {
 //                                    // 如果在规定时间内没有第二个手指按下，则切换为单指拖动模式
 //                                    mode = 1;
-//                                    Log.d("HSK1", "mode: " + mode);
 //                                }
 //                            }
 //                        }, DOUBLE_TAP_TIMEOUT);
-//                        Log.d("HSK1", "mode: " + mode);
+//                    }else  mode = 2;
+//                    break;
+//                case MotionEvent.ACTION_POINTER_DOWN:
+//                    if (event.getPointerCount() == 2) {
+//                        mode = 2; // 确保两根手指时进入缩放模式
 //                    }
 //                    break;
 //                case MotionEvent.ACTION_MOVE:
@@ -384,41 +303,124 @@ public class CustomDraw extends View {
 //                            invalidate();
 //                            currentPoint.set(event.getX(), event.getY());
 //                        }
+//                    } else if (mode == 2) {
+//                        scaleGestureDetector.onTouchEvent(event);
 //                    }
-//                    if (isMoveEnabled && event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
-//                        mode = 0; // 结束拖动模式
-//                    }
+//
+//                    Log.d("hsk0520", "onTouchEvent: "+mode);
 //                    //双指缩放
-//                    scaleGestureDetector.onTouchEvent(event);
 //                    break;
 //                case MotionEvent.ACTION_UP:
 //                    mode = 0;
 //                    break;
 //                default:
-//                    mode = 0;
+//                    break;
 //            }
-////            switch (event.getAction()) {
-////                case MotionEvent.ACTION_DOWN:
-////                    startPoint.set(event.getX(), event.getY());
-////                    currentPoint.set(startPoint);
-////                    break;
-////                case MotionEvent.ACTION_MOVE:
-////                    float dx = event.getX() - currentPoint.x;
-////                    float dy = event.getY() - currentPoint.y;
-////                    if (Math.sqrt(dx * dx + dy * dy) >= touchSlop) {
-////                        // 移动背景图片
-////                        matrix.postTranslate(dx, dy);
-////                        invalidate();
-////                        currentPoint.set(event.getX(), event.getY());
-////                    }
-////                    break;
-////            }
-//
 //        }
 //
 //        return true;
 //
 //    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (isDrawingEnabled) {
+            float x = event.getX();
+            float y = event.getY();
+            // 检查触摸坐标是否在背景图的范围内
+            if (!isWithinBackgroundBounds(x, y)) {
+                return false; // 如果在背景范围外，退出onTouchEvent
+            }
+
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    // 对触摸点进行逆变换
+                    float[] downPoint = {x, y};
+                    matrix.invert(matrix);
+                    matrix.mapPoints(downPoint);
+                    path = new Path();
+                    path.moveTo(downPoint[0], downPoint[1]);
+                    paths.add(new Pair<>(path, new PathAttributes(paint.getColor(), paint.getStrokeWidth()))); // 记录当前画笔的颜色和粗细
+                    currentPathIndex++;
+                    // 恢复原始矩阵
+                    matrix.invert(matrix);
+                    return true;
+                case MotionEvent.ACTION_MOVE:
+                    // 对触摸点进行逆变换
+                    float[] movePoint = {x, y};
+                    matrix.invert(matrix);
+                    matrix.mapPoints(movePoint);
+                    path.lineTo(movePoint[0], movePoint[1]);
+                    // 恢复原始矩阵
+                    matrix.invert(matrix);
+                    break;
+                default:
+                    return false;
+            }
+            // 强制重绘视图
+            invalidate();
+        }
+        if (isMoveEnabled) {
+            switch (event.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN:
+                    if (event.getPointerCount() == 1) {
+                        isSingleTap = true;//单指操作
+                        startPoint.set(event.getX(), event.getY());//获取手指坐标
+                        currentPoint.set(startPoint);
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (isSingleTap) {
+                                    // 如果在规定时间内没有第二个手指按下，则切换为单指拖动模式
+                                    mode = 1;
+                                    Log.d("HSK1", "mode: " + mode);
+                                }
+                            }
+                        }, DOUBLE_TAP_TIMEOUT);
+                        Log.d("HSK1", "mode: " + mode);
+                    }
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    if (mode == 1) { // 单指拖动
+                        float dx = event.getX() - currentPoint.x;
+                        float dy = event.getY() - currentPoint.y;
+                        if (Math.hypot(dx, dy) >= touchSlop) {
+                            matrix.postTranslate(dx, dy);
+                            invalidate();
+                            currentPoint.set(event.getX(), event.getY());
+                        }
+                    }
+                    //双指缩放
+                    scaleGestureDetector.onTouchEvent(event);
+                    break;
+                case MotionEvent.ACTION_UP:
+                    mode = 0;
+                    break;
+                default:
+                    mode = 0;
+            }
+//            switch (event.getAction()) {
+//                case MotionEvent.ACTION_DOWN:
+//                    startPoint.set(event.getX(), event.getY());
+//                    currentPoint.set(startPoint);
+//                    break;
+//                case MotionEvent.ACTION_MOVE:
+//                    float dx = event.getX() - currentPoint.x;
+//                    float dy = event.getY() - currentPoint.y;
+//                    if (Math.sqrt(dx * dx + dy * dy) >= touchSlop) {
+//                        // 移动背景图片
+//                        matrix.postTranslate(dx, dy);
+//                        invalidate();
+//                        currentPoint.set(event.getX(), event.getY());
+//                    }
+//                    break;
+//            }
+
+        }
+
+        return true;
+
+    }
 
     // 检查触摸坐标是否在背景图的范围内
     private boolean isWithinBackgroundBounds(float x, float y) {
@@ -454,26 +456,26 @@ public class CustomDraw extends View {
     // ScaleGestureListener 类用于处理捏合手势
     private class ScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            scaleFactor *= detector.getScaleFactor(); // 获取缩放因子
-            scaleFactor = Math.max(minScaleFactor, Math.min(scaleFactor, maxScaleFactor)); // 限制缩放比例
-
-            // 计算缩放中心点，即两指间的中点
-            PointF midPoint = new PointF(detector.getFocusX(), detector.getFocusY());
-
-            // 应用缩放时，确保以缩放中心点为中心进行缩放
-            matrix.postScale(detector.getScaleFactor(), detector.getScaleFactor(), midPoint.x, midPoint.y);
-
-            invalidate(); // 通知视图需要重绘
-            return true;
-        }
 //        public boolean onScale(ScaleGestureDetector detector) {
-//            scaleFactor *= detector.getScaleFactor(); // 从检测器获取缩放因子
-//            scaleFactor = Math.max(minScaleFactor, Math.min(scaleFactor, maxScaleFactor)); // 确保 scaleFactor 在范围内
-//            matrix.postScale(detector.getScaleFactor(), detector.getScaleFactor(), detector.getFocusX(), detector.getFocusY());
-//            invalidate(); // 重绘视图
+//            scaleFactor *= detector.getScaleFactor(); // 获取缩放因子
+//            scaleFactor = Math.max(minScaleFactor, Math.min(scaleFactor, maxScaleFactor)); // 限制缩放比例
+//
+//            // 计算缩放中心点，即两指间的中点
+//            PointF midPoint = new PointF(detector.getFocusX(), detector.getFocusY());
+//
+//            // 应用缩放时，确保以缩放中心点为中心进行缩放
+//            matrix.postScale(detector.getScaleFactor(), detector.getScaleFactor(), midPoint.x, midPoint.y);
+//
+//            invalidate(); // 通知视图需要重绘
 //            return true;
 //        }
+        public boolean onScale(ScaleGestureDetector detector) {
+            scaleFactor *= detector.getScaleFactor(); // 从检测器获取缩放因子
+            scaleFactor = Math.max(minScaleFactor, Math.min(scaleFactor, maxScaleFactor)); // 确保 scaleFactor 在范围内
+            matrix.postScale(detector.getScaleFactor(), detector.getScaleFactor(), detector.getFocusX(), detector.getFocusY());
+            invalidate(); // 重绘视图
+            return true;
+        }
     }
 
     //保存绘制后的照片

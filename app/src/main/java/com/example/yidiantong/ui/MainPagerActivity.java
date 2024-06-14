@@ -310,4 +310,20 @@ public class MainPagerActivity extends AppCompatActivity implements View.OnClick
         super.onSaveInstanceState(outState);
         outState.putInt("id_bottom_onclick", id_bottom_onclick);
     }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Log.e("wen0531", "onNewIntent: 测试");
+        if (id_bottom_onclick != 0) {
+            SwitchTabById(0);
+//                    vp_main.setCurrentItem(0, false);
+            ft.replace(R.id.vp_main, homeFragment);
+        }
+        ft.commit(); // 提交事务
+
+        homeFragment.refreshList();
+        SwitchTabById(0);
+    }
 }

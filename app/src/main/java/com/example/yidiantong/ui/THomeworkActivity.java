@@ -36,7 +36,9 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
+import com.example.yidiantong.View.ClickableTextView;
 import com.example.yidiantong.adapter.THomeworkStuRecyclerAdapter;
+import com.example.yidiantong.adapter.TLearnPlanPreviewAdapter;
 import com.example.yidiantong.bean.THomeworkStudentItemEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
@@ -48,6 +50,7 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.Inet4Address;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +65,7 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
     private String status = "0";    // 批改状态，2未批改；4以批改，空或者0代表全部
     private String searchStr = "";
     private String mode = "2";      // 模式：1逐题批阅；2只显示需手工批阅试题
+    private String homeworkName;
 
     // 页面组件
     private Button btn_report;
@@ -89,6 +93,7 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
     //  checkIn点击后标记
     // -------------------
     private int checkInPos = -1;
+    private ClickableImageView iv_preview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +104,19 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
         taskId = intent.getStringExtra("taskId");
         teacherId = intent.getStringExtra("teacherId");
         type = intent.getStringExtra("type");
+        homeworkName = intent.getStringExtra("homeworkName");
+        iv_preview = findViewById(R.id.iv_preview);
+        iv_preview.setOnClickListener(view -> {
+            Intent toPreview = null;
+            if(type.equals("paper")){
+                toPreview = new Intent(this, THomeworkPreviewActivity.class);
+            }else{
+                toPreview = new Intent(this, TLearnPlanPreviewActivity.class);
+            }
+            toPreview.putExtra("paperId", taskId);
+            toPreview.putExtra("homeworkName", homeworkName);
+            startActivity(toPreview);
+        });
 
         // 组件获取
         btn_report = findViewById(R.id.btn_report);
@@ -165,6 +183,7 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
                 intent2.putExtra("canMark", !adapter.itemList.get(pos).getStatus().equals("5"));
                 intent2.putExtra("type", type);
                 intent2.putExtra("mode", mode);
+                intent2.putExtra("homeworkName", homeworkName);
                 mResultLauncher.launch(intent2);
             }
         });
@@ -179,7 +198,7 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
 
         // 请求数据同步
         loadItems_Net();
-        geteMode();
+        getMode();
 
         //搜索栏优化-小键盘回车搜索
         et_search.setOnKeyListener(new View.OnKeyListener() {
@@ -331,6 +350,8 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
                     intent2.putExtra("canMark", !adapter.itemList.get(pos).getStatus().equals("5"));
                     intent2.putExtra("type", type);
                     intent2.putExtra("mode", mode);
+                    intent2.putExtra("homeworkName", homeworkName);
+
                     mResultLauncher.launch(intent2);
                 }
             }
@@ -387,7 +408,7 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
     }
 
     // 获取模式
-    private void geteMode() {
+    private void getMode() {
         mRequestUrl = Constant.API + Constant.T_HOMEWORK_GET_MOLD + "?userName=" + teacherId + "&mode=" + mode;
 
         Log.d("wen", "获取模式: " + mRequestUrl);

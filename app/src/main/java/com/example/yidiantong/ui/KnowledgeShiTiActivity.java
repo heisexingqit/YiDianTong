@@ -33,6 +33,7 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.adapter.BookAutoAdapter;
 import com.example.yidiantong.bean.BookExerciseEntity;
+import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

@@ -57,7 +57,7 @@
             android:layout_height="match_parent"
             android:background="@drawable/t_homework_report_unable"
             android:text="@string/watch_report"
-            android:textColor="@color/main_bg"
+            android:textColor="@color/white"
             android:textSize="14sp"
             android:textStyle="bold" />
     </RelativeLayout>

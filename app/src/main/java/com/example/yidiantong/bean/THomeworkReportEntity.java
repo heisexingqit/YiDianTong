@@ -14,15 +14,6 @@ public class THomeworkReportEntity {
     private List<String> noSubmitList;//未提交人员列表
     private List<String> noCorrectingList;//未批改人员列表
     private List<String> correctingList;//已批改人员列表
-    private String status;
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
     public String getAvg() {
         return avg;

@@ -15,17 +15,18 @@
                 android:id="@+id/fiv_de_icon"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:layout_alignParentLeft="true"
                 android:layout_gravity="left"
-                android:src="@drawable/homework_icon"
                 android:paddingLeft="3dp"
-                android:layout_alignParentLeft="true"/>
+                android:src="@drawable/homework_icon" />
+
             <TextView
                 android:id="@+id/ftv_de_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="集合的基本关系"
                 android:layout_marginLeft="2dp"
-                android:layout_toRightOf="@+id/fiv_de_icon"/>
+                android:layout_toRightOf="@+id/fiv_de_icon"
+                android:text="集合的基本关系" />
             <TextView
                 android:id="@+id/ftv_de_num"
                 android:layout_width="wrap_content"

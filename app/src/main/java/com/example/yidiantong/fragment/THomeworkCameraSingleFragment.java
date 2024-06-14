@@ -31,9 +31,6 @@ public class THomeworkCameraSingleFragment extends Fragment {
         Bundle arg = getArguments();
         item = (THomeworkCameraItem) arg.getSerializable("data");
 
-
-
-
         return view;
     }
 }

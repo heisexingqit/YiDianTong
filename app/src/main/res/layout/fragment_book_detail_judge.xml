@@ -3,222 +3,326 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.BookDetailSingleFragment"
+    android:background="@color/white"
     android:orientation="vertical"
-    android:background="@color/white">
+    tools:context=".fragment.BookDetailSingleFragment">
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/light_gray"
-        android:orientation="horizontal"
-        android:paddingTop="3dp"
-        android:paddingBottom="3dp">
-
-        <ImageView
-            android:id="@+id/fiv_de_icon"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="left"
-            android:src="@drawable/homework_icon"
-            android:paddingLeft="3dp"
-            android:layout_alignParentLeft="true"/>
-        <TextView
-            android:id="@+id/ftv_br_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="集合的基本关系"
-            android:layout_marginLeft="2dp"
-            android:layout_toRightOf="@+id/fiv_de_icon"/>
-
-    </LinearLayout>
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp">
-
-        <TextView
-            android:id="@+id/ftv_bd_num"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:text="1" />
-
-        <TextView
-            android:id="@+id/ftv_bd_score"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="得分和平均分" />
-
-    </RelativeLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="3dp"
-        android:layout_marginEnd="10dp"
-        android:background="@drawable/book_detail">
-
-        <WebView
-            android:id="@+id/fwv_bd_content"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:layout_marginBottom="3dp"
-            android:layout_marginLeft="3dp"
-            android:layout_marginRight="3dp"
-            android:scrollbars="none"
-            tools:ignore="WebViewLayout" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/fll_bd_answer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/f_answer"
-            android:layout_marginBottom="3dp"
-            android:layout_marginLeft="10dp"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:paddingStart="10dp"
-            android:paddingTop="7dp"
-            android:paddingEnd="10dp"
-            android:paddingBottom="6dp">
-
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="55dp"
-                android:layout_marginEnd="45dp">
-
-
-                <com.example.yidiantong.View.ClickableImageView
-                    android:id="@+id/iv_r"
-                    android:layout_width="0dp"
-                    android:layout_height="37dp"
-                    android:layout_weight="1"
-                    android:adjustViewBounds="true"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:src="@drawable/right_unselect" />
-
-                <com.example.yidiantong.View.ClickableImageView
-                    android:id="@+id/iv_e"
-                    android:layout_width="0dp"
-                    android:layout_height="37dp"
-                    android:layout_weight="1"
-                    android:adjustViewBounds="true"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:src="@drawable/error_unselect" />
-            </LinearLayout>
-
-        </RelativeLayout>
-
-        <Button
-            android:id="@+id/fb_bd_sumbit"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:text="@string/f_submit"
-            android:background="@color/f_blue"
-            android:textColor="@color/white"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/fll_bd_analysis"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="3dp"
-            android:layout_marginRight="3dp">
-
-            <TextView
-                android:id="@+id/ftv_bd_answer"
-                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="【参考答案】D"/>
+                android:background="@color/light_gray"
+                android:orientation="horizontal"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp">
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/ftv_bd_stuans"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="3dp"
-                    android:text="【你的作答】A"/>
                 <ImageView
-                    android:id="@+id/fiv_bd_tf"
+                    android:id="@+id/fiv_de_icon"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/ansright"/>
+                    android:layout_alignParentLeft="true"
+                    android:layout_gravity="left"
+                    android:paddingLeft="3dp"
+                    android:src="@drawable/homework_icon" />
+
+                <TextView
+                    android:id="@+id/ftv_br_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_toRightOf="@+id/fiv_de_icon"
+                    android:text="集合的基本关系" />
 
             </LinearLayout>
 
 
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="3dp"
-            android:text="@string/f_analysis"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="3dp"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/book_detail">
-
-            <WebView
-                android:id="@+id/fwv_bd_analysis"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="3dp"
-                android:layout_marginLeft="3dp"
-                android:layout_marginRight="3dp"
-                android:scrollbars="none"/>
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp">
 
+                <TextView
+                    android:id="@+id/ftv_bd_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="1" />
+
+                <TextView
+                    android:id="@+id/ftv_bd_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="得分和平均分" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/book_detail">
+
+                <WebView
+                    android:id="@+id/fwv_bd_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginRight="3dp"
+                    android:layout_marginBottom="3dp"
+                    android:scrollbars="none"
+                    tools:ignore="WebViewLayout" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fll_bd_answer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="3dp"
+                    android:text="@string/f_answer" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:paddingStart="10dp"
+                    android:paddingTop="7dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="6dp">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="55dp"
+                        android:layout_marginEnd="45dp">
+
+
+                        <com.example.yidiantong.View.ClickableImageView
+                            android:id="@+id/iv_r"
+                            android:layout_width="0dp"
+                            android:layout_height="37dp"
+                            android:layout_weight="1"
+                            android:adjustViewBounds="true"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:src="@drawable/right_unselect" />
+
+                        <com.example.yidiantong.View.ClickableImageView
+                            android:id="@+id/iv_e"
+                            android:layout_width="0dp"
+                            android:layout_height="37dp"
+                            android:layout_weight="1"
+                            android:adjustViewBounds="true"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:src="@drawable/error_unselect" />
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/fb_bd_sumbit"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:background="@color/blue_btn"
+                    android:text="@string/f_submit"
+                    android:textColor="@color/white" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fll_bd_analysis"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="3dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/ftv_bd_answer"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="【参考答案】D" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/ftv_bd_stuans"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="3dp"
+                            android:text="【你的作答】A" />
+
+                        <ImageView
+                            android:id="@+id/fiv_bd_tf"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ansright" />
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_shiti_analysis"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:text="@string/f_analysis" />
+
+                <LinearLayout
+                    android:id="@+id/ll_shiti_analysis"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/book_detail">
+
+                    <WebView
+                        android:id="@+id/fwv_bd_analysis"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_marginBottom="3dp"
+                        android:scrollbars="none" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_xueba"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:visibility="gone"
+                    android:text="【学霸答案】" />
+                <TextView
+                    android:id="@+id/ftv_xuebaName1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:visibility="gone"
+                    android:text="  学霸答案1" />
+                <LinearLayout
+                    android:id="@+id/ll_xueba1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginEnd="10dp"
+                    tools:ignore="WebViewLayout"
+                    android:visibility="gone"
+                    android:background="@drawable/book_detail">
+
+                    <WebView
+                        android:id="@+id/fwv_xuebaAnswer1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_marginBottom="3dp"
+                        android:scrollbars="none" />
+
+
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/ftv_xuebaName2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:visibility="gone"
+                    android:text="  学霸答案2" />
+                <LinearLayout
+                    android:id="@+id/ll_xueba2"
+                    tools:ignore="WebViewLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginEnd="10dp"
+                    android:visibility="gone"
+                    android:background="@drawable/book_detail">
+
+                    <WebView
+                        android:id="@+id/fwv_xuebaAnswer2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_marginBottom="3dp"
+                        android:scrollbars="none" />
+
+
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/ftv_xuebaName3"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:text="  学霸答案3" />
+                <LinearLayout
+                    android:id="@+id/ll_xueba3"
+                    android:visibility="gone"
+                    tools:ignore="WebViewLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/book_detail">
+
+                    <WebView
+                        android:id="@+id/fwv_xuebaAnswer3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_marginBottom="3dp"
+                        android:scrollbars="none" />
+                </LinearLayout>
+
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-    </LinearLayout>
     </ScrollView>
 
 </LinearLayout>

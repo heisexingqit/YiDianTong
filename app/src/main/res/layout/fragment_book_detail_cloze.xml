@@ -124,7 +124,7 @@
                     android:id="@+id/fb_bd_sumbit"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
-                    android:background="@color/f_blue"
+                    android:background="@color/blue_btn"
                     android:text="@string/f_submit"
                     android:textColor="@color/white" />
 
@@ -209,6 +209,7 @@
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/tv_shiti_analysis"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="3dp"
@@ -217,6 +218,7 @@
 <!--                    android:visibility="gone"-->
 
                 <LinearLayout
+                    android:id="@+id/ll_shiti_analysis"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginStart="10dp"

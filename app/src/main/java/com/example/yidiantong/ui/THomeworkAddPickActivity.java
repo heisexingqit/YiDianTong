@@ -39,8 +39,6 @@ import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
 import com.example.yidiantong.util.THomeworkAddInterface;
 import com.google.android.flexbox.FlexboxLayout;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONArray;
@@ -48,7 +46,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -280,14 +277,42 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
             case R.id.btn_1:
                 changePopBtn(btn_1);
                 shareTag = "99";
+                loadType();
+                if (showPos == 5) {
+                    showPos = -1;
+                    fl_type.removeAllViews();
+                    iv_type.setImageResource(R.drawable.down_icon);
+                    tv_type_null.setVisibility(View.GONE);
+                }
+                type = "";
+                tv_type.setText("");
+
                 break;
             case R.id.btn_2:
                 changePopBtn(btn_2);
                 shareTag = "10";
+                loadType();
+                if (showPos == 5) {
+                    showPos = -1;
+                    fl_type.removeAllViews();
+                    iv_type.setImageResource(R.drawable.down_icon);
+                    tv_type_null.setVisibility(View.GONE);
+                }
+                type = "";
+                tv_type.setText("");
                 break;
             case R.id.btn_3:
                 changePopBtn(btn_3);
                 shareTag = "50";
+                loadType();
+                if (showPos == 5) {
+                    showPos = -1;
+                    fl_type.removeAllViews();
+                    iv_type.setImageResource(R.drawable.down_icon);
+                    tv_type_null.setVisibility(View.GONE);
+                }
+                type = "";
+                tv_type.setText("");
                 break;
             case R.id.iv_xueduan:
                 showList(0);
@@ -337,7 +362,11 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                     dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
                     dialog.show();
                 } else {
+//                    addFragment = new THomeworkPickAddFragment(xueduanMap.get(xueduan), xuekeMap.get(xueke), banbenMap.get(banben), jiaocaiMap.get(jiaocai), zhishidianId, typeMap.get(type), "99");
                     addFragment.updateItem(xueduanMap.get(xueduan), xuekeMap.get(xueke), banbenMap.get(banben), jiaocaiMap.get(jiaocai), zhishidianId, typeMap.get(type), shareTag);
+                    //changeFragment = new THomeworkPickChangeFragment();
+                    //assignFragment = new THomeworkPickAssignFragment();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fl_main, addFragment).commit();
                     window.dismiss();
                 }
                 break;
@@ -382,6 +411,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
             return;
         }
         changeBtn(btn_assign);
+        assignFragment = new THomeworkPickAssignFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.fl_main, assignFragment).commit();
         iv_search_select.setVisibility(View.INVISIBLE);
     }
@@ -448,45 +478,114 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
         tv_type = contentView.findViewById(R.id.tv_type);
     }
 
-    int count = 0; // 成功请求计数
-
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag) {
-        Log.e(TAG, "start: ==================================");
-        Log.e(TAG, "ketang: " + ketang);
-        Log.e(TAG, "ketangId: " + ketangId);
-        Log.e(TAG, "clas: " + clas);
-        Log.e(TAG, "classId: " + classId);
-        Log.e(TAG, "stuIds: " + stuIds);
-        Log.e(TAG, "stuNames: " + stuNames);
-        Log.e(TAG, "end: ==================================");
-        List<String> ketangNameList = new ArrayList<>(Arrays.asList(ketang.split(", ")));
-        List<String> ketangIdList = new ArrayList<>(Arrays.asList(ketangId.split(", ")));
-        List<String> clasList = new ArrayList<>(Arrays.asList(clas.split(", ")));
-        List<String> classIdList = new ArrayList<>(Arrays.asList(classId.split(", ")));
-        List<String> stuIdsList = new ArrayList<>(Arrays.asList(stuIds.split(", ")));
-        List<String> stuNamesList = new ArrayList<>(Arrays.asList(stuNames.split(", ")));
-
-        count = 0;
-        String assignType_ = assignType;
-        for (int i = 0; i < ketangNameList.size(); ++i) {
-            // 第一次保存+布置，后面直接布置即可
-            if (i > 0 && assignType.equals("1")) {
-                assignType_ = "2";
-            }
-            ketang = ketangNameList.get(i);
-            ketangId = ketangIdList.get(i);
-            clas = clasList.get(i);
-            classId = classIdList.get(i);
-            stuIds = stuIdsList.get(i);
-            stuNames = stuNamesList.get(i);
+    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag, int zouyeType, int zouyeFlag, String xiezuozuId, String xiezuozuName) {
+        if (zouyeFlag == 1) {
+            Log.e("wen0601", "start: ==================================");
+            Log.e("wen0601", "ketang: " + ketang);
+            Log.e("wen0601", "ketangId: " + ketangId);
+            Log.e("wen0601", "clas: " + clas);
+            Log.e("wen0601", "classId: " + classId);
+            Log.e("wen0601", "stuIds: " + stuIds);
+            Log.e("wen0601", "stuNames: " + stuNames);
+            Log.e("wen0601", "learnType: " + learnType);
+            Log.e("wen0601", "end: ==================================");
 
             // --------------------------------//
             //  这部分是从AddActivity获取的属性值，
             //  与PopUpWindow中的数值不同
             //  必须从intent中直接获取
             // --------------------------------//
+            Intent intent = getIntent();
+
+            String xueduan = intent.getStringExtra("xueduan");
+            String xueduanId = intent.getStringExtra("xueduanId");
+            String xueke = intent.getStringExtra("xueke");
+            String xuekeId = intent.getStringExtra("xuekeId");
+            String banben = intent.getStringExtra("banben");
+            String banbenId = intent.getStringExtra("banbenId");
+            String jiaocai = intent.getStringExtra("jiaocai");
+            String jiaocaiId = intent.getStringExtra("jiaocaiId");
+            String zhishidian = intent.getStringExtra("zhishidian");
+            String zhishidianId = intent.getStringExtra("zhishidianId");
+
+            StringBuilder jsonStringBuilder = new StringBuilder();
+            String jsonString = "{\"data\":[";
+            addFragment.pickList.forEach(item -> {
+                if (jsonStringBuilder.length() > 0) {
+                    jsonStringBuilder.append(",");
+                }
+                jsonStringBuilder.append(item.toData());
+            });
+            jsonString += jsonStringBuilder.toString();
+            jsonString += "],\"paperId\":\"" + paperId + "\"}";
+
+            try {
+                ketang = URLEncoder.encode(ketang, "UTF-8");
+                clas = URLEncoder.encode(clas, "UTF-8");
+                stuNames = URLEncoder.encode(stuNames, "UTF-8");
+                jsonString = URLEncoder.encode(jsonString, "UTF-8");
+
+                mRequestUrl = Constant.API + Constant.T_HOMEWORK_ASSIGN_SAVE + "?assignType=" + assignType +
+                        "&channelCode=" + xueduanId + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") +
+                        "&subjectCode=" + xuekeId + "&subjectName=" + URLEncoder.encode(xueke, "UTF-8") +
+                        "&textBookCode=" + banbenId + "&textBookName=" + URLEncoder.encode(banben, "UTF-8") +
+                        "&gradeLevelCode=" + jiaocaiId + "&gradeLevelName=" + URLEncoder.encode(jiaocai, "UTF-8") +
+                        "&pointCode=" + zhishidianId + "&introduction=" + URLEncoder.encode(introduce, "UTF-8") +
+                        "&userName=" + MyApplication.username + "&paperName=" + URLEncoder.encode(name, "UTF-8") +
+                        "&paperId=" + paperId + "&startTime=" + startTime + "&endTime=" + endTime +
+                        "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classOrGroupId=" + classId +
+                        "&classOrGroupName=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
+                        "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
+//                LogUtils.writeLogToFile("wen0601.txt", mRequestUrl, true, this);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            StringRequest request = new StringRequest(mRequestUrl, response -> {
+                try {
+                    JSONObject json = JsonUtils.getJsonObjectFromString(response);
+
+                    Log.d("wenss", "提交成功: " + json);
+                    boolean success = json.getBoolean("success");
+                    String message = json.getString("message");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle(name);
+                    if (success) {
+                        if (assignType.equals("3")) {
+                            builder.setMessage("作业保存成功");
+                        } else {
+                            builder.setMessage("作业布置成功");
+                        }
+
+                    } else {
+                        builder.setMessage(message);
+                    }
+
+                    builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            rl_submitting.setVisibility(View.GONE);
+                            Intent toHome = new Intent(THomeworkAddPickActivity.this, TMainPagerActivity.class);
+                            toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            startActivity(toHome);
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+                    dialog.show();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }, error -> {
+                Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+                Log.d("wen", "Volley_Error: " + error.toString());
+            });
+            MyApplication.addRequest(request, TAG);
+            rl_submitting.setVisibility(View.VISIBLE);
+
+        } else {
             Intent intent = getIntent();
 
             String xueduan = intent.getStringExtra("xueduan");
@@ -516,8 +615,8 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                 clas = URLEncoder.encode(clas, "UTF-8");
                 stuNames = URLEncoder.encode(stuNames, "UTF-8");
                 jsonString = URLEncoder.encode(jsonString, "UTF-8");
-
-                mRequestUrl = Constant.API + Constant.T_HOMEWORK_ASSIGN_SAVE + "?assignType=" + assignType_ +
+                xiezuozuName = URLEncoder.encode(xiezuozuName, "UTF-8");
+                mRequestUrl = Constant.API + Constant.T_HOMEWORK_ASSIGN_SAVE + "?assignType=" + assignType +
                         "&channelCode=" + xueduanId + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") +
                         "&subjectCode=" + xuekeId + "&subjectName=" + URLEncoder.encode(xueke, "UTF-8") +
                         "&textBookCode=" + banbenId + "&textBookName=" + URLEncoder.encode(banben, "UTF-8") +
@@ -527,8 +626,8 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                         "&paperId=" + paperId + "&startTime=" + startTime + "&endTime=" + endTime +
                         "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classOrGroupId=" + classId +
                         "&classOrGroupName=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
-                        "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=" + jsonString;
-
+                        "&learnType=" + learnType + "&flag=" + flag + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId + "&xiezuozuName=" + xiezuozuName;
+//                LogUtils.writeLogToFile("wen0601.txt", mRequestUrl, true, this);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -536,37 +635,34 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                 try {
                     JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
-                    count++;
                     Log.d("wenss", "提交成功: " + json);
                     boolean success = json.getBoolean("success");
                     String message = json.getString("message");
-                    if (count == ketangNameList.size()) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                        builder.setTitle(name);
-                        if (success) {
-                            if (assignType.equals("3")) {
-                                builder.setMessage("作业保存成功");
-                            } else {
-                                builder.setMessage("作业布置成功");
-                            }
-
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle(name);
+                    if (success) {
+                        if (assignType.equals("3")) {
+                            builder.setMessage("作业保存成功");
                         } else {
-                            builder.setMessage(message);
+                            builder.setMessage("作业布置成功");
                         }
-
-                        builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                rl_submitting.setVisibility(View.GONE);
-                                Intent toHome = new Intent(THomeworkAddPickActivity.this, TMainPagerActivity.class);
-                                toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                startActivity(toHome);
-                            }
-                        });
-                        AlertDialog dialog = builder.create();
-                        dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
-                        dialog.show();
+                    } else {
+                        builder.setMessage(message);
                     }
+
+                    builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            rl_submitting.setVisibility(View.GONE);
+                            Intent toHome = new Intent(THomeworkAddPickActivity.this, TMainPagerActivity.class);
+                            toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            startActivity(toHome);
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+                    dialog.show();
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -576,13 +672,6 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
             });
             MyApplication.addRequest(request, TAG);
             rl_submitting.setVisibility(View.VISIBLE);
-
-            try {
-                // 休眠2秒钟，避免请求过快被丢弃
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -826,7 +915,12 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                 JSONArray data = json.getJSONArray("data");
                 for (int i = 0; i < data.length(); ++i) {
                     JSONObject object = data.getJSONObject(i);
-                    xuekeMap.put(object.getString("subjectName").substring(2), object.getString("subjectId"));
+                    String text = object.getString("subjectName");
+                    if (text.startsWith(xueduan)) {
+                        text = text.substring(xueduan.length());
+                    }
+                    Log.e("wen", "loadXueKe: " + text);
+                    xuekeMap.put(text, object.getString("subjectId"));
                 }
 
                 Log.d("wen", "学科: " + xuekeMap);
@@ -1106,14 +1200,26 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
                 Log.d("wenbb", "loadType: " + data);
                 if (data != null && !data.equals("null")) {
                     typeMap.put("全部", "all");
-                    for (String row : data.split("\\],\\[")) {
-                        String[] values = row.replaceAll("\\[|\\]|\"", "").split(",");
+                    if (shareTag.equals("50")) {
+                        String[] values = data.replaceAll("\\[|\\]|\"", "").split(",");
                         if (values.length >= 2) { // 添加这一行来检查数组长度
-                            typeMap.put(values[1], values[1]);
-                            Log.e(TAG, "loadType: " + values[1]);
+                            for (String value : values) {
+                                typeMap.put(value, value);
+                            }
                         } else {
                             // 处理数组长度不足的情况，可以输出日志或者其他处理方式
                             Log.e(TAG, "loadType: values数组长度不足");
+                        }
+                    } else {
+                        for (String row : data.split("\\],\\[")) {
+                            String[] values = row.replaceAll("\\[|\\]|\"", "").split(",");
+                            if (values.length >= 2) { // 添加这一行来检查数组长度
+                                typeMap.put(values[1], values[1]);
+                                Log.e(TAG, "loadType: " + values[1]);
+                            } else {
+                                // 处理数组长度不足的情况，可以输出日志或者其他处理方式
+                                Log.e(TAG, "loadType: values数组长度不足");
+                            }
                         }
                     }
                 }
@@ -1142,6 +1248,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void showType() {
+
         if (typeMap.size() == 0) {
             tv_type_null.setVisibility(View.VISIBLE);
         }
@@ -1239,6 +1346,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
         tv.setBackgroundResource(R.drawable.t_homework_add_select);
         tv.setTextColor(getColor(R.color.red));
     }
+
 
     private void unselectedTv(TextView tv) {
         tv.setBackgroundResource(R.drawable.t_homework_add_unselect);

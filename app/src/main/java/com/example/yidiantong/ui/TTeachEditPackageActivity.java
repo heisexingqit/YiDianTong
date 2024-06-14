@@ -395,7 +395,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
     private void changeUI() {
         if (addFragment.pickList.size() == 0) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("暂无选中试题");
+            builder.setMessage("暂无选中内容");
             builder.setNegativeButton("关闭", null);
             AlertDialog dialog = builder.create();
             dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
@@ -422,7 +422,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
 
         if (addFragment.pickList.size() == 0) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("暂无选中试题");
+            builder.setMessage("暂无选中内容");
             builder.setNegativeButton("关闭", null);
             AlertDialog dialog = builder.create();
             dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
@@ -430,7 +430,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
             return;
         }
 
-        submit("", "", "", "", "", "", "3", "", "", "", "edit");
+        submit("", "", "", "", "", "", "3", "", "", "", "edit", 0, 0, "", "");
 
     }
 
@@ -484,7 +484,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
         tv_type_question.setOnClickListener(this);
         tv_type_paper.setOnClickListener(this);
         tv_type_resource.setOnClickListener(this);
-        lastType = tv_type_all;
+        lastType = tv_type_resource;
 
         iv_xueduan = contentView.findViewById(R.id.iv_xueduan);
         iv_xueke = contentView.findViewById(R.id.iv_xueke);
@@ -526,7 +526,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag) {
+    public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag, int zouyeType, int zouyeFlag, String xiezuozuId, String xiezuozuName) {
         Intent intent = getIntent();
 
         // 导学案专属参数
@@ -561,7 +561,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
             LearnPlanAddItemEntity item = pickList.get(i);
             item.setOrder(i + 1);
             if (jsonStringBuilder.length() > 0) {
-                jsonStringBuilder.append(", ");
+                jsonStringBuilder.append(",");
             }
             jsonStringBuilder.append(item.toData());
         }

@@ -85,8 +85,8 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="*  名称:"
-                    android:textSize="15sp"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/black"
+                    android:textSize="15sp" />
 
                 <EditText
                     android:id="@+id/et_name"
@@ -95,10 +95,10 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="2dp"
                     android:background="@drawable/default_edit_text"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
                     android:paddingStart="15dp"
+                    android:paddingTop="10dp"
                     android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
                     android:singleLine="true"
                     android:textSize="14sp" />
 
@@ -572,9 +572,10 @@
                         android:inputType="number"
                         android:paddingStart="15dp"
                         android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
                         android:paddingEnd="15dp"
+                        android:paddingBottom="10dp"
                         android:singleLine="true"
+                        android:text="1"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -603,9 +604,10 @@
                         android:inputType="number"
                         android:paddingStart="15dp"
                         android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
                         android:paddingEnd="15dp"
+                        android:paddingBottom="10dp"
                         android:singleLine="true"
+                        android:text="1"
                         android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -637,13 +639,13 @@
                     android:id="@+id/et_introduce"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="2dp"
                     android:background="@drawable/default_edit_text"
                     android:paddingStart="15dp"
+                    android:paddingTop="10dp"
                     android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
                     android:singleLine="true"
                     android:textSize="14sp" />
 
@@ -679,10 +681,10 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="2dp"
                     android:background="@drawable/default_edit_text"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
                     android:paddingStart="15dp"
+                    android:paddingTop="10dp"
                     android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
                     android:singleLine="true"
                     android:textSize="14sp" />
 
@@ -718,10 +720,10 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="2dp"
                     android:background="@drawable/default_edit_text"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
                     android:paddingStart="15dp"
+                    android:paddingTop="10dp"
                     android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
                     android:singleLine="true"
                     android:textSize="14sp" />
 
@@ -757,10 +759,10 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="2dp"
                     android:background="@drawable/default_edit_text"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
                     android:paddingStart="15dp"
+                    android:paddingTop="10dp"
                     android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
                     android:singleLine="true"
                     android:textSize="14sp" />
 
@@ -796,10 +798,10 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="2dp"
                     android:background="@drawable/default_edit_text"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
                     android:paddingStart="15dp"
+                    android:paddingTop="10dp"
                     android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
                     android:singleLine="true"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -834,10 +836,10 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="2dp"
                     android:background="@drawable/default_edit_text"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
                     android:paddingStart="15dp"
+                    android:paddingTop="10dp"
                     android:paddingEnd="15dp"
+                    android:paddingBottom="10dp"
                     android:singleLine="true"
                     android:textSize="14sp" />
             </LinearLayout>

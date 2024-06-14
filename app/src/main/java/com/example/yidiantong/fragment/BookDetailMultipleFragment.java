@@ -37,16 +37,24 @@ import androidx.fragment.app.Fragment;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookRecyclerEntity;
+import com.example.yidiantong.bean.XueBaAnswerEntity;
+import com.example.yidiantong.ui.BookExerciseActivity;
 import com.example.yidiantong.ui.MainBookExerciseActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.RecyclerInterface;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 
 public class BookDetailMultipleFragment extends Fragment implements View.OnClickListener{
@@ -68,6 +76,7 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
     private ImageView fiv_de_icon;
     private AlertDialog dialog_model;
     private ImageView fiv_bd_exercise;// 举一反三
+    private ImageView iv_exercise_scores;//
 
     private String userName;  //用户名
     private String subjectId;  //学科ID
@@ -171,6 +180,8 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
         iv_pager_last.setOnClickListener(this);
         iv_pager_next.setOnClickListener(this);
 
+
+
         //显示答案选项
         ClickableImageView iv_a = view.findViewById(R.id.iv_a);
         ClickableImageView iv_b = view.findViewById(R.id.iv_b);
@@ -197,8 +208,15 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
         ftv_bd_answer.setText("【参考答案】"+ bookrecyclerEntity.getShitiAnswer());
         ftv_bd_stuans = view.findViewById(R.id.ftv_bd_stuans);
         fwv_bd_analysis1 = view.findViewById(R.id.fwv_bd_analysis);
-        String html_analysis = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiAnalysis() + "</body>";
-        fwv_bd_analysis1.loadDataWithBaseURL(null, html_analysis, "text/html", "utf-8", null);
+        TextView tv_shiti_analysis = view.findViewById(R.id.tv_shiti_analysis);
+        LinearLayout ll_shiti_analysis = view.findViewById(R.id.ll_shiti_analysis);
+        if(bookrecyclerEntity.getShitiAnalysis() == null || bookrecyclerEntity.getShitiAnalysis().length() == 0){
+            tv_shiti_analysis.setVisibility(View.GONE);
+            ll_shiti_analysis.setVisibility(View.GONE);
+        }else {
+            String html_analysis = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getShitiAnalysis() + "</body>";
+            fwv_bd_analysis1.loadDataWithBaseURL(null, html_analysis, "text/html", "utf-8", null);
+        }
         fiv_bd_tf = view.findViewById(R.id.fiv_bd_tf);
         // 题目数量
         int positionLen = String.valueOf(bookrecyclerEntity.getCurrentPage()).length();
@@ -214,7 +232,12 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
         spanString.setSpan(span1, 0, positionLen, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         ftv_pbd_quenum.setText(spanString);
 
+
         if (!exerciseType){
+            // 提分练习
+            iv_exercise_scores = getActivity().findViewById(R.id.iv_exercise_scores);
+            iv_exercise_scores.setOnClickListener(this);
+            setHasOptionsMenu(true);
             // 标记掌握
             fiv_bd_mark = getActivity().findViewById(R.id.fiv_bd_mark);
             fiv_bd_mark.setOnClickListener(this);
@@ -231,8 +254,8 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
                 fll_bd_analysis.setVisibility(View.GONE);
                 fll_bd_answer.setVisibility(View.VISIBLE);
                 mode = 0;
-                // 显示学生本地保存的作答
-                showLoadAnswer();
+//                // 显示学生本地保存的作答
+//                showLoadAnswer();
             }else {
                 fll_bd_answer.setVisibility(View.GONE);
                 fll_bd_analysis.setVisibility(View.VISIBLE);
@@ -318,7 +341,7 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
                     //设置title组件
                     builder.setCustomTitle(tv);
                     AlertDialog dialog = builder.create();
-                    builder.setNegativeButton("ok", null);
+                    builder.setNegativeButton("关闭", null);
                     //禁止返回和外部点击
                     builder.setCancelable(false);
                     //对话框弹出
@@ -383,6 +406,16 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
                 builder.setCancelable(false);
                 //对话框弹出
                 builder.show();
+                break;
+            case R.id.iv_exercise_scores:
+                // 弹出一个简单的Dialog提示 "功能完善中"
+//                AlertDialog.Builder builder_exercise = new AlertDialog.Builder(getActivity());
+//                builder_exercise.setMessage("功能完善中");
+//                builder_exercise.setPositiveButton("确定", null);
+//                builder_exercise.show();
+                Intent toExercise = new Intent(getActivity(), BookExerciseActivity.class);
+                toExercise.putExtra("questionId", bookrecyclerEntity.getQuestionId());
+                startActivity(toExercise);
                 break;
             case R.id.fiv_bd_exercise:// 举一反三
                 Intent intent = new Intent(getActivity(), MainBookExerciseActivity.class);

@@ -53,7 +53,7 @@ public class MainBookFragment extends Fragment {
     BooksAdapter adapter;
     private String username;//当前用户名
 
-    private SharedPreferences preferences ;
+    private SharedPreferences preferences;
     private String[] stuLoadAnswer;
 
     //获得实例，并绑定参数

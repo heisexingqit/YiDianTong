@@ -58,7 +58,7 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
 
     // 参数相关
     private THomeworkStudentItemEntity itemEntity;
-    private String name;
+    public String name;
     private int pageCount = 0;
     private int pageCountAll = 0;
     private String scoreCount;
@@ -75,8 +75,8 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
     private Button btn_next;
 
     // 请求参数
-    private String taskId;
-    private String stuName;
+    public String taskId;
+    public String stuName;
 
     // 跳转
     ActivityResultLauncher mResultLauncher;
@@ -91,6 +91,7 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
 
     // ViewPagerAdapter中列表
     List<THomeworkMarkedEntity> moreList;
+    public String homeworkName;
 
     private boolean isAll = false; // 标记ViewPager是否已经是全部题目
 
@@ -109,7 +110,7 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
         canMark = intent.getBooleanExtra("canMark", true);
         mode = intent.getStringExtra("mode");
         type = intent.getStringExtra("type");
-
+        homeworkName = intent.getStringExtra("homeworkName");
         findViewById(R.id.iv_eye).setOnClickListener(this);
 
         // 获取组件
@@ -250,7 +251,6 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
                 if (currentItem == pageCount - 1) {
                     jumpToSubmit();
                 } else {
-
                     currentItem += 1;
                     vp_homework.setCurrentItem(currentItem);
                     Log.d("wen", "Activity: " + moreList.get(currentItem).getOrder());
@@ -281,8 +281,10 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
         if (finishData) {
             Intent intent = new Intent(THomeworkMarkPagerActivity.this, THomeworkMarkSubmitActivity.class);
             double sum = 0;
+            // TODO
+            // 分数求和
             for (int i = 0; i < pageCountAll; ++i) {
-                sum += stuScoresList.get(i);
+                sum += Math.max(0.0, stuScoresList.get(i));
             }
             // 分数格式化
             intent.putExtra("stuScore", NumberUtils.getFormatNumString(String.format("%.1f", sum)));
@@ -342,9 +344,13 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
                         }
                         statusList.add(iconStr);
                     }
-
+                    // TODO
                     // 同步分数
-                    stuScoresList.add(Double.parseDouble(item.getStuscore()));
+                    if(item.getStatus().equals("4")){
+                        stuScoresList.add(-1.0);
+                    }else{
+                        stuScoresList.add(Double.parseDouble(item.getStuscore()));
+                    }
                     qusScoresList.add(Double.parseDouble(item.getQuestionScore()));
                 }
 
@@ -424,7 +430,11 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
         }
         double socres = Double.parseDouble(stuScore);
         // 同步分数
+        Log.e("wen0605", "setStuAnswer: 第" + pos + "原分数: " + stuScoresList.get(pos));
+
         stuScoresList.set(pos, socres);
+        Log.e("wen0605", "setStuAnswer: 第" + pos + "新的分数: " + stuScoresList.get(pos));
+
         if (socres < 0.1) {
             if (statusList.get(pos).equals("no_answer")) {
                 statusList.set(pos, "hand_no_answer");

@@ -2,11 +2,18 @@ package com.example.yidiantong.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.os.Trace;
+import android.provider.MediaStore;
 import android.text.SpannableString;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,22 +23,37 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.android.volley.toolbox.StringRequest;
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.bean.THomeworkMarkedEntity;
+import com.example.yidiantong.bean.XueBaAnswerEntity;
 import com.example.yidiantong.ui.THomeworkImageMark;
+import com.example.yidiantong.ui.THomeworkMarkPagerActivity;
+import com.example.yidiantong.util.Constant;
+import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
 import com.example.yidiantong.util.THomeworkMarkInterface;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.zxing.aztec.encoder.Encoder;
 import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
@@ -40,7 +62,12 @@ import com.yanzhenjie.permission.RequestExecutor;
 import com.yanzhenjie.permission.runtime.Permission;
 
 import org.apache.commons.text.StringEscapeUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 public class THomeworkMarkFragment extends Fragment {
@@ -72,6 +99,13 @@ public class THomeworkMarkFragment extends Fragment {
     private PopupWindow window;
     private View popView;
     private static final int REQUEST_CODE_EDIT_IMAGE = 1001;
+    private CheckBox cb_xueba;
+    private TextView tv_xueba;
+    private boolean cb_xueba_flag = false;
+    private PopupWindow replaceWindow;
+    private View replaceView;
+    private int replaceId = -1;
+    private RadioButton lastRadioBtn;
 
 
     public static THomeworkMarkFragment newInstance(THomeworkMarkedEntity homeworkMarked, int position, int size, boolean canMark) {
@@ -113,6 +147,7 @@ public class THomeworkMarkFragment extends Fragment {
         // 动态加打分按钮
         tv_stu_scores = view.findViewById(R.id.tv_stu_scores);
         checkBox = view.findViewById(R.id.cb_zero5);
+        cb_xueba = view.findViewById(R.id.cb_xueba);
 
         //题号染色
         int positionLen = String.valueOf(position).length();
@@ -195,6 +230,7 @@ public class THomeworkMarkFragment extends Fragment {
                     double nowScore = score + 0.5;
                     if (nowScore > Double.parseDouble(homeworkMarked.getQuestionScore())) {
                         zero5 = 0;
+                        checkBox.setChecked(false);
                         Toast.makeText(getActivity(), "分数超过上限", Toast.LENGTH_SHORT).show();
                         return;
                     } else {
@@ -308,7 +344,330 @@ public class THomeworkMarkFragment extends Fragment {
         }
 
         isFirst = false;
+
+        /**
+         * 学霸答案设置功能 初始化
+         */
+        cb_xueba = view.findViewById(R.id.cb_xueba);
+        tv_xueba = view.findViewById(R.id.tv_xueba);
+        Log.e("wen0607", "onCreateView: " + homeworkMarked.getQuestionType());
+        if (homeworkMarked.getQuestionType().equals("104") || homeworkMarked.getQuestionType().equals("106")) {
+            cb_xueba.setVisibility(View.VISIBLE);
+            tv_xueba.setVisibility(View.VISIBLE);
+            cb_xueba.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (cb_xueba_flag) {
+                        Log.e("wen0604", "onCheckedChanged: " + b);
+                        if (b) {
+                            if (xuebaList.size() == 3) {
+                                cb_xueba_flag = false;
+                                cb_xueba.setChecked(false);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                builder.setMessage("学霸答案已满，是否进行替换？");
+                                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        if(lastRadioBtn != null){
+                                            lastRadioBtn.setChecked(false);
+                                            replaceId = -1;
+                                        }
+                                        replaceWindow.showAtLocation(cb_xueba, Gravity.CENTER, 0, 0);
+                                    }
+                                });
+                                builder.setNegativeButton("取消", null);
+
+                                builder.show();
+                                cb_xueba_flag = true;
+                            }else{
+                                setXueBaAnswer(true);
+                            }
+//                            Toast.makeText(getActivity(), "设置学霸答案成功", Toast.LENGTH_SHORT).show();
+                        } else {
+
+                            setXueBaAnswer(false);
+//                            Toast.makeText(getActivity(), "取消学霸答案成功", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            });
+            initXueBaCb();
+        }
         return view;
+    }
+
+    private void initReplaceView(){
+        if(replaceView == null){
+            replaceView = LayoutInflater.from(getActivity()).inflate(R.layout.menu_t_xueba_replace, null, false);
+            RadioButton rb_xueba1 = replaceView.findViewById(R.id.rb_xueba1);
+            RadioButton rb_xueba2 = replaceView.findViewById(R.id.rb_xueba2);
+            RadioButton rb_xueba3 = replaceView.findViewById(R.id.rb_xueba3);
+            TextView tv_xuebaName1 = replaceView.findViewById(R.id.tv_xuebaName1);
+            TextView tv_xuebaName2 = replaceView.findViewById(R.id.tv_xuebaName2);
+            TextView tv_xuebaName3 = replaceView.findViewById(R.id.tv_xuebaName3);
+            WebView wv_xuebaAnswer1 = replaceView.findViewById(R.id.wv_xuebaAnswer1);
+            WebView wv_xuebaAnswer2 = replaceView.findViewById(R.id.wv_xuebaAnswer2);
+            WebView wv_xuebaAnswer3 = replaceView.findViewById(R.id.wv_xuebaAnswer3);
+            replaceWindow = new PopupWindow(replaceView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, true);
+            replaceWindow.setTouchable(true);
+            // 列表加载信息
+            tv_xuebaName1.setText(xuebaList.get(0).getStuName());
+            tv_xuebaName2.setText(xuebaList.get(1).getStuName());
+            tv_xuebaName3.setText(xuebaList.get(2).getStuName());
+            wv_xuebaAnswer1.loadDataWithBaseURL(null, xuebaList.get(0).getStuAnswer(), "text/html", "utf-8", null);
+            wv_xuebaAnswer2.loadDataWithBaseURL(null, xuebaList.get(1).getStuAnswer(), "text/html", "utf-8", null);
+            wv_xuebaAnswer3.loadDataWithBaseURL(null, xuebaList.get(2).getStuAnswer(), "text/html", "utf-8", null);
+            Button btn_submit = replaceView.findViewById(R.id.btn_submit);
+            btn_submit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(replaceId == -1){
+                        Toast.makeText(getActivity(), "请选择学霸答案", Toast.LENGTH_SHORT).show();
+                    }else{
+                        replaceXueBaAnswer();
+                    }
+                }
+            });
+            View.OnClickListener listener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    RadioButton clickedRadioButton = (RadioButton) v;
+                    if (clickedRadioButton.isChecked()) {
+                        rb_xueba1.setChecked(false);
+                        rb_xueba2.setChecked(false);
+                        rb_xueba3.setChecked(false);
+                        lastRadioBtn = clickedRadioButton;
+                        clickedRadioButton.setChecked(true);
+                        switch (v.getId()){
+                            case R.id.rb_xueba1:
+                                replaceId = 0;
+                                break;
+                            case R.id.rb_xueba2:
+                                replaceId = 1;
+                                break;
+                            case R.id.rb_xueba3:
+                                replaceId = 2;
+                                break;
+                        }
+                    }
+                }
+            };
+            rb_xueba1.setOnClickListener(listener);
+            rb_xueba2.setOnClickListener(listener);
+            rb_xueba3.setOnClickListener(listener);
+        }
+    }
+
+
+    /**
+     * 替换学霸答案
+     */
+    private void replaceXueBaAnswer(){
+//        Toast.makeText(getActivity(), "替换成功" + replaceId, Toast.LENGTH_SHORT).show();
+        String stu_name = "";
+        String homework_name = "";
+        try {
+            stu_name = URLEncoder.encode(((THomeworkMarkPagerActivity) getActivity()).name, "UTF-8");
+            homework_name = URLEncoder.encode(((THomeworkMarkPagerActivity) getActivity()).homeworkName, "UTF-8");
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        String mRequestUrl = Constant.API + Constant.T_REPLACE_XUEBA_ANSWER +
+                "?stuId=" + ((THomeworkMarkPagerActivity) getActivity()).stuName +
+                "&stuName=" + stu_name +
+                "&paperId=" + ((THomeworkMarkPagerActivity) getActivity()).taskId +
+                "&paperName=" + homework_name +
+                "&questionId=" + homeworkMarked.getQuestionID() +
+                "&teacherId=" + MyApplication.username +
+                "&xuebaStuId=" + xuebaList.get(replaceId).getStuId();
+
+        Log.e("wen0604", "setXueBaAnswer: " + mRequestUrl);
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+
+                Boolean isSuccess = json.getBoolean("success");
+
+                Message message = Message.obtain();
+                // 携带数据
+                message.obj = isSuccess;
+
+                // 标识线程
+                message.what = 102;
+                handler.sendMessage(message);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }, error -> {
+            Log.d("wen", "Volley_Error: " + error.toString());
+        });
+        MyApplication.addRequest(request, TAG);
+
+    }
+
+
+    private List<XueBaAnswerEntity> xuebaList;
+    // 批改情况生成
+    private final Handler handler = new Handler(Looper.getMainLooper()) {
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @SuppressLint("NotifyDataSetChanged")
+        @Override
+        public void handleMessage(Message message) {
+            super.handleMessage(message);
+            if (message.what == 100) {
+                Bundle receivedBundle = (Bundle) message.obj;
+                xuebaList = (List<XueBaAnswerEntity>) receivedBundle.getSerializable("itemList");
+                String flag = receivedBundle.getString("flag");
+                if (flag.equals("1")) {
+                    cb_xueba.setChecked(true);
+                } else {
+                    cb_xueba.setChecked(false);
+                    if(xuebaList.size() == 3){
+                        initReplaceView();
+                    }
+                }
+                cb_xueba_flag = true;
+            } else if (message.what == 101) {
+                Bundle receivedBundle = (Bundle) message.obj;
+                Boolean flag = receivedBundle.getBoolean("flag");
+                Boolean isSuccess = receivedBundle.getBoolean("isSuccess");
+//                Log.e("wen0604", "handleMessage: 请求成功返回" + flag + isSuccess);
+                if (isSuccess) {
+                    if (flag) {
+                        Toast.makeText(getActivity(), "学霸答案设置成功", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getActivity(), "学霸答案取消成功", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    cb_xueba_flag = false;
+                    if (flag) {
+                        cb_xueba.setChecked(false);
+                    } else {
+                        cb_xueba.setChecked(true);
+                    }
+                    Toast.makeText(getActivity(), "操作失败,请稍后重试", Toast.LENGTH_SHORT).show();
+                }
+                cb_xueba_flag = true;
+
+            }else if(message.what == 102){
+                Boolean isSuccess = (Boolean) message.obj;
+                if (isSuccess) {
+                    Toast.makeText(getActivity(), "学霸答案替换成功", Toast.LENGTH_SHORT).show();
+                    xuebaList.remove(replaceId);
+                    replaceWindow.dismiss();
+                    cb_xueba_flag = false;
+                    cb_xueba.setChecked(true);
+                    cb_xueba_flag = true;
+                }else{
+                    Toast.makeText(getActivity(), "操作失败,请稍后重试", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    };
+
+    /**
+     * 学霸答案设置请求
+     */
+    private void setXueBaAnswer(boolean setFlag) {
+
+        String type = "delete";
+        if (setFlag) {
+            type = "save";
+        }
+        String stu_name = "";
+        String homework_name = "";
+        try {
+            stu_name = URLEncoder.encode(((THomeworkMarkPagerActivity) getActivity()).name, "UTF-8");
+            homework_name = URLEncoder.encode(((THomeworkMarkPagerActivity) getActivity()).homeworkName, "UTF-8");
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        String mRequestUrl = Constant.API + Constant.T_SET_XUEBA_ANSWER +
+                "?stuId=" + ((THomeworkMarkPagerActivity) getActivity()).stuName +
+                "&stuName=" + stu_name +
+                "&paperId=" + ((THomeworkMarkPagerActivity) getActivity()).taskId +
+                "&paperName=" + homework_name +
+                "&questionId=" + homeworkMarked.getQuestionID() +
+                "&teacherId=" + MyApplication.username +
+                "&type=" + type;
+
+        Log.e("wen0604", "setXueBaAnswer: " + mRequestUrl);
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+
+                Boolean isSuccess = json.getBoolean("success");
+
+                Message message = Message.obtain();
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("isSuccess", isSuccess);
+                bundle.putBoolean("flag", setFlag);
+                // 携带数据
+                message.obj = bundle;
+
+                // 标识线程
+                message.what = 101;
+                handler.sendMessage(message);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }, error -> {
+            Log.d("wen", "Volley_Error: " + error.toString());
+        });
+        MyApplication.addRequest(request, TAG);
+
+
+//        Log.e("wen0604", "setXueBaAnswer: " + ((THomeworkMarkPagerActivity) getActivity()).name);
+//        Log.e("wen0604", "setXueBaAnswer: " + ((THomeworkMarkPagerActivity) getActivity()).homeworkName);
+    }
+
+    /**
+     * 初始化学霸信息和按钮方法
+     */
+    private void initXueBaCb() {
+        String mRequestUrl = Constant.API + Constant.T_CHECK_XUEBA_ANSWER + "?stuId=" + ((THomeworkMarkPagerActivity) getActivity()).stuName + "&paperId=" + ((THomeworkMarkPagerActivity) getActivity()).taskId + "&questionId=" + homeworkMarked.getQuestionID();
+        Log.e("wen0604", "查询是否是学霸答案: " + mRequestUrl);
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+
+                JSONObject obj = json.getJSONObject("data");
+                String flag = obj.getString("flag");
+                String itemString = obj.getString("list");
+
+
+                Gson gson = new Gson();
+                //使用Gson框架转换Json字符串为列表
+                List<XueBaAnswerEntity> itemList = gson.fromJson(itemString, new TypeToken<List<XueBaAnswerEntity>>() {
+                }.getType());
+                Log.e("wen0604", "initXueBaCb: " + position + " List:" + itemString);
+                Log.e("wen0604", "initXueBaCb: " + position + " List:" + itemList.size());
+                // 封装消息，传递给主线程
+                Message message = Message.obtain();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("itemList", (Serializable) itemList);
+                bundle.putString("flag", flag);
+                // 携带数据
+                message.obj = bundle;
+
+                // 标识线程
+                message.what = 100;
+                handler.sendMessage(message);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }, error -> {
+            Log.d("wen", "Volley_Error: " + error.toString());
+        });
+        MyApplication.addRequest(request, TAG);
     }
 
     private void showBtnPanel() {
@@ -365,6 +724,7 @@ public class THomeworkMarkFragment extends Fragment {
 
     /**
      * 将HTML内容显示在WebView中，包含转义和样式
+     *
      * @param wb  WebView组件对象
      * @param str 原始HTML数据
      */
@@ -395,35 +755,36 @@ public class THomeworkMarkFragment extends Fragment {
      * 申请读写文件权限
      */
     private void permissionOpenGallery(String url) {
+
         // 权限请求
-        oldUrl = url;
-        Intent intent = new Intent(getActivity(), THomeworkImageMark.class);
-        intent.putExtra("imageUrl", url); // 如果有需要传递的数据，可以使用 Intent 的 putExtra 方法
-        startActivityForResult(intent, REQUEST_CODE_EDIT_IMAGE);
-//        AndPermission.with(this)
-//                .runtime()
-//                .permission(Permission.Group.STORAGE)
-//                .onGranted(new Action<List<String>>() {
-//                    // 获取权限后
-//                    @Override
-//                    public void onAction(List<String> data) {
-//                        oldUrl = url;
-//                        EditImageActivity.start(getActivity(), THomeworkMarkFragment.this, url, null, 0);
-//                    }
-//                }).onDenied(new Action<List<String>>() {
-//                    @Override
-//                    public void onAction(List<String> data) {
-//                        // 判断是否点了永远拒绝，不再提示
-////
-//                    }
-//                })
-//                .rationale(rGallery)
-//                .start();
+        AndPermission.with(this)
+                .runtime()
+                .permission(Permission.Group.STORAGE)
+                .onGranted(new Action<List<String>>() {
+                    // 获取权限后
+                    @Override
+                    public void onAction(List<String> data) {
+
+                        oldUrl = url;
+                        Intent intent = new Intent(getActivity(), THomeworkImageMark.class);
+                        intent.putExtra("imageUrl", url); // 如果有需要传递的数据，可以使用 Intent 的 putExtra 方法
+                        startActivityForResult(intent, REQUEST_CODE_EDIT_IMAGE);
+                    }
+                }).onDenied(new Action<List<String>>() {
+                    @Override
+                    public void onAction(List<String> data) {
+                        // 判断是否点了永远拒绝，不再提示
+//
+                    }
+                })
+                .rationale(rGallery)
+                .start();
     }
 
     /**
      * 第三方权限申请包-自定义权限提示，出现在首次拒绝后。读写文件申请
      */
+
     /**
      * 第三方权限申请包-自定义权限提示，出现在首次拒绝后。拍照申请
      */
@@ -452,6 +813,10 @@ public class THomeworkMarkFragment extends Fragment {
             String newUrl = data.getStringExtra("newUrl");
             //int img_length = data.getIntExtra("img_length",0);
             stuStr = homeworkMarked.getStuAnswer().trim().replace(oldUrl, newUrl);
+            homeworkMarked.setStuAnswer(stuStr);
+            Log.d("hsk0524", "oldUrl:" + oldUrl);
+            Log.d("hsk0524", "newUrl:" + newUrl);
+            Log.d("hsk0524", "stuStr:" + stuStr);
             setHtmlOnWebView(wv_content2, stuStr);
 //            new Handler().postDelayed(new Runnable() {
 //                @Override

@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.animation.AccelerateInterpolator;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,7 +48,6 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
     private int pageCount = 0;
     private boolean exerciseType = false;  //是否是巩固提升
 
-
     // 接口参数
     String sourceId;  //单元ID
     String userName;  //用户名
@@ -55,7 +55,6 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
     String questionId; //题目ID
     private String pos; //题目位置
     private String num;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +82,6 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
         currentItem = Integer.valueOf(pos);
         fvp_book_recycle.setCurrentItem(currentItem);
 
-
         loadItems_Net(currentItem);
 
         //ViewPager滑动变速
@@ -96,7 +94,6 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
             scroller.setmDuration(400);
         } catch (Exception e) {
         }
-
     }
 
     // 回到上一题
@@ -115,7 +112,7 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
             //设置title组件
             builder.setCustomTitle(tv);
             AlertDialog dialog = builder.create();
-            builder.setNegativeButton("ok", null);
+            builder.setNegativeButton("关闭", null);
             //禁止返回和外部点击
             builder.setCancelable(false);
             //对话框弹出
@@ -137,14 +134,14 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
             AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
             //自定义title样式
             TextView tv = new TextView(this);
-            tv.setText("已经最后一题了");    //内容
+            tv.setText("已经是最后一题了");    //内容
             tv.setTextSize(17);//字体大小
             tv.setPadding(30, 40, 30, 40);//位置
             tv.setTextColor(Color.parseColor("#000000"));//颜色
             //设置title组件
             builder.setCustomTitle(tv);
             AlertDialog dialog = builder.create();
-            builder.setNegativeButton("ok", null);
+            builder.setNegativeButton("关闭", null);
             //禁止返回和外部点击
             builder.setCancelable(false);
             //对话框弹出
@@ -202,7 +199,7 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
     // 获取错题详情信息
     private void loadItems_Net(int pos) {
         String mRequestUrl = Constant.API + Constant.ERROR_QUE_ANSWER_QUESTION + "?sourceId=" + sourceId +"&userName=" +userName +"&subjectId=" + subjectId +"&currentPage=" + pos + "&questionId=" + questionId;
-        Log.e("wen0223", "详细信息单题请求" + mRequestUrl);
+        Log.e("wen0601", "详细信息单题请求" + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
@@ -211,9 +208,6 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
                 List<BookRecyclerEntity> itemList = gson.fromJson(itemString, new TypeToken<List<BookRecyclerEntity>>() {}.getType());
-                System.out.println("wen0223 ^-^:" + itemList.size());
-                System.out.println("wen0223 ^-^:" + itemList.get(0).getAllPage());
-                System.out.println("wen0223 ^-^:  " + itemList.get(0));
                 Log.e("wen0223", "loadItems_Net: " + itemList);
                 //封装消息，传递给主线程
                 Message message = Message.obtain();
