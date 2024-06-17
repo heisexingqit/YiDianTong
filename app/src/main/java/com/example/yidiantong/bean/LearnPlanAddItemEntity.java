@@ -4,8 +4,12 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import com.google.gson.Gson;
+
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class LearnPlanAddItemEntity implements Serializable {
@@ -191,27 +195,53 @@ public class LearnPlanAddItemEntity implements Serializable {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public String toData(){
-        return  '{' +
-                "\"id\":\"" + id + '\"' +
-                ", \"name\":\"" + (type.equals("question") ? "" :name) + '\"' +
-                ", \"type\":\"" + type + '\"' +
-                ", \"format\":\"" + format + '\"' +
-                ", \"shitiShow\":\"" + '\"' +
-                ", \"shitiAnswer\":\"" + '\"' +
-                ", \"shitiAnalysis\":\"" + '\"' +
-                ", \"baseTypeId\":\"" + baseTypeId + '\"' +
-                ", \"baseTypeName\":\"" + baseTypeName + '\"' +
-                ", \"typeId\":\"" + typeId + '\"' +
-                ", \"typeName\":\"" + typeName + '\"' +
-                ", \"url\":\"" + (url.length() == 0 ? previewPath : url) + '\"' +
-                ", \"pptList\":\"" + '\"' +
-                ", \"filePath\":\"" + filePath + '\"' +
-                ", \"previewPath\":\"" + filePath + '\"' +
-                ", \"linkName\":\"" + "默认环节" + '\"' +
-                ", \"linkOrder\":\"" + 1 + '\"' +
-                ", \"activityName\":\"" + "默认活动" + '\"' +
-                ", \"activityOrder\":\"" + 1 + '\"' +
-                ", \"resourceOrder\":\"" + order + '\"' +
-                '}';
+        Gson gson = new Gson();
+
+
+        Map<String, String> jsonMap = new HashMap<>();
+        jsonMap.put("id", id);
+        jsonMap.put("name", name);
+        jsonMap.put("type", type);
+        jsonMap.put("format", format);
+        jsonMap.put("shitiShow", shitiShow);
+        jsonMap.put("shitiAnswer", shitiAnswer);
+        jsonMap.put("shitiAnalysis", shitiAnalysis);
+        jsonMap.put("baseTypeId", baseTypeId);
+        jsonMap.put("baseTypeName", baseTypeName);
+        jsonMap.put("typeId", typeId);
+        jsonMap.put("typeName", typeName);
+        jsonMap.put("url", url);
+        jsonMap.put("pptList", gson.toJson(pptList));
+        jsonMap.put("filePath", filePath);
+        jsonMap.put("previewPath", previewPath);
+        jsonMap.put("linkName", "默认环节");
+        jsonMap.put("linkOrder", "1");
+        jsonMap.put("activityName", "默认活动");
+        jsonMap.put("activityOrder", "1");
+        jsonMap.put("resourceOrder", String.valueOf(order));
+
+        return  gson.toJson(jsonMap);
+//        return  '{' +
+//                "\"id\":\"" + id + '\"' +
+//                ", \"name\":\"" + (type.equals("question") ? "" :name) + '\"' +
+//                ", \"type\":\"" + type + '\"' +
+//                ", \"format\":\"" + format + '\"' +
+//                ", \"shitiShow\":\"" + '\"' +
+//                ", \"shitiAnswer\":\"" + '\"' +
+//                ", \"shitiAnalysis\":\"" + '\"' +
+//                ", \"baseTypeId\":\"" + baseTypeId + '\"' +
+//                ", \"baseTypeName\":\"" + baseTypeName + '\"' +
+//                ", \"typeId\":\"" + typeId + '\"' +
+//                ", \"typeName\":\"" + typeName + '\"' +
+//                ", \"url\":\"" + (url.length() == 0 ? previewPath : url) + '\"' +
+//                ", \"pptList\":\"" + '\"' +
+//                ", \"filePath\":\"" + filePath + '\"' +
+//                ", \"previewPath\":\"" + filePath + '\"' +
+//                ", \"linkName\":\"" + "默认环节" + '\"' +
+//                ", \"linkOrder\":\"" + 1 + '\"' +
+//                ", \"activityName\":\"" + "默认活动" + '\"' +
+//                ", \"activityOrder\":\"" + 1 + '\"' +
+//                ", \"resourceOrder\":\"" + order + '\"' +
+//                '}';
     }
 }

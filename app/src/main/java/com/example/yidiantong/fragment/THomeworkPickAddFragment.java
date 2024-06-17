@@ -343,13 +343,13 @@ public class THomeworkPickAddFragment extends Fragment implements View.OnClickLi
     };
 
     private void loadItems_Net() {
-        Log.e("wen", "loadItems_Net: " + xueduan);
-        Log.e("wen", "loadItems_Net: " + xueke);
-        Log.e("wen", "loadItems_Net: " + zhishidian);
-        Log.e("wen", "loadItems_Net: " + banben);
-        Log.e("wen", "loadItems_Net: " + jiaocai);
-        Log.e("wen", "loadItems_Net: " + type);
-        Log.e("wen", "loadItems_Net: " + shareTag);
+        Log.e("wen", "loadItems_Net:xueduan " + xueduan);
+        Log.e("wen", "loadItems_Net:xueke " + xueke);
+        Log.e("wen", "loadItems_Net:zhishidian " + zhishidian);
+        Log.e("wen", "loadItems_Net:banben " + banben);
+        Log.e("wen", "loadItems_Net:jiaocai " + jiaocai);
+        Log.e("wen", "loadItems_Net:type " + type);
+        Log.e("wen", "loadItems_Net:shareTag " + shareTag);
 
         if (StringUtils.hasEmptyString(xueduan, xueke, zhishidian, banben, jiaocai, type, shareTag)) {
             return;
