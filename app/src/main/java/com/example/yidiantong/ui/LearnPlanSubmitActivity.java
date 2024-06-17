@@ -50,6 +50,7 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
     private RelativeLayout rl_submitting;
     private RelativeLayout rl_loading;
     private String title;
+    private boolean isSubmitting = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +138,10 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
     };
 
     private void submitFinal() {
+        if (isSubmitting) {
+            return; // 如果正在提交中，直接返回不执行后续操作
+        }
+        isSubmitting = true;
         java.util.Date day = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd:HH:mm:ss");
         String date = sdf.format(day);
@@ -156,6 +161,7 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
                     intent.putExtra("currentItem", -1);
                     setResult(Activity.RESULT_OK, intent);
                     rl_submitting.setVisibility(View.GONE);
+                    isSubmitting = false;
                     finish();
                 } else {
                     Toast.makeText(LearnPlanSubmitActivity.this, "提交失败！", Toast.LENGTH_SHORT).show();

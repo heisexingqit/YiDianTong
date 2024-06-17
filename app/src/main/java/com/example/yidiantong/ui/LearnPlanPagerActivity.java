@@ -181,7 +181,9 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
                     int index = intent.getIntExtra("currentItem", 0);
                     if (index == -1) {
                         Toast.makeText(LearnPlanPagerActivity.this, "提交成功！", Toast.LENGTH_SHORT).show();
-                        finish();
+                        Intent toHome = new Intent(LearnPlanPagerActivity.this, MainPagerActivity.class);
+                        toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(toHome);
                     } else {
                         currentItem = index;
                         vp_homework.setCurrentItem(currentItem);

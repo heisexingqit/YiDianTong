@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 
 
@@ -107,8 +108,10 @@ public class PswDialog extends Dialog implements View.OnClickListener {
                     if(!new_pw.equals(new_pw2)){
                         Toast.makeText(mContext, "两次输入的密码不一致!", Toast.LENGTH_SHORT).show();
                         break;
-                    }
-                    confirmListener.onConfirm(this);
+                    }else if (!MyApplication.password.equals(old_pw)) { // 假设MyApplication.password存储的是正确的原密码
+                        Toast.makeText(mContext, "原密码错误！", Toast.LENGTH_SHORT).show();
+                        break;
+                    }else confirmListener.onConfirm(this);
                 }
                 dismiss();
                 break;
