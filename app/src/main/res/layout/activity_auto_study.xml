@@ -323,6 +323,82 @@
                 android:layout_height="1dp"
                 android:background="@color/light_gray" />
 
+            <!-- TODO 后期需删除 -->
+            <!-- 学生  开始 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="10dp">
+
+                    <TextView
+                        android:id="@+id/tv_xs"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="    学生:"
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tv_stu"
+                        android:layout_width="0dp"
+
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="20dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text=""
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
+
+                    <com.example.yidiantong.View.ClickableImageView
+                        android:id="@+id/iv_stu"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/down_icon" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_stu_null"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="学生列表未获取到或者为空"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+
+                <ScrollView
+                    android:id="@+id/sv_stu"
+                    android:layout_width="match_parent"
+                    android:layout_height="190dp">
+
+                    <com.google.android.flexbox.FlexboxLayout
+                        android:id="@+id/fl_stu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="18dp"
+                        android:layout_marginEnd="30dp"
+                        app:flexWrap="wrap" />
+
+                </ScrollView>
+            </LinearLayout>
+
+            <!-- 分割线 -->
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="1dp"-->
+<!--                android:background="@color/light_gray" />-->
+
         </LinearLayout>
     </ScrollView>
 

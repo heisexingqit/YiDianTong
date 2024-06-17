@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +32,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AutoStudyActivity extends AppCompatActivity implements View.OnClickListener{
@@ -79,6 +82,16 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
 
     private SharedPreferences preferences;
     private boolean loadPreference = true; // 自动填写判断，仅第一次执行
+
+    // TODO 后期需删除
+    private Map<String, String> stuMap = new LinkedHashMap<>();  // 教材
+    private FlexboxLayout fl_stu;
+    private ClickableImageView iv_stu;
+    private String stu = "";
+    private TextView lastStu;
+    private TextView tv_stu;
+    private TextView tv_stu_null;
+    private ScrollView sv_stu;
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -135,6 +148,16 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
         iv_banben.setOnClickListener(this);
         iv_jiaocai.setOnClickListener(this);
 
+        // TODO 后期需删除
+        tv_stu = findViewById(R.id.tv_stu);
+        tv_stu.setOnClickListener(v -> iv_stu.callOnClick());
+        TextView tv_xs = findViewById(R.id.tv_jc);
+        tv_stu_null = findViewById(R.id.tv_stu_null);
+        sv_stu = findViewById(R.id.sv_stu);
+        fl_stu = findViewById(R.id.fl_stu);
+        iv_stu = findViewById(R.id.iv_stu);
+        iv_stu.setOnClickListener(this);
+
         // --------------------------------//
         //  记住选择-本地数据读取
         //  改进，仅存储id和name
@@ -164,6 +187,10 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
                 break;
             case R.id.iv_jiaocai:
                 showList(3);
+                break;
+            // TODO 后期需删除
+            case R.id.iv_stu:
+                showList(4);
                 break;
             case R.id.btn_select_knowledge:
                 if (StringUtils.hasEmptyString(xueduan, xueke, banben, jiaocai)) {
@@ -197,6 +224,9 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
                     editor.putString("jiaocai", jiaocai);
                     intent.putExtra("jiaocai", jiaocai);
                     intent.putExtra("jiaocaiId", jiaocaiMap.get(jiaocai));
+
+                    // TODO 后期需删除
+                    intent.putExtra("stu", stu);
 
                     editor.commit();
 
@@ -233,6 +263,13 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
                 iv_jiaocai.setImageResource(R.drawable.down_icon);
                 tv_jiaocai_null.setVisibility(View.GONE);
                 break;
+            // TODO 后期需删除
+            case 4:
+                fl_stu.removeAllViews();
+                iv_stu.setImageResource(R.drawable.down_icon);
+                tv_stu_null.setVisibility(View.GONE);
+//                sv_stu.setVisibility(View.GONE);
+                break;
             default:
                 break;
         }
@@ -255,6 +292,11 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
                 case 3:
                     showJiaoCai();
                     iv_jiaocai.setImageResource(R.drawable.up_icon);
+                    break;
+                // TODO 后期需删除
+                case 4:
+                    showStu();
+                    iv_stu.setImageResource(R.drawable.up_icon);
                     break;
                 default:
                     break;
@@ -553,6 +595,8 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
                         // -----------------------//
                         // 同步教材完成，全部同步完成
                         // -----------------------//
+                        // TODO 后期需删除
+                        loadStu();
                         loadPreference = false;
                     }
                 }
@@ -605,6 +649,71 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
             fl_jiaocai.addView(view);
         });
     }
+
+    // TODO 后期需删除
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void loadStu() {
+        mRequestUrl = "http://www.cn901.com:8111//AppServer/ajax/studentApp_getStuList.do";
+        Log.d("wen", "loadStu: " + mRequestUrl);
+        stuMap.clear();
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                JSONArray data = json.getJSONArray("data");
+                for (int i = 0; i < data.length(); ++i) {
+                    stuMap.put(data.getString(i), data.getString(i));
+                }
+                Log.d("wen", "学生: " + stuMap);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.d("wen", "Volley_Error: " + error.toString());
+        });
+        MyApplication.addRequest(request, TAG);
+    }
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void showStu() {
+        if (stuMap.size() == 0) {
+            tv_stu_null.setVisibility(View.VISIBLE);
+        }
+        lastStu = null;
+        stuMap.forEach((name, id) -> {
+            view = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_block, fl_stu, false);
+            TextView tv_name = view.findViewById(R.id.tv_name);
+            tv_name.setText(name);
+            if (name.equals(stu)) {
+                selectedTv(tv_name);
+                lastStu = tv_name;
+            }
+            tv_name.setOnClickListener(v -> {
+                stu = (String) tv_name.getText();
+
+                if (lastStu != null) {
+                    unselectedTv(lastStu);
+                }
+
+                if (lastStu == tv_name) {
+                    stu = "";
+                    lastStu = null;
+                    refresh(4);
+                } else {
+                    stu = tv_name.getText().toString();
+                    selectedTv(tv_name);
+                    lastStu = tv_name;
+                }
+                tv_stu.setText(stu);
+            });
+            ViewGroup.LayoutParams params = tv_name.getLayoutParams();
+            params.width = fl_stu.getWidth() / 3 - PxUtils.dip2px(view.getContext(), 15);
+            tv_name.setLayoutParams(params);
+            fl_stu.addView(view);
+        });
+//        sv_stu.setVisibility(View.VISIBLE);
+    }
+
 
     // 刷新文本的内容
     void refresh(int type) {
