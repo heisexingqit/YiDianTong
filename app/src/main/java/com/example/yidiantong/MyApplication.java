@@ -86,7 +86,7 @@ public class MyApplication extends Application {
          * 延长请求超时
          */
         request.setRetryPolicy(new DefaultRetryPolicy(
-                30000, // 30 seconds timeout
+                1200000, // 120 seconds timeout
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 //        /**

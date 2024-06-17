@@ -1,9 +1,11 @@
 package com.example.yidiantong.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -54,9 +56,10 @@ public class BookExerciseFragment extends Fragment {
 
     private RelativeLayout rl_loading;
     private ClickableImageView fiv_refresh;//刷新题目按钮
+    private TextView tv_knowledge_name;//原试题考点
 
     //请求数据参数
-    private int currentPage = 0;
+    private int currentPage = -1;
     private String userName; //用户名
     private String course_Id;  //学科id
     private String course_name;  //学科名
@@ -111,8 +114,7 @@ public class BookExerciseFragment extends Fragment {
         TextView tv_title = view.findViewById(R.id.ftv_title);
         tv_title.setText("举一反三");
 
-        LinearLayout ll_knowledge_name = view.findViewById(R.id.ll_knowledge_name);
-        ll_knowledge_name.setVisibility(View.GONE);
+        tv_knowledge_name = view.findViewById(R.id.tv_knowledge_name);
 
         //加载页
         rl_loading = view.findViewById(R.id.rl_loading);
@@ -190,14 +192,20 @@ public class BookExerciseFragment extends Fragment {
             fll_null.setVisibility(View.GONE);
             rl_loading.setVisibility(View.VISIBLE);
         }
-//        String mRequestUrl = Constant.API + "/AppServer/ajax/studentApp_getRecommendQue.do" + "?questionId=" + questionIdd;
-        String mRequestUrl = Constant.API +"/AppServer/ajax/studentApp_getQuestionsJYFS.do?questionId=" + questionIdd + "&currentPage=" + currentPage;
+        String mRequestUrl = "http://www.cn901.net:8111/AppServer/ajax/studentApp_getQuestionsJYFS.do?userId=" + userName + "&questionId="
+                + questionIdd + "&currentPage=" + currentPage;
         Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String message1 = json.getString("message");
+                Log.d("song0321", "message: " + message1);
+                String[] split = message1.split("@_@");
+                //弹出警告框,将数组第一个元素作为警告框内容,第二个元素作为原试题考点
+                Alert(split[0]);
+                tv_knowledge_name.setText("原试题考点: " + split[1]);
                 String itemString = json.getString("data");
-                Log.e("wen0321", "itemString: " + itemString);
+                Log.d("song0321", "itemString: " + itemString);
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
                 itemList = gson.fromJson(itemString, new TypeToken<List<BookExerciseEntity>>() {}.getType());
@@ -236,6 +244,24 @@ public class BookExerciseFragment extends Fragment {
             Toast.makeText(BookExerciseFragment.this.getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
         });
         MyApplication.addRequest(request, TAG);
+    }
+
+    private void Alert(String alert) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), AlertDialog.THEME_HOLO_LIGHT);
+        //自定义title样式
+        TextView tv = new TextView(getContext());
+        tv.setText(alert);    //内容
+        tv.setTextSize(17);//字体大小
+        tv.setPadding(30, 40, 30, 40);//位置
+        tv.setTextColor(Color.parseColor("#000000"));//颜色
+        //设置title组件
+        builder.setCustomTitle(tv);
+        AlertDialog dialog = builder.create();
+        builder.setNegativeButton("ok", null);
+        //禁止返回和外部点击
+        builder.setCancelable(false);
+        //对话框弹出
+        builder.show();
     }
 
     //慢加载

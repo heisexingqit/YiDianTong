@@ -1,17 +1,23 @@
 package com.example.yidiantong.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,15 +27,23 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import com.android.volley.toolbox.StringRequest;
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.bean.BookExerciseEntity;
+import com.example.yidiantong.ui.KnowledgeShiTiActivity;
+import com.example.yidiantong.ui.MainBookUpActivity;
+import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.RecyclerInterface;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 
@@ -55,7 +69,7 @@ public class ShiTiDetailClozeFragment extends Fragment implements View.OnClickLi
     private String userName;// 用户名
     private String subjectId;// 学科id
     private String courseName;// 课程名
-    private Boolean exerciseType;//是否是举一反三or巩固提升
+    private String flag;// 模式标记
 
     private BookExerciseEntity bookExerciseEntity;
     private ImageView fiv_bd_tf;
@@ -112,6 +126,7 @@ public class ShiTiDetailClozeFragment extends Fragment implements View.OnClickLi
         courseName = arg.getString("courseName");
         currentpage = arg.getString("currentpage");
         allpage = arg.getString("allpage");
+        flag = getActivity().getIntent().getStringExtra("flag");
 
         //获取view
         view = inflater.inflate(R.layout.fragment_book_detail_cloze, container, false);
@@ -138,7 +153,11 @@ public class ShiTiDetailClozeFragment extends Fragment implements View.OnClickLi
 
         // 题号和平均分
         ftv_bd_num = view.findViewById(R.id.ftv_bd_num);
-        ftv_bd_num.setText("第" + currentpage + "题");
+        if (bookExerciseEntity.getQuestionKeyword().equals("")) {
+            ftv_bd_num.setText("第" + currentpage + "题");
+        } else {
+            ftv_bd_num.setText("第" + currentpage + "题  (" + bookExerciseEntity.getQuestionKeyword() + "");
+        }
         ftv_bd_score = view.findViewById(R.id.ftv_bd_score);
         ftv_bd_score.setVisibility(View.GONE);
 
@@ -211,6 +230,9 @@ public class ShiTiDetailClozeFragment extends Fragment implements View.OnClickLi
             case 3:
                 arrayString = preferences.getString("autoStuLoadAnswer", null);
                 break;
+            case 5:
+                arrayString = preferences.getString("OnlineTestAnswer", null);
+                break;
         }
         if (arrayString != null) {
             String[] exerciseStuLoadAnswer = arrayString.split(",");
@@ -276,7 +298,8 @@ public class ShiTiDetailClozeFragment extends Fragment implements View.OnClickLi
                     } else {
                         fiv_bd_tf.setImageResource(R.drawable.answrong);
                     }
-
+                    // 保存学生答案至服务器
+                    saveAnswer2Server(bookExerciseEntity.getShiTiAnswer(), stuans, type);
                     // 保存学生答案至本地
                     String arrayString = null;
                     switch (type) {
@@ -316,10 +339,80 @@ public class ShiTiDetailClozeFragment extends Fragment implements View.OnClickLi
                                 editor.commit();
                             }
                             break;
+                        case 5:
+                            arrayString = preferences.getString("OnlineTestAnswer", null);
+                            if (arrayString != null) {
+                                String[] OnlineTestAnswer = arrayString.split(",");
+                                OnlineTestAnswer[Integer.parseInt(currentpage) - 1] = stuans; // 数组题号对应页数-1
+                                SharedPreferences.Editor editor = preferences.edit();
+                                arrayString = TextUtils.join(",", OnlineTestAnswer);
+                                System.out.println("arrayString: " + arrayString);
+                                editor.putString("OnlineTestAnswer", arrayString);
+                                editor.commit();
+                            }
+                            if (!arrayString.contains("null")) {
+                                Toast.makeText(getContext(), "测试完成！", Toast.LENGTH_SHORT).show();
+                                if (flag.equals("自主学习")){
+                                    Intent intent = new Intent(getActivity(), KnowledgeShiTiActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                    startActivity(intent);
+                                    getActivity().finish();
+                                }else if (flag.equals("巩固提升")){
+                                    Intent intent = new Intent(getActivity(), MainBookUpActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                    startActivity(intent);
+                                    getActivity().finish();
+                                }
+                            }
+                            break;
                     }
 
                 }
                 break;
         }
     }
+
+    private void saveAnswer2Server(String queAnswer, String stuAnswer,int type) {
+        String mRequestUrl = "http://www.cn901.net:8111/AppServer/ajax/studentApp_savePythonRecommendQueAnswer.do?userId=" +
+                userName + "&questionId=" + bookExerciseEntity.getQuestionId() + "&queAnswer=" + queAnswer + "&stuAnswer=" +
+                stuAnswer + "&baseTypeId=" + bookExerciseEntity.getBaseTypeId() + "&type=" + type;
+        Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String success = json.getString("success");
+                Log.d("wen0321", "success: " + success);
+
+                //封装消息，传递给主线程
+                Message message = Message.obtain();
+                message.obj = success.equals("true");
+                //标识线程
+                message.what = 100;
+                handler.sendMessage(message);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(this.getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
+        });
+        MyApplication.addRequest(request, TAG);
+    }
+
+    private final Handler handler = new Handler(Looper.getMainLooper()) {
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @SuppressLint("NotifyDataSetChanged")
+        @Override
+        public void handleMessage(Message message) {
+            super.handleMessage(message);
+            if (message.what == 100) {
+                boolean f = (boolean) message.obj;
+                if (f) {
+                    Toast.makeText(getContext(), "答案保存成功！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "答案保存失败！", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    };
 }

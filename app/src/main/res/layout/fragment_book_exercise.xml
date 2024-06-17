@@ -33,8 +33,10 @@
             android:textSize="15sp"
             android:textColor="@color/black"/>
     </LinearLayout>
-
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray_back" />
 
     <include layout="@layout/error_null"/>
     <include layout="@layout/loading_page"/>

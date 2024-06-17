@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <RelativeLayout
+        android:id="@+id/ll_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingStart="5dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="10dp">
+
+        <!-- 左 -->
+        <com.example.yidiantong.View.ClickableImageView
+            android:id="@+id/fiv_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/left_ex" />
+
+        <!-- 中 -->
+        <TextView
+            android:id="@+id/ftv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:singleLine="true"
+            android:text="null"
+            android:textColor="@color/main_bg"
+            android:textSize="17sp" />
+
+    </RelativeLayout>
+
+    <!-- 分割线 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/ll_biaoti"
+        android:background="@color/black" />
+
+    <LinearLayout
+        android:id="@+id/ll_biaoti"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_title"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/ftv_bell_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="标题:"
+            android:textColor="@color/black" />
+
+        <EditText
+            android:id="@+id/fet_bell_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="10dp"
+            android:background="@android:drawable/editbox_background_normal"
+            android:hint="请输入标题"
+            android:padding="10dp"
+            android:textSize="17sp" />
+
+    </LinearLayout>
+
+    <!-- 分割线 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/ll_class"
+        android:background="@color/black" />
+
+    <LinearLayout
+        android:id="@+id/ll_class"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_biaoti"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="班级:"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/ftv_bell_class_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="10dp"
+                android:background="@android:drawable/editbox_background_normal"
+                android:focusable="false"
+                android:hint="请选择下列班级"
+                android:padding="10dp"
+                android:textSize="17sp" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/fll_bell_class"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/ftv_bellclass_null"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:text="班级列表未获取到或者为空"
+                android:textSize="13sp"
+                android:visibility="gone" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:id="@+id/ffl_bellclass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    app:flexWrap="wrap" />
+            </ScrollView>
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_class"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/black" />
+
+<!--        <TextView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginLeft="10dp"-->
+<!--            android:layout_marginBottom="3dp"-->
+<!--            android:text="任务描述:"-->
+<!--            android:textSize="16sp" />-->
+
+<!--        <RelativeLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="60dp"-->
+<!--            android:paddingStart="10dp"-->
+<!--            android:paddingTop="7dp"-->
+<!--            android:paddingEnd="10dp"-->
+<!--            android:paddingBottom="6dp">-->
+
+<!--            <EditText-->
+<!--                android:id="@+id/et_task_description"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:background="@drawable/default_edit_text"-->
+<!--                android:paddingStart="15dp"-->
+<!--                android:paddingEnd="15dp"-->
+<!--                android:text=""-->
+<!--                android:textSize="14sp" />-->
+<!--        </RelativeLayout>-->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="3dp"
+            android:text="朗读内容:"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:id="@+id/ll_content"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/book_detail">
+
+            <WebView
+                android:id="@+id/wv_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginRight="3dp"
+                android:layout_marginBottom="3dp"
+                android:scrollbars="none" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!--分隔线-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/ll_bottom_block"
+        android:background="@color/black" />
+    <!--答案输入区-->
+    <RelativeLayout
+        android:id="@+id/ll_bottom_block"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_alignParentBottom="true"
+        android:background="#e6ddd6">
+
+        <!-- 左边的图标 -->
+        <com.example.yidiantong.View.ClickableImageView
+            android:id="@+id/civ_camera"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/camera" />
+
+        <!-- 中间的图标 -->
+        <com.example.yidiantong.View.ClickableImageView
+            android:id="@+id/civ_gallery"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:layout_marginEnd="10dp"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/photo" />
+
+        <!-- 右边的布局 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/shape_translation_et_bg">
+
+            <TextView
+                android:id="@+id/tv_save"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="1dp"
+                android:background="@drawable/shape_translation_tv_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="发布"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+
+    <!--    <LinearLayout-->
+<!--        android:id="@+id/ll_bottom_block"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="55dp"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:background="#e6ddd6">-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="42dp"-->
+<!--            android:layout_gravity="center_vertical"-->
+<!--            android:layout_marginStart="20dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:background="@drawable/shape_translation_et_bg">-->
+
+<!--            <EditText-->
+<!--                android:id="@+id/et_answer"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_marginStart="10dp"-->
+<!--                android:layout_marginEnd="7dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:background="@null"-->
+<!--                android:hint="请输入任务描述"-->
+<!--                android:textSize="15sp" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/tv_save"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_margin="1dp"-->
+<!--                android:background="@drawable/shape_translation_tv_bg"-->
+<!--                android:clickable="true"-->
+<!--                android:focusable="true"-->
+<!--                android:gravity="center"-->
+<!--                android:padding="8dp"-->
+<!--                android:text="提交"-->
+<!--                android:textColor="@color/white"-->
+<!--                android:textSize="14sp" />-->
+<!--        </LinearLayout>-->
+
+<!--        <com.example.yidiantong.View.ClickableImageView-->
+<!--            android:id="@+id/civ_camera"-->
+<!--            android:layout_width="50dp"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:layout_gravity="center_vertical"-->
+<!--            android:layout_marginStart="20dp"-->
+<!--            android:adjustViewBounds="true"-->
+<!--            android:clickable="true"-->
+<!--            android:focusable="true"-->
+<!--            android:padding="10dp"-->
+<!--            android:scaleType="fitCenter"-->
+<!--            android:src="@drawable/camera" />-->
+
+<!--        <com.example.yidiantong.View.ClickableImageView-->
+<!--            android:id="@+id/civ_gallery"-->
+<!--            android:layout_width="50dp"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:layout_gravity="center_vertical"-->
+<!--            android:layout_marginStart="20dp"-->
+<!--            android:layout_marginEnd="10dp"-->
+<!--            android:adjustViewBounds="true"-->
+<!--            android:clickable="true"-->
+<!--            android:focusable="true"-->
+<!--            android:padding="10dp"-->
+<!--            android:scaleType="fitCenter"-->
+<!--            android:src="@drawable/photo" />-->
+
+<!--    </LinearLayout>-->
+
+</RelativeLayout>

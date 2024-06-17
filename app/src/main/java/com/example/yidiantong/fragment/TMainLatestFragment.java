@@ -45,6 +45,7 @@ import com.example.yidiantong.ui.THomeworkCameraAddActivity;
 import com.example.yidiantong.ui.TLearnPlanAddActivity;
 import com.example.yidiantong.ui.TLiveListActivity;
 import com.example.yidiantong.ui.TPackageAddActivity;
+import com.example.yidiantong.ui.TReadAloudAddActivity;
 import com.example.yidiantong.ui.TWeikeAddActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
@@ -58,6 +59,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+// 教师端首页最新Fragment
 public class TMainLatestFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "TMainLatestFragment";
@@ -301,6 +303,7 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
                     contentView2.findViewById(R.id.tv_add_learnPlan).setOnClickListener(this);
                     contentView2.findViewById(R.id.tv_add_weike).setOnClickListener(this);
                     contentView2.findViewById(R.id.tv_add_homework).setOnClickListener(this);
+                    contentView2.findViewById(R.id.tv_add_read_aloud).setOnClickListener(this);
                     contentView2.findViewById(R.id.tv_select_learnPlan).setOnClickListener(this);
                     contentView2.findViewById(R.id.tv_select_weike).setOnClickListener(this);
                     contentView2.findViewById(R.id.tv_select_paper).setOnClickListener(this);
@@ -380,6 +383,11 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
             case R.id.tv_add_homework:
                 startActivity(new Intent(getActivity(), THomeworkAddActivity.class));
                 window2.dismiss();
+                break;
+            case R.id.tv_add_read_aloud:
+                // 跳转到布置朗读任务页面
+                startActivity(new Intent(getActivity(), TReadAloudAddActivity.class));
+                window2.dismiss();  //关闭添加窗口
                 break;
             case R.id.tv_my_package:
                 window2.dismiss();

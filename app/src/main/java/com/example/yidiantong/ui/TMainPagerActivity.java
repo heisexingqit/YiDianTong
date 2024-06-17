@@ -52,6 +52,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+// 教师主界面, 底部导航栏
 public class TMainPagerActivity extends AppCompatActivity implements View.OnClickListener, TMainLatestFragment.ChangePageInterface, LoadingPageInterface {
     private static final String TAG = "TMainPagerActivity";
 
