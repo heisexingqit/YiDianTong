@@ -248,9 +248,11 @@ public class TMainTeachFragment extends Fragment implements View.OnClickListener
                     intent.putExtra("type", "3");
                 } else if (item.getIconUrl().contains("paper")) {
                     intent.putExtra("type", "paper");
+                    if(item.getPaperType().equals("6")){
+                        intent.putExtra("typeCamera", "true");
+                    }
                 }
                 startActivity(intent);
-
             }
 
             @Override

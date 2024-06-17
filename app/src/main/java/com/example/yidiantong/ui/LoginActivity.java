@@ -115,6 +115,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // 自动登录
         if (user != null && MyApplication.autoLogin) {
             btn_login.callOnClick();
+        }else{
+            et_username.setText("");
+            et_pw.setText("");
         }
     }
 

@@ -1,6 +1,10 @@
 package com.example.yidiantong.bean;
 
+import com.google.gson.Gson;
+
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class THomeworkAddEntity implements Serializable {
     private String pointName;
@@ -147,7 +151,7 @@ public class THomeworkAddEntity implements Serializable {
     public void setSelectFlag(String selectFlag) {
         this.selectFlag = selectFlag;
     }
-    
+
     @Override
     public String toString() {
         return "THomeworkAddEntity{" +
@@ -170,19 +174,7 @@ public class THomeworkAddEntity implements Serializable {
                 '}';
     }
 
-    public String toData() {
-        return '{' +
-                "\"pointName\":\"" + pointName + '\"' +
-                ", \"questionId\":\"" + questionId + '\"' +
-                ", \"baseTypeId\":\"" + baseTypeId + '\"' +
-                ", \"bigId\":\"" + bigId + '\"' +
-                ", \"score\":\"" + score + '\"' +
-                ", \"smallId\":\"" + smallId + '\"' +
-                ", \"questionDifficult\":\"" + questionDifficult + '\"' +
-                ", \"typeName\":\"" + typeName + '\"' +
-                ", \"pointCode\":\"" + pointCode + '\"' +
-                ", \"questionTextControl\":\"" + questionTextControl + '\"' +
-                ", \"typeId\":\"" + typeId + '\"' +
-                '}';
+    public boolean toData() {
+        return true;
     }
 }

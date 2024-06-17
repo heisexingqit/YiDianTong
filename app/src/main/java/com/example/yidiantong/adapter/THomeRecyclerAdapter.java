@@ -1,6 +1,7 @@
 package com.example.yidiantong.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -217,8 +218,10 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
             }
 
             iv_icon.setImageResource(icon_id);
-
             tv_title.setText(item.getfName());
+            tv_title.setEllipsize(TextUtils.TruncateAt.END); // 设置省略号显示在结尾
+
+
 
             // 设置时间
             tv_date.setText(item.getfTime());
