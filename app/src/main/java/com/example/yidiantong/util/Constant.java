@@ -184,6 +184,8 @@ public class Constant {
 
     // 教师端获取知识点
     public static final String T_HOMEWORK_ADD_ZHISHIDIAN = "/AppServer/ajax/teacherApp_getKnowledgeTree.do";
+    // 学生端获取知识点
+    public static final String HOMEWORK_ADD_ZHISHIDIAN = "/AppServer/ajax/teacherApp_getImgKnowledgeTree.do";
 
     // 教师端获取题库
     public static final String T_HOMEWORK_GET_ALL_QUESTIONS = "/AppServer/ajax/teacherApp_getAllQuestions.do";
@@ -312,5 +314,8 @@ public class Constant {
     public static final String T_HOMEWORK_ASSIGN_GET_XZ = "/AppServer/ajax/teacherApp_getXiezuozuList.do";
 
     public static final String T_HOMEWORK_ASSIGN_GET_XZ_CLASS = "/AppServer/ajax/teacherApp_getXiezuozuMemberList.do";
+
+    // 作业预览
+    public static final String T_HOMEWORK_PREVIEW = "/AppServer/ajax/teacherApp_lookZyDetial.do";
 
 }

@@ -52,6 +52,8 @@ import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.ImagePagerAdapter;
 import com.example.yidiantong.bean.BookExerciseEntity;
+import com.example.yidiantong.ui.KnowledgeShiTiActivity;
+import com.example.yidiantong.ui.MainBookUpActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.HomeworkInterface;
 import com.example.yidiantong.util.ImageUtils;
@@ -153,7 +155,7 @@ public class ShiTiDetailSubjectFragment extends Fragment implements View.OnClick
     private String userName;
     private String subjectId;
     private String courseName;
-    private Boolean exerciseType;
+    private String flag; // 模式标记
 
     private BookExerciseEntity bookExerciseEntity;
 
@@ -209,6 +211,7 @@ public class ShiTiDetailSubjectFragment extends Fragment implements View.OnClick
         courseName = arg.getString("courseName");
         currentpage = arg.getString("currentpage");
         allpage = arg.getString("allpage");
+        flag = getActivity().getIntent().getStringExtra("flag");
 
         //获取view
         View view = inflater.inflate(R.layout.fragment_book_shiti_subject, container, false);
@@ -253,7 +256,11 @@ public class ShiTiDetailSubjectFragment extends Fragment implements View.OnClick
 
         // 题号
         ftv_bd_num = view.findViewById(R.id.ftv_bd_num);
-        ftv_bd_num.setText("第" + currentpage + "题");
+        if (bookExerciseEntity.getQuestionKeyword().equals("")) {
+            ftv_bd_num.setText("第" + currentpage + "题");
+        } else {
+            ftv_bd_num.setText("第" + currentpage + "题  (" + bookExerciseEntity.getQuestionKeyword() + "");
+        }
 
         //翻页组件
         ImageView iv_pager_last = getActivity().findViewById(R.id.iv_page_last);
@@ -434,6 +441,9 @@ public class ShiTiDetailSubjectFragment extends Fragment implements View.OnClick
             case 3:
                 arrayString = preferences.getString("autoStuLoadAnswer", null);
                 break;
+            case 5:
+                arrayString = preferences.getString("OnlineTestAnswer", null);
+                break;
         }
         if (arrayString != null) {
             String[] stuLoadAnswer = arrayString.split(",");
@@ -445,17 +455,14 @@ public class ShiTiDetailSubjectFragment extends Fragment implements View.OnClick
                 String s = html_answer_head + loadAnswer + html_answer_tail;
                 wv_answer.loadDataWithBaseURL(null, s, "text/html", "utf-8", null);
 
-                // 利用正则表达式统计"onclick"出现的次数
+                // 利用正则表达式统计"src"出现的次数
                 Pattern srcPattern = Pattern.compile("src='(http[^']*)'");
                 Matcher srcMatcher = srcPattern.matcher(loadAnswer);
-
-                // Count occurrences of "src=" and extract URLs
-                int count = 0;
+                // 通过正则表达式匹配出所有图片的url
                 while (srcMatcher.find()) {
-                    count++;
                     String url = srcMatcher.group(1);
-                    url_list.add(url);
-                    adapter.updateData(url_list);// 关键
+                    url_list.add(url); // 添加到图片url列表
+                    adapter.updateData(url_list); // 更新图片列表
                 }
 
             }
@@ -476,6 +483,9 @@ public class ShiTiDetailSubjectFragment extends Fragment implements View.OnClick
                 ll_bottom_block.setVisibility(View.GONE);
                 html_answer += et_answer.getText().toString();
                 System.out.println("html_answer:" + html_answer);
+
+                // 保存学生答案至服务器
+                saveAnswer2Server(bookExerciseEntity.getShiTiAnswer(), html_answer, type);
 
                 // 保存学生答案至本地
                 String arrayString = null;
@@ -514,6 +524,32 @@ public class ShiTiDetailSubjectFragment extends Fragment implements View.OnClick
                             System.out.println("arrayString: " + arrayString);
                             editor2.putString("autoStuLoadAnswer", arrayString);
                             editor2.commit();
+                        }
+                        break;
+                    case 5:
+                        arrayString = preferences.getString("OnlineTestAnswer", null);
+                        if (arrayString != null) {
+                            String[] OnlineTestAnswer = arrayString.split(",");
+                            OnlineTestAnswer[Integer.parseInt(currentpage) - 1] = html_answer; // 数组题号对应页数-1
+                            SharedPreferences.Editor editor3 = preferences.edit();
+                            arrayString = TextUtils.join(",", OnlineTestAnswer);
+                            System.out.println("arrayString: " + arrayString);
+                            editor3.putString("OnlineTestAnswer", arrayString);
+                            editor3.commit();
+                        }
+                        if (!arrayString.contains("null")) {
+                            Toast.makeText(getContext(), "测试完成！", Toast.LENGTH_SHORT).show();
+                            if (flag.equals("自主学习")){
+                                Intent intent = new Intent(getActivity(), KnowledgeShiTiActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                startActivity(intent);
+                                getActivity().finish();
+                            }else if (flag.equals("巩固提升")){
+                                Intent intent = new Intent(getActivity(), MainBookUpActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                startActivity(intent);
+                                getActivity().finish();
+                            }
                         }
                         break;
                 }
@@ -605,6 +641,50 @@ public class ShiTiDetailSubjectFragment extends Fragment implements View.OnClick
     private String getHtmlAnswer() {
         return html_answer_head + html_answer + html_answer_tail;
     }
+
+    private void saveAnswer2Server(String queAnswer, String stuAnswer,int type) {
+        String mRequestUrl = "http://www.cn901.net:8111/AppServer/ajax/studentApp_savePythonRecommendQueAnswer.do?userId=" +
+                userName + "&questionId=" + bookExerciseEntity.getQuestionId() + "&queAnswer=" + queAnswer + "&stuAnswer=" +
+                stuAnswer + "&baseTypeId=" + bookExerciseEntity.getBaseTypeId() + "&type=" + type;
+        Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String success = json.getString("success");
+                Log.d("wen0321", "success: " + success);
+
+                //封装消息，传递给主线程
+                Message message = Message.obtain();
+                message.obj = success.equals("true");
+                //标识线程
+                message.what = 100;
+                handlerSave.sendMessage(message);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(this.getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
+        });
+        MyApplication.addRequest(request, TAG);
+    }
+
+    private final Handler handlerSave = new Handler(Looper.getMainLooper()) {
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @SuppressLint("NotifyDataSetChanged")
+        @Override
+        public void handleMessage(Message message) {
+            super.handleMessage(message);
+            if (message.what == 100) {
+                boolean f = (boolean) message.obj;
+                if (f) {
+                    Toast.makeText(getContext(), "答案保存成功！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "答案保存失败！", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    };
 
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @SuppressLint("NotifyDataSetChanged")

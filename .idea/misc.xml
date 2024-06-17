@@ -128,7 +128,9 @@
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/activity_thomework_camera_add_pick.xml" value="0.2554347826086957" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/activity_thomework_mark.xml" value="0.209375" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/activity_thomework_mark_submit.xml" value="0.3958333333333333" />
+        <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/activity_thomework_preview.xml" value="0.2875" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/activity_thomework_report.xml" value="0.21145833333333333" />
+        <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/activity_tlean_plan_preview.xml" value="0.27291666666666664" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/activity_tlearn_plan_add.xml" value="0.4" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/activity_tlearn_plan_add_pick.xml" value="0.2" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/activity_tlive_add.xml" value="0.29528985507246375" />
@@ -173,6 +175,7 @@
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_homework_reading.xml" value="0.165625" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_homework_single.xml" value="0.34739583333333335" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_homework_translation.xml" value="0.20520833333333333" />
+        <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_learn_plan_qu_review.xml" value="0.2984375" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_learn_plan_video.xml" value="0.2578125" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_main_course.xml" value="0.36186594202898553" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/fragment_main_home.xml" value="0.284375" />
@@ -224,6 +227,7 @@
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/item_t_homework_camera_list_seven.xml" value="0.37743589743589745" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/item_t_homework_camera_list_translation.xml" value="0.37743589743589745" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/item_t_homework_mark_submit.xml" value="0.3958333333333333" />
+        <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/item_t_homework_preview.xml" value="0.2864583333333333" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/item_t_homework_report_student.xml" value="0.165625" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/item_t_homework_stu.xml" value="0.3220108695652174" />
         <entry key="..\:/AndroidProject/YiDianTong0913/app/src/main/res/layout/item_t_score_btn.xml" value="0.2515625" />
@@ -314,7 +318,6 @@
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_tpackage_add.xml" value="0.13271604938271606" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_tpackage_add_pick.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_tremove_control.xml" value="0.3" />
-        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/activity_tweike_add.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/bar_bottom_navigation.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/bar_bottom_navigation2.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/bar_top_homework_title3.xml" value="0.3" />
@@ -368,7 +371,6 @@
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_t_homework_camera_single.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_t_homework_mark.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_t_homework_pick_add.xml" value="0.3" />
-        <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_t_homework_pick_assign.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_t_homework_pick_change.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_t_learn_plan_add_paper.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/fragment_t_learn_plan_add_ppt.xml" value="0.3" />
@@ -418,21 +420,57 @@
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/picture_menu.xml" value="0.3" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/submitting_page.xml" value="0.2552083333333333" />
         <entry key="..\:/Code/android/YiDianTong/app/src/main/res/layout/t_homework_mark_btn_panel.xml" value="0.3" />
-        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_auto_study.xml" value="0.11354166666666667" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout-land/picture_menu.xml" value="0.22134038800705466" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_TRead_Aloud.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_auto_shiti.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_auto_study.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_auto_study_null.xml" value="0.26145833333333335" />
         <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_book_exercise_detail.xml" value="0.26145833333333335" />
         <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_book_recycle.xml" value="0.26145833333333335" />
         <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_book_up_detail.xml" value="0.11354166666666667" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_homework_pager.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_main_pager.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_notice_look.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_read_aloud_look.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_shiti_null.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_tbell_look_notice.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_tbell_notice_submit.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_tbell_notice_update.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_thomework_add.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_thomework_add_pick.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_tlive_list.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_tmain_pager.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_tread_aloud.xml" value="0.2572463768115942" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_tread_aloud_add.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/activity_tread_aloud_arrangement.xml" value="0.26145833333333335" />
         <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/bar_top.xml" value="0.26145833333333335" />
         <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/bar_top_book.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/bar_top_search2.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/error_null.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/foot_load_tips.xml" value="0.26145833333333335" />
         <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/fragment_book_detail.xml" value="0.26145833333333335" />
         <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/fragment_book_detail_cloze.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/fragment_book_detail_judge.xml" value="0.26145833333333335" />
         <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/fragment_book_detail_reanding.xml" value="0.11354166666666667" />
         <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/fragment_book_detail_seven2five.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/fragment_book_detail_single.xml" value="0.26145833333333335" />
         <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/fragment_book_detail_subject.xml" value="0.26145833333333335" />
         <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/fragment_book_exercise.xml" value="0.26145833333333335" />
         <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/fragment_book_shiti_subject.xml" value="0.26145833333333335" />
         <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/fragment_book_up.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/fragment_main_home.xml" value="0.26145833333333335" />
         <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/fragment_main_my.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/fragment_t_bell_notice_submit.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/fragment_t_homework_pick_assign.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/fragment_t_main_latest.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/item_book_detail_list.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/item_home_list.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/item_t_homework_add_block.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/item_t_homework_add_show_zsd.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/menu_search_select.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/menu_t_home_add.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/menu_t_main_teach_add.xml" value="0.26145833333333335" />
+        <entry key="..\:/software/Git/Git-Space/YiDianTong/app/src/main/res/layout/picture_menu.xml" value="0.26145833333333335" />
       </map>
     </option>
   </component>

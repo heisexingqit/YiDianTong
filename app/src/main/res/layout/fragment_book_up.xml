@@ -5,9 +5,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/white"
-    tools:context=".fragment.BookDetailFragment">
+    tools:context=".fragment.BookUpFragment">
 
     <include layout="@layout/bar_top" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray_back" />
     <include layout="@layout/error_null"/>
     <include layout="@layout/loading_page"/>
 

@@ -36,7 +36,9 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
+import com.example.yidiantong.View.ClickableTextView;
 import com.example.yidiantong.adapter.THomeworkStuRecyclerAdapter;
+import com.example.yidiantong.adapter.TLearnPlanPreviewAdapter;
 import com.example.yidiantong.bean.THomeworkStudentItemEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
@@ -48,6 +50,7 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.Inet4Address;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,6 +93,7 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
     //  checkIn点击后标记
     // -------------------
     private int checkInPos = -1;
+    private ClickableImageView iv_preview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +105,18 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
         teacherId = intent.getStringExtra("teacherId");
         type = intent.getStringExtra("type");
         homeworkName = intent.getStringExtra("homeworkName");
+        iv_preview = findViewById(R.id.iv_preview);
+        iv_preview.setOnClickListener(view -> {
+            Intent toPreview = null;
+            if(type.equals("paper")){
+                toPreview = new Intent(this, THomeworkPreviewActivity.class);
+            }else{
+                toPreview = new Intent(this, TLearnPlanPreviewActivity.class);
+            }
+            toPreview.putExtra("paperId", taskId);
+            toPreview.putExtra("homeworkName", homeworkName);
+            startActivity(toPreview);
+        });
 
         // 组件获取
         btn_report = findViewById(R.id.btn_report);

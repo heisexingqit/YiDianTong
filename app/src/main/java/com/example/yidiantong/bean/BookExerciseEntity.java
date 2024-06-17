@@ -13,6 +13,15 @@ public class BookExerciseEntity implements Serializable {
     public String stuHtml = ""; // 主观题图片url
     public String questionId; // 题目id
     public int answerNumber;//答案个数
+    public String questionKeyword;//试题考点
+
+    public String getQuestionKeyword() {
+        return questionKeyword;
+    }
+
+    public void setQuestionKeyword(String questionKeyword) {
+        this.questionKeyword = questionKeyword;
+    }
 
     public int getAnswerNumber() {
         return answerNumber;
@@ -107,7 +116,8 @@ public class BookExerciseEntity implements Serializable {
     @Override
     public String toString() {
         return "BookExerciseEntity{" +
-                "shiTiAnswer='" + shiTiAnswer + '\'' +
+                "questionKeyword='" + questionKeyword + '\'' +
+                ", shiTiAnswer='" + shiTiAnswer + '\'' +
                 ", typeName='" + typeName + '\'' +
                 ", baseTypeId='" + baseTypeId + '\'' +
                 ", stuAnswer='" + stuAnswer + '\'' +

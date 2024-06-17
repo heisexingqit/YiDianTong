@@ -1,8 +1,11 @@
 package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -22,6 +25,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
@@ -38,6 +43,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -49,11 +55,14 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
 
     private RelativeLayout rl_loading;
     private ClickableImageView fiv_refresh;//刷新题目按钮
+    private ClickableImageView fiv_select_stu;//选择学生按钮
     private TextView tv_knowledge_name;
+    private LinearLayout ll_kaodian_filtrate;
 
     //请求数据参数
-    private int currentPage = 0;
+    private int currentPage = -1;
     private String userName; //用户名
+    private String reqName;  //请求用户名
     private String subjectId;  //学科id
     private String course_name;  //学科名
     private String zhishidian;  //知识点
@@ -61,6 +70,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
 
     //列表数据
     private List<BookExerciseEntity> itemList = new ArrayList<>();
+    private List<String> stuList = new ArrayList<>();//学生列表
     private String questionIds;
     BookAutoAdapter adapter;
     private RecyclerView frv_detail;
@@ -74,10 +84,14 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
     private SharedPreferences preferences;
     private String[] autoStuLoadAnswer;
 
+    //TODO 临时添加的变量
+    private boolean[] checkedItems = new boolean[3];
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_book_exercise);
+        setContentView(R.layout.activity_auto_shiti);
 
         preferences = getSharedPreferences("shiti", MODE_PRIVATE);
 
@@ -85,6 +99,11 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
         findViewById(R.id.fiv_back).setOnClickListener(v -> {
             finish();
         });
+
+        //TODO 临时添加的代码
+        for (int i = 0; i < checkedItems.length; i++) {
+            checkedItems[i] = true; // 默认全选
+        }
 
         frv_detail = findViewById(R.id.frv_detail);
         //RecyclerView两步必要配置
@@ -97,15 +116,29 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
         course_name = getIntent().getStringExtra("courseName"); //学科id
         zhishidian = getIntent().getStringExtra("zhishidian"); //知识点
         zhishidianId = getIntent().getStringExtra("zhishidianId"); //知识点id
+        reqName = userName;
 
         TextView tv_title = findViewById(R.id.ftv_title);
         tv_title.setText("知识点试题");
         tv_knowledge_name = findViewById(R.id.tv_knowledge_name);
         tv_knowledge_name.setText(zhishidian);
+        ll_kaodian_filtrate = findViewById(R.id.ll_kaodian_filtrate);
+        //点击后,页面弹出图层,显示章节下的考点,每个考点占一行,并且前面有一个复选框,默认全部为选中状态
+        ll_kaodian_filtrate.setOnClickListener(v -> showCheckableSubjectsDialog());
 
         //加载页
         rl_loading = findViewById(R.id.rl_loading);
         fll_null = findViewById(R.id.fll_null);
+
+        //发送请求获取学生列表
+        getStudentList();
+        //加载学生按钮
+        fiv_select_stu = findViewById(R.id.fiv_select_stu);
+        fiv_select_stu.setVisibility(View.VISIBLE);
+        fiv_select_stu.setOnClickListener(v -> {
+            //将学生集合转换为数组
+            showStusDialog();
+        });
 
         //刷新题目按钮
         fiv_refresh = findViewById(R.id.fiv_refresh);
@@ -139,6 +172,96 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+    }
+
+    private void showStusDialog() {
+        String[] stuArr = new String[this.stuList.size()];
+        for (int i = 0; i < this.stuList.size(); i++) {
+            stuArr[i] = this.stuList.get(i);
+        }
+        System.out.println("学生列表：" + Arrays.toString(stuArr));
+        //使用AlertDialog显示学生列表以供选择
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("选择一个学生");
+        builder.setItems(stuArr, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                reqName = stuArr[which];
+                loadItems_Net();
+            }
+
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+    }
+
+
+    //考点复选框事件
+    private void showCheckableSubjectsDialog() {
+        // 示例考点数据，实际应从数据源获取
+        List<String> subjects = Arrays.asList("考点1", "考点2", "考点3");
+
+        // 创建AlertDialog.Builder实例
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("选择考点");
+
+        builder.setMultiChoiceItems(subjects.toArray(new CharSequence[0]), checkedItems,
+                new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        // 处理复选框状态变化的逻辑
+                        // 这里可以根据需要更新UI或保存用户的选择
+                        checkedItems[which] = isChecked;
+                    }
+                });
+
+        // 添加“确认”按钮
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 处理用户点击确定后的逻辑，比如根据用户的选择更新UI或保存选择状态
+                dialog.dismiss(); // 关闭对话框
+            }
+        });
+
+        // 添加“取消”按钮
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss(); // 关闭对话框
+            }
+        });
+
+        // 显示对话框
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
+    private void getStudentList() {
+        String mRequestUrl = "http://www.cn901.com:8111//AppServer/ajax/studentApp_getStuList.do";
+        Log.d("wen0223", "loadItems_Net: " + mRequestUrl);
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String itemString = json.getString("data");
+                Log.d("wen0501", "itemString: " + itemString);
+                Gson gson = new Gson();
+                //使用Goson框架转换Json字符串为列表
+                stuList = gson.fromJson(itemString, new TypeToken<List<String>>() {}.getType());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            System.out.println(error.toString());
+            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+        });
+        MyApplication.addRequest(request, TAG);
     }
 
     //刷新列表
@@ -180,12 +303,29 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
             fll_null.setVisibility(View.GONE);
             rl_loading.setVisibility(View.VISIBLE);
         }
-        String mRequestUrl = Constant.API+"/AppServer/ajax/studentApp_getQuestionsZZXX.do?subjectId=" + subjectId + "&catalogId=" + zhishidianId;
+        String mRequestUrl = "http://www.cn901.net:8111/AppServer/ajax/studentApp_getQuestionsZZXX.do?" +
+                "userId=" + reqName + "&subjectId=" + subjectId + "&catalogId=" + zhishidianId + "&currentPage=" + currentPage;
         Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String message1 = json.getString("message");
+                Log.d("song0321", "message: " + message1);
+                Alert(message1);
                 String itemString = json.getString("data");
+                //TODO 汇报结束要进行修改
+//                itemString = "[]";
+                //当试题列表为空时,需要跳转中间页进行处理
+                if (itemString.equals("[]") || itemString.equals("") || itemString.equals("null")) {
+                    Intent intent = new Intent(this, OnlineTestNullActivity.class);
+                    intent.putExtra("userName", userName);
+                    intent.putExtra("subjectId", subjectId);
+                    intent.putExtra("courseName", course_name);
+                    intent.putExtra("flag", "自主学习");
+                    startActivity(intent);
+                    finish();
+                }
+
                 Log.d("wen0501", "itemString: " + itemString);
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
@@ -278,6 +418,24 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
 //        }catch (JSONException e) {
 //            e.printStackTrace();
 //        }
+    }
+
+    private void Alert(String alert) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
+        //自定义title样式
+        TextView tv = new TextView(this);
+        tv.setText(alert);    //内容
+        tv.setTextSize(17);//字体大小
+        tv.setPadding(30, 40, 30, 40);//位置
+        tv.setTextColor(Color.parseColor("#000000"));//颜色
+        //设置title组件
+        builder.setCustomTitle(tv);
+        AlertDialog dialog = builder.create();
+        builder.setNegativeButton("ok", null);
+        //禁止返回和外部点击
+        builder.setCancelable(false);
+        //对话框弹出
+        builder.show();
     }
 
     @Override

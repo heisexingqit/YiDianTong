@@ -75,14 +75,26 @@
                 android:textColor="@color/blue_btn"/>
 
         </LinearLayout>
-
+        <com.example.yidiantong.View.ClickableImageView
+            android:id="@+id/iv_preview"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="2dp"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
+            android:src="@drawable/eye_open_ex" />
         <!--右部-->
         <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/iv_setting"
             android:layout_width="40dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:layout_marginStart="15dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="2dp"
             android:adjustViewBounds="true"
             android:clickable="true"

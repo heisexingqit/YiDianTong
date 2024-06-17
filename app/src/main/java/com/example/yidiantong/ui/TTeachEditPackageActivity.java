@@ -26,6 +26,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
@@ -48,6 +49,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -553,12 +555,15 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
         String zhishidian = intent.getStringExtra("zhishidian");
         String zhishidianId = intent.getStringExtra("zhishidianId");
 
+        mRequestUrl = Constant.API + Constant.T_LEARN_PLAN_ASSIGN_SAVE;
 
+        HashMap<String, String> params = new HashMap<>();
+
+        // 仅布置时为空
         StringBuilder jsonStringBuilder = new StringBuilder();
         String jsonString = "[";
-        List<LearnPlanAddItemEntity> pickList = addFragment.pickList;
-        for (int i = 0; i < pickList.size(); ++i) {
-            LearnPlanAddItemEntity item = pickList.get(i);
+        for (int i = 0; i < addFragment.pickList.size(); ++i) {
+            LearnPlanAddItemEntity item = addFragment.pickList.get(i);
             item.setOrder(i + 1);
             if (jsonStringBuilder.length() > 0) {
                 jsonStringBuilder.append(",");
@@ -568,37 +573,66 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
         jsonString += jsonStringBuilder.toString();
         jsonString += "]";
 
-        Log.d("wen", "内容串: " + jsonString);
         try {
-            ketang = URLEncoder.encode(ketang, "UTF-8");
-            clas = URLEncoder.encode(clas, "UTF-8");
-            stuNames = URLEncoder.encode(stuNames, "UTF-8");
-            jsonString = URLEncoder.encode(jsonString, "UTF-8");
+            params.put("assignType", assignType);
 
-            mRequestUrl = Constant.API + Constant.T_LEARN_PLAN_ASSIGN_SAVE + "?assignType=" + assignType +
-                    "&channelCode=" + xueduanCode + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") +
-                    "&subjectCode=" + xuekeCode + "&subjectName=" + URLEncoder.encode(xueke, "UTF-8") +
-                    "&textBookCode=" + banbenCode + "&textBookName=" + URLEncoder.encode(banben, "UTF-8") +
-                    "&gradeLevelCode=" + jiaocaiCode + "&gradeLevelName=" + URLEncoder.encode(jiaocai, "UTF-8") +
-                    "&pointCode=" + zhishidianId + "&pointName=" + URLEncoder.encode(zhishidian, "UTF-8") +
+            params.put("jsonStr", URLEncoder.encode(jsonString, "UTF-8"));
 
-                    "&type=3" + "&learnPlanType=" + "&classHours=" + classHours +
-                    "&studyHours=" + studyHours + "&Introduce=" + URLEncoder.encode(Introduce, "UTF-8") + "&Goal=" + URLEncoder.encode(Goal, "UTF-8") +
-                    "&Emphasis=" + URLEncoder.encode(Emphasis, "UTF-8") + "&Difficulty=" + URLEncoder.encode(Difficulty, "UTF-8") + "&Summary=" + URLEncoder.encode(Summary, "UTF-8") + "&Extension=" + URLEncoder.encode(Extension, "UTF-8") +
+            params.put("channelCode", xueduanCode);
+            params.put("channelName", URLEncoder.encode(xueduan, "UTF-8"));
 
-                    "&startTime=" + startTime + "&endTime=" + endTime +
-                    "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classIds=" + classId +
-                    "&className=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
-                    "&roomType=" + learnType +
+            params.put("subjectCode", xuekeCode);
+            params.put("subjectName", URLEncoder.encode(xueke, "UTF-8"));
 
-                    "&userName=" + MyApplication.username + "&learnPlanId=" + learnPlanId +
-                    "&learnPlanName=" + URLEncoder.encode(learnPlanName, "UTF-8") + "&flag=edit" + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;
+            params.put("textBookCode", banbenCode);
+            params.put("textBookName", URLEncoder.encode(banben, "UTF-8"));
 
-            Log.d("wen", "URL: " + mRequestUrl);
+            params.put("gradeLevelCode", jiaocaiCode);
+            params.put("gradeLevelName", URLEncoder.encode(jiaocai, "UTF-8"));
+
+            params.put("pointCode", zhishidianId);
+            params.put("pointName", URLEncoder.encode(zhishidian, "UTF-8"));
+
+            params.put("type", "3");
+            params.put("learnPlanType", "");
+            params.put("classHours", classHours);
+            params.put("studyHours", studyHours);
+
+            params.put("Introduce", URLEncoder.encode(Introduce, "UTF-8"));
+            params.put("Goal", URLEncoder.encode(Goal, "UTF-8"));
+            params.put("Emphasis", URLEncoder.encode(Emphasis, "UTF-8"));
+            params.put("Difficulty", URLEncoder.encode(Difficulty, "UTF-8"));
+            params.put("Summary", URLEncoder.encode(Summary, "UTF-8"));
+            params.put("Extension", URLEncoder.encode(Extension, "UTF-8"));
+
+            params.put("keTangId", ketangId);
+            params.put("keTangName", URLEncoder.encode(ketang, "UTF-8"));
+            params.put("roomType", learnType);
+
+            params.put("stuIds", stuIds);
+            params.put("stuNames", URLEncoder.encode(stuNames, "UTF-8"));
+
+            params.put("classIds", classId);
+            params.put("className", URLEncoder.encode(clas, "UTF-8"));
+
+            params.put("startTime", startTime);
+            params.put("endTime", endTime);
+
+            params.put("userName", MyApplication.username);
+            params.put("learnPlanId", learnPlanId);
+            params.put("learnPlanName", URLEncoder.encode(learnPlanName, "UTF-8"));
+
+            params.put("flag", "edit");
+            params.put("learnPlanFlag", String.valueOf(zouyeFlag));
+            params.put("zouyeType", String.valueOf(zouyeType));
+            params.put("xiezuozuId", xiezuozuId);
+            params.put("xiezuozuName", URLEncoder.encode(xiezuozuName, "UTF-8"));
+
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        StringRequest request = new StringRequest(mRequestUrl, response -> {
+
+        StringRequest request = new StringRequest(Request.Method.POST, mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 Log.d(TAG, "submit: " + json);
@@ -624,7 +658,7 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
                         rl_submitting.setVisibility(View.GONE);
                         Intent toHome = new Intent(TTeachEditPackageActivity.this, TMainPagerActivity.class);
                         //两个一起用
-                        toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
                         startActivity(toHome);
                     }
@@ -640,9 +674,17 @@ public class TTeachEditPackageActivity extends AppCompatActivity implements View
         }, error -> {
             Log.e("volley", "Volley_Error: " + error.toString());
 
-        });
+        }){
+            @Override
+            protected Map<String, String> getParams() {
+                // 返回请求参数
+                return params;
+            }
+        };
         MyApplication.addRequest(request, TAG);
         rl_submitting.setVisibility(View.VISIBLE);
+
+
     }
 
     @Override

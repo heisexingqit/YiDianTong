@@ -26,6 +26,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
@@ -49,6 +50,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -446,168 +448,106 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void submit(String startTime, String endTime, String ketang, String ketangId, String clas, String classId, String assignType, String stuIds, String stuNames, String learnType, String flag, int zouyeType, int zouyeFlag, String xiezuozuId, String xiezuozuName) {
-        if (zouyeFlag == 1) {
+        // 仅布置时为空
+        String jsonString = "{\"data\":";
+        Gson gson = new Gson();
+        jsonString += gson.toJson(addFragment.pickList);
+        jsonString += ",\"paperId\":\"" + paperId + "\"}";
+        HashMap<String, String> params = new HashMap<>();
 
-            StringBuilder jsonStringBuilder = new StringBuilder();
-            String jsonString = "{\"data\":[";
-            addFragment.pickList.forEach(item -> {
-                if (jsonStringBuilder.length() > 0) {
-                    jsonStringBuilder.append(",");
-                }
-                jsonStringBuilder.append(item.toData());
-            });
-            jsonString += jsonStringBuilder.toString();
-            jsonString += "],\"paperId\":\"" + paperId + "\"}";
+        mRequestUrl = Constant.API + Constant.T_HOMEWORK_ASSIGN_SAVE;
+        try {
+            params.put("assignType", assignType);
+            params.put("jsonStr", URLEncoder.encode(jsonString, "UTF-8"));
 
-            try {
-                ketang = URLEncoder.encode(ketang, "UTF-8");
-                clas = URLEncoder.encode(clas, "UTF-8");
-                stuNames = URLEncoder.encode(stuNames, "UTF-8");
-                jsonString = URLEncoder.encode(jsonString, "UTF-8");
-                mRequestUrl = Constant.API + Constant.T_HOMEWORK_ASSIGN_SAVE + "?assignType=" + assignType +
-                        "&channelCode=" + xueduanCode + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") +
-                        "&subjectCode=" + xuekeCode + "&subjectName=" + URLEncoder.encode(xueke, "UTF-8") +
-                        "&textBookCode=" + banbenCode + "&textBookName=" + URLEncoder.encode(banben, "UTF-8") +
-                        "&gradeLevelCode=" + jiaocaiCode + "&gradeLevelName=" + URLEncoder.encode(jiaocai, "UTF-8") +
-                        "&pointCode=" + zhishidianId + "&introduction=" +
-                        "&userName=" + MyApplication.username + "&paperName=" + URLEncoder.encode(name, "UTF-8") +
-                        "&paperId=" + paperId + "&startTime=" + startTime + "&endTime=" + endTime +
-                        "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classOrGroupId=" + classId +
-                        "&classOrGroupName=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
-                        "&learnType=" + learnType + "&flag=edit" + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag;
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+            params.put("channelCode", xueduanCode);
+            params.put("channelName", URLEncoder.encode(xueduan, "UTF-8"));
 
+            params.put("subjectCode", xuekeCode);
+            params.put("subjectName", URLEncoder.encode(xueke, "UTF-8"));
 
-            StringRequest request = new StringRequest(mRequestUrl, response -> {
-                try {
-                    JSONObject json = JsonUtils.getJsonObjectFromString(response);
-                    Log.d(TAG, "submit: " + json);
-                    boolean success = json.getBoolean("success");
-                    String msg = json.getString("message");
+            params.put("textBookCode", banbenCode);
+            params.put("textBookName", URLEncoder.encode(banben, "UTF-8"));
 
+            params.put("gradeLevelCode", jiaocaiCode);
+            params.put("gradeLevelName", URLEncoder.encode(jiaocai, "UTF-8"));
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setTitle(name);
+            params.put("pointCode", zhishidianId);
 
-                    if (success) {
+            params.put("introduction", "");
+            params.put("userName", MyApplication.username);
+            params.put("paperName", URLEncoder.encode(name, "UTF-8"));
+            params.put("paperId", paperId);
 
-                        if (assignType.equals("3")) {
-                            builder.setMessage("作业保存成功");
-                        } else {
-                            builder.setMessage("作业布置成功");
-                        }
-                    } else {
-                        builder.setMessage(msg);
+            params.put("startTime", startTime);
+            params.put("endTime", endTime);
 
-                    }
-                    builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            rl_submitting.setVisibility(View.GONE);
-                            Intent toHome = new Intent(TTeachEditHomeworkActivity.this, TMainPagerActivity.class);
-                            //两个一起用
-                            toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-                            startActivity(toHome);
-                        }
-                    });
-                    AlertDialog dialog = builder.create();
-                    dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
-                    dialog.show();
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }, error -> {
-                Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-                Log.e("volley", "Volley_Error: " + error.toString());
-            });
-            MyApplication.addRequest(request, TAG);
-            rl_submitting.setVisibility(View.VISIBLE);
-        }else{
-
-            // 新的协作组方式
-            StringBuilder jsonStringBuilder = new StringBuilder();
-            String jsonString = "{\"data\":[";
-            addFragment.pickList.forEach(item -> {
-                if (jsonStringBuilder.length() > 0) {
-                    jsonStringBuilder.append(",");
-                }
-                jsonStringBuilder.append(item.toData());
-            });
-            jsonString += jsonStringBuilder.toString();
-            jsonString += "],\"paperId\":\"" + paperId + "\"}";
-
-            try {
-                ketang = URLEncoder.encode(ketang, "UTF-8");
-                clas = URLEncoder.encode(clas, "UTF-8");
-                stuNames = URLEncoder.encode(stuNames, "UTF-8");
-                jsonString = URLEncoder.encode(jsonString, "UTF-8");
-                xiezuozuName = URLEncoder.encode(xiezuozuName, "UTF-8");
-                mRequestUrl = Constant.API + Constant.T_HOMEWORK_ASSIGN_SAVE + "?assignType=" + assignType +
-                        "&channelCode=" + xueduanCode + "&channelName=" + URLEncoder.encode(xueduan, "UTF-8") +
-                        "&subjectCode=" + xuekeCode + "&subjectName=" + URLEncoder.encode(xueke, "UTF-8") +
-                        "&textBookCode=" + banbenCode + "&textBookName=" + URLEncoder.encode(banben, "UTF-8") +
-                        "&gradeLevelCode=" + jiaocaiCode + "&gradeLevelName=" + URLEncoder.encode(jiaocai, "UTF-8") +
-                        "&pointCode=" + zhishidianId + "&introduction=" +
-                        "&userName=" + MyApplication.username + "&paperName=" + URLEncoder.encode(name, "UTF-8") +
-                        "&paperId=" + paperId + "&startTime=" + startTime + "&endTime=" + endTime +
-                        "&keTangId=" + ketangId + "&keTangName=" + ketang + "&classOrGroupId=" + classId +
-                        "&classOrGroupName=" + clas + "&stuIds=" + stuIds + "&stuNames=" + stuNames +
-                        "&learnType=" + learnType + "&flag=edit" + "&jsonStr=" + jsonString + "&zouyeType=" + zouyeType + "&zouyeFlag=" + zouyeFlag + "&xiezuozuId=" + xiezuozuId +"&xiezuozuName=" + xiezuozuName;
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-
-
-            StringRequest request = new StringRequest(mRequestUrl, response -> {
-                try {
-                    JSONObject json = JsonUtils.getJsonObjectFromString(response);
-                    Log.d(TAG, "submit: " + json);
-                    boolean success = json.getBoolean("success");
-                    String msg = json.getString("message");
-
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setTitle(name);
-
-                    if (success) {
-
-                        if (assignType.equals("3")) {
-                            builder.setMessage("作业保存成功");
-                        } else {
-                            builder.setMessage("作业布置成功");
-                        }
-                    } else {
-                        builder.setMessage(msg);
-
-                    }
-                    builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            rl_submitting.setVisibility(View.GONE);
-                            Intent toHome = new Intent(TTeachEditHomeworkActivity.this, TMainPagerActivity.class);
-                            //两个一起用
-                            toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                            startActivity(toHome);
-                        }
-                    });
-                    AlertDialog dialog = builder.create();
-                    dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
-                    dialog.show();
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }, error -> {
-                Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-                Log.e("volley", "Volley_Error: " + error.toString());
-            });
-            MyApplication.addRequest(request, TAG);
-            rl_submitting.setVisibility(View.VISIBLE);
+            params.put("keTangId", ketangId);
+            params.put("keTangName", URLEncoder.encode(ketang, "UTF-8"));
+            params.put("classOrGroupId", classId);
+            params.put("classOrGroupName", URLEncoder.encode(clas, "UTF-8"));
+            params.put("stuIds", stuIds);
+            params.put("stuNames", URLEncoder.encode(stuNames, "UTF-8"));
+            params.put("learnType", learnType);
+            params.put("flag", "edit");
+            params.put("zouyeType", String.valueOf(zouyeType));
+            params.put("zouyeFlag", String.valueOf(zouyeFlag));
+            params.put("xiezuozuId", xiezuozuId);
+            params.put("xiezuozuName", URLEncoder.encode(xiezuozuName, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
+
+        StringRequest request = new StringRequest(Request.Method.POST, mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                Log.d(TAG, "submit: " + json);
+                boolean success = json.getBoolean("success");
+                String msg = json.getString("message");
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(name);
+
+                if (success) {
+                    if (assignType.equals("3")) {
+                        builder.setMessage("作业保存成功");
+                    } else {
+                        builder.setMessage("作业布置成功");
+                    }
+                } else {
+                    builder.setMessage(msg);
+
+                }
+                builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        rl_submitting.setVisibility(View.GONE);
+                        Intent toHome = new Intent(TTeachEditHomeworkActivity.this, TMainPagerActivity.class);
+                        //两个一起用
+                        toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(toHome);
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+                dialog.show();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+            Log.e("volley", "Volley_Error: " + error.toString());
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                // 返回请求参数
+                return params;
+            }
+        };
+        MyApplication.addRequest(request, TAG);
+        rl_submitting.setVisibility(View.VISIBLE);
     }
 
     // Java接口注入到Js中
@@ -1143,11 +1083,29 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
                 String data = json.getString("data");
                 Log.d(TAG, "loadType: " + data);
 
-                if (data != "null") {
+                if (data != null && !data.equals("null")) {
                     typeMap.put("全部", "all");
-                    for (String row : data.split("\\],\\[")) {
-                        String[] values = row.replaceAll("\\[|\\]|\"", "").split(",");
-                        typeMap.put(values[1], values[1]);
+                    if (shareTag.equals("50")) {
+                        String[] values = data.replaceAll("\\[|\\]|\"", "").split(",");
+                        if (values.length >= 2) { // 添加这一行来检查数组长度
+                            for (String value : values) {
+                                typeMap.put(value, value);
+                            }
+                        } else {
+                            // 处理数组长度不足的情况，可以输出日志或者其他处理方式
+                            Log.e(TAG, "loadType: values数组长度不足");
+                        }
+                    } else {
+                        for (String row : data.split("\\],\\[")) {
+                            String[] values = row.replaceAll("\\[|\\]|\"", "").split(",");
+                            if (values.length >= 2) { // 添加这一行来检查数组长度
+                                typeMap.put(values[1], values[1]);
+                                Log.e(TAG, "loadType: " + values[1]);
+                            } else {
+                                // 处理数组长度不足的情况，可以输出日志或者其他处理方式
+                                Log.e(TAG, "loadType: values数组长度不足");
+                            }
+                        }
                     }
                 }
                 Log.d("wen", "类型: " + typeMap);

@@ -60,6 +60,13 @@ public class LearnPlanPaperFragment extends Fragment implements View.OnClickList
         fragment.setArguments(args);
         return fragment;
     }
+    public static LearnPlanPaperFragment newInstance(LearnPlanItemEntity learnPlanEntity) {
+        LearnPlanPaperFragment fragment = new LearnPlanPaperFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("learnPlanEntity", learnPlanEntity);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     //绑定Activity的接口类，实现调用
     @Override

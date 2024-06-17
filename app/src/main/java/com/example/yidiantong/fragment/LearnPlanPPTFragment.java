@@ -78,6 +78,14 @@ public class LearnPlanPPTFragment extends Fragment implements View.OnClickListen
         return fragment;
     }
 
+    public static LearnPlanPPTFragment newInstance(LearnPlanItemEntity learnPlanEntity) {
+        LearnPlanPPTFragment fragment = new LearnPlanPPTFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("learnPlanEntity", learnPlanEntity);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);

@@ -45,6 +45,7 @@ import com.example.yidiantong.ui.HomeworkPagerFinishActivity;
 import com.example.yidiantong.ui.LearnPlanPagerActivity;
 import com.example.yidiantong.ui.LiveListActivity;
 import com.example.yidiantong.ui.NoticeLookActivity;
+import com.example.yidiantong.ui.ReadAloudLookActivity;
 import com.example.yidiantong.ui.ResourceFolderActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
@@ -142,7 +143,6 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                 Intent intent;
                 switch (adapter.itemList.get(pos).getType()) {
                     case "作业":
-
                         if (Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 2) {
                             Log.e(TAG, "onCreateView: 改过的");
                             intent = new Intent(getActivity(), HomeworkPagerFinishActivity.class);
@@ -179,22 +179,30 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                             }
                             MyReadWriteLock.checkin(adapter.itemList.get(pos).getLearnId(), username, "student", "", handler, getActivity());
                         }
-
                         break;
                     case "直播课消息":
                         intent = new Intent(getActivity(), LiveListActivity.class);
                         intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
                         startActivity(intent);
                         break;
-
                     case "通知":
                         Intent intent_t;
-                        intent_t = new Intent(getActivity(), NoticeLookActivity.class);
-                        intent_t.putExtra("noticetype", adapter.itemList.get(pos).getType());  // 类型
-                        intent_t.putExtra("noticetime", adapter.itemList.get(pos).getTime());   // 发布时间
-                        intent_t.putExtra("noticeAuthor", adapter.itemList.get(pos).getCreaterName());  // 创建者
-                        intent_t.putExtra("noticeTitle", adapter.itemList.get(pos).getBottomTitle());     // 标题
-                        intent_t.putExtra("noticecotent", adapter.itemList.get(pos).getCourseName()); // 内容
+                        if (adapter.itemList.get(pos).getCourseName().contains("img")) {
+                            System.out.println("syq^_^:朗诵任务");
+                            intent_t = new Intent(getActivity(), ReadAloudLookActivity.class);
+                            intent_t.putExtra("readTime", adapter.itemList.get(pos).getTime());   // 发布时间
+                            intent_t.putExtra("readAuthor", adapter.itemList.get(pos).getCreaterName());  // 创建者
+                            intent_t.putExtra("readTitle", adapter.itemList.get(pos).getBottomTitle());     // 标题
+                            intent_t.putExtra("readContent", adapter.itemList.get(pos).getCourseName()); // 内容
+                        }else {
+                            System.out.println("syq^_^:通知");
+                            intent_t = new Intent(getActivity(), NoticeLookActivity.class);
+                            intent_t.putExtra("noticetype", adapter.itemList.get(pos).getType());  // 类型
+                            intent_t.putExtra("noticetime", adapter.itemList.get(pos).getTime());   // 发布时间
+                            intent_t.putExtra("noticeAuthor", adapter.itemList.get(pos).getCreaterName());  // 创建者
+                            intent_t.putExtra("noticeTitle", adapter.itemList.get(pos).getBottomTitle());     // 标题
+                            intent_t.putExtra("noticecotent", adapter.itemList.get(pos).getCourseName()); // 内容
+                        }
                         startActivity(intent_t);
                         reload(adapter.itemList.get(pos).getType(), adapter.itemList.get(pos).getLearnId());
                         adapter.itemList.get(pos).setStatus("4");
@@ -209,7 +217,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                         intent_g.putExtra("noticeTitle", adapter.itemList.get(pos).getBottomTitle());     // 标题
                         intent_g.putExtra("noticecotent", adapter.itemList.get(pos).getCourseName()); // 内容
                         startActivity(intent_g);
-                        reload(adapter.itemList.get(pos).getType(), adapter.itemList.get(pos).getLearnId());
+                        reload(adapter.itemList.get(pos).getType(), adapter.itemList.get(pos).getLearnId()); //修改已读状态
                         adapter.itemList.get(pos).setStatus("4");
                         adapter.notifyDataSetChanged();
                         break;
