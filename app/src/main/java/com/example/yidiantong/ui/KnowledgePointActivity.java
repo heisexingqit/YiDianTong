@@ -45,6 +45,7 @@ public class KnowledgePointActivity extends AppCompatActivity {
     private static final String TAG = "KnowledgePointActivity";
     private String mRequestUrl;
     // 选择参数
+    private String xueduan = "";//学段id
     private String banben = "";//版本id
     private String jiaocai = "";//教材id
     private String zhishidian = "";//知识点
@@ -73,6 +74,7 @@ public class KnowledgePointActivity extends AppCompatActivity {
 
         //获取Intent参数,设置学科错题本最上面的内容
         userName = getIntent().getStringExtra("userName");  //用户名
+        xueduan = getIntent().getStringExtra("xueduanId"); //学段id
         course_Id = getIntent().getStringExtra("xuekeId"); //学科id
         course_name = getIntent().getStringExtra("xueke"); //学科名
         banben = getIntent().getStringExtra("banbenId"); //版本id
@@ -112,14 +114,22 @@ public class KnowledgePointActivity extends AppCompatActivity {
         public void handleMessage(Message message) {
             super.handleMessage(message);
             if (message.what == 100) {
-
                 Intent intent = new Intent(KnowledgePointActivity.this,
                         KnowledgeShiTiActivity.class);
-                intent.putExtra("userName", userName);  // 用户名
+                intent.putExtra("zhishidianId", zhishidianId);  // 知识点id
+                if (getIntent().getStringExtra("stu").equals("")){
+                    intent.putExtra("userName", userName);  // 用户名
+                    intent.putExtra("unitId", "");    // 学科id
+                }else {
+                    intent.putExtra("userName", getIntent().getStringExtra("stu"));
+                    intent.putExtra("unitId", "6105230000001");    // 学科id
+                }
+                intent.putExtra("xueduanId", xueduan);    // 学科id
                 intent.putExtra("subjectId", course_Id);    // 学科id
+                intent.putExtra("banbenId", banben);  // 学科名
+                intent.putExtra("jiaocaiId", jiaocai);  // 学科名
                 intent.putExtra("courseName", course_name);  // 学科名
                 intent.putExtra("zhishidian", zhishidian);  // 知识点
-                intent.putExtra("zhishidianId", zhishidianId);  // 知识点id
                 startActivity(intent);
 
                 // TODO 临时变更
@@ -241,9 +251,18 @@ public class KnowledgePointActivity extends AppCompatActivity {
 
     // 加载知识点
     private void loadZhiShiDian() {
-        mRequestUrl = Constant.API + Constant.HOMEWORK_ADD_ZHISHIDIAN
-                + "?userName=" + userName + "&subjectCode=" + course_Id +
-                "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai;
+        // TODO 后期需要删除
+        String stu = getIntent().getStringExtra("stu");
+        if (stu.equals("")) {
+            mRequestUrl = Constant.API + Constant.HOMEWORK_ADD_ZHISHIDIAN
+                    + "?stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + course_Id +
+                    "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=";
+        }else {
+            mRequestUrl = Constant.API + Constant.HOMEWORK_ADD_ZHISHIDIAN
+                    + "?stuId=" + stu + "&channelCode=" + xueduan + "&subjectCode=" + course_Id +
+                    "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=" + "6105230000001";
+        }
+//        mRequestUrl = "http://www.cn901.com:8111/AppServer/ajax/studentApp_getImgKnowledgeTree.do";
         Log.d("wen", "loadZhiShiDian: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
