@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
+import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookExerciseEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
@@ -60,6 +61,8 @@ public class KnowledgePointActivity extends AppCompatActivity {
     private String userName; //用户名
     private String course_Id;  //学科id
     private String course_name;  //学科名
+    private RelativeLayout rl_loading;
+    private ClickableImageView iv_back;
 
     // TODO 临时变量
 //    private List<BookExerciseEntity> itemList = new ArrayList<>();
@@ -71,6 +74,10 @@ public class KnowledgePointActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.item_t_homework_add_show_zsd);
+
+        //加载页
+        rl_loading = findViewById(R.id.rl_loading);
+        iv_back = findViewById(R.id.iv_back);
 
         //获取Intent参数,设置学科错题本最上面的内容
         userName = getIntent().getStringExtra("userName");  //用户名
@@ -104,6 +111,7 @@ public class KnowledgePointActivity extends AppCompatActivity {
                     LinearLayout.LayoutParams.MATCH_PARENT, true);
             window.showAsDropDown(ll_content, 0, 0);
         }
+        if (!window.isShowing()) finish();
     }
 
 
@@ -251,6 +259,8 @@ public class KnowledgePointActivity extends AppCompatActivity {
 
     // 加载知识点
     private void loadZhiShiDian() {
+        rl_loading.setVisibility(View.VISIBLE);
+        iv_back.setVisibility(View.VISIBLE);
         // TODO 后期需要删除
         String stu = getIntent().getStringExtra("stu");
         if (stu.equals("")) {
@@ -293,6 +303,7 @@ public class KnowledgePointActivity extends AppCompatActivity {
      * @param str 原始HTML数据
      */
     private void setHtmlOnWebView(WebView wb, String str) {
+        rl_loading.setVisibility(View.GONE);
         str = StringEscapeUtils.unescapeHtml4(str);
         System.out.println("str: " + str);
 

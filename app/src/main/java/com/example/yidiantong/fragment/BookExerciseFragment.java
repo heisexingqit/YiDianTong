@@ -192,7 +192,7 @@ public class BookExerciseFragment extends Fragment {
             fll_null.setVisibility(View.GONE);
             rl_loading.setVisibility(View.VISIBLE);
         }
-        String mRequestUrl = "http://www.cn901.net:8111/AppServer/ajax/studentApp_getQuestionsJYFS.do?userId=" + userName + "&questionId="
+        String mRequestUrl = Constant.API + Constant.GET_JUYIFANSAN + "?userId=" + userName + "&questionId="
                 + questionIdd + "&currentPage=" + currentPage;
         Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {

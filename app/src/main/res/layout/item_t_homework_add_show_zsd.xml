@@ -4,12 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <RelativeLayout
         android:id="@+id/ll_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
         android:padding="20dp">
+
+        <include layout="@layout/loading_page" />
 
         <com.example.yidiantong.View.ClickableImageView
 
@@ -25,6 +28,7 @@
             android:layout_below="@+id/iv_back"
             android:scrollbars="none"
             tools:ignore="WebViewLayout">
+
 
             <WebView
                 android:id="@+id/wv_content"

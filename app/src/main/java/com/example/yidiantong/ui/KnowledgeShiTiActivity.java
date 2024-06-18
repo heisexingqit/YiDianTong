@@ -34,7 +34,9 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.adapter.BookAutoAdapter;
 import com.example.yidiantong.bean.BookExerciseEntity;
+import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
+import com.google.android.exoplayer2.C;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -192,7 +194,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
         builder.setItems(stuArr, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                reqName = stuArr[which];
+                userName = stuArr[which];
                 loadItems_Net();
             }
 
@@ -369,8 +371,8 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
             fll_null.setVisibility(View.GONE);
             rl_loading.setVisibility(View.VISIBLE);
         }
-        String mRequestUrl = "http://www.cn901.net:8111/AppServer/ajax/studentApp_getQuestionsZZXX.do?" +
-                "userId=" + userName + "&subjectId=" + subjectId + "&catalogId=" + zhishidianId + "&pointIds=" + pointIds + "&currentPage=" + currentPage;
+        String mRequestUrl = Constant.API + Constant.GET_ZIZHUXUEXI +
+                "?userId=" + userName + "&subjectId=" + subjectId + "&catalogId=" + zhishidianId + "&pointIds=" + pointIds + "&currentPage=" + currentPage;
         Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
