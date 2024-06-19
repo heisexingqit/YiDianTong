@@ -33,6 +33,7 @@ public class MyApplication extends Application {
     public static String picUrl;
     public static String password;
     public static Boolean autoLogin;
+    public static String typeName;
 
     // 旋转屏幕处理
     public static int currentItem = 0;

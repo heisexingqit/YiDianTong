@@ -119,6 +119,8 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_t_main_latest, container, false);
 
+
+
         //获取组件
         rv_home = view.findViewById(R.id.rv_home);
 
@@ -310,6 +312,10 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
                     contentView2.findViewById(R.id.tv_camera_homework).setOnClickListener(this);
                     contentView2.findViewById(R.id.tv_add_notice).setOnClickListener(this);
                     contentView2.findViewById(R.id.tv_add_announcement).setOnClickListener(this);
+                    //非管理员隐藏发布公告
+                    if(!MyApplication.typeName.equals("ADMIN_TEACHER")){
+                        contentView2.findViewById(R.id.tv_add_announcement).setVisibility(View.GONE);
+                    }
 
                     window2 = new PopupWindow(contentView2, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
                     window2.setTouchable(true);

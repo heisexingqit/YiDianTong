@@ -303,6 +303,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     // 角色变量
                     MyApplication.username = username;
                     MyApplication.password = password;
+                    MyApplication.typeName = typeName;
                     MyApplication.userId = userInfo.getString("userId");
                     MyApplication.cnName = userInfo.getString("name");
                     MyApplication.token = obj.getString("token");

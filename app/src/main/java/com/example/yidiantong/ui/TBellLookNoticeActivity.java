@@ -163,19 +163,25 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
         noreadname_s = ToString(noreadname);
 
         // 根据权限设置修改和撤回操作
-        fb_bd_modify.setVisibility(View.VISIBLE);
-        fb_bd_withdraw.setVisibility(View.VISIBLE);
-        fb_bd_withdraw.setBackgroundResource(R.drawable.t_homework_add);
-//        if(tBellNoticeEntity.get(0).getIsAuthor()){
-//        }
-        //tBellNoticeEntity.get(0).getIsUpdate()
-
-        if(modifymode == -1){
-            fb_bd_modify.setBackgroundResource(R.drawable.t_homework_add);
-            modifymode = 1;
-        }else{
-            modifymode = 0;
+        if(tBellNoticeEntity.get(0).getIsAuthor()) {
+            fb_bd_modify.setVisibility(View.VISIBLE);
+            fb_bd_withdraw.setVisibility(View.VISIBLE);
+            fb_bd_withdraw.setBackgroundResource(R.drawable.t_homework_add);
         }
+        //如果isUpdate为false，则修改按钮不可以点击
+        if(!tBellNoticeEntity.get(0).getIsUpdate()){
+            fb_bd_modify.setBackgroundResource(R.color.f_light_gray);
+            fb_bd_modify.setEnabled(false);
+        }else{
+            if(modifymode == -1){
+                fb_bd_modify.setBackgroundResource(R.drawable.t_homework_add);
+                modifymode = 1;
+            }else{
+                modifymode = 0;
+            }
+        }
+
+
 
     }
 
