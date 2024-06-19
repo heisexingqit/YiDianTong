@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
+import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookExerciseEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
@@ -45,6 +46,7 @@ public class KnowledgePointActivity extends AppCompatActivity {
     private static final String TAG = "KnowledgePointActivity";
     private String mRequestUrl;
     // 选择参数
+    private String xueduan = "";//学段id
     private String banben = "";//版本id
     private String jiaocai = "";//教材id
     private String zhishidian = "";//知识点
@@ -59,6 +61,8 @@ public class KnowledgePointActivity extends AppCompatActivity {
     private String userName; //用户名
     private String course_Id;  //学科id
     private String course_name;  //学科名
+    private RelativeLayout rl_loading;
+    private ClickableImageView iv_back;
 
     // TODO 临时变量
 //    private List<BookExerciseEntity> itemList = new ArrayList<>();
@@ -71,8 +75,13 @@ public class KnowledgePointActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.item_t_homework_add_show_zsd);
 
+        //加载页
+        rl_loading = findViewById(R.id.rl_loading);
+        iv_back = findViewById(R.id.iv_back);
+
         //获取Intent参数,设置学科错题本最上面的内容
         userName = getIntent().getStringExtra("userName");  //用户名
+        xueduan = getIntent().getStringExtra("xueduanId"); //学段id
         course_Id = getIntent().getStringExtra("xuekeId"); //学科id
         course_name = getIntent().getStringExtra("xueke"); //学科名
         banben = getIntent().getStringExtra("banbenId"); //版本id
@@ -102,6 +111,7 @@ public class KnowledgePointActivity extends AppCompatActivity {
                     LinearLayout.LayoutParams.MATCH_PARENT, true);
             window.showAsDropDown(ll_content, 0, 0);
         }
+        if (!window.isShowing()) finish();
     }
 
 
@@ -112,14 +122,22 @@ public class KnowledgePointActivity extends AppCompatActivity {
         public void handleMessage(Message message) {
             super.handleMessage(message);
             if (message.what == 100) {
-
                 Intent intent = new Intent(KnowledgePointActivity.this,
                         KnowledgeShiTiActivity.class);
-                intent.putExtra("userName", userName);  // 用户名
+                intent.putExtra("zhishidianId", zhishidianId);  // 知识点id
+                if (getIntent().getStringExtra("stu").equals("")){
+                    intent.putExtra("userName", userName);  // 用户名
+                    intent.putExtra("unitId", "");    // 学科id
+                }else {
+                    intent.putExtra("userName", getIntent().getStringExtra("stu"));
+                    intent.putExtra("unitId", "6105230000001");    // 学科id
+                }
+                intent.putExtra("xueduanId", xueduan);    // 学科id
                 intent.putExtra("subjectId", course_Id);    // 学科id
+                intent.putExtra("banbenId", banben);  // 学科名
+                intent.putExtra("jiaocaiId", jiaocai);  // 学科名
                 intent.putExtra("courseName", course_name);  // 学科名
                 intent.putExtra("zhishidian", zhishidian);  // 知识点
-                intent.putExtra("zhishidianId", zhishidianId);  // 知识点id
                 startActivity(intent);
 
                 // TODO 临时变更
@@ -241,9 +259,19 @@ public class KnowledgePointActivity extends AppCompatActivity {
 
     // 加载知识点
     private void loadZhiShiDian() {
-        mRequestUrl = Constant.API + Constant.HOMEWORK_ADD_ZHISHIDIAN
-                + "?userName=" + userName + "&subjectCode=" + course_Id +
-                "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai;
+        rl_loading.setVisibility(View.VISIBLE);
+        iv_back.setVisibility(View.VISIBLE);
+        // TODO 后期需要删除
+        String stu = getIntent().getStringExtra("stu");
+        if (stu.equals("")) {
+            mRequestUrl = Constant.API + Constant.HOMEWORK_ADD_ZHISHIDIAN
+                    + "?stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + course_Id +
+                    "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=";
+        }else {
+            mRequestUrl = Constant.API + Constant.HOMEWORK_ADD_ZHISHIDIAN
+                    + "?stuId=" + stu + "&channelCode=" + xueduan + "&subjectCode=" + course_Id +
+                    "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=" + "6105230000001";
+        }
         Log.d("wen", "loadZhiShiDian: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -274,6 +302,7 @@ public class KnowledgePointActivity extends AppCompatActivity {
      * @param str 原始HTML数据
      */
     private void setHtmlOnWebView(WebView wb, String str) {
+        rl_loading.setVisibility(View.GONE);
         str = StringEscapeUtils.unescapeHtml4(str);
         System.out.println("str: " + str);
 

@@ -2,7 +2,7 @@ package com.example.yidiantong.util;
 
 public class Constant {
     // 服务器地址
-   public static  String API = "http://www.cn901.net:8111";
+    public static String API = "http://www.cn901.net:8111";
     //public static final String API = "http://www.cn901.com:8181";
     // 直播课服务器地址
     public static final String API_LIVE = "http://www.cn901.com";
@@ -40,7 +40,7 @@ public class Constant {
     // 获取错题回收站
     public static final String ERROR_QUE_GET_QUESTION_RECYCLE = "/AppServer/ajax/studentApp_ErrorQueGetQuestionRecycle.do";
     // 恢复错题
-    public static final String ERROR_QUE_REMOVE= "/AppServer/ajax/studentApp_ErrorQueRemove.do";
+    public static final String ERROR_QUE_REMOVE = "/AppServer/ajax/studentApp_ErrorQueRemove.do";
 
     // 上传图片
     public static final String UPLOAD_IMAGE = "/AppServer/ajax/studentApp_saveBase64Image.do";
@@ -185,7 +185,13 @@ public class Constant {
     // 教师端获取知识点
     public static final String T_HOMEWORK_ADD_ZHISHIDIAN = "/AppServer/ajax/teacherApp_getKnowledgeTree.do";
     // 学生端获取知识点
-    public static final String HOMEWORK_ADD_ZHISHIDIAN = "/AppServer/ajax/teacherApp_getImgKnowledgeTree.do";
+    public static final String HOMEWORK_ADD_ZHISHIDIAN = "/AppServer/ajax/studentApp_getImgKnowledgeTree.do";
+    // 学生端获取举一反三试题
+    public static final String GET_JUYIFANSAN = "/AppServer/ajax/studentApp_getQuestionsJYFS.do";
+    // 学生端获取巩固提升试题
+    public static final String GET_GONGGUTISHENG= "/AppServer/ajax/studentApp_getQuestionsGGTS.do";
+    // 学生端获取自主学习试题
+    public static final String GET_ZIZHUXUEXI= "/AppServer/ajax/studentApp_getQuestionsZZXX.do";
 
     // 教师端获取题库
     public static final String T_HOMEWORK_GET_ALL_QUESTIONS = "/AppServer/ajax/teacherApp_getAllQuestions.do";
@@ -230,10 +236,10 @@ public class Constant {
     public static final String T_UPLOAD_IMAGE = "/AppServer/ajax/teacherApp_saveBase64Image.do";
 
     // 教师端发布通知获取班级列表
-    public static final String T_BELL_ADD_CLASS= "/AppServer/ajax/teacherApp_publishNotice.do";
+    public static final String T_BELL_ADD_CLASS = "/AppServer/ajax/teacherApp_publishNotice.do";
 
     // 教师端查看通知或公告接口
-    public static final String T_BELL_LOOK_NOTICE = "/AppServer/ajax/teacherApp_lookNotice.do?";
+    public static final String T_BELL_LOOK_NOTICE = "/AppServer/ajax/teacherApp_lookNotice.do";
 
     // 教师端撤回通知或公告
     public static final String T_DELETE_NOTICE = "/AppServer/ajax/teacherApp_deleteNotice.do";
@@ -275,7 +281,7 @@ public class Constant {
     public static final String GET_SKYDT_STATUS = "/AppServer/ajax/teacherApp_getSkydtStatus.do";
 
     // 教师端获取课堂
-    public static final String T_CLIENT_KETANG_PLAY_BY_TEA= "/KeTangServer/ajax/ketang_clientKeTangPlayByTea.do";
+    public static final String T_CLIENT_KETANG_PLAY_BY_TEA = "/KeTangServer/ajax/ketang_clientKeTangPlayByTea.do";
 
     // 教师端连接授课一点通
     public static final String T_GET_MESSAGE_LIST_BY_TEA = "/KeTangServer/ajax/ketang_getMessageListByTea.do";

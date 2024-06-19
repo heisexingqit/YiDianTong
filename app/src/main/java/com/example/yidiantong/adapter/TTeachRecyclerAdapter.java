@@ -1,6 +1,7 @@
 package com.example.yidiantong.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -205,6 +206,8 @@ public class TTeachRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             iv_icon.setImageResource(icon_id);
 
             tv_title.setText(item.getName());
+            tv_title.setMaxLines(2); // 限制文本至单行
+            tv_title.setEllipsize(TextUtils.TruncateAt.END);
 
             // 设置时间
             tv_date.setText(item.getCreateTime());

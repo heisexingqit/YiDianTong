@@ -50,6 +50,7 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
     private RelativeLayout rl_submitting;
     private RelativeLayout rl_loading;
     private String title;
+    private boolean isSubmitting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,7 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
         questionIdx = (ArrayList<Integer>) getIntent().getSerializableExtra("questionIdx");
         String type = getIntent().getStringExtra("type");
         Button btn_submit = findViewById(R.id.btn_submit);
+        isSubmitting = false;
         if (type.equals("learnPlan")) {
             btn_submit.setText("交导学案");
         } else if (type.equals("weike")) {
@@ -116,7 +118,9 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
                 finish();
                 break;
             case R.id.btn_submit:
-                submitFinal();
+                if (!isSubmitting) {
+                     submitFinal();
+                }
         }
     }
 
@@ -137,6 +141,7 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
     };
 
     private void submitFinal() {
+        isSubmitting = true;
         java.util.Date day = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd:HH:mm:ss");
         String date = sdf.format(day);
@@ -156,6 +161,7 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
                     intent.putExtra("currentItem", -1);
                     setResult(Activity.RESULT_OK, intent);
                     rl_submitting.setVisibility(View.GONE);
+
                     finish();
                 } else {
                     Toast.makeText(LearnPlanSubmitActivity.this, "提交失败！", Toast.LENGTH_SHORT).show();

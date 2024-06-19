@@ -12,10 +12,13 @@ import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,8 +28,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
@@ -35,6 +36,7 @@ import com.example.yidiantong.adapter.BookAutoAdapter;
 import com.example.yidiantong.bean.BookExerciseEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
+import com.google.android.exoplayer2.C;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -45,6 +47,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 
 public class KnowledgeShiTiActivity extends AppCompatActivity {
@@ -63,7 +66,11 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
     private int currentPage = -1;
     private String userName; //用户名
     private String reqName;  //请求用户名
+    private String xueduan;  //请求类型
     private String subjectId;  //学科id
+    private String banben;  //学科id
+    private String jiaocai;  //学科id
+    private String unitId;  //考点
     private String course_name;  //学科名
     private String zhishidian;  //知识点
     private String zhishidianId;  //知识点id
@@ -71,6 +78,8 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
     //列表数据
     private List<BookExerciseEntity> itemList = new ArrayList<>();
     private List<String> stuList = new ArrayList<>();//学生列表
+    private List<ExamPoint> examPoints = new ArrayList<>();//考点列表
+    private List<ExamPoint> selectedExamPoints = new ArrayList<>();//已选考点列表
     private String questionIds;
     BookAutoAdapter adapter;
     private RecyclerView frv_detail;
@@ -79,13 +88,10 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
     private ImageView fiv_recycle;
     private String questionId;
 
-    private String sourceId = "";
+    private String pointIds = "";
 
     private SharedPreferences preferences;
     private String[] autoStuLoadAnswer;
-
-    //TODO 临时添加的变量
-    private boolean[] checkedItems = new boolean[3];
 
 
     @Override
@@ -100,10 +106,6 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
             finish();
         });
 
-        //TODO 临时添加的代码
-        for (int i = 0; i < checkedItems.length; i++) {
-            checkedItems[i] = true; // 默认全选
-        }
 
         frv_detail = findViewById(R.id.frv_detail);
         //RecyclerView两步必要配置
@@ -112,11 +114,16 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
 
         //获取Intent参数,设置学科错题本最上面的内容
         userName = getIntent().getStringExtra("userName");  //用户名
+
         subjectId = getIntent().getStringExtra("subjectId"); //学科名
         course_name = getIntent().getStringExtra("courseName"); //学科id
         zhishidian = getIntent().getStringExtra("zhishidian"); //知识点
         zhishidianId = getIntent().getStringExtra("zhishidianId"); //知识点id
-        reqName = userName;
+        xueduan = getIntent().getStringExtra("xueduanId"); //学段
+        banben = getIntent().getStringExtra("banbenId"); //版本
+        jiaocai = getIntent().getStringExtra("jiaocaiId"); //教材
+        unitId = getIntent().getStringExtra("unitId"); //考点
+//        reqName = userName;
 
         TextView tv_title = findViewById(R.id.ftv_title);
         tv_title.setText("知识点试题");
@@ -174,6 +181,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
 
     }
 
+    //展示学生列表
     private void showStusDialog() {
         String[] stuArr = new String[this.stuList.size()];
         for (int i = 0; i < this.stuList.size(); i++) {
@@ -186,7 +194,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
         builder.setItems(stuArr, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                reqName = stuArr[which];
+                userName = stuArr[which];
                 loadItems_Net();
             }
 
@@ -199,52 +207,9 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
         });
         builder.show();
     }
-
-
-    //考点复选框事件
-    private void showCheckableSubjectsDialog() {
-        // 示例考点数据，实际应从数据源获取
-        List<String> subjects = Arrays.asList("考点1", "考点2", "考点3");
-
-        // 创建AlertDialog.Builder实例
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("选择考点");
-
-        builder.setMultiChoiceItems(subjects.toArray(new CharSequence[0]), checkedItems,
-                new DialogInterface.OnMultiChoiceClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                        // 处理复选框状态变化的逻辑
-                        // 这里可以根据需要更新UI或保存用户的选择
-                        checkedItems[which] = isChecked;
-                    }
-                });
-
-        // 添加“确认”按钮
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // 处理用户点击确定后的逻辑，比如根据用户的选择更新UI或保存选择状态
-                dialog.dismiss(); // 关闭对话框
-            }
-        });
-
-        // 添加“取消”按钮
-        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss(); // 关闭对话框
-            }
-        });
-
-        // 显示对话框
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
-
+    //加载学生列表
     private void getStudentList() {
-        String mRequestUrl = "http://www.cn901.com:8111//AppServer/ajax/studentApp_getStuList.do";
+        String mRequestUrl = Constant.API + "//AppServer/ajax/studentApp_getStuList.do";
         Log.d("wen0223", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -253,7 +218,8 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
                 Log.d("wen0501", "itemString: " + itemString);
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
-                stuList = gson.fromJson(itemString, new TypeToken<List<String>>() {}.getType());
+                stuList = gson.fromJson(itemString, new TypeToken<List<String>>() {
+                }.getType());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -264,11 +230,113 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
         MyApplication.addRequest(request, TAG);
     }
 
+
+    //考点复选框事件
+    private void showCheckableSubjectsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("选择考点");
+
+        LayoutInflater inflater = getLayoutInflater();
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        for (ExamPoint examPoint : examPoints) {
+            View itemView = inflater.inflate(R.layout.item_exam_point, null);
+            CheckBox checkBox = itemView.findViewById(R.id.checkBox);
+            TextView textName = itemView.findViewById(R.id.textName);
+            TextView masteryLevel = itemView.findViewById(R.id.masteryLevel);
+
+            textName.setText(examPoint.getPointName());
+            masteryLevel.setText(examPoint.getInfo());
+            checkBox.setChecked(selectedExamPoints.contains(examPoint));
+
+            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    if (!selectedExamPoints.contains(examPoint)) {
+                        selectedExamPoints.add(examPoint);
+                    }
+                } else {
+                    selectedExamPoints.remove(examPoint);
+                }
+            });
+
+            layout.addView(itemView);
+        }
+        ScrollView scrollView = new ScrollView(this);
+        scrollView.addView(layout);
+        builder.setView(scrollView);
+        builder.setPositiveButton("确定", (dialog, which) -> {
+            // 将选中的考点中的dbid拼接到pointIds中
+            pointIds = "";
+            StringBuilder sb = new StringBuilder();
+            for (ExamPoint examPoint : selectedExamPoints) {
+                sb.append(examPoint.getDbid()).append(",");
+            }
+            if (sb.length() > 0) {
+                sb.deleteCharAt(sb.length() - 1);
+            }
+            pointIds = sb.toString();
+            loadItems_Net();
+        });
+        builder.setNegativeButton("取消", null);
+        builder.show();
+
+    }
+    //获取考点列表
+    private void getKaoDianList() {
+        if (adapter.isRefresh == 1) {
+            fll_null.setVisibility(View.GONE);
+            rl_loading.setVisibility(View.VISIBLE);
+        }
+        //如果集合中有数据，直接显示对话框
+        if (examPoints != null && examPoints.size() > 0) {
+//            showCheckableSubjectsDialog();
+            loadItems_Net();
+            return;
+        }
+        String mRequestUrl = Constant.API + "//AppServer/ajax/studentApp_getPointsByCatalogId.do?" +
+                "catalogId=" + zhishidianId + "&stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + subjectId
+                + "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=" + unitId;
+        Log.d("wen0223", "loadItems_Net: " + mRequestUrl);
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String itemString = json.getString("data");
+                Log.d("wen0501", "itemString: " + itemString);
+                Gson gson = new Gson();
+                //使用Goson框架转换Json字符串为列表
+                examPoints = gson.fromJson(itemString, new TypeToken<List<ExamPoint>>() {
+                }.getType());
+                //默认全选,并将考点dbid拼接到pointIds中
+                selectedExamPoints.addAll(examPoints);
+                pointIds = "";
+                StringBuilder sb = new StringBuilder();
+                for (ExamPoint examPoint : selectedExamPoints) {
+                    sb.append(examPoint.getDbid()).append(",");
+                }
+                if (sb.length() > 0) {
+                    sb.deleteCharAt(sb.length() - 1);
+                }
+                pointIds = sb.toString();
+                loadItems_Net();
+//                showCheckableSubjectsDialog();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            System.out.println(error.toString());
+            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+        });
+        MyApplication.addRequest(request, TAG);
+    }
+
+
     //刷新列表
     private void refreshList() {
         currentPage++;
         adapter.isRefresh = 1;
-        loadItems_Net();
+        getKaoDianList();
+//        loadItems_Net();
         frv_detail.scrollToPosition(0);
     }
 
@@ -281,7 +349,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
             if (message.what == 100) {
                 Bundle receivedBundle = (Bundle) message.obj;
                 // 获得三个列表信息
-                itemList = (List<BookExerciseEntity>)receivedBundle.getSerializable("itemList");
+                itemList = (List<BookExerciseEntity>) receivedBundle.getSerializable("itemList");
                 adapter.loadData(itemList);
                 rl_loading.setVisibility(View.GONE);
                 currentPage += 1;
@@ -303,8 +371,8 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
             fll_null.setVisibility(View.GONE);
             rl_loading.setVisibility(View.VISIBLE);
         }
-        String mRequestUrl = "http://www.cn901.net:8111/AppServer/ajax/studentApp_getQuestionsZZXX.do?" +
-                "userId=" + reqName + "&subjectId=" + subjectId + "&catalogId=" + zhishidianId + "&currentPage=" + currentPage;
+        String mRequestUrl = Constant.API + Constant.GET_ZIZHUXUEXI +
+                "?userId=" + userName + "&subjectId=" + subjectId + "&catalogId=" + zhishidianId + "&pointIds=" + pointIds + "&currentPage=" + currentPage;
         Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -329,7 +397,8 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
                 Log.d("wen0501", "itemString: " + itemString);
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
-                itemList = gson.fromJson(itemString, new TypeToken<List<BookExerciseEntity>>() {}.getType());
+                itemList = gson.fromJson(itemString, new TypeToken<List<BookExerciseEntity>>() {
+                }.getType());
                 questionIds = "";
                 for (int i = 0; i < itemList.size(); i++) {
                     if (i == itemList.size() - 1) {
@@ -365,59 +434,6 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
             Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
         });
         MyApplication.addRequest(request, TAG);
-
-//        String response = "{\"code\":20000,\"data\":{\"items\":[{\"id\":\"1\",\"ques_id\":\"PRQUI9001174518\",\"ques_data\":{\"questionInfo\":{\"isUse\":\"1\",\"updateCount\":0,\"answerTime\":1,\"pointName\":\"高中数学(北师大版(2019))/必修第一册/第一章 预备知识/3 不等式/3.1 不等式性质/\",\"shiTiShow\":\"<p>若<img src=\\\"http://www.cn901.com/html1/2023/04/18/10017/20212/D676DA1546/120375D142/55FFE75510/PRQUI9001174518/PRQUI9001174518Show.files/image021.png\\\"  style=\\\"vertical-align: middle;\\\" width=\\\"60\\\" height=\\\"21\\\">，<img src=\\\"http://www.cn901.com/html1/2023/04/18/10017/20212/D676DA1546/120375D142/55FFE75510/PRQUI9001174518/PRQUI9001174518Show.files/image010.png\\\"  style=\\\"vertical-align: middle;\\\" width=\\\"38\\\" height=\\\"21\\\">，则下列不等式成立的是（&nbsp;&nbsp;&nbsp;&nbsp;）</p><p>A．<img src=\\\"http://www.cn901.com/html1/2023/04/18/10017/20212/D676DA1546/120375D142/55FFE75510/PRQUI9001174518/PRQUI9001174518Show.files/image037.png\\\"  style=\\\"vertical-align: middle;\\\" width=\\\"47\\\" height=\\\"21\\\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B．<img src=\\\"http://www.cn901.com/html1/2023/04/18/10017/20212/D676DA1546/120375D142/55FFE75510/PRQUI9001174518/PRQUI9001174518Show.files/image178.png\\\"  style=\\\"vertical-align: middle;\\\" width=\\\"125\\\" height=\\\"21\\\"></p><p>C．<img src=\\\"http://www.cn901.com/html1/2023/04/18/10017/20212/D676DA1546/120375D142/55FFE75510/PRQUI9001174518/PRQUI9001174518Show.files/image179.png\\\"  style=\\\"vertical-align: middle;\\\" width=\\\"80\\\" height=\\\"42\\\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; D．<img src=\\\"http://www.cn901.com/html1/2023/04/18/10017/20212/D676DA1546/120375D142/55FFE75510/PRQUI9001174518/PRQUI9001174518Show.files/image180.png\\\"  style=\\\"vertical-align: middle;\\\" width=\\\"48\\\" height=\\\"42\\\"></p>\",\"shiTiAnalysis\":\"<p>对于A，由<img src=\\\"http://www.cn901.com/html1/2023/04/18/10017/20212/D676DA1546/120375D142/55FFE75510/PRQUI9001174518/PRQUI9001174518Analysis.files/image021.png\\\"  style=\\\"vertical-align: middle;\\\" width=\\\"60\\\" height=\\\"21\\\">，则<img src=\\\"http://www.cn901.com/html1/2023/04/18/10017/20212/D676DA1546/120375D142/55FFE75510/PRQUI9001174518/PRQUI9001174518Analysis.files/image037.png\\\"  style=\\\"vertical-align: middle;\\\" width=\\\"47\\\" height=\\\"21\\\">，故A正确；</p><p>对于B，<img src=\\\"http://www.cn901.com/html1/2023/04/18/10017/20212/D676DA1546/120375D142/55FFE75510/PRQUI9001174518/PRQUI9001174518Analysis.files/image504.png\\\"  style=\\\"vertical-align: middle;\\\" width=\\\"477\\\" height=\\\"21\\\">，</p><p>由<img src=\\\"http://www.cn901.com/html1/2023/04/18/10017/20212/D676DA1546/120375D142/55FFE75510/PRQUI9001174518/PRQUI9001174518Analysis.files/image021.png\\\"  style=\\\"vertical-align: middle;\\\" width=\\\"60\\\" height=\\\"21\\\">，所以<img src=\\\"http://www.cn901.com/html1/2023/04/18/10017/20212/D676DA1546/120375D142/55FFE75510/PRQUI9001174518/PRQUI9001174518Analysis.files/image505.png\\\"  style=\\\"vertical-align: middle;\\\" width=\\\"125\\\" height=\\\"21\\\">，故B错误；</p><p>对于C，由<img src=\\\"http://www.cn901.com/html1/2023/04/18/10017/20212/D676DA1546/120375D142/55FFE75510/PRQUI9001174518/PRQUI9001174518Analysis.files/image021.png\\\"  style=\\\"vertical-align: middle;\\\" width=\\\"60\\\" height=\\\"21\\\">，可得<img src=\\\"http://www.cn901.com/html1/2023/04/18/10017/20212/D676DA1546/120375D142/55FFE75510/PRQUI9001174518/PRQUI9001174518Analysis.files/image039.png\\\"  style=\\\"vertical-align: middle;\\\" width=\\\"31\\\" height=\\\"42\\\">，所以<img src=\\\"http://www.cn901.com/html1/2023/04/18/10017/20212/D676DA1546/120375D142/55FFE75510/PRQUI9001174518/PRQUI9001174518Analysis.files/image506.png\\\"  style=\\\"vertical-align: middle;\\\" width=\\\"57\\\" height=\\\"42\\\">，</p><p>所以<img src=\\\"http://www.cn901.com/html1/2023/04/18/10017/20212/D676DA1546/120375D142/55FFE75510/PRQUI9001174518/PRQUI9001174518Analysis.files/image507.png\\\"  style=\\\"vertical-align: middle;\\\" width=\\\"80\\\" height=\\\"42\\\">，故C错误；</p><p>对于D，<img src=\\\"http://www.cn901.com/html1/2023/04/18/10017/20212/D676DA1546/120375D142/55FFE75510/PRQUI9001174518/PRQUI9001174518Analysis.files/image508.png\\\"  style=\\\"vertical-align: middle;\\\" width=\\\"204\\\" height=\\\"42\\\">，</p><p>由<img src=\\\"http://www.cn901.com/html1/2023/04/18/10017/20212/D676DA1546/120375D142/55FFE75510/PRQUI9001174518/PRQUI9001174518Analysis.files/image021.png\\\"  style=\\\"vertical-align: middle;\\\" width=\\\"60\\\" height=\\\"21\\\">，则<img src=\\\"http://www.cn901.com/html1/2023/04/18/10017/20212/D676DA1546/120375D142/55FFE75510/PRQUI9001174518/PRQUI9001174518Analysis.files/image509.png\\\"  style=\\\"vertical-align: middle;\\\" width=\\\"72\\\" height=\\\"42\\\">，即<img src=\\\"http://www.cn901.com/html1/2023/04/18/10017/20212/D676DA1546/120375D142/55FFE75510/PRQUI9001174518/PRQUI9001174518Analysis.files/image180.png\\\"  style=\\\"vertical-align: middle;\\\" width=\\\"48\\\" height=\\\"42\\\">，故D正确.</p><p>故选：AD.</p>\",\"questionsSource\":\"2.3.1不等式性质\",\"questionText\":\"000\",\"subjectId\":\"10017\",\"deleteFlag\":0,\"questionDifferent\":\"0.4-0.2\",\"score\":5,\"shareTag\":\"99\",\"dictionaryName\":\"\",\"price\":0,\"gradeBookCode\":\"TB00001781\",\"annexText\":\"\",\"baseTypeId\":\"102\",\"checkLink\":9,\"textBookName\":\"北师大版(2019)\",\"priceUnit\":\"1\",\"checkNumber\":1,\"isPortalShow\":\"1\",\"answerText\":\"<?xml version=\\\"1.0\\\" encoding=\\\"gb2312\\\"?><root><answer version=\\\"1.0\\\" systemversion=\\\"1.0\\\" editype=\\\"Form\\\" editversion=\\\"1.0\\\"><questionid>PRQUI9001174518</questionid><standard>答对得分，错不得分</standard><typeformat>多项选择形式</typeformat><itemstyle valuelist=\\\"A,B,C,D\\\" groupnum=\\\"1\\\" answernumber=\\\"1\\\" answerType=\\\"checkbox\\\"><item id=\\\"1\\\">AD</item></itemstyle></answer></root>\",\"pointCode\":\"ZSD00000000161099\",\"productId\":\"230044181174518\",\"checkDateTimeStr\":\"\",\"analysisControl\":\"\",\"questionid1\":\"\",\"shiTiShow1\":\"\",\"contentMark\":\"10\",\"questionDifficult\":\"0.4-0.2\",\"questionTextControl\":\"OfficeEditor\",\"click\":0,\"answerControl\":\"OfficeEditor\",\"checkUser\":\"zengzeng\",\"companyId\":100,\"questionKeyword\":\"\",\"dbid\":3251333,\"markingMachineValue\":\"0\",\"pointNameStr\":\"\",\"typeId\":\"60000538\",\"gradeCode\":\"\",\"updateDateTime\":{\"date\":25,\"hours\":11,\"seconds\":15,\"month\":7,\"nanos\":913000000,\"timezoneOffset\":-480,\"year\":123,\"minutes\":42,\"time\":1692934935913,\"day\":5},\"answerAnalysisText\":\"\",\"modifiedDiscrimination\":0,\"agentId\":\"\",\"markingMachine\":\"可计算机判卷\",\"districtCode\":\"610113000 \",\"questionId\":\"PRQUI9001174518\",\"questionIdcopyHistory\":\"\",\"shiTiAnswer\":\"<p>AD</p>\",\"exposalDate\":null,\"modifiedDifficulty\":0,\"questionCommand\":\"闭卷\",\"typeName\":\"多项选择题\",\"orderNum\":101174518,\"questionIdcopy\":\"PRQUI9001174518\",\"dbcode\":\"1       \",\"priceDateTime\":null,\"secrecy\":\"\",\"unitId\":\"1101010010001\",\"annexTextCopy1\":\"\",\"annexTextCopy2\":\"\",\"channelCode\":\"C0003\",\"createDate\":{\"date\":18,\"hours\":15,\"seconds\":45,\"month\":3,\"nanos\":593000000,\"timezoneOffset\":-480,\"year\":123,\"minutes\":31,\"time\":1681803105593,\"day\":2},\"subjectName\":\"高中数学\",\"webSiteId\":\"1         \",\"gradeName\":\"\",\"auditOpinion\":\"\",\"questionTitle\":\"\",\"questionidcopy1\":\"\",\"textBookId\":\"20212\",\"filePath\":\"2023/04/18/10017/20212/D676DA1546/120375D142/55FFE75510/\",\"questionStandard\":\"答对得分，错不得分\",\"updateUser\":\"zengzeng\",\"priceStatus\":\"1\",\"checkDate\":{\"date\":22,\"hours\":10,\"seconds\":50,\"month\":3,\"nanos\":700000000,\"timezoneOffset\":-480,\"year\":123,\"minutes\":14,\"time\":1682129690700,\"day\":6},\"dictionaryCode\":\"\",\"questionSubNum\":1,\"createDateTimeStr\":\"\",\"usedTime\":0,\"gradeBookName\":\"必修第一册\",\"questionDegrade\":\"了解\",\"annexControl\":\"\",\"updateDateTimeStr\":\"\",\"channelName\":\"高中\",\"createUser\":\"guord\",\"createUserBack\":\"1\"}}}],\"total\":1}}";
-//        try {
-//            String itemString = "";
-//            JSONObject json = new JSONObject(response);
-//            JSONObject dataObject = json.getJSONObject("data");
-//            JSONArray itemsArray = dataObject.getJSONArray("items");
-//            for (int i = 0; i < itemsArray.length(); i++) {
-//                JSONObject firstItem = itemsArray.getJSONObject(i);
-//                JSONObject quesDataObject = firstItem.getJSONObject("ques_data");
-//                JSONObject questionInfoObject = quesDataObject.getJSONObject("questionInfo");
-//                if (i == itemsArray.length() - 1) {
-//                    itemString += questionInfoObject.toString();
-//                } else {
-//                    itemString += questionInfoObject.toString() + ",";
-//                }
-//                System.out.println("itemString:" + itemString);
-//                Log.d("wen0501", "itemString: " + itemString);
-//            }
-//            itemString = "[" + itemString + "]";
-//            Gson gson = new Gson();
-//            //使用Goson框架转换Json字符串为列表
-//            itemList = gson.fromJson(itemString, new TypeToken<List<BookExerciseEntity>>() {}.getType());
-//            questionIds = "";
-//            for (int i = 0; i < itemList.size(); i++) {
-//                if (i == itemList.size() - 1) {
-//                    questionIds += itemList.get(i).questionId;
-//                } else {
-//                    questionIds += itemList.get(i).questionId + ",";
-//                }
-//            }
-//            System.out.println("questionIds:" + questionIds);
-//            System.out.println("itemList:" + itemList);
-//
-//            Bundle bundle = new Bundle();
-//            bundle.putSerializable("itemList", (Serializable) itemList);
-//            //封装消息，传递给主线程
-//            Message message = Message.obtain();
-//            message.obj = bundle;
-//
-//            // 发送消息给主线程
-//            if (itemList == null || itemList.size() == 0 || itemString.equals("[]")) {
-//                fll_null.setVisibility(View.VISIBLE);
-//                return;
-//            } else {
-//                fll_null.setVisibility(View.GONE);
-//            }
-//            //标识线程
-//            message.what = 100;
-//            handler.sendMessage(message);
-//        }catch (JSONException e) {
-//            e.printStackTrace();
-//        }
     }
 
     private void Alert(String alert) {
@@ -449,9 +465,62 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
 
     }
 
+    private static class ExamPoint {
+        private String pointName;
+        private String info;
+        private String dbid;
+        private String pointCode;
 
-    private void selectorRefresh(String sourceId) {
-        this.sourceId = sourceId;
+        public ExamPoint(String pointName, String info, String dbid, String pointCode) {
+            this.pointName = pointName;
+            this.info = info;
+            this.dbid = dbid;
+            this.pointCode = pointCode;
+        }
+
+        public String getPointName() {
+            return pointName;
+        }
+
+        public void setPointName(String pointName) {
+            this.pointName = pointName;
+        }
+
+        public String getInfo() {
+            return info;
+        }
+
+        public void setInfo(String info) {
+            this.info = info;
+        }
+
+        public String getDbid() {
+            return dbid;
+        }
+
+        public void setDbid(String dbid) {
+            this.dbid = dbid;
+        }
+
+        public String getPointCode() {
+            return pointCode;
+        }
+
+        public void setPointCode(String pointCode) {
+            this.pointCode = pointCode;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            ExamPoint examPoint = (ExamPoint) obj;
+            return pointName.equals(examPoint.pointName);
+        }
+
+        @Override
+        public int hashCode() {
+            return pointName.hashCode();
+        }
     }
-
 }
