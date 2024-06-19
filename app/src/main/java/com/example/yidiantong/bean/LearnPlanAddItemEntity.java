@@ -203,15 +203,19 @@ public class LearnPlanAddItemEntity implements Serializable {
         jsonMap.put("name", name);
         jsonMap.put("type", type);
         jsonMap.put("format", format);
-        jsonMap.put("shitiShow", shitiShow);
-        jsonMap.put("shitiAnswer", shitiAnswer);
-        jsonMap.put("shitiAnalysis", shitiAnalysis);
+        jsonMap.put("shitiShow", "");
+        jsonMap.put("shitiAnswer", "");
+        jsonMap.put("shitiAnalysis", "");
         jsonMap.put("baseTypeId", baseTypeId);
         jsonMap.put("baseTypeName", baseTypeName);
         jsonMap.put("typeId", typeId);
         jsonMap.put("typeName", typeName);
-        jsonMap.put("url", url);
-        jsonMap.put("pptList", gson.toJson(pptList));
+        if(url != null && url.length() > 0){
+            jsonMap.put("url", url);
+        }else{
+            jsonMap.put("url", previewPath);
+        }
+        jsonMap.put("pptList", "");
         jsonMap.put("filePath", filePath);
         jsonMap.put("previewPath", previewPath);
         jsonMap.put("linkName", "默认环节");

@@ -37,10 +37,12 @@ import com.example.yidiantong.fragment.TLearnPlanPickAssignFragment;
 import com.example.yidiantong.fragment.TLearnPlanPickChangeFragment;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
+import com.example.yidiantong.util.LogUtils;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
 import com.example.yidiantong.util.TLearnPlanAddInterface;
 import com.google.android.flexbox.FlexboxLayout;
+import com.google.gson.Gson;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONArray;
@@ -554,7 +556,6 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
         }
         jsonString += jsonStringBuilder.toString();
         jsonString += "]";
-
         try {
             params.put("assignType", assignType);
 
@@ -613,6 +614,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+
         StringRequest request = new StringRequest(Request.Method.POST, mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);

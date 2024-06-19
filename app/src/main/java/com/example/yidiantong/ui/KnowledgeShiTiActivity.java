@@ -209,7 +209,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
     }
     //加载学生列表
     private void getStudentList() {
-        String mRequestUrl = "http://www.cn901.com:8111//AppServer/ajax/studentApp_getStuList.do";
+        String mRequestUrl = Constant.API + "//AppServer/ajax/studentApp_getStuList.do";
         Log.d("wen0223", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -294,7 +294,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
             loadItems_Net();
             return;
         }
-        String mRequestUrl = "http://www.cn901.com:8111//AppServer/ajax/studentApp_getPointsByCatalogId.do?" +
+        String mRequestUrl = Constant.API + "//AppServer/ajax/studentApp_getPointsByCatalogId.do?" +
                 "catalogId=" + zhishidianId + "&stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + subjectId
                 + "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=" + unitId;
         Log.d("wen0223", "loadItems_Net: " + mRequestUrl);
