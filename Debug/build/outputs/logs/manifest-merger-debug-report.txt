@@ -1,32 +1,5 @@
 -- Merging decision tree log ---
 manifest
-<<<<<<< HEAD
-ADDED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml:1:1-6:12
-INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml:1:1-6:12
-INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml:1:1-6:12
-	package
-		ADDED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml:1:11-45
-		INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
-		INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
-	xmlns:android
-		ADDED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml:1:1-6:12
-application
-ADDED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml:4:5-32
-uses-sdk
-INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml reason: use-sdk injection requested
-INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
-INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
-INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
-INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
-	android:targetSdkVersion
-		INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
-		ADDED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
-		INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
-	android:minSdkVersion
-		INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
-		ADDED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
-		INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
-=======
 ADDED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml:1:1-6:12
 INJECTED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml:1:1-6:12
 INJECTED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml:1:1-6:12
@@ -52,4 +25,3 @@ INJECTED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifes
 		INJECTED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml
 		ADDED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml
 		INJECTED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml
->>>>>>> b06e609d68c5e906ca0fdb09c5477438c59886db

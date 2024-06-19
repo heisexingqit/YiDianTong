@@ -653,7 +653,7 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
     // TODO 后期需删除
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void loadStu() {
-        mRequestUrl = "http://www.cn901.com:8111//AppServer/ajax/studentApp_getStuList.do";
+        mRequestUrl = Constant.API + "//AppServer/ajax/studentApp_getStuList.do";
         Log.d("wen", "loadStu: " + mRequestUrl);
         stuMap.clear();
         StringRequest request = new StringRequest(mRequestUrl, response -> {

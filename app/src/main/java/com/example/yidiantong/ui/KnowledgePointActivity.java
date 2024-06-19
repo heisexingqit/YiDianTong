@@ -272,7 +272,6 @@ public class KnowledgePointActivity extends AppCompatActivity {
                     + "?stuId=" + stu + "&channelCode=" + xueduan + "&subjectCode=" + course_Id +
                     "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=" + "6105230000001";
         }
-//        mRequestUrl = "http://www.cn901.com:8111/AppServer/ajax/studentApp_getImgKnowledgeTree.do";
         Log.d("wen", "loadZhiShiDian: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
