@@ -268,7 +268,7 @@ public class TBellAnnounceSubmitFragment extends Fragment implements View.OnClic
         Integer type = all_tea_stu;
         Integer setDateFlag = timemode;
         if(setDateFlag == 2){
-            setDate = fev_bell_time.getText().toString();
+            setDate = fev_bell_time.getText().toString()+ ":00";
         }
 
         mRequestUrl1 = Constant.API + Constant.T_BELL_SAVE_MANAGE_ANN + "?userName=" + MyApplication.username + "&userCN=" + MyApplication.cnName + "&content=" + content + "&title=" + title + "&type=" + type + "&setDateFlag=" + setDateFlag + "&setDate=" + setDate + "&saveOrUpdate=" + "save";

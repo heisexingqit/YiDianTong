@@ -239,7 +239,7 @@ public class Constant {
     public static final String T_BELL_ADD_CLASS = "/AppServer/ajax/teacherApp_publishNotice.do";
 
     // 教师端查看通知或公告接口
-    public static final String T_BELL_LOOK_NOTICE = "/AppServer/ajax/teacherApp_lookNotice.do?";
+    public static final String T_BELL_LOOK_NOTICE = "/AppServer/ajax/teacherApp_lookNotice.do";
 
     // 教师端撤回通知或公告
     public static final String T_DELETE_NOTICE = "/AppServer/ajax/teacherApp_deleteNotice.do";
