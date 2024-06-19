@@ -239,13 +239,15 @@ public class Constant {
     public static final String T_BELL_ADD_CLASS = "/AppServer/ajax/teacherApp_publishNotice.do";
 
     // 教师端查看通知或公告接口
-    public static final String T_BELL_LOOK_NOTICE = "/AppServer/ajax/teacherApp_lookNotice.do";
+    //public static final String T_BELL_LOOK_NOTICE = "/AppServer/ajax/teacherApp_lookNotice.do";
+    public static final String T_BELL_LOOK_NOTICE = "/AppServer/ajax/teacherApp_lookNoticeNew.do";
 
     // 教师端撤回通知或公告
     public static final String T_DELETE_NOTICE = "/AppServer/ajax/teacherApp_deleteNotice.do";
 
     // 教师端保存公告接口
-    public static final String T_BELL_SAVE_MANAGE_ANN = "/AppServer/ajax/teacherApp_saveManageNotice.do";
+    //public static final String T_BELL_SAVE_MANAGE_ANN = "/AppServer/ajax/teacherApp_saveManageNotice.do";
+    public static final String T_BELL_SAVE_MANAGE_ANN = "/AppServer/ajax/teacherApp_saveManageNoticeNew.do";
 
     // 教师端保存通知接口
     public static final String T_BELL_SAVE_MANAGE_NOTICE = "/AppServer/ajax/teacherApp_saveNotice.do";
@@ -275,7 +277,8 @@ public class Constant {
     public static final String T_MAIN_TEACH_PARAM_SAVE = "/AppServer/ajax/teacherApp_saveLpProperty.do";
 
     // 教师端修改通知或公告，返回对应的内容
-    public static final String T_BELL_GET_NOTICE_INFO = "/AppServer/ajax/teacherApp_getNoticeInfo.do";
+    //public static final String T_BELL_GET_NOTICE_INFO = "/AppServer/ajax/teacherApp_getNoticeInfo.do";
+    public static final String T_BELL_GET_NOTICE_INFO = "/AppServer/ajax/teacherApp_getNoticeInfoNew.do";
 
     // 教师端获取授课一点通是否上课
     public static final String GET_SKYDT_STATUS = "/AppServer/ajax/teacherApp_getSkydtStatus.do";

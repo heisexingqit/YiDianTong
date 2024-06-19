@@ -1,193 +1,271 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     tools:context=".ui.TBellLookNoticeActivity"
-    android:orientation="vertical"
-    android:background="@color/white">
-
-    <include layout="@layout/bar_top" />
-
-    <TextView
-        android:id="@+id/ftv_bd_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="测试公告"
-        android:textColor="@color/black"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="10dp"/>
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="20dp">
-        <RelativeLayout
-            android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="60dp"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <include layout="@layout/bar_top" />
+
+        <TextView
+            android:id="@+id/ftv_bd_title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginRight="10dp">
-
-            <ImageView
-                android:layout_width="20sp"
-                android:layout_height="20sp"
-                android:layout_marginRight="8dp"
-                android:layout_toLeftOf="@+id/ftv_bd_user"
-                android:src="@drawable/te_name" />
-
-            <TextView
-                android:id="@+id/ftv_bd_user"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:text="mingming" />
-
-        </RelativeLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            android:layout_marginLeft="10dp">
-
-            <ImageView
-                android:layout_width="20sp"
-                android:layout_height="20sp"
-                android:src="@drawable/time_clock"
-                android:layout_marginRight="8dp"/>
-            <TextView
-                android:id="@+id/ftv_bd_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:text="2022.07"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/ftv_bd_content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="暑假定于9.1号开学"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="20dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/black" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="20dp">
-
-        <LinearLayout
-            android:id="@+id/fll_bd_read"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginBottom="10dp"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="7dp">
-            <TextView
-                android:id="@+id/ftv_bd_read"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="已读学生(2/60)"/>
-
-            <ImageView
-                android:id="@+id/fiv_bd_arrow"
-                android:layout_width="32dp"
-                android:layout_height="15dp"
-                android:src="@drawable/bot"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/fll_bd_noread"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="7dp">
-
-            <TextView
-                android:id="@+id/ftv_bd_noread"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="未读学生(58/60)"/>
-
-            <ImageView
-                android:id="@+id/fiv_bd_noarrow"
-                android:layout_width="32dp"
-                android:layout_height="15dp"
-                android:src="@drawable/bot" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/ftv_bd_stuname"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical"
-        android:fadeScrollbars="false"
-        android:visibility="gone"
-        android:padding="10dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            android:text="测试公告"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_gravity="bottom"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
             android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/fb_bd_modify"
-                style="?android:attr/borderlessButtonStyle"
+            <RelativeLayout
                 android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_gravity="bottom"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/t_homework_add_unable"
-                android:gravity="center"
-                android:text="修改"
-                android:textColor="@color/white"
-                android:visibility="gone"/>
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1">
 
-            <Button
-                android:id="@+id/fb_bd_withdraw"
-                style="?android:attr/borderlessButtonStyle"
+                <ImageView
+                    android:layout_width="20sp"
+                    android:layout_height="20sp"
+                    android:layout_marginRight="8dp"
+                    android:layout_toLeftOf="@+id/ftv_bd_user"
+                    android:src="@drawable/te_name" />
+
+                <TextView
+                    android:id="@+id/ftv_bd_user"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="mingming" />
+
+            </RelativeLayout>
+
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_gravity="bottom"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="5dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
                 android:layout_weight="1"
-                android:background="@drawable/t_homework_add_unable"
-                android:text="撤回"
-                android:textColor="@color/white"
-                android:visibility="gone"/>
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="20sp"
+                    android:layout_height="20sp"
+                    android:layout_marginRight="8dp"
+                    android:src="@drawable/time_clock" />
+
+                <TextView
+                    android:id="@+id/ftv_bd_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="2022.07" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
+        <ScrollView
+            android:id="@+id/SV_bd_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/ftv_bd_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="20dp"
+                android:text="暑假定于9.1号开学" />
+        </ScrollView>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/black" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/fll_bd_read"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="7dp">
+
+                <TextView
+                    android:id="@+id/ftv_bd_read"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="2"
+                    android:text="已读学生(2/60)" />
+
+                <ImageView
+                    android:id="@+id/fiv_bd_arrow"
+                    android:layout_width="32dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/bot" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fll_bd_noread"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="7dp">
+
+                <TextView
+                    android:id="@+id/ftv_bd_noread"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="未读学生(58/60)" />
+
+                <ImageView
+                    android:id="@+id/fiv_bd_noarrow"
+                    android:layout_width="32dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/bot" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/fll_bd_read_teacher"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="7dp">
+
+                <TextView
+                    android:id="@+id/ftv_bd_read_teacher"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="已读教师(2/60)" />
+
+                <ImageView
+                    android:id="@+id/fiv_bd_arrow_teacher"
+                    android:layout_width="32dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/bot" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fll_bd_noread_teacher"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="7dp">
+
+                <TextView
+                    android:id="@+id/ftv_bd_noread_teacher"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="未读教师(58/60)" />
+
+                <ImageView
+                    android:id="@+id/fiv_bd_noarrow_teacher"
+                    android:layout_width="32dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/bot" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/ftv_bd_stuname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fadeScrollbars="false"
+            android:padding="10dp"
+            android:scrollbars="vertical"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/ftv_bd_teaname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="100dp"
+            android:fadeScrollbars="false"
+            android:padding="10dp"
+            android:scrollbars="vertical"
+            android:visibility="gone" />
     </LinearLayout>
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/fb_bd_modify"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/t_homework_add_unable"
+            android:gravity="center"
+            android:text="修改"
+            android:textColor="@color/white"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/fb_bd_withdraw"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/t_homework_add_unable"
+            android:text="撤回"
+            android:textColor="@color/white"
+            android:visibility="gone" />
+    </LinearLayout>
+
+
+</RelativeLayout>

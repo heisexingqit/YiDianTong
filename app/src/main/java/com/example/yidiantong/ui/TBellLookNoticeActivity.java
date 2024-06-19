@@ -26,15 +26,17 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
-import com.example.yidiantong.bean.TBellNoticeEntity;
+import com.example.yidiantong.bean.TBellNoticeEntity_New;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
+import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -62,14 +64,25 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
     private LinearLayout fll_bd_noread;
     private LinearLayout fll_bd_read;
     private int read_state;
+    private int read_state_teacher;
     private String readname_s;
     private String noreadname_s;
+    private String readname_t;
+    private String noreadname_t;
     private Button fb_bd_modify;
     private Button fb_bd_withdraw;
     private int modifymode = -1;
     private String noticetime;
     private int height_screen;
     private int height_tv;
+    private LinearLayout fll_bd_read_teacher;
+    private TextView ftv_bd_read_teacher;
+    private ImageView fiv_bd_arrow_teacher;
+    private LinearLayout fll_bd_noread_teacher;
+    private TextView ftv_bd_noread_teacher;
+    private ImageView fiv_bd_noarrow_teacher;
+    private TextView ftv_bd_teaname;
+    private ScrollView sv_bd_content;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -101,12 +114,21 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
         ftv_bd_read = findViewById(R.id.ftv_bd_read);
         ftv_bd_noread = findViewById(R.id.ftv_bd_noread);
         ftv_bd_stuname = findViewById(R.id.ftv_bd_stuname);
+        ftv_bd_teaname = findViewById(R.id.ftv_bd_teaname);
         fiv_bd_noarrow = findViewById(R.id.fiv_bd_noarrow);
         fiv_bd_arrow = findViewById(R.id.fiv_bd_arrow);
         fll_bd_noread = findViewById(R.id.fll_bd_noread);
         fll_bd_read = findViewById(R.id.fll_bd_read);
         fb_bd_modify = findViewById(R.id.fb_bd_modify);
         fb_bd_withdraw = findViewById(R.id.fb_bd_withdraw);
+        fll_bd_read_teacher = findViewById(R.id.fll_bd_read_teacher);
+        ftv_bd_read_teacher = findViewById(R.id.ftv_bd_read_teacher);
+        fiv_bd_arrow_teacher = findViewById(R.id.fiv_bd_arrow_teacher);
+
+        fll_bd_noread_teacher = findViewById(R.id.fll_bd_noread_teacher);
+        ftv_bd_noread_teacher = findViewById(R.id.ftv_bd_noread_teacher);
+        fiv_bd_noarrow_teacher = findViewById(R.id.fiv_bd_noarrow_teacher);
+        sv_bd_content = findViewById(R.id.SV_bd_content);
 
         // 设置时间，从上一个页面获取
         noticetime = getIntent().getStringExtra("noticetime");
@@ -114,10 +136,13 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
 
         //查看已读/未读,初始化为-1
         read_state = -1;
+        read_state_teacher = -1;
         loadClass();
 
         fiv_bd_arrow.setOnClickListener(this);
         fiv_bd_noarrow.setOnClickListener(this);
+        fiv_bd_arrow_teacher.setOnClickListener(this);
+        fiv_bd_noarrow_teacher.setOnClickListener(this);
         fb_bd_modify.setOnClickListener(this);
         fb_bd_withdraw.setOnClickListener(this);
 
@@ -126,7 +151,7 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
 
     }
 
-    private List<TBellNoticeEntity> tBellNoticeEntity;
+    private List<TBellNoticeEntity_New> tBellNoticeEntity;
     private final Handler handler = new Handler(Looper.getMainLooper()) {
         @RequiresApi(api = Build.VERSION_CODES.N)
         @SuppressLint("NotifyDataSetChanged")
@@ -134,33 +159,68 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
         public void handleMessage(Message message) {
             super.handleMessage(message);
             if (message.what == 100) {
-                tBellNoticeEntity = (List<TBellNoticeEntity>) message.obj;
+                tBellNoticeEntity = (List<TBellNoticeEntity_New>) message.obj;
                 showView(tBellNoticeEntity);
             }
         }
     };
 
-    private void showView(List<TBellNoticeEntity> tBellNoticeEntity) {
+    private void showView(List<TBellNoticeEntity_New> tBellNoticeEntity) {
         ftv_bd_title.setText(tBellNoticeEntity.get(0).getTitle());
         ftv_bd_user.setText(tBellNoticeEntity.get(0).getAuthor());
         ftv_bd_content.setText(tBellNoticeEntity.get(0).getContent());
+        ftv_bd_content.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int height = ftv_bd_content.getHeight();
+                if (height > PxUtils.dip2px(TBellLookNoticeActivity.this, 300)) {
+                    ViewGroup.LayoutParams layoutParams = sv_bd_content.getLayoutParams();
+                    layoutParams.height = PxUtils.dip2px(TBellLookNoticeActivity.this, 300);
+                    sv_bd_content.setLayoutParams(layoutParams);
+                }
+                // 移除监听器，避免重复调整
+                sv_bd_content.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
 
-        //已读染色
-        int positionLen = String.valueOf(tBellNoticeEntity.get(0).getReadNum()).length();
-        String questionNum = "已读学生(" + tBellNoticeEntity.get(0).getReadNum() + "/" + tBellNoticeEntity.get(0).getNum() + ")";
-        SpannableString spannableString = StringUtils.getStringWithColor(questionNum, "#6CC1E0", 5, 5 + positionLen);
-        ftv_bd_read.setText(spannableString);
 
-        //未读染色
-        int positionLen1 = String.valueOf(tBellNoticeEntity.get(0).getNoReadNum()).length();
-        String questionNum1 = "未读学生(" + tBellNoticeEntity.get(0).getNoReadNum() + "/" + tBellNoticeEntity.get(0).getNum() + ")";
-        SpannableString spannableString1 = StringUtils.getStringWithColor(questionNum1, "#6CC1E0", 5, 5 + positionLen1);
-        ftv_bd_noread.setText(spannableString1);
-        // 设置已读/未读姓名格式
-        List readname = tBellNoticeEntity.get(0).getReadList();
-        List noreadname = tBellNoticeEntity.get(0).getNoreadList();
-        readname_s = ToString(readname);
-        noreadname_s = ToString(noreadname);
+        if(tBellNoticeEntity.get(0).getStuNum()!=0){
+            //已读染色
+            int positionLen = String.valueOf(tBellNoticeEntity.get(0).getStureadNum()).length();
+            String questionNum = "已读学生(" + tBellNoticeEntity.get(0).getStureadNum() + "/" + tBellNoticeEntity.get(0).getStuNum() + ")";
+            SpannableString spannableString = StringUtils.getStringWithColor(questionNum, "#6CC1E0", 5, 5 + positionLen);
+            ftv_bd_read.setText(spannableString);
+
+            //未读染色
+            int positionLen1 = String.valueOf(tBellNoticeEntity.get(0).getStunoreadNum()).length();
+            String questionNum1 = "未读学生(" + tBellNoticeEntity.get(0).getStunoreadNum() + "/" + tBellNoticeEntity.get(0).getStuNum() + ")";
+            SpannableString spannableString1 = StringUtils.getStringWithColor(questionNum1, "#6CC1E0", 5, 5 + positionLen1);
+            ftv_bd_noread.setText(spannableString1);
+            // 设置已读/未读姓名格式
+            List readname = tBellNoticeEntity.get(0).getStureadList();
+            List noreadname = tBellNoticeEntity.get(0).getStunoreadList();
+            readname_s = ToString(readname);
+            noreadname_s = ToString(noreadname);
+        }
+        // 设置教师姓名格式
+        if(tBellNoticeEntity.get(0).getTeanum()!=0){
+            //已读染色
+            int positionLen = String.valueOf(tBellNoticeEntity.get(0).getTeareadnum()).length();
+            String questionNum = "已读教师(" + tBellNoticeEntity.get(0).getTeareadnum() + "/" + tBellNoticeEntity.get(0).getTeanum() + ")";
+            SpannableString spannableString = StringUtils.getStringWithColor(questionNum, "#6CC1E0", 5, 5 + positionLen);
+            ftv_bd_read_teacher.setText(spannableString);
+            //未读染色
+            int positionLen1 = String.valueOf(tBellNoticeEntity.get(0).getTeanoreadnum()).length();
+            String questionNum1 = "未读教师(" + tBellNoticeEntity.get(0).getTeanoreadnum() + "/" + tBellNoticeEntity.get(0).getTeanum() + ")";
+            SpannableString spannableString1 = StringUtils.getStringWithColor(questionNum1, "#6CC1E0", 5, 5 + positionLen1);
+            ftv_bd_noread_teacher.setText(spannableString1);
+            // 设置已读/未读姓名格式
+            List readname = tBellNoticeEntity.get(0).getTeareadList();
+            List noreadname = tBellNoticeEntity.get(0).getTeanoreadList();
+            readname_t = ToString(readname);
+            noreadname_t = ToString(noreadname);
+
+        }
 
         // 根据权限设置修改和撤回操作
         if(tBellNoticeEntity.get(0).getIsAuthor()) {
@@ -206,7 +266,7 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
                 String data1 = "["+data+"]";
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
-                List<TBellNoticeEntity> bellList =gson.fromJson(data1, new TypeToken<List<TBellNoticeEntity>>() {}.getType());
+                List<TBellNoticeEntity_New> bellList =gson.fromJson(data1, new TypeToken<List<TBellNoticeEntity_New>>() {}.getType());
                 Log.e("bellList",""+bellList);
 
                 //封装消息，传递给主线程
@@ -246,8 +306,7 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
                     ftv_bd_stuname.setBackgroundResource(R.color.white);
                     read_state = -1;
                 }else {
-                    fiv_bd_noarrow.setImageResource(R.drawable.bot);
-                    fll_bd_noread.setBackgroundResource(R.color.white);
+                    resetStudentButtons();
                     ftv_bd_stuname.setVisibility(View.VISIBLE);
                     ftv_bd_stuname.setText(readname_s);
                     // 设置文本高度(包含初始化)
@@ -269,7 +328,6 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
                     fll_bd_noread.setBackgroundResource(R.color.f_light_gray);
                     ftv_bd_stuname.setBackgroundResource(R.color.f_light_gray);
                     read_state = 1;
-
                 }else if(read_state == 1){
                     fiv_bd_noarrow.setImageResource(R.drawable.bot);
                     ftv_bd_stuname.setVisibility(View.GONE);
@@ -277,8 +335,7 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
                     ftv_bd_stuname.setBackgroundResource(R.color.white);
                     read_state = -1;
                 }else {
-                    fiv_bd_arrow.setImageResource(R.drawable.bot);
-                    fll_bd_read.setBackgroundResource(R.color.white);
+                    resetStudentButtons();
                     ftv_bd_stuname.setVisibility(View.VISIBLE);
                     ftv_bd_stuname.setText(noreadname_s);
                     // 设置文本高度(包含初始化)
@@ -289,6 +346,183 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
                     read_state = 1;
                 }
                 break;
+            case R.id.fiv_bd_arrow_teacher:
+                if(read_state == -1){
+                    fiv_bd_arrow_teacher.setImageResource(R.drawable.top);
+                    ftv_bd_teaname.setVisibility(View.VISIBLE);
+                    ftv_bd_teaname.setText(readname_t);
+                    // 设置文本高度(包含初始化)
+                    textview_sethight();
+                    fll_bd_read_teacher.setBackgroundResource(R.color.f_light_gray);
+                    ftv_bd_teaname.setBackgroundResource(R.color.f_light_gray);
+                    read_state= 2;
+                }else if(read_state == 2){
+                    fiv_bd_arrow_teacher.setImageResource(R.drawable.bot);
+                    ftv_bd_teaname.setVisibility(View.GONE);
+                    fll_bd_read_teacher.setBackgroundResource(R.color.white);
+                    ftv_bd_teaname.setBackgroundResource(R.color.white);
+                    read_state = -1;
+                }else {
+                    resetStudentButtons();
+                    ftv_bd_teaname.setVisibility(View.VISIBLE);
+                    ftv_bd_teaname.setText(readname_t);
+                    // 设置文本高度(包含初始化)
+                    textview_sethight();
+                    fiv_bd_arrow_teacher.setImageResource(R.drawable.top);
+                    fll_bd_read_teacher.setBackgroundResource(R.color.f_light_gray);
+                    ftv_bd_teaname.setBackgroundResource(R.color.f_light_gray);
+                    read_state = 2;
+                }
+                break;
+
+            case R.id.fiv_bd_noarrow_teacher:
+                if(read_state == -1){
+                    fiv_bd_noarrow_teacher.setImageResource(R.drawable.top);
+                    ftv_bd_teaname.setVisibility(View.VISIBLE);
+                    ftv_bd_teaname.setText(noreadname_t);
+                    // 设置文本高度(包含初始化)
+                    textview_sethight();
+                    fll_bd_noread_teacher.setBackgroundResource(R.color.f_light_gray);
+                    ftv_bd_teaname.setBackgroundResource(R.color.f_light_gray);
+                    read_state = 3;
+
+                }else if(read_state == 3){
+                    fiv_bd_noarrow_teacher.setImageResource(R.drawable.bot);
+                    ftv_bd_teaname.setVisibility(View.GONE);
+                    fll_bd_noread_teacher.setBackgroundResource(R.color.white);
+                    ftv_bd_teaname.setBackgroundResource(R.color.white);
+                    read_state = -1;
+                }else {
+                    resetStudentButtons();
+                    ftv_bd_teaname.setVisibility(View.VISIBLE);
+                    ftv_bd_teaname.setText(noreadname_t);
+                    // 设置文本高度(包含初始化)
+                    textview_sethight();
+                    fiv_bd_noarrow_teacher.setImageResource(R.drawable.top);
+                    fll_bd_noread_teacher.setBackgroundResource(R.color.f_light_gray);
+                    ftv_bd_teaname.setBackgroundResource(R.color.f_light_gray);
+                    read_state= 3;
+                }
+                break;
+//            case R.id.fiv_bd_arrow:
+//                if(read_state == -1){
+//                    fiv_bd_arrow.setImageResource(R.drawable.top);
+//                    ftv_bd_stuname.setVisibility(View.VISIBLE);
+//                    ftv_bd_stuname.setText(readname_s);
+//                    // 设置文本高度(包含初始化)
+//                    textview_sethight();
+//                    fll_bd_read.setBackgroundResource(R.color.f_light_gray);
+//                    ftv_bd_stuname.setBackgroundResource(R.color.f_light_gray);
+//                    read_state = 0;
+//                }else if(read_state == 0){
+//                    fiv_bd_arrow.setImageResource(R.drawable.bot);
+//                    ftv_bd_stuname.setVisibility(View.GONE);
+//                    fll_bd_read.setBackgroundResource(R.color.white);
+//                    ftv_bd_stuname.setBackgroundResource(R.color.white);
+//                    read_state = -1;
+//                }else {
+//                    fiv_bd_noarrow.setImageResource(R.drawable.bot);
+//                    fll_bd_noread.setBackgroundResource(R.color.white);
+//                    ftv_bd_stuname.setVisibility(View.VISIBLE);
+//                    ftv_bd_stuname.setText(readname_s);
+//                    // 设置文本高度(包含初始化)
+//                    textview_sethight();
+//                    fiv_bd_arrow.setImageResource(R.drawable.top);
+//                    fll_bd_read.setBackgroundResource(R.color.f_light_gray);
+//                    ftv_bd_stuname.setBackgroundResource(R.color.f_light_gray);
+//                    read_state = 0;
+//                }
+//                break;
+//
+//            case R.id.fiv_bd_noarrow:
+//                if(read_state == -1){
+//                    fiv_bd_noarrow.setImageResource(R.drawable.top);
+//                    ftv_bd_stuname.setVisibility(View.VISIBLE);
+//                    ftv_bd_stuname.setText(noreadname_s);
+//                    // 设置文本高度(包含初始化)
+//                    textview_sethight();
+//                    fll_bd_noread.setBackgroundResource(R.color.f_light_gray);
+//                    ftv_bd_stuname.setBackgroundResource(R.color.f_light_gray);
+//                    read_state = 1;
+//                }else if(read_state == 1){
+//                    fiv_bd_noarrow.setImageResource(R.drawable.bot);
+//                    ftv_bd_stuname.setVisibility(View.GONE);
+//                    fll_bd_noread.setBackgroundResource(R.color.white);
+//                    ftv_bd_stuname.setBackgroundResource(R.color.white);
+//                    read_state = -1;
+//                }else {
+//                    fiv_bd_arrow.setImageResource(R.drawable.bot);
+//                    fll_bd_read.setBackgroundResource(R.color.white);
+//                    ftv_bd_stuname.setVisibility(View.VISIBLE);
+//                    ftv_bd_stuname.setText(noreadname_s);
+//                    // 设置文本高度(包含初始化)
+//                    textview_sethight();
+//                    fiv_bd_noarrow.setImageResource(R.drawable.top);
+//                    fll_bd_noread.setBackgroundResource(R.color.f_light_gray);
+//                    ftv_bd_stuname.setBackgroundResource(R.color.f_light_gray);
+//                    read_state = 1;
+//                }
+//                break;
+//            case R.id.fiv_bd_arrow_teacher:
+//                if(read_state == -1){
+//                    fiv_bd_arrow_teacher.setImageResource(R.drawable.top);
+//                    ftv_bd_teaname.setVisibility(View.VISIBLE);
+//                    ftv_bd_teaname.setText(readname_t);
+//                    // 设置文本高度(包含初始化)
+//                    textview_sethight();
+//                    fll_bd_read_teacher.setBackgroundResource(R.color.f_light_gray);
+//                    ftv_bd_teaname.setBackgroundResource(R.color.f_light_gray);
+//                    read_state= 2;
+//                }else if(read_state_teacher == 0){
+//                    fiv_bd_arrow_teacher.setImageResource(R.drawable.bot);
+//                    ftv_bd_teaname.setVisibility(View.GONE);
+//                    fll_bd_read_teacher.setBackgroundResource(R.color.white);
+//                    ftv_bd_teaname.setBackgroundResource(R.color.white);
+//                    read_state_teacher = -1;
+//                }else {
+//                    fiv_bd_noarrow_teacher.setImageResource(R.drawable.bot);
+//                    fll_bd_noread_teacher.setBackgroundResource(R.color.white);
+//                    ftv_bd_teaname.setVisibility(View.VISIBLE);
+//                    ftv_bd_teaname.setText(readname_t);
+//                    // 设置文本高度(包含初始化)
+//                    textview_sethight();
+//                    fiv_bd_arrow_teacher.setImageResource(R.drawable.top);
+//                    fll_bd_read_teacher.setBackgroundResource(R.color.f_light_gray);
+//                    ftv_bd_teaname.setBackgroundResource(R.color.f_light_gray);
+//                    read_state_teacher = 0;
+//                }
+//                break;
+//
+//            case R.id.fiv_bd_noarrow_teacher:
+//                if(read_state == -1){
+//                    fiv_bd_noarrow_teacher.setImageResource(R.drawable.top);
+//                    ftv_bd_teaname.setVisibility(View.VISIBLE);
+//                    ftv_bd_teaname.setText(noreadname_t);
+//                    // 设置文本高度(包含初始化)
+//                    textview_sethight();
+//                    fll_bd_noread_teacher.setBackgroundResource(R.color.f_light_gray);
+//                    ftv_bd_teaname.setBackgroundResource(R.color.f_light_gray);
+//                    read_state = 3;
+//
+//                }else if(read_state_teacher == 1){
+//                    fiv_bd_noarrow_teacher.setImageResource(R.drawable.bot);
+//                    ftv_bd_teaname.setVisibility(View.GONE);
+//                    fll_bd_noread_teacher.setBackgroundResource(R.color.white);
+//                    ftv_bd_teaname.setBackgroundResource(R.color.white);
+//                    read_state_teacher = -1;
+//                }else {
+//                    fiv_bd_arrow_teacher.setImageResource(R.drawable.bot);
+//                    fll_bd_read_teacher.setBackgroundResource(R.color.white);
+//                    ftv_bd_teaname.setVisibility(View.VISIBLE);
+//                    ftv_bd_teaname.setText(noreadname_t);
+//                    // 设置文本高度(包含初始化)
+//                    textview_sethight();
+//                    fiv_bd_noarrow_teacher.setImageResource(R.drawable.top);
+//                    fll_bd_noread_teacher.setBackgroundResource(R.color.f_light_gray);
+//                    ftv_bd_teaname.setBackgroundResource(R.color.f_light_gray);
+//                    read_state_teacher = 1;
+//                }
+//                break;
 
             case R.id.fb_bd_modify:
                 if(modifymode == 1){
@@ -419,6 +653,21 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
             Log.d("", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
+    }
+    public void resetStudentButtons(){
+        ftv_bd_stuname.setVisibility(View.GONE);
+        ftv_bd_teaname.setVisibility(View.GONE);
+        fiv_bd_arrow.setImageResource(R.drawable.bot);
+        fll_bd_read.setBackgroundResource(R.color.white);
+
+        fiv_bd_noarrow.setImageResource(R.drawable.bot);
+        fll_bd_noread.setBackgroundResource(R.color.white);
+
+        fiv_bd_arrow_teacher.setImageResource(R.drawable.bot);
+        fll_bd_read_teacher.setBackgroundResource(R.color.white);
+
+        fiv_bd_noarrow_teacher.setImageResource(R.drawable.bot);
+        fll_bd_noread_teacher.setBackgroundResource(R.color.white);
     }
 
 }

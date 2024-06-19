@@ -8,9 +8,6 @@
     android:focusableInTouchMode="true"
     android:orientation="vertical">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -184,14 +181,14 @@
                     android:id="@+id/fll_bell_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
+                    android:layout_gravity="center"
                     android:background="@drawable/bell_time_unfocus"
                     android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/fev_bell_time"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="30dp"
                         android:focusable="false"
                         android:paddingLeft="8dp"
                         android:paddingTop="1dp"
@@ -219,18 +216,19 @@
                     android:layout_height="wrap_content"
                     android:text="内容：(添加文字)"
                     android:textColor="@color/black" />
-
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/fet_bell_content"
                     android:layout_width="match_parent"
-                    android:layout_height="400dp"
-                    android:background="@android:drawable/editbox_background_normal"
+                    android:layout_height="450dp"
                     android:gravity="top"
-                    android:padding="10dp" />
-
+                    android:inputType="textMultiLine"
+                    android:background="@android:drawable/editbox_background_normal"
+                    android:minLines="5"
+                    android:layout_marginTop="10dp"
+                    android:scrollbars="vertical"
+                    android:padding="10dp"/>
             </LinearLayout>
 
         </LinearLayout>
-    </ScrollView>
 
 </LinearLayout>
