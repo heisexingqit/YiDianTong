@@ -186,12 +186,16 @@
                     android:text="内容：(添加文字)"
                     android:textColor="@color/black"/>
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/fet_bell_content"
                     android:layout_width="match_parent"
-                    android:layout_height="400dp"
+                    android:layout_height="450dp"
                     android:gravity="top"
+                    android:inputType="textMultiLine"
                     android:background="@android:drawable/editbox_background_normal"
+                    android:minLines="5"
+                    android:layout_marginTop="10dp"
+                    android:scrollbars="vertical"
                     android:padding="10dp"/>
 
             </LinearLayout>

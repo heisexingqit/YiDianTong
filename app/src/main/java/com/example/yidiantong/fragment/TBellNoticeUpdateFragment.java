@@ -42,6 +42,7 @@ import com.example.yidiantong.util.DateFormatUtils;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.PxUtils;
 import com.google.android.flexbox.FlexboxLayout;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -97,7 +98,7 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
     private int[] allmode = {0, 0};
     // 判断时间，1为即时，2为定时
     private int timemode;
-    private EditText fet_bell_content;
+    private TextInputEditText fet_bell_content;
     private String mRequestUrl1;
     private String setDate = null;
     private RelativeLayout frl_bell_0;
@@ -201,7 +202,7 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
             if (message.what == 100) {
                 tBellNoticeUpdateEntity = (List<TBellUpdateEntity.TBellNoticeUpdateEntity>) message.obj;
                 showView(tBellNoticeUpdateEntity);
-                loadClass();
+                //loadClass();
             } else if (message.what == 101) {
                 showClass((Map<String, String>) message.obj);
             }
