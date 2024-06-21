@@ -1,6 +1,7 @@
 package com.example.yidiantong.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +12,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.yidiantong.R;
 import com.example.yidiantong.bean.THomeItemEntity;
+import com.example.yidiantong.util.PxUtils;
 
 import java.util.List;
 
@@ -24,6 +27,8 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     private final LayoutInflater layoutInflater;
 
     private MyItemClickListener mItemClickListener;
+
+    Context context;
 
     //item类型，数据
     public List<THomeItemEntity> itemList;
@@ -37,6 +42,7 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     public boolean fail = false;
 
     public THomeRecyclerAdapter(Context context, List<THomeItemEntity> itemList) {
+        this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
         this.itemList = itemList;
     }
@@ -207,10 +213,24 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             // 未阅小球
             if (item.getfNumber() != null) {
-                if (!item.getfNumber().equals("0") && !item.getfType().equals("10")) {
+                if (!item.getfNumber().equals("0") && !item.getfType().equals("10")&&item.getfFlag().equals("1")) {
                     tv_unread.setVisibility(View.VISIBLE);
                     tv_unread.setText(item.getfNumber());
-                } else {
+                } else if(item.getfFlag().equals("2")&&!item.getfType().equals("10")&&item.getfNumber().equals("1")){
+                    tv_unread.setVisibility(View.VISIBLE);
+                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) tv_unread.getLayoutParams();
+                    layoutParams.width = PxUtils.dip2px(context, 15);
+                    layoutParams.height = PxUtils.dip2px(context, 8);
+                    tv_unread.setLayoutParams(layoutParams);
+                    tv_unread.setBackgroundResource(android.R.color.transparent);
+                    // 获取Drawable对象
+                    Drawable drawable = ContextCompat.getDrawable(context, R.drawable.new_icon);
+                    // 设置Drawable的边界以改变其大小
+                    int desiredWidth = PxUtils.dip2px(context, 15); // 期望的宽度
+                    int desiredHeight = PxUtils.dip2px(context, 8); // 期望的高度
+                    drawable.setBounds(0, 0, desiredWidth, desiredHeight);
+                    tv_unread.setCompoundDrawables(drawable, null, null, null);
+                } else{
                     tv_unread.setVisibility(View.INVISIBLE);
                 }
             } else {

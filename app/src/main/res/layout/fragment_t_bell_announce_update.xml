@@ -189,7 +189,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/fet_bell_content"
                     android:layout_width="match_parent"
-                    android:layout_height="450dp"
+                    android:layout_height="350dp"
                     android:gravity="top"
                     android:inputType="textMultiLine"
                     android:background="@android:drawable/editbox_background_normal"
