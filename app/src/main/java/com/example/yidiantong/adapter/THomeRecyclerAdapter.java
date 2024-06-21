@@ -260,6 +260,9 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
                 String bottomStr = item.getfNum1() + " " + item.getfNum2() + " " + item.getfNum3();
                 tv_bottom.setText(bottomStr);
             }
+            if(item.getfFlag().equals("2")&&item.getfType().equals("4")){
+                tv_bottom.setVisibility(View.INVISIBLE);
+            }
         }
     }
 

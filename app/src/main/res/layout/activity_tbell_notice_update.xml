@@ -24,7 +24,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="60dp"
             android:orientation="horizontal">
 
             <Button
@@ -32,7 +32,7 @@
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
-                android:layout_gravity="bottom"
+                android:layout_marginTop="5dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="5dp"
@@ -48,7 +48,7 @@
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
-                android:layout_gravity="bottom"
+                android:layout_marginTop="5dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="5dp"
@@ -70,7 +70,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="60dp"
             android:orientation="horizontal">
 
             <Button
@@ -78,10 +78,10 @@
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
-                android:layout_gravity="bottom"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/t_homework_add"
                 android:gravity="center"
@@ -94,7 +94,7 @@
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
-                android:layout_gravity="bottom"
+                android:layout_marginTop="5dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="5dp"
