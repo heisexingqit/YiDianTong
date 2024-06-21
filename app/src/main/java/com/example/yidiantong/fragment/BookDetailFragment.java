@@ -193,7 +193,7 @@ public class BookDetailFragment extends Fragment {
                         intent = new Intent(getActivity(), MainBookUpActivity.class);
                     }else {
                         //功能暂未开放
-                        Toast.makeText(getActivity(), "该学科自主学习功能暂未开放，敬请期待", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "该学科巩固提升功能暂未开放，敬请期待", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     intent.putExtra("userName", course_name);  // 用户名
