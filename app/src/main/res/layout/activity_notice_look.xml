@@ -70,13 +70,18 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/ftv_nl_content"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="暑假定于9.1号开学"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="20dp">
+        <TextView
+            android:id="@+id/ftv_nl_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="暑假定于9.1号开学"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="20dp"/>
+    </ScrollView>
 
 </LinearLayout>

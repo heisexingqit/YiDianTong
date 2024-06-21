@@ -86,6 +86,7 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
     private LinearLayout ll_teacher;
     private LinearLayout ll_student;
     private LinearLayout ll_name;
+    private LinearLayout ll_btn;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -127,6 +128,7 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
         fll_bd_read_teacher = findViewById(R.id.fll_bd_read_teacher);
         ftv_bd_read_teacher = findViewById(R.id.ftv_bd_read_teacher);
         fiv_bd_arrow_teacher = findViewById(R.id.fiv_bd_arrow_teacher);
+        ll_btn = findViewById(R.id.ll_btn);
 
 //        fll_bd_noread_teacher = findViewById(R.id.fll_bd_noread_teacher);
 //        ftv_bd_noread_teacher = findViewById(R.id.ftv_bd_noread_teacher);
@@ -251,8 +253,7 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
 
         // 根据权限设置修改和撤回操作
         if(tBellNoticeEntity.get(0).getIsAuthor()) {
-            fb_bd_modify.setVisibility(View.VISIBLE);
-            fb_bd_withdraw.setVisibility(View.VISIBLE);
+            ll_btn.setVisibility(View.VISIBLE);
             ll_student.setVisibility(View.VISIBLE);
             fb_bd_withdraw.setBackgroundResource(R.drawable.t_homework_add);
         }

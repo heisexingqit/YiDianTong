@@ -8,7 +8,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="0dp"
         android:background="@color/white"
         android:orientation="vertical">
 
@@ -80,7 +80,8 @@
         <ScrollView
             android:id="@+id/SV_bd_content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="25dp">
 
             <TextView
                 android:id="@+id/ftv_bd_content"
@@ -103,8 +104,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:visibility="gone"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
 
             <LinearLayout
@@ -235,6 +236,7 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <LinearLayout
                 android:id="@+id/ll_name"
                 android:layout_width="match_parent"
@@ -247,6 +249,7 @@
                     android:layout_height="wrap_content"
                     android:background="@color/f_light_gray"
                     android:text="【已读】" />
+
                 <TextView
                     android:id="@+id/ftv_bd_stuname"
                     android:layout_width="match_parent"
@@ -261,6 +264,7 @@
                     android:layout_height="wrap_content"
                     android:background="@color/f_light_gray"
                     android:text="【未读】" />
+
                 <TextView
                     android:id="@+id/ftv_bd_teaname"
                     android:layout_width="match_parent"
@@ -278,12 +282,14 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_btn"
         android:layout_width="match_parent"
         android:layout_height="65dp"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
         android:background="@color/white"
         android:gravity="center_vertical"
+        android:visibility="gone"
         android:orientation="horizontal">
 
         <Button
@@ -299,8 +305,7 @@
             android:background="@drawable/t_homework_add_unable"
             android:gravity="center"
             android:text="修改"
-            android:textColor="@color/white"
-            android:visibility="gone" />
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/fb_bd_withdraw"
@@ -314,8 +319,7 @@
             android:layout_weight="1"
             android:background="@drawable/t_homework_add_unable"
             android:text="撤回"
-            android:textColor="@color/white"
-            android:visibility="gone" />
+            android:textColor="@color/white" />
     </LinearLayout>
 
 
