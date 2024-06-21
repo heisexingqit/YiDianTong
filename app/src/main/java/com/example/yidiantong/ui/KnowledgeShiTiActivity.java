@@ -95,6 +95,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
     private SharedPreferences preferences;
     private String[] autoStuLoadAnswer;
     private boolean isUpdatingAllCheckBoxes = false;
+    private boolean isClickAllCheckBoxes = false;
 
 
     @Override
@@ -283,12 +284,15 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
                 } else {
                     selectedExamPoints.remove(examPoint.getDbid());
                 }
-                if (selectedExamPoints.size() == examPoints.size()) {
-                    selectAllCheckBox.setChecked(true);
-                } else {
-                    isUpdatingAllCheckBoxes = true;
-                    selectAllCheckBox.setChecked(false);
+                if (!isClickAllCheckBoxes) {
+                    if (selectedExamPoints.size() == examPoints.size()) {
+                        selectAllCheckBox.setChecked(true);
+                    } else {
+                        isUpdatingAllCheckBoxes = true;
+                        selectAllCheckBox.setChecked(false);
+                    }
                 }
+
             });
 
             layout.addView(itemView);
@@ -299,6 +303,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
             if (isUpdatingAllCheckBoxes) {
                 isUpdatingAllCheckBoxes = false;
             }else {
+                isClickAllCheckBoxes = true;
                 for (int i = 0; i < layout.getChildCount(); i++) {
                     View itemView = layout.getChildAt(i);
                     if (itemView instanceof LinearLayout) {
@@ -312,6 +317,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
                         selectedExamPoints.add(examPoint.getDbid());
                     }
                 }
+                isClickAllCheckBoxes = false;
             }
         });
 
