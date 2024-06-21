@@ -46,8 +46,10 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 public class KnowledgeShiTiActivity extends AppCompatActivity {
@@ -131,7 +133,8 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
         tv_knowledge_name.setText(zhishidian);
         ll_kaodian_filtrate = findViewById(R.id.ll_kaodian_filtrate);
         //点击后,页面弹出图层,显示章节下的考点,每个考点占一行,并且前面有一个复选框,默认全部为选中状态
-        ll_kaodian_filtrate.setOnClickListener(v -> showCheckableSubjectsDialog());
+//        ll_kaodian_filtrate.setOnClickListener(v -> showCheckableSubjectsDialog());
+        ll_kaodian_filtrate.setOnClickListener(v -> getKaoDianList());
 
         //加载页
         rl_loading = findViewById(R.id.rl_loading);
@@ -284,16 +287,16 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
     }
     //获取考点列表
     private void getKaoDianList() {
-        if (adapter.isRefresh == 1) {
-            fll_null.setVisibility(View.GONE);
-            rl_loading.setVisibility(View.VISIBLE);
-        }
-        //如果集合中有数据，直接显示对话框
-        if (examPoints != null && examPoints.size() > 0) {
-//            showCheckableSubjectsDialog();
-            loadItems_Net();
-            return;
-        }
+//        if (adapter.isRefresh == 1) {
+//            fll_null.setVisibility(View.GONE);
+//            rl_loading.setVisibility(View.VISIBLE);
+//        }
+//        //如果集合中有数据，直接显示对话框
+//        if (examPoints != null && examPoints.size() > 0) {
+////            showCheckableSubjectsDialog();
+//            loadItems_Net();
+//            return;
+//        }
         String mRequestUrl = Constant.API + "//AppServer/ajax/studentApp_getPointsByCatalogId.do?" +
                 "catalogId=" + zhishidianId + "&stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + subjectId
                 + "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=" + unitId;
@@ -314,12 +317,13 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
                 for (ExamPoint examPoint : selectedExamPoints) {
                     sb.append(examPoint.getDbid()).append(",");
                 }
+
                 if (sb.length() > 0) {
                     sb.deleteCharAt(sb.length() - 1);
                 }
                 pointIds = sb.toString();
-                loadItems_Net();
-//                showCheckableSubjectsDialog();
+//                loadItems_Net();
+                showCheckableSubjectsDialog();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -335,8 +339,8 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
     private void refreshList() {
         currentPage++;
         adapter.isRefresh = 1;
-        getKaoDianList();
-//        loadItems_Net();
+//        getKaoDianList();
+        loadItems_Net();
         frv_detail.scrollToPosition(0);
     }
 
