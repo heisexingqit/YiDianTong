@@ -28,6 +28,7 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.adapter.BookAutoAdapter;
 import com.example.yidiantong.bean.BookExerciseEntity;
+import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -50,10 +51,15 @@ public class OnlineTestActivity extends AppCompatActivity {
     private LinearLayout ll_knowledge_name;
 
     //请求数据参数
-    private String userName; //用户名
+    private String userName;//用户名
+    private String unitId;//学校id
+    private String xueduan = "";//学段
     private String subjectId;  //学科id
-    private String course_name;  //学科名
-    private String flag;  //模式标记
+    private String banben = "";  //版本
+    private String jiaocai = "";  //教材
+    private String courseName;  //课程名称
+    private String zhishidian = "";  //知识点id
+    private String flag;  //标记
 
     //列表数据
     private List<BookExerciseEntity> itemList = new ArrayList<>();
@@ -92,9 +98,16 @@ public class OnlineTestActivity extends AppCompatActivity {
 
         //获取Intent参数,设置学科错题本最上面的内容
         userName = getIntent().getStringExtra("userName");
+        unitId = getIntent().getStringExtra("unitId");
         subjectId = getIntent().getStringExtra("subjectId"); //学科名
-        course_name = getIntent().getStringExtra("courseName"); //学科名
+        courseName = getIntent().getStringExtra("courseName"); //学科名
         flag = getIntent().getStringExtra("flag"); //模式标记
+        if (flag.equals("自主学习")) {
+            xueduan = getIntent().getStringExtra("xueduan");
+            banben = getIntent().getStringExtra("banben");
+            jiaocai = getIntent().getStringExtra("jiaocai");
+            zhishidian = getIntent().getStringExtra("zhishidian");
+        }
 
 
         TextView tv_title = findViewById(R.id.ftv_title);
@@ -119,7 +132,7 @@ public class OnlineTestActivity extends AppCompatActivity {
             intent.putExtra("questionId", item.questionId); //题目id
             intent.putExtra("subjectId", subjectId);  // 学科id
             intent.putExtra("username", userName);  // 用户名
-            intent.putExtra("name", course_name);  // 学科名
+            intent.putExtra("name", courseName);  // 学科名
             intent.putExtra("allpage", String.valueOf(itemList.size()));  // 总页数
             intent.putExtra("questionIds", questionIds);  // 题目id
             pos = pos + 1;
@@ -160,7 +173,10 @@ public class OnlineTestActivity extends AppCompatActivity {
             fll_null.setVisibility(View.GONE);
             rl_loading.setVisibility(View.VISIBLE);
         }
-        String mRequestUrl = "http://www.cn901.net:8111/AppServer/ajax/studentApp_getQuestionsZDJC.do?subjectId=" + subjectId;
+        String mRequestUrl = Constant.API +"/AppServer/ajax/studentApp_getQuestionsZDJC.do?subjectId="
+                + "?stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + subjectId
+                + "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&catalogId=" + zhishidian
+                + "&unitId=" + "&type=zzxx";
         Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {

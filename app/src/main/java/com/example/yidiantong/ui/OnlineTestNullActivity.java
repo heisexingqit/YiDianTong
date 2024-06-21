@@ -50,9 +50,15 @@ public class OnlineTestNullActivity extends AppCompatActivity {
     private ImageView fiv_auto_study_null;
     private ImageView fiv_up_null;
     private Button btn_test;
-    private String userName;
+
+    private String userName;//用户名
+    private String unitId;//学校id
+    private String xueduan="";//学段
     private String subjectId;  //学科id
+    private String banben="";  //版本
+    private String jiaocai="";  //教材
     private String courseName;  //课程名称
+    private String zhishidian="";  //知识点id
     private String flag;  //标记
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -62,10 +68,16 @@ public class OnlineTestNullActivity extends AppCompatActivity {
         setContentView(R.layout.activity_shiti_null);
 
         userName = getIntent().getStringExtra("userName");
+        unitId = getIntent().getStringExtra("unitId");
         subjectId = getIntent().getStringExtra("subjectId");
         courseName = getIntent().getStringExtra("courseName");
         flag = getIntent().getStringExtra("flag");
-
+        if (flag.equals("自主学习")) {
+            xueduan = getIntent().getStringExtra("xueduan");
+            banben = getIntent().getStringExtra("banben");
+            jiaocai = getIntent().getStringExtra("jiaocai");
+            zhishidian = getIntent().getStringExtra("zhishidian");
+        }
 
         ftv_title = findViewById(R.id.ftv_title);
         if (flag.equals("巩固提升")) {
@@ -103,6 +115,11 @@ public class OnlineTestNullActivity extends AppCompatActivity {
             intent.putExtra("subjectId", subjectId);
             intent.putExtra("courseName", courseName);
             intent.putExtra("flag", flag);
+            intent.putExtra("unitId", unitId);
+            intent.putExtra("xueduan", xueduan);
+            intent.putExtra("banben", banben);
+            intent.putExtra("jiaocai", jiaocai);
+            intent.putExtra("zhishidian", zhishidian);
             startActivity(intent);
         });
     }
