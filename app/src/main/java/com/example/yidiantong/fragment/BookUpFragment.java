@@ -193,7 +193,7 @@ public class BookUpFragment extends Fragment {
     }
 
     private void getStudentList() {
-        String mRequestUrl = "http://www.cn901.com:8111//AppServer/ajax/studentApp_getStuList.do";
+        String mRequestUrl = Constant.API + "//AppServer/ajax/studentApp_getStuList.do";
         Log.d("wen0223", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -261,18 +261,6 @@ public class BookUpFragment extends Fragment {
                 Log.d("song0321", "message: " + message1);
                 Alert(message1);
                 String itemString = json.getString("data");
-                //TODO 打包前要修改
-//                itemString = "[]";
-                //当试题列表为空时,需要跳转中间页进行处理
-                if (itemString.equals("[]") || itemString.equals("") || itemString == null) {
-                    Intent intent = new Intent(getActivity(), OnlineTestNullActivity.class);
-                    intent.putExtra("userName", userName); // 用户名
-                    intent.putExtra("subjectId", subjectId); // 学科ID
-                    intent.putExtra("courseName", course_name);  // 课程名
-                    intent.putExtra("flag", "巩固提升"); // 巩固提升,用于在线测试判别
-                    startActivity(intent);
-                    getActivity().finish();
-                }
                 Log.d("wen0501", "itemString: " + itemString);
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表

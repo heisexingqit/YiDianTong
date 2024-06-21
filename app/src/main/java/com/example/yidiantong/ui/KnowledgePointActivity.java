@@ -122,27 +122,68 @@ public class KnowledgePointActivity extends AppCompatActivity {
         public void handleMessage(Message message) {
             super.handleMessage(message);
             if (message.what == 100) {
-                Intent intent = new Intent(KnowledgePointActivity.this,
-                        KnowledgeShiTiActivity.class);
-                intent.putExtra("zhishidianId", zhishidianId);  // 知识点id
-                if (getIntent().getStringExtra("stu").equals("")){
-                    intent.putExtra("userName", userName);  // 用户名
-                    intent.putExtra("unitId", "");    // 学科id
+                //跳转判断
+                String stu = getIntent().getStringExtra("stu");
+                String url;
+                if (stu.equals("")){
+                    url = Constant.API + "/AppServer/ajax/studentApp_judgeCheck.do"
+                            + "?stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + course_Id
+                            + "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&catalogId=" + zhishidianId
+                            + "&unitId=1101010010001" + "&type=zzxx";
                 }else {
-                    intent.putExtra("userName", getIntent().getStringExtra("stu"));
-                    intent.putExtra("unitId", "6105230000001");    // 学科id
+                    url = Constant.API + "/AppServer/ajax/studentApp_judgeCheck.do"
+                            + "?stuId=" + stu + "&channelCode=" + xueduan + "&subjectCode=" + course_Id
+                            + "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&catalogId=" + zhishidianId
+                            + "&unitId=6105230000001" + "&type=zzxx";
                 }
-                intent.putExtra("xueduanId", xueduan);    // 学科id
-                intent.putExtra("subjectId", course_Id);    // 学科id
-                intent.putExtra("banbenId", banben);  // 学科名
-                intent.putExtra("jiaocaiId", jiaocai);  // 学科名
-                intent.putExtra("courseName", course_name);  // 学科名
-                intent.putExtra("zhishidian", zhishidian);  // 知识点
-                startActivity(intent);
+                Log.d("wen", "judgeCheck: " + url);
+                StringRequest request = new StringRequest(url, response -> {
+                    try {
+                        JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                        String result = json.getString("data");
+                        Log.d("wen", "result: " + result);
+                        Intent intent;
+                        if (result.equals("0")) {
+                            //需要自我检测
+                            intent = new Intent(KnowledgePointActivity.this,
+                                    OnlineTestNullActivity.class);
+
+                        }else if (result.equals("1")){
+                            //不需要检测直接进入自主学习
+                            intent = new Intent(KnowledgePointActivity.this,
+                                    KnowledgeShiTiActivity.class);
+                        }else {
+                            //功能暂未开放
+                            Toast.makeText(KnowledgePointActivity.this, "该学科自主学习功能暂未开放，敬请期待", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        intent.putExtra("zhishidianId", zhishidianId);  // 知识点id
+                        if (getIntent().getStringExtra("stu").equals("")){
+                            intent.putExtra("userName", userName);  // 用户名
+                            intent.putExtra("unitId", "1101010010001");    // 学科id
+                        }else {
+                            intent.putExtra("userName", getIntent().getStringExtra("stu"));
+                            intent.putExtra("unitId", "6105230000001");    // 学科id
+                        }
+                        intent.putExtra("xueduanId", xueduan);    // 学科id
+                        intent.putExtra("subjectId", course_Id);    // 学科id
+                        intent.putExtra("banbenId", banben);  // 版本id
+                        intent.putExtra("jiaocaiId", jiaocai);  // 教材id
+                        intent.putExtra("courseName", course_name);  // 学科名
+                        intent.putExtra("zhishidian", zhishidian);  // 知识点
+                        intent.putExtra("flag", "自主学习");
+                        startActivity(intent);
+//                        finish();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }, error -> {
+                    Log.d("wen", "Volley_Error: " + error.toString());
+                });
+                MyApplication.addRequest(request, TAG);
 
                 // TODO 临时变更
 //                loadZSDID();
-
             }
         }
     };
@@ -266,7 +307,7 @@ public class KnowledgePointActivity extends AppCompatActivity {
         if (stu.equals("")) {
             mRequestUrl = Constant.API + Constant.HOMEWORK_ADD_ZHISHIDIAN
                     + "?stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + course_Id +
-                    "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=";
+                    "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=1101010010001";
         }else {
             mRequestUrl = Constant.API + Constant.HOMEWORK_ADD_ZHISHIDIAN
                     + "?stuId=" + stu + "&channelCode=" + xueduan + "&subjectCode=" + course_Id +

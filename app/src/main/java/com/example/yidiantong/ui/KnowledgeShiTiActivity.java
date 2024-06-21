@@ -381,19 +381,6 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
                 Log.d("song0321", "message: " + message1);
                 Alert(message1);
                 String itemString = json.getString("data");
-                //TODO 汇报结束要进行修改
-//                itemString = "[]";
-                //当试题列表为空时,需要跳转中间页进行处理
-                if (itemString.equals("[]") || itemString.equals("") || itemString.equals("null")) {
-                    Intent intent = new Intent(this, OnlineTestNullActivity.class);
-                    intent.putExtra("userName", userName);
-                    intent.putExtra("subjectId", subjectId);
-                    intent.putExtra("courseName", course_name);
-                    intent.putExtra("flag", "自主学习");
-                    startActivity(intent);
-                    finish();
-                }
-
                 Log.d("wen0501", "itemString: " + itemString);
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表

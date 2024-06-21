@@ -385,11 +385,26 @@ public class ShiTiDetailReadingFragment extends Fragment implements View.OnClick
                                 if (flag.equals("自主学习")){
                                     Intent intent = new Intent(getActivity(), KnowledgeShiTiActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                    intent.putExtra("userName", getActivity().getIntent().getStringExtra("username"));
+                                    intent.putExtra("subjectId", getActivity().getIntent().getStringExtra("subjectId"));
+                                    intent.putExtra("unitId", getActivity().getIntent().getStringExtra("unitId"));
+                                    intent.putExtra("xueduanId", getActivity().getIntent().getStringExtra("xueduan"));
+                                    intent.putExtra("banbenId", getActivity().getIntent().getStringExtra("banben"));
+                                    intent.putExtra("jiaocaiId", getActivity().getIntent().getStringExtra("jiaocai"));
+                                    intent.putExtra("courseName", getActivity().getIntent().getStringExtra("name"));
+                                    intent.putExtra("zhishidian", getActivity().getIntent().getStringExtra("zhishidian"));
+                                    intent.putExtra("zhishidianId", getActivity().getIntent().getStringExtra("zhishidianId"));
+                                    intent.putExtra("flag", "自主学习");
                                     startActivity(intent);
                                     getActivity().finish();
                                 }else if (flag.equals("巩固提升")){
                                     Intent intent = new Intent(getActivity(), MainBookUpActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                    intent.putExtra("userName", getActivity().getIntent().getStringExtra("username"));
+                                    intent.putExtra("subjectId", getActivity().getIntent().getStringExtra("subjectId"));
+                                    intent.putExtra("unitId", getActivity().getIntent().getStringExtra("unitId"));
+                                    intent.putExtra("courseName", getActivity().getIntent().getStringExtra("name"));
+                                    intent.putExtra("flag", "自主学习");
                                     startActivity(intent);
                                     getActivity().finish();
                                 }

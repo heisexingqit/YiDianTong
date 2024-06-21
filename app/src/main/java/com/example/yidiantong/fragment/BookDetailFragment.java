@@ -36,7 +36,10 @@ import com.example.yidiantong.ui.BookRecoverActivity;
 import com.example.yidiantong.ui.BookRecyclerActivity;
 import com.example.yidiantong.ui.BookSelectorActivity;
 import com.example.yidiantong.ui.HomeworkPagerActivity;
+import com.example.yidiantong.ui.KnowledgePointActivity;
+import com.example.yidiantong.ui.KnowledgeShiTiActivity;
 import com.example.yidiantong.ui.MainBookUpActivity;
+import com.example.yidiantong.ui.OnlineTestNullActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.google.gson.Gson;
@@ -171,12 +174,41 @@ public class BookDetailFragment extends Fragment {
 
         // 巩固提升按钮
         view.findViewById(R.id.fiv_up).setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), MainBookUpActivity.class);
-            intent.putExtra("courseName", course_name);
-            intent.putExtra("userName", username);
-            intent.putExtra("subjectId", coures_Id);
-            intent.putExtra("questionId", questionId);
-            getActivity().startActivity(intent);
+            String url = Constant.API + "/AppServer/ajax/studentApp_judgeCheck.do"
+                    + "?stuId=" + username + "&channelCode=" + "&subjectCode=" + coures_Id
+                    + "&textBookCode=" + "&gradeLevelCode=" + "&catalogId="
+                    + "&unitId=1101010010001" + "&type=ggts";
+            Log.d("wen", "judgeCheck: " + url);
+            StringRequest request = new StringRequest(url, response -> {
+                try {
+                    JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                    String result = json.getString("data");
+                    Log.d("wen", "result: " + result);
+                    Intent intent;
+                    if (result.equals("0")) {
+                        //需要自我检测
+                        intent = new Intent(getActivity(), OnlineTestNullActivity.class);
+                    }else if (result.equals("1")){
+                        //不需要检测直接进入自主学习
+                        intent = new Intent(getActivity(), MainBookUpActivity.class);
+                    }else {
+                        //功能暂未开放
+                        Toast.makeText(getActivity(), "该学科巩固提升功能暂未开放，敬请期待", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    intent.putExtra("userName", username);  // 用户名
+                    intent.putExtra("unitId", "1101010010001");    // 学科id
+                    intent.putExtra("subjectId", coures_Id);    // 学科id
+                    intent.putExtra("courseName", course_name);  // 学科名
+                    intent.putExtra("flag", "巩固提升"); // 巩固提升,用于在线测试判别
+                    startActivity(intent);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }, error -> {
+                Log.d("wen", "Volley_Error: " + error.toString());
+            });
+            MyApplication.addRequest(request, TAG);
         });
 
         // 回收站按钮
