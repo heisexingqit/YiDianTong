@@ -3,10 +3,12 @@ package com.example.yidiantong.fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -30,7 +32,9 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableTextView;
@@ -186,6 +190,9 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
                         intent2.putExtra("classTimeId", adapter.itemList.get(pos).getfId());
                         intent2.putExtra("noticetype", adapter.itemList.get(pos).getfType());
                         intent2.putExtra("noticetime", adapter.itemList.get(pos).getfTime());
+                        if(adapter.itemList.get(pos).getfFlag().equals("2")){
+                            reload(adapter.itemList.get(pos).getfId());
+                        }
                         startActivity(intent2);
                         break;
                     case "10":
@@ -517,5 +524,47 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
             refreshList();
             isRefresh = false;
         }
+    }
+    private final Handler handler2 = new Handler(Looper.getMainLooper()) {
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @SuppressLint("NotifyDataSetChanged")
+        @Override
+        public void handleMessage(Message message) {
+            super.handleMessage(message);
+            if (message.what == 100) {
+                // 成功
+            }
+        }
+    };
+    // 修改已读状态
+    private void reload(String classTimeId) {
+        int type_mode;
+        if (type.equals("通知")) {
+            type_mode = 3;
+        } else {
+            type_mode = 4;
+        }
+        String mRequestUrl = Constant.API + Constant.READ_NOTICE + "?userName=" + username + "&type=" + 4 + "&classTimeId=" + classTimeId + "&callback=ha";
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                //结果信息
+                Boolean isSuccess = json.getBoolean("success");
+                Message msg = Message.obtain();
+                if (isSuccess) {
+                    msg.obj = 1;
+                } else {
+                    msg.obj = 0;
+                }
+                msg.what = 100;
+                handler2.sendMessage(msg);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(getContext(), error.toString(), Toast.LENGTH_SHORT).show();
+        });
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        queue.add(request);
     }
 }
