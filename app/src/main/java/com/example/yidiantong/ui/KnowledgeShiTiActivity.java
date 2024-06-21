@@ -81,7 +81,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
     private List<BookExerciseEntity> itemList = new ArrayList<>();
     private List<String> stuList = new ArrayList<>();//学生列表
     private List<ExamPoint> examPoints = new ArrayList<>();//考点列表
-    private List<ExamPoint> selectedExamPoints = new ArrayList<>();//已选考点列表
+    private List<String> selectedExamPoints = new ArrayList<>();//已选考点列表
     private String questionIds;
     BookAutoAdapter adapter;
     private RecyclerView frv_detail;
@@ -94,6 +94,8 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
 
     private SharedPreferences preferences;
     private String[] autoStuLoadAnswer;
+    private boolean isUpdatingAllCheckBoxes = false;
+    private boolean isClickAllCheckBoxes = false;
 
 
     @Override
@@ -210,6 +212,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
         });
         builder.show();
     }
+
     //加载学生列表
     private void getStudentList() {
         String mRequestUrl = Constant.API + "//AppServer/ajax/studentApp_getStuList.do";
@@ -237,9 +240,29 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
     //考点复选框事件
     private void showCheckableSubjectsDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("选择考点");
 
         LayoutInflater inflater = getLayoutInflater();
+        LinearLayout mainLayout = new LinearLayout(this);
+        mainLayout.setOrientation(LinearLayout.VERTICAL);
+
+        LinearLayout headerLayout = new LinearLayout(this);
+        headerLayout.setOrientation(LinearLayout.HORIZONTAL);
+        headerLayout.setPadding(16, 16, 16, 16);
+        TextView title = new TextView(this);
+        title.setText("选择考点");
+        title.setTextSize(20);
+        title.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f));
+
+        CheckBox selectAllCheckBox = new CheckBox(this);
+        selectAllCheckBox.setText("全选");
+        if (selectedExamPoints.size() == examPoints.size()) {
+            selectAllCheckBox.setChecked(true);
+        }
+
+        headerLayout.addView(title);
+        headerLayout.addView(selectAllCheckBox);
+        mainLayout.addView(headerLayout);
+
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
 
@@ -251,29 +274,63 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
 
             textName.setText(examPoint.getPointName());
             masteryLevel.setText(examPoint.getInfo());
-            checkBox.setChecked(selectedExamPoints.contains(examPoint));
+            checkBox.setChecked(selectedExamPoints.contains(examPoint.getDbid()));
 
             checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked) {
-                    if (!selectedExamPoints.contains(examPoint)) {
-                        selectedExamPoints.add(examPoint);
+                    if (!selectedExamPoints.contains(examPoint.getDbid())) {
+                        selectedExamPoints.add(examPoint.getDbid());
                     }
                 } else {
-                    selectedExamPoints.remove(examPoint);
+                    selectedExamPoints.remove(examPoint.getDbid());
                 }
+                if (!isClickAllCheckBoxes) {
+                    if (selectedExamPoints.size() == examPoints.size()) {
+                        selectAllCheckBox.setChecked(true);
+                    } else {
+                        isUpdatingAllCheckBoxes = true;
+                        selectAllCheckBox.setChecked(false);
+                    }
+                }
+
             });
 
             layout.addView(itemView);
         }
+
+        //全选按钮事件,当全选按钮被选中时，将所有考点的复选框选中,否则取消选中
+        selectAllCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isUpdatingAllCheckBoxes) {
+                isUpdatingAllCheckBoxes = false;
+            }else {
+                isClickAllCheckBoxes = true;
+                for (int i = 0; i < layout.getChildCount(); i++) {
+                    View itemView = layout.getChildAt(i);
+                    if (itemView instanceof LinearLayout) {
+                        CheckBox checkBox = itemView.findViewById(R.id.checkBox);
+                        checkBox.setChecked(isChecked);
+                    }
+                }
+                selectedExamPoints.clear();
+                if (isChecked) {
+                    for (ExamPoint examPoint : examPoints) {
+                        selectedExamPoints.add(examPoint.getDbid());
+                    }
+                }
+                isClickAllCheckBoxes = false;
+            }
+        });
+
         ScrollView scrollView = new ScrollView(this);
         scrollView.addView(layout);
-        builder.setView(scrollView);
+        mainLayout.addView(scrollView);
+        builder.setView(mainLayout);
         builder.setPositiveButton("确定", (dialog, which) -> {
             // 将选中的考点中的dbid拼接到pointIds中
             pointIds = "";
             StringBuilder sb = new StringBuilder();
-            for (ExamPoint examPoint : selectedExamPoints) {
-                sb.append(examPoint.getDbid()).append(",");
+            for (String examPoint : selectedExamPoints) {
+                sb.append(examPoint).append(",");
             }
             if (sb.length() > 0) {
                 sb.deleteCharAt(sb.length() - 1);
@@ -285,6 +342,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
         builder.show();
 
     }
+
     //获取考点列表
     private void getKaoDianList() {
 //        if (adapter.isRefresh == 1) {
@@ -310,14 +368,17 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
                 //使用Goson框架转换Json字符串为列表
                 examPoints = gson.fromJson(itemString, new TypeToken<List<ExamPoint>>() {
                 }.getType());
-                //默认全选,并将考点dbid拼接到pointIds中
-                selectedExamPoints.addAll(examPoints);
+                if (selectedExamPoints == null || selectedExamPoints.size() == 0) {
+                    //第一次默认全选,并将全部考点dbid拼接到pointIds中
+                    for (ExamPoint examPoint : examPoints) {
+                        selectedExamPoints.add(examPoint.getDbid());
+                    }
+                }
                 pointIds = "";
                 StringBuilder sb = new StringBuilder();
-                for (ExamPoint examPoint : selectedExamPoints) {
-                    sb.append(examPoint.getDbid()).append(",");
+                for (String examPoint : selectedExamPoints) {
+                    sb.append(examPoint).append(",");
                 }
-
                 if (sb.length() > 0) {
                     sb.deleteCharAt(sb.length() - 1);
                 }
