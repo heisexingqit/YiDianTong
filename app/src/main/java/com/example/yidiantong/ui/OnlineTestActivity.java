@@ -58,7 +58,8 @@ public class OnlineTestActivity extends AppCompatActivity {
     private String banben = "";  //版本
     private String jiaocai = "";  //教材
     private String courseName;  //课程名称
-    private String zhishidian = "";  //知识点id
+    private String zhishidianId = "";  //知识点id
+    private String zhishidian = "";  //知识点
     private String flag;  //标记
 
     //列表数据
@@ -107,6 +108,7 @@ public class OnlineTestActivity extends AppCompatActivity {
             banben = getIntent().getStringExtra("banben");
             jiaocai = getIntent().getStringExtra("jiaocai");
             zhishidian = getIntent().getStringExtra("zhishidian");
+            zhishidianId = getIntent().getStringExtra("zhishidianId");
         }
 
 
@@ -138,6 +140,12 @@ public class OnlineTestActivity extends AppCompatActivity {
             pos = pos + 1;
             intent.putExtra("pos", String.valueOf(pos));
             intent.putExtra("flag", flag);  // 模式标记
+            intent.putExtra("unitId", unitId);
+            intent.putExtra("xueduan", xueduan);
+            intent.putExtra("banben", banben);
+            intent.putExtra("jiaocai", jiaocai);
+            intent.putExtra("zhishidian", zhishidian);
+            intent.putExtra("zhishidianId", zhishidianId);
             startActivity(intent);
         });
 
@@ -175,8 +183,8 @@ public class OnlineTestActivity extends AppCompatActivity {
         }
         String mRequestUrl = Constant.API +"/AppServer/ajax/studentApp_getQuestionsZDJC.do?subjectId="
                 + "?stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + subjectId
-                + "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&catalogId=" + zhishidian
-                + "&unitId=" + "&type=zzxx";
+                + "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&catalogId=" + zhishidianId
+                + "&unitId=" + unitId + "&type=zzxx";
         Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {

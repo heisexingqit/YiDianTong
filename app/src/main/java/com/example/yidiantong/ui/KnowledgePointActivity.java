@@ -129,7 +129,7 @@ public class KnowledgePointActivity extends AppCompatActivity {
                     url = Constant.API + "/AppServer/ajax/studentApp_judgeCheck.do"
                             + "?stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + course_Id
                             + "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&catalogId=" + zhishidianId
-                            + "&unitId=" + "&type=zzxx";
+                            + "&unitId=1101010010001" + "&type=zzxx";
                 }else {
                     url = Constant.API + "/AppServer/ajax/studentApp_judgeCheck.do"
                             + "?stuId=" + stu + "&channelCode=" + xueduan + "&subjectCode=" + course_Id
@@ -160,7 +160,7 @@ public class KnowledgePointActivity extends AppCompatActivity {
                         intent.putExtra("zhishidianId", zhishidianId);  // 知识点id
                         if (getIntent().getStringExtra("stu").equals("")){
                             intent.putExtra("userName", userName);  // 用户名
-                            intent.putExtra("unitId", "");    // 学科id
+                            intent.putExtra("unitId", "1101010010001");    // 学科id
                         }else {
                             intent.putExtra("userName", getIntent().getStringExtra("stu"));
                             intent.putExtra("unitId", "6105230000001");    // 学科id
@@ -307,7 +307,7 @@ public class KnowledgePointActivity extends AppCompatActivity {
         if (stu.equals("")) {
             mRequestUrl = Constant.API + Constant.HOMEWORK_ADD_ZHISHIDIAN
                     + "?stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + course_Id +
-                    "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=";
+                    "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=1101010010001";
         }else {
             mRequestUrl = Constant.API + Constant.HOMEWORK_ADD_ZHISHIDIAN
                     + "?stuId=" + stu + "&channelCode=" + xueduan + "&subjectCode=" + course_Id +

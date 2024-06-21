@@ -58,7 +58,8 @@ public class OnlineTestNullActivity extends AppCompatActivity {
     private String banben="";  //版本
     private String jiaocai="";  //教材
     private String courseName;  //课程名称
-    private String zhishidian="";  //知识点id
+    private String zhishidianId="";  //知识点id
+    private String zhishidian="";  //知识点
     private String flag;  //标记
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -73,9 +74,10 @@ public class OnlineTestNullActivity extends AppCompatActivity {
         courseName = getIntent().getStringExtra("courseName");
         flag = getIntent().getStringExtra("flag");
         if (flag.equals("自主学习")) {
-            xueduan = getIntent().getStringExtra("xueduan");
-            banben = getIntent().getStringExtra("banben");
-            jiaocai = getIntent().getStringExtra("jiaocai");
+            xueduan = getIntent().getStringExtra("xueduanId");
+            banben = getIntent().getStringExtra("banbenId");
+            jiaocai = getIntent().getStringExtra("jiaocaiId");
+            zhishidianId = getIntent().getStringExtra("zhishidianId");
             zhishidian = getIntent().getStringExtra("zhishidian");
         }
 
@@ -120,6 +122,7 @@ public class OnlineTestNullActivity extends AppCompatActivity {
             intent.putExtra("banben", banben);
             intent.putExtra("jiaocai", jiaocai);
             intent.putExtra("zhishidian", zhishidian);
+            intent.putExtra("zhishidianId", zhishidianId);
             startActivity(intent);
         });
     }

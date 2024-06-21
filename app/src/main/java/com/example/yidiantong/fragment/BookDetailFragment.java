@@ -177,7 +177,7 @@ public class BookDetailFragment extends Fragment {
             String url = Constant.API + "/AppServer/ajax/studentApp_judgeCheck.do"
                     + "?stuId=" + username + "&channelCode=" + "&subjectCode=" + coures_Id
                     + "&textBookCode=" + "&gradeLevelCode=" + "&catalogId="
-                    + "&unitId=" + "&type=ggts";
+                    + "&unitId=1101010010001" + "&type=ggts";
             Log.d("wen", "judgeCheck: " + url);
             StringRequest request = new StringRequest(url, response -> {
                 try {
@@ -196,8 +196,8 @@ public class BookDetailFragment extends Fragment {
                         Toast.makeText(getActivity(), "该学科巩固提升功能暂未开放，敬请期待", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    intent.putExtra("userName", course_name);  // 用户名
-                    intent.putExtra("unitId", "");    // 学科id
+                    intent.putExtra("userName", username);  // 用户名
+                    intent.putExtra("unitId", "1101010010001");    // 学科id
                     intent.putExtra("subjectId", coures_Id);    // 学科id
                     intent.putExtra("courseName", course_name);  // 学科名
                     intent.putExtra("flag", "巩固提升"); // 巩固提升,用于在线测试判别
