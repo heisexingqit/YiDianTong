@@ -92,10 +92,10 @@ public class LearnPlanPagerAdapter extends FragmentPagerAdapter {
                 switch (item.getFormat()){
                     case "music":
                     case "video":
-                        fragment = LearnPlanVideoFragment.newInstance(itemList.get(position), itemList2.get(position));
+                        fragment = LearnPlanVideoFragment.newInstance(itemList.get(position), position, itemList.size(), itemList2.get(position));
                         break;
                     case "ppt":
-                        fragment = LearnPlanPPTFragment.newInstance(itemList.get(position), itemList2.get(position));
+                        fragment = LearnPlanPPTFragment.newInstance(itemList.get(position),  position, itemList.size(),itemList2.get(position));
                         break;
                     default:
                         Log.d("wen", "导学案未知类型: " + item.getFormat());

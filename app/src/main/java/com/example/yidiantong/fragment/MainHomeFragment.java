@@ -161,7 +161,6 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                         break;
                     case "导学案":
                     case "微课":
-
                         if (Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 2) {
                             intent = new Intent(getActivity(), HomeworkPagerFinishActivity.class);
                             intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());

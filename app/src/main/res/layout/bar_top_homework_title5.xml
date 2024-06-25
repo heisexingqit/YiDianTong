@@ -13,10 +13,12 @@
     <!--左-->
     <com.example.yidiantong.View.ClickableImageView
         android:id="@+id/iv_back"
-        android:layout_width="30dp"
+        android:layout_width="40dp"
         android:layout_height="match_parent"
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
         android:clickable="true"
         android:focusable="true"
         android:src="@drawable/left_ex" />

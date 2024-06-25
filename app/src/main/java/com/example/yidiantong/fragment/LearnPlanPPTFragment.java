@@ -19,6 +19,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +41,7 @@ import com.example.yidiantong.ui.ResourceFolderShowActivity;
 import com.example.yidiantong.util.LearnPlanInterface;
 import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.HomeworkInterface;
+import com.example.yidiantong.util.StringUtils;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yanzhenjie.permission.Action;
@@ -69,11 +71,13 @@ public class LearnPlanPPTFragment extends Fragment implements View.OnClickListen
     // 观看时间
     private long timeStart;
 
-    public static LearnPlanPPTFragment newInstance(LearnPlanItemEntity learnPlanEntity, StuAnswerEntity stuAnswerEntity) {
+    public static LearnPlanPPTFragment newInstance(LearnPlanItemEntity learnPlanEntity,int position, int size, StuAnswerEntity stuAnswerEntity) {
         LearnPlanPPTFragment fragment = new LearnPlanPPTFragment();
         Bundle args = new Bundle();
         args.putSerializable("learnPlanEntity", learnPlanEntity);
         args.putSerializable("stuAnswerEntity", stuAnswerEntity);
+        args.putInt("position", position);
+        args.putInt("size", size);
         fragment.setArguments(args);
         return fragment;
     }
@@ -97,11 +101,14 @@ public class LearnPlanPPTFragment extends Fragment implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: " + learnPlanEntity);
+        int position=0,size=0;
         // 取出携带的参数
         if (getArguments() != null) {
             learnPlanEntity = (LearnPlanItemEntity)getArguments().getSerializable("learnPlanEntity");
             stuAnswerEntity = (StuAnswerEntity) getArguments().getSerializable("stuAnswerEntity");
             picUrlList = learnPlanEntity.getPptList();
+            position = getArguments().getInt("position") + 1;
+            size = getArguments().getInt("size");
         }
 
         // 获取View
@@ -185,6 +192,13 @@ public class LearnPlanPPTFragment extends Fragment implements View.OnClickListen
                     .start();
 
         });
+
+        //顶部题号染色
+        TextView tv_question_number = view.findViewById(R.id.tv_question_number);
+        int positionLen = String.valueOf(position).length();
+        String questionNum = position + "/" + size + "题";
+        SpannableString spannableString = StringUtils.getStringWithColor(questionNum, "#6CC1E0", 0, positionLen);
+        tv_question_number.setText(spannableString);
 
 
 

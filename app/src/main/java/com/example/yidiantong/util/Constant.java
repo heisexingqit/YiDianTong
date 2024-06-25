@@ -245,6 +245,9 @@ public class Constant {
     // 教师端撤回通知或公告
     public static final String T_DELETE_NOTICE = "/AppServer/ajax/teacherApp_deleteNotice.do";
 
+    //教师删除公告
+    public static final String T_DELETE_ANN = "/AppServer/ajax/teacherApp_deleteManageNotice.do";
+
     // 教师端保存公告接口
     //public static final String T_BELL_SAVE_MANAGE_ANN = "/AppServer/ajax/teacherApp_saveManageNotice.do";
     public static final String T_BELL_SAVE_MANAGE_ANN = "/AppServer/ajax/teacherApp_saveManageNoticeNew.do";

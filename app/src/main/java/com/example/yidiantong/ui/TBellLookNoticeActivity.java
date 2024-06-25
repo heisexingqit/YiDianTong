@@ -87,6 +87,9 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
     private LinearLayout ll_student;
     private LinearLayout ll_name;
     private LinearLayout ll_btn;
+    private Button fb_bd_delete;
+
+    private String isWithDraw;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -101,6 +104,7 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
 
         classTimeId = getIntent().getStringExtra("classTimeId");
         type = getIntent().getStringExtra("noticetype");
+        isWithDraw = getIntent().getStringExtra("isWithDraw");
         ftv_title = findViewById(R.id.ftv_title);
         switch (type){
             case "3":
@@ -129,6 +133,7 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
         ftv_bd_read_teacher = findViewById(R.id.ftv_bd_read_teacher);
         fiv_bd_arrow_teacher = findViewById(R.id.fiv_bd_arrow_teacher);
         ll_btn = findViewById(R.id.ll_btn);
+        fb_bd_delete = findViewById(R.id.fb_bd_delete);
 
 //        fll_bd_noread_teacher = findViewById(R.id.fll_bd_noread_teacher);
 //        ftv_bd_noread_teacher = findViewById(R.id.ftv_bd_noread_teacher);
@@ -157,6 +162,7 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
         fb_bd_withdraw.setOnClickListener(this);
         fll_bd_read_teacher.setOnClickListener(this);
         fll_bd_read.setOnClickListener(this);
+        fb_bd_delete.setOnClickListener(this);
 
         MovementMethod movementMethod = ScrollingMovementMethod.getInstance();
         ftv_bd_stuname.setMovementMethod(movementMethod);
@@ -256,6 +262,7 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
             ll_btn.setVisibility(View.VISIBLE);
             ll_student.setVisibility(View.VISIBLE);
             fb_bd_withdraw.setBackgroundResource(R.drawable.t_homework_add);
+            fb_bd_delete.setBackgroundResource(R.drawable.t_homework_add);
         }
         //如果isUpdate为false，则修改按钮不可以点击
         if(!tBellNoticeEntity.get(0).getIsUpdate()){
@@ -269,9 +276,11 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
                 modifymode = 0;
             }
         }
-
-
-
+        //如果是已撤回按钮设置撤回为不可点击
+        if(!tBellNoticeEntity.get(0).getCheHui()){
+            fb_bd_withdraw.setBackgroundResource(R.drawable.t_homework_add_unable);
+            fb_bd_withdraw.setEnabled(false);
+        }
     }
 
     private String ToString(List readname) {
@@ -668,6 +677,31 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
                 //对话框弹出
                 builder.show();
                 break;
+            case R.id.fb_bd_delete:
+                //建立对话框
+                AlertDialog.Builder builder2 = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
+                //自定义title样式
+                TextView tv2 = new TextView(this);
+                tv2.setText("删除成功");    //内容
+                tv2.setTextSize(17);//字体大小
+                tv2.setPadding(30, 40, 30, 40);//位置
+                tv2.setTextColor(Color.parseColor("#000000"));//颜色
+                //设置title组件
+                builder2.setCustomTitle(tv2);
+
+                AlertDialog dialog2 = builder2.create();
+                builder2.setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        delete();
+                        goLastPage();
+                    }
+                });
+                //禁止返回和外部点击
+                builder2.setCancelable(false);
+                //对话框弹出
+                builder2.show();
+                break;
         }
 
     }
@@ -734,6 +768,13 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
                 }else {
                     Toast.makeText(getApplicationContext(), "撤回成功", Toast.LENGTH_SHORT).show();
                 }
+            }else if (message.what == 101) {
+                int f = (int) message.obj;
+                if (f == 0) {
+                    Toast.makeText(getApplicationContext(), "删除失败", Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(getApplicationContext(), "删除成功", Toast.LENGTH_SHORT).show();
+                }
             }
         }
     };
@@ -776,6 +817,32 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
 
 //        fiv_bd_noarrow_teacher.setImageResource(R.drawable.bot);
 //        fll_bd_noread_teacher.setBackgroundResource(R.color.white);
+    }
+    //删除公告
+    private void delete() {
+        mRequestUrl = Constant.API + Constant.T_DELETE_ANN + "?noticeId=" + classTimeId;
+        Log.d("", "删除: " + mRequestUrl);
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                //结果信息
+                Boolean isSuccess = json.getBoolean("success");
+                Message message = Message.obtain();
+                if(isSuccess){
+                    message.obj = 1;
+                }else{
+                    message.obj = 0;
+                }
+                //标识线程
+                message.what = 101;
+                handler2.sendMessage(message);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Log.d("", "Volley_Error: " + error.toString());
+        });
+        MyApplication.addRequest(request, TAG);
     }
 
 }

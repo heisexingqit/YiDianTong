@@ -43,7 +43,6 @@
         android:layout_above="@+id/ll_context"
         android:layout_below="@+id/ll_top"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="24dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="4dp">
 
@@ -59,7 +58,7 @@
     <LinearLayout
         android:id="@+id/ll_context"
         android:layout_width="match_parent"
-        android:layout_height="235dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="vertical">
         <!--分隔线-->
@@ -105,8 +104,8 @@
             <LinearLayout
                 android:id="@+id/ll_answer"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="50dp"
+
                 android:background="@color/white">
 
                 <WebView
@@ -133,7 +132,7 @@
                 android:layout_width="0dp"
                 android:layout_height="42dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="20dp"
+                android:layout_marginStart="10dp"
                 android:layout_weight="1"
                 android:background="@drawable/shape_translation_et_bg">
 
@@ -168,7 +167,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="20dp"
+                android:layout_marginStart="10dp"
                 android:adjustViewBounds="true"
                 android:clickable="true"
                 android:focusable="true"
@@ -181,7 +180,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="20dp"
+                android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:adjustViewBounds="true"
                 android:clickable="true"

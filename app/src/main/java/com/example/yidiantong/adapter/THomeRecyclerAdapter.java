@@ -107,7 +107,7 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
             this.itemList.clear();
             this.itemList = moreList;
             this.isRefresh = 0;
-            if (moreList.size() == 0) {
+            if (moreList.size() == 0|| moreList.size() < 12) {
                 isDown = 1;
             }
         } else {
@@ -214,8 +214,8 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
             // 未阅小球
             if (item.getfNumber() != null) {
                 if (!item.getfNumber().equals("0") && !item.getfType().equals("10")&&item.getfFlag().equals("1")) {
-                    tv_unread.setVisibility(View.VISIBLE);
-                    tv_unread.setText(item.getfNumber());
+//                    tv_unread.setVisibility(View.VISIBLE);
+//                    tv_unread.setText(item.getfNumber());
                 } else if(item.getfFlag().equals("2")&&!item.getfType().equals("10")&&item.getfNumber().equals("1")){
                     tv_unread.setVisibility(View.VISIBLE);
                     LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) tv_unread.getLayoutParams();
@@ -258,6 +258,9 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
                 // 设置底行
                 tv_bottom.setVisibility(View.VISIBLE);
                 String bottomStr = item.getfNum1() + " " + item.getfNum2() + " " + item.getfNum3();
+                if(item.getfNumber().equals("2")){
+                    bottomStr = bottomStr + "【已撤回】";
+                }
                 tv_bottom.setText(bottomStr);
             }
             if(item.getfFlag().equals("2")&&item.getfType().equals("4")){

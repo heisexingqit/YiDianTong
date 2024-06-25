@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -88,6 +90,19 @@ public class PswDialog extends Dialog implements View.OnClickListener {
         fiv_old_eye.setOnClickListener(this);
         fiv_new1_eye.setOnClickListener(this);
         fiv_new2_eye.setOnClickListener(this);
+        // 获取Dialog的Window对象并设置其属性以调整大小
+        Window window = getWindow();
+        if (window != null) {
+            WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+            layoutParams.copyFrom(window.getAttributes());
+
+            // 设置宽度和高度，这里以屏幕宽度的80%和屏幕高度的50%为例
+            int width = (int) (mContext.getResources().getDisplayMetrics().widthPixels * 0.9f);
+            layoutParams.width = width;
+
+            // 应用新的LayoutParams
+            window.setAttributes(layoutParams);
+        }
 
     }
 

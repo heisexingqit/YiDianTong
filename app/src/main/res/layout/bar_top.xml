@@ -16,7 +16,21 @@
         android:layout_centerVertical="true"
         android:clickable="true"
         android:focusable="true"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
         android:src="@drawable/left_ex" />
+<!--    &lt;!&ndash;左部&ndash;&gt;-->
+<!--    <com.example.yidiantong.View.ClickableImageView-->
+<!--        android:id="@+id/iv_back"-->
+<!--        android:layout_width="40dp"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_gravity="center_vertical"-->
+<!--        android:clickable="true"-->
+<!--        android:focusable="true"-->
+<!--        android:paddingStart="6dp"-->
+<!--        android:paddingEnd="6dp"-->
+<!--        android:src="@drawable/left_ex" />-->
+
     <!--中-->
     <TextView
         android:id="@+id/ftv_title"

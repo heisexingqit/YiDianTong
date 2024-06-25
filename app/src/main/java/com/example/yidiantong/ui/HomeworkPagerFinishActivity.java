@@ -104,6 +104,7 @@ public class HomeworkPagerFinishActivity extends AppCompatActivity implements Vi
         vp_homework.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
             }
 
             @Override

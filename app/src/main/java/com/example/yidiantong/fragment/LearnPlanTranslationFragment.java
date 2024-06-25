@@ -17,6 +17,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.text.Html;
+import android.text.SpannableString;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -63,6 +64,7 @@ import com.example.yidiantong.util.LearnPlanInterface;
 import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.HomeworkInterface;
+import com.example.yidiantong.util.StringUtils;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Rationale;
@@ -225,14 +227,14 @@ public class LearnPlanTranslationFragment extends Fragment implements View.OnCli
         float deviceAspectRatio = (float) screenHeight / screenWidth;
         // 获取底部布局
         LinearLayout block = view.findViewById(R.id.ll_bottom_block);
-        if (deviceAspectRatio > 2.0) {
-            ViewGroup.LayoutParams params = block.getLayoutParams();
-            params.height = PxUtils.dip2px(getActivity(), 80);
-            block.setLayoutParams(params);
-            params = ll_context.getLayoutParams();
-            params.height = PxUtils.dip2px(getActivity(), 255);
-            ll_context.setLayoutParams(params);
-        }
+//        if (deviceAspectRatio > 2.0) {
+//            ViewGroup.LayoutParams params = block.getLayoutParams();
+//            params.height = PxUtils.dip2px(getActivity(), 80);
+//            block.setLayoutParams(params);
+//            params = ll_context.getLayoutParams();
+//            params.height = PxUtils.dip2px(getActivity(), 255);
+//            ll_context.setLayoutParams(params);
+//        }
 
         //题面显示
         WebView wv_content = view.findViewById(R.id.wv_content);
@@ -282,11 +284,10 @@ public class LearnPlanTranslationFragment extends Fragment implements View.OnCli
 
         //顶部题号染色
         TextView tv_question_number = view.findViewById(R.id.tv_question_number);
-        tv_question_number.setVisibility(View.GONE);
-//        int positionLen = String.valueOf(position).length();
-//        String questionNum = position + "/" + size + "题";
-//        SpannableString spannableString = StringUtils.getStringWithColor(questionNum, "#6CC1E0", 0, positionLen);
-//        tv_question_number.setText(spannableString);
+        int positionLen = String.valueOf(position).length();
+        String questionNum = position + "/" + size + "题";
+        SpannableString spannableString = StringUtils.getStringWithColor(questionNum, "#6CC1E0", 0, positionLen);
+        tv_question_number.setText(spannableString);
 
         //翻页组件
         ImageView iv_pager_last = view.findViewById(R.id.iv_page_last);

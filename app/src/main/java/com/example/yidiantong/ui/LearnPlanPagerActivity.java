@@ -133,6 +133,7 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
             public void onPageSelected(int position) {
                 //翻页同步下标
                 currentItem = position;
+                tv_question_number.setText(String.valueOf(currentItem + 1));
                 Log.e("currentItem", ":" + currentItem);
             }
 
