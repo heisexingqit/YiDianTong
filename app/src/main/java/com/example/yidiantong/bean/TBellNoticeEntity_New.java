@@ -48,6 +48,16 @@ public class TBellNoticeEntity_New {
 
     // true则修改按钮可点击
     private Boolean isUpdate;
+    // true则撤回按钮可点击
+    private Boolean isChehui;
+
+    public Boolean getCheHui() {
+        return isChehui;
+    }
+
+    public void setCheHui(Boolean cheHui) {
+        isChehui = cheHui;
+    }
 
     public String getContent() {
         return content;

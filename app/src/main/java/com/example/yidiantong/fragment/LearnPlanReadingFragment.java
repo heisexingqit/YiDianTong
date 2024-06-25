@@ -124,12 +124,12 @@ public class LearnPlanReadingFragment extends Fragment implements View.OnClickLi
         // 长宽像素比
         float deviceAspectRatio = (float) screenHeight / screenWidth;
         // 获取底部布局
-        RelativeLayout block = view.findViewById(R.id.rl_bottom_block);
-        if(deviceAspectRatio > 2.0){
-            ViewGroup.LayoutParams params = block.getLayoutParams();
-            params.height = PxUtils.dip2px(getActivity(), 80);
-            block.setLayoutParams(params);
-        }
+//        RelativeLayout block = view.findViewById(R.id.rl_bottom_block);
+//        if(deviceAspectRatio > 2.0){
+//            ViewGroup.LayoutParams params = block.getLayoutParams();
+//            params.height = PxUtils.dip2px(getActivity(), 80);
+//            block.setLayoutParams(params);
+//        }
 
         WebView wv_content = view.findViewById(R.id.wv_content);
         String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + learnPlanEntity.getQuestion() + "</body>";
@@ -144,11 +144,10 @@ public class LearnPlanReadingFragment extends Fragment implements View.OnClickLi
         //顶部题号染色
 
         TextView tv_question_number = view.findViewById(R.id.tv_question_number);
-        tv_question_number.setVisibility(View.GONE);
-//        int positionLen = String.valueOf(position).length();
-//        String questionNum = position + "/" + size + "题";
-//        SpannableString spannableString = StringUtils.getStringWithColor(questionNum, "#6CC1E0", 0, positionLen);
-//        tv_question_number.setText(spannableString);
+        int positionLen = String.valueOf(position).length();
+        String questionNum = position + "/" + size + "题";
+        SpannableString spannableString = StringUtils.getStringWithColor(questionNum, "#6CC1E0", 0, positionLen);
+        tv_question_number.setText(spannableString);
 
         // 翻页按钮
         ImageView iv_pager_last = view.findViewById(R.id.iv_page_last);

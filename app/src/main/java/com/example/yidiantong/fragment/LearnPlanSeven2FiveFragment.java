@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import com.example.yidiantong.bean.StuAnswerEntity;
 import com.example.yidiantong.util.LearnPlanInterface;
 import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.HomeworkInterface;
+import com.example.yidiantong.util.StringUtils;
 
 import org.apache.commons.text.StringEscapeUtils;
 
@@ -114,11 +116,10 @@ public class LearnPlanSeven2FiveFragment extends Fragment implements View.OnClic
 
         //顶部题号染色
         TextView tv_question_number = view.findViewById(R.id.tv_question_number);
-        tv_question_number.setVisibility(View.GONE);
-//        int positionLen = String.valueOf(position).length();
-//        String questionNum = position + "/" + size + "题";
-//        SpannableString spannableString = StringUtils.getStringWithColor(questionNum, "#6CC1E0", 0, positionLen);
-//        tv_question_number.setText(spannableString);
+        int positionLen = String.valueOf(position).length();
+        String questionNum = position + "/" + size + "题";
+        SpannableString spannableString = StringUtils.getStringWithColor(questionNum, "#6CC1E0", 0, positionLen);
+        tv_question_number.setText(spannableString);
 
         // 翻页按钮
         ImageView iv_pager_last = view.findViewById(R.id.iv_page_last);

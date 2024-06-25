@@ -14,6 +14,12 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tv_question_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="i/n"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tv_question_type"
@@ -28,7 +34,6 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="30dp"
             android:layout_marginEnd="10dp"
             android:layout_weight="1">
             <com.google.android.exoplayer2.ui.PlayerView

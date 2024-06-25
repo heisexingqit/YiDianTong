@@ -190,6 +190,7 @@ public class TMainLatestFragment extends Fragment implements View.OnClickListene
                         intent2.putExtra("classTimeId", adapter.itemList.get(pos).getfId());
                         intent2.putExtra("noticetype", adapter.itemList.get(pos).getfType());
                         intent2.putExtra("noticetime", adapter.itemList.get(pos).getfTime());
+                        intent2.putExtra("isWithDraw", adapter.itemList.get(pos).getfNumber());
                         if(adapter.itemList.get(pos).getfFlag().equals("2")){
                             reload(adapter.itemList.get(pos).getfId());
                         }

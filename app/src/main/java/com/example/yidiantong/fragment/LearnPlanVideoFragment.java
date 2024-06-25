@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ import com.example.yidiantong.util.LearnPlanInterface;
 import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.HomeworkInterface;
+import com.example.yidiantong.util.StringUtils;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
@@ -44,11 +46,13 @@ public class LearnPlanVideoFragment extends Fragment implements View.OnClickList
     // 观看时间
     private long timeStart;
 
-    public static LearnPlanVideoFragment newInstance(LearnPlanItemEntity learnPlanEntity, StuAnswerEntity stuAnswerEntity) {
+    public static LearnPlanVideoFragment newInstance(LearnPlanItemEntity learnPlanEntity,int position, int size, StuAnswerEntity stuAnswerEntity) {
         LearnPlanVideoFragment fragment = new LearnPlanVideoFragment();
         Bundle args = new Bundle();
         args.putSerializable("learnPlanEntity", learnPlanEntity);
         args.putSerializable("stuAnswerEntity", stuAnswerEntity);
+        args.putInt("position", position);
+        args.putInt("size", size);
         fragment.setArguments(args);
         return fragment;
     }
@@ -74,9 +78,12 @@ public class LearnPlanVideoFragment extends Fragment implements View.OnClickList
 
         Log.d(TAG, "onCreateView: " + learnPlanEntity);
         // 取出携带的参数
+        int position = 0, size = 0;
         if (getArguments() != null) {
             learnPlanEntity = (LearnPlanItemEntity)getArguments().getSerializable("learnPlanEntity");
             stuAnswerEntity = (StuAnswerEntity) getArguments().getSerializable("stuAnswerEntity");
+            position = getArguments().getInt("position") + 1;
+            size = getArguments().getInt("size");
         }
 
         // 获取View
@@ -148,6 +155,11 @@ public class LearnPlanVideoFragment extends Fragment implements View.OnClickList
             playerView.setShowPreviousButton(false);
             playerView.setShowNextButton(false);
         }
+        TextView tv_question_number = view.findViewById(R.id.tv_question_number);
+        int positionLen = String.valueOf(position).length();
+        String questionNum = position + "/" + size + "题";
+        SpannableString spannableString = StringUtils.getStringWithColor(questionNum, "#6CC1E0", 0, positionLen);
+        tv_question_number.setText(spannableString);
         return view;
     }
 

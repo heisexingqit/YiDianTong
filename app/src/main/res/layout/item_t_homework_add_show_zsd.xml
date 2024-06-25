@@ -12,7 +12,9 @@
         android:background="@color/white"
         android:padding="20dp">
 
-        <include layout="@layout/loading_page" />
+
+        <include layout="@layout/loading_page2" />
+
 
         <com.example.yidiantong.View.ClickableImageView
 

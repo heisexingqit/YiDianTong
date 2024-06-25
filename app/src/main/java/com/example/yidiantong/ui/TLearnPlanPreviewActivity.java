@@ -110,6 +110,26 @@ public class TLearnPlanPreviewActivity extends AppCompatActivity implements View
         vp_main.setAdapter(adapter);
 
         myArrayAdapter = new MyArrayAdapter(this, topArrayItem);
+        vp_main.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                //翻页同步下标
+                currentItem = position;
+                int positionLen = String.valueOf(currentItem + 1).length();
+                String questionNum = (currentItem + 1) + "/" + pageCount;
+                SpannableString spannableString = StringUtils.getStringWithColor(questionNum, "#6CC1E0", 0, positionLen);
+                tv_question_number.setText(spannableString);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
 
         loadItems_Net();
     }

@@ -1,27 +1,27 @@
 -- Merging decision tree log ---
 manifest
-ADDED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml:1:1-6:12
-INJECTED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml:1:1-6:12
-INJECTED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml:1:1-6:12
+ADDED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml:1:1-6:12
+INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml:1:1-6:12
+INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml:1:1-6:12
 	package
-		ADDED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml:1:11-45
-		INJECTED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml
-		INJECTED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml
+		ADDED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml:1:11-45
+		INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
+		INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
 	xmlns:android
-		ADDED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml:1:1-6:12
+		ADDED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml:1:1-6:12
 application
-ADDED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml:4:5-32
+ADDED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml:4:5-32
 uses-sdk
-INJECTED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml reason: use-sdk injection requested
-INJECTED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml
-INJECTED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml
-INJECTED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml
-INJECTED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml
+INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
+INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
+INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
+INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
 	android:targetSdkVersion
-		INJECTED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml
-		ADDED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml
-		INJECTED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml
+		INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
+		ADDED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
+		INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
 	android:minSdkVersion
-		INJECTED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml
-		ADDED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml
-		INJECTED from D:\software\Git\Git-Space\YiDianTong\Debug\src\main\AndroidManifest.xml
+		INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
+		ADDED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml
+		INJECTED from E:\Code\android\YiDianTong\Debug\src\main\AndroidManifest.xml

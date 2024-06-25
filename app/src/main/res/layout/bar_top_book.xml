@@ -14,6 +14,8 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_centerVertical="true"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
         android:clickable="true"
         android:focusable="true"
         android:src="@drawable/left_ex" />

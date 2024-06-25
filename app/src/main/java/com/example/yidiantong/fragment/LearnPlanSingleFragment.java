@@ -3,6 +3,7 @@ package com.example.yidiantong.fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.SpannableString;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +27,7 @@ import com.example.yidiantong.util.LearnPlanInterface;
 import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.HomeworkInterface;
+import com.example.yidiantong.util.StringUtils;
 
 import org.apache.commons.text.StringEscapeUtils;
 
@@ -95,26 +97,26 @@ public class LearnPlanSingleFragment extends Fragment implements View.OnClickLis
         /**
          * 多机适配：底栏高度
          */
-        WindowManager windowManager = getActivity().getWindowManager();
-        DisplayMetrics metrics = new DisplayMetrics();
-        windowManager.getDefaultDisplay().getMetrics(metrics);
-        int screenWidth = metrics.widthPixels;
-        int screenHeight = metrics.heightPixels;
-        // 长宽像素比
-        float deviceAspectRatio = (float) screenHeight / screenWidth;
-        // 获取底部布局
-        RelativeLayout block = view.findViewById(R.id.rl_bottom_block);
-        if(deviceAspectRatio > 2.0){
-            ViewGroup.LayoutParams params = block.getLayoutParams();
-            params.height = PxUtils.dip2px(getActivity(), 80);
-            block.setLayoutParams(params);
-        }
+//        WindowManager windowManager = getActivity().getWindowManager();
+//        DisplayMetrics metrics = new DisplayMetrics();
+//        windowManager.getDefaultDisplay().getMetrics(metrics);
+//        int screenWidth = metrics.widthPixels;
+//        int screenHeight = metrics.heightPixels;
+//        // 长宽像素比
+//        float deviceAspectRatio = (float) screenHeight / screenWidth;
+//        // 获取底部布局
+//        RelativeLayout block = view.findViewById(R.id.rl_bottom_block);
+//        if(deviceAspectRatio > 2.0){
+//            ViewGroup.LayoutParams params = block.getLayoutParams();
+//            params.height = PxUtils.dip2px(getActivity(), 80);
+//            block.setLayoutParams(params);
+//        }
 
         /** 转义数据中的字符实体 */
         learnPlanEntity.setQuestion(StringEscapeUtils.unescapeHtml4(learnPlanEntity.getQuestion()));
 
         WebView wv_content = view.findViewById(R.id.wv_content);
-        String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + learnPlanEntity.getQuestion() + "</body>";
+        String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px; line-height: 30px; margin: 0; padding: 0;\">" + learnPlanEntity.getQuestion() + "</body>";
         wv_content.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
 
         //题目类型
@@ -125,11 +127,10 @@ public class LearnPlanSingleFragment extends Fragment implements View.OnClickLis
 
         //顶部题号染色
         TextView tv_question_number = view.findViewById(R.id.tv_question_number);
-        tv_question_number.setVisibility(View.GONE);
-//        int positionLen = String.valueOf(position).length();
-//        String questionNum = position + "/" + size + "题";
-//        SpannableString spannableString = StringUtils.getStringWithColor(questionNum, "#6CC1E0", 0, positionLen);
-//        tv_question_number.setText(spannableString);
+        int positionLen = String.valueOf(position).length();
+        String questionNum = position + "/" + size + "题";
+        SpannableString spannableString = StringUtils.getStringWithColor(questionNum, "#6CC1E0", 0, positionLen);
+        tv_question_number.setText(spannableString);
 
         //翻页组件
         ImageView iv_pager_last = view.findViewById(R.id.iv_page_last);

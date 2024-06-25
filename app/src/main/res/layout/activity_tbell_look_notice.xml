@@ -297,9 +297,9 @@
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_marginTop="5dp"
-            android:layout_marginEnd="20dp"
             android:layout_marginBottom="5dp"
             android:layout_weight="1"
             android:background="@drawable/t_homework_add_unable"
@@ -312,13 +312,25 @@
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_marginStart="20dp"
             android:layout_marginTop="5dp"
-            android:layout_marginEnd="20dp"
             android:layout_marginBottom="5dp"
+            android:layout_marginEnd="10dp"
             android:layout_weight="1"
             android:background="@drawable/t_homework_add_unable"
             android:text="撤回"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/fb_bd_delete"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/t_homework_add_unable"
+            android:text="删除"
             android:textColor="@color/white" />
     </LinearLayout>
 
