@@ -32,9 +32,6 @@
             android:name=".ui.OnlineTestNullActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.ReadAloudLookActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.TReadAloudAddActivity"
             android:exported="false"/>
         <activity

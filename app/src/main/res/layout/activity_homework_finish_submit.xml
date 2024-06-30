@@ -53,7 +53,7 @@
                 android:id="@+id/btn_submit"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:backgroundTint="@color/blue_btn"
+                android:backgroundTint="@color/f_blue"
                 android:text="关闭"
                 android:textColor="@color/white" />
         </LinearLayout>

@@ -5,7 +5,6 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -63,7 +62,6 @@ import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.LearnPlanInterface;
 import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
-import com.example.yidiantong.util.HomeworkInterface;
 import com.example.yidiantong.util.StringUtils;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
@@ -77,7 +75,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -538,17 +535,18 @@ public class LearnPlanTranslationFragment extends Fragment implements View.OnCli
                 pageing.pageNext();
                 break;
             case R.id.iv_top:
-                ViewGroup.LayoutParams params = ll_context.getLayoutParams();
+                //ViewGroup.LayoutParams params = ll_context.getLayoutParams();
+                ViewGroup.LayoutParams params = ll_answer.getLayoutParams();
                 if (show == 0) {
-                    params.height = PxUtils.dip2px(getActivity(), 729);
+                    params.height = PxUtils.dip2px(getActivity(), 700);
                     iv_top.setImageResource(R.drawable.down_icon);
                     show = 1;
                 } else {
-                    params.height = PxUtils.dip2px(getActivity(), 235);
+                    params.height = PxUtils.dip2px(getActivity(), 50);
                     iv_top.setImageResource(R.drawable.up_icon);
                     show = 0;
                 }
-                ll_context.setLayoutParams(params);
+                ll_answer.setLayoutParams(params);
                 break;
             case R.id.civ_camera:
                 // 启动相机程序
@@ -581,7 +579,7 @@ public class LearnPlanTranslationFragment extends Fragment implements View.OnCli
             case R.id.ll_answer:
                 if (contentView == null) {
                     if(picCount == 0) break;
-                    contentView = LayoutInflater.from(getActivity()).inflate(R.layout.picture_menu, null, false);
+                    contentView = LayoutInflater.from(getActivity()).inflate(R.layout.picture_menu_new, null, false);
                     ViewPager vp_pic = contentView.findViewById(R.id.vp_picture);
                     vp_pic.setAdapter(adapter);
 

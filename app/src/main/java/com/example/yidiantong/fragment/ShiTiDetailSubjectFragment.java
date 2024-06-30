@@ -589,7 +589,7 @@ public class ShiTiDetailSubjectFragment extends Fragment implements View.OnClick
 
                 if (contentView == null) {
                     if (url_list.size() == 0) break;
-                    contentView = LayoutInflater.from(getActivity()).inflate(R.layout.picture_menu, null, false);
+                    contentView = LayoutInflater.from(getActivity()).inflate(R.layout.picture_menu_new, null, false);
                     ViewPager vp_pic = contentView.findViewById(R.id.vp_picture);
 //                    LinearLayout ll_selector = contentView.findViewById(R.id.ll_selector);
                     //  回显方法

@@ -113,15 +113,14 @@ public class ResourceFolderRecyclerAdapter extends RecyclerView.Adapter<Recycler
             }
         } else {
             this.itemList.addAll(moreList);
-            if (moreList.size() >= 12) {
+            if (moreList.size() == 12) {
                 isDown = 0;
                 count = 0;
             } else if (moreList.size() == 0) {
-                isDown = 0;
-                count++;
-            } else {
                 isDown = 1;
-                count = 0;
+                count++;
+            } else if(moreList.size()<12){
+                isDown=1;
             }
 
             if (count > 3) {

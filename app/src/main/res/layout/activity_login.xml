@@ -116,6 +116,7 @@
                 android:layout_marginTop="20dp"
                 android:background="@drawable/login_et_border_unfocus"
                 android:gravity="center"
+                android:visibility="gone"
                 android:padding="10dp">
 
                 <ImageView

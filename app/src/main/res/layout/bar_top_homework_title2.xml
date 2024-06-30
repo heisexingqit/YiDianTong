@@ -30,7 +30,6 @@
         android:singleLine="true"
         android:text="22级测试-题目"
         android:textColor="@color/main_bg_title"
-        android:textSize="17sp"
-        android:textStyle="bold" />
+        android:textSize="17sp" />
 
 </RelativeLayout>

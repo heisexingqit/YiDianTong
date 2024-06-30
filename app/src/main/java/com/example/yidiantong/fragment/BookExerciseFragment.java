@@ -202,7 +202,7 @@ public class BookExerciseFragment extends Fragment {
                 Log.d("song0321", "message: " + message1);
                 String[] split = message1.split("@_@");
                 //弹出警告框,将数组第一个元素作为警告框内容,第二个元素作为原试题考点
-                Alert(split[0]);
+                //Alert(split[0]);
                 tv_knowledge_name.setText("原试题考点: " + split[1]);
                 String itemString = json.getString("data");
                 Log.d("song0321", "itemString: " + itemString);

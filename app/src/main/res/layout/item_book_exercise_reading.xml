@@ -76,7 +76,7 @@
                 android:id="@+id/btn_submit"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:background="@color/blue_btn"
+                android:background="@color/f_blue"
                 android:text="@string/f_submit"
                 android:textColor="@color/white" />
         </LinearLayout>

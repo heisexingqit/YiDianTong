@@ -147,7 +147,7 @@
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_marginBottom="10dp"
-        android:background="@color/blue_btn"
+        android:background="@color/f_blue"
         android:text="确定"
         android:textColor="@color/white" />
 </LinearLayout>

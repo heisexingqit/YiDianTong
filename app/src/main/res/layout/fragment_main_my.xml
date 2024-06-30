@@ -253,6 +253,7 @@
                 android:layout_marginRight="15dp"
                 android:background="@drawable/my_item_selector"
                 android:orientation="vertical"
+                android:visibility="gone"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/f_ll_update">
@@ -301,6 +302,7 @@
                 android:orientation="vertical"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
+                android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@+id/f_ll_psw">
 
                 <LinearLayout

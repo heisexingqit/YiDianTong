@@ -1,7 +1,6 @@
 package com.example.yidiantong.fragment;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -26,7 +24,6 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.toolbox.StringRequest;
-import com.bumptech.glide.Glide;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.ImagePagerAdapter;
@@ -359,7 +356,7 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
                 if (contentView == null) {
 
                     if (url_list.size() == 0) return;
-                    contentView = LayoutInflater.from(getActivity()).inflate(R.layout.picture_menu, null, false);
+                    contentView = LayoutInflater.from(getActivity()).inflate(R.layout.picture_menu_new, null, false);
                     ViewPager vp_pic = contentView.findViewById(R.id.vp_picture);
 //                    LinearLayout ll_selector = contentView.findViewById(R.id.ll_selector);
                     //  回显方法

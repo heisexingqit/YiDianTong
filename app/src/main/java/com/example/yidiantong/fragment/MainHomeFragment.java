@@ -45,7 +45,6 @@ import com.example.yidiantong.ui.HomeworkPagerFinishActivity;
 import com.example.yidiantong.ui.LearnPlanPagerActivity;
 import com.example.yidiantong.ui.LiveListActivity;
 import com.example.yidiantong.ui.NoticeLookActivity;
-import com.example.yidiantong.ui.ReadAloudLookActivity;
 import com.example.yidiantong.ui.ResourceFolderActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
@@ -186,14 +185,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                         break;
                     case "通知":
                         Intent intent_t;
-                        if (adapter.itemList.get(pos).getCourseName().contains("img")) {
-                            System.out.println("syq^_^:朗诵任务");
-                            intent_t = new Intent(getActivity(), ReadAloudLookActivity.class);
-                            intent_t.putExtra("readTime", adapter.itemList.get(pos).getTime());   // 发布时间
-                            intent_t.putExtra("readAuthor", adapter.itemList.get(pos).getCreaterName());  // 创建者
-                            intent_t.putExtra("readTitle", adapter.itemList.get(pos).getBottomTitle());     // 标题
-                            intent_t.putExtra("readContent", adapter.itemList.get(pos).getCourseName()); // 内容
-                        }else {
+                       {
                             System.out.println("syq^_^:通知");
                             intent_t = new Intent(getActivity(), NoticeLookActivity.class);
                             intent_t.putExtra("noticetype", adapter.itemList.get(pos).getType());  // 类型

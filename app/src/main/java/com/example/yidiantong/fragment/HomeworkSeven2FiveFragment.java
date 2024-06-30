@@ -2,6 +2,7 @@ package com.example.yidiantong.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.util.DisplayMetrics;
@@ -120,6 +121,8 @@ public class HomeworkSeven2FiveFragment extends Fragment implements View.OnClick
         //题目类型
         TextView tv_question_type = view.findViewById(R.id.tv_question_type);
         tv_question_type.setText(homeworkEntity.getQuestionTypeName());
+        tv_question_type.setTextSize(18);
+        tv_question_type.setTextColor(Color.BLACK);
 
         //顶部题号染色
         int positionLen = String.valueOf(position).length();

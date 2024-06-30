@@ -5,7 +5,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -56,7 +56,6 @@ import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.adapter.ImagePagerAdapter;
 import com.example.yidiantong.bean.HomeworkEntity;
 import com.example.yidiantong.bean.StuAnswerEntity;
-import com.example.yidiantong.ui.DoodleActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.ImageUtils;
 import com.example.yidiantong.util.JsonUtils;
@@ -64,7 +63,6 @@ import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
 import com.example.yidiantong.util.StringUtils;
 import com.example.yidiantong.util.HomeworkInterface;
-import com.google.common.base.Utf8;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Rationale;
@@ -230,14 +228,14 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
         float deviceAspectRatio = (float) screenHeight / screenWidth;
         // 获取底部布局
         LinearLayout block = view.findViewById(R.id.ll_bottom_block);
-        if (deviceAspectRatio > 2.0) {
-            ViewGroup.LayoutParams params = block.getLayoutParams();
-            params.height = PxUtils.dip2px(getActivity(), 80);
-            block.setLayoutParams(params);
-            params = ll_context.getLayoutParams();
-            params.height = PxUtils.dip2px(getActivity(), 255);
-            ll_context.setLayoutParams(params);
-        }
+//        if (deviceAspectRatio > 2.0) {
+//            ViewGroup.LayoutParams params = block.getLayoutParams();
+//            params.height = PxUtils.dip2px(getActivity(), 80);
+//            block.setLayoutParams(params);
+//            params = ll_context.getLayoutParams();
+//            params.height = PxUtils.dip2px(getActivity(), 255);
+//            ll_context.setLayoutParams(params);
+//        }
 
         //题面显示
         WebView wv_content = view.findViewById(R.id.wv_content);
@@ -287,6 +285,8 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
         //题目类型
         TextView tv_question_type = view.findViewById(R.id.tv_question_type);
         tv_question_type.setText(homeworkEntity.getQuestionTypeName());
+        tv_question_type.setTextSize(18);
+        tv_question_type.setTextColor(Color.BLACK);
 
         //顶部题号染色
         int positionLen = String.valueOf(position).length();
@@ -560,17 +560,17 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
                 pageing.pageNext();
                 break;
             case R.id.iv_top:
-                ViewGroup.LayoutParams params = ll_context.getLayoutParams();
+                ViewGroup.LayoutParams params = ll_answer.getLayoutParams();
                 if (show == 0) {
-                    params.height = PxUtils.dip2px(getActivity(), 729);
+                    params.height = PxUtils.dip2px(getActivity(), 700);
                     iv_top.setImageResource(R.drawable.down_icon);
                     show = 1;
                 } else {
-                    params.height = PxUtils.dip2px(getActivity(), 235);
+                    params.height = PxUtils.dip2px(getActivity(), 50);
                     iv_top.setImageResource(R.drawable.up_icon);
                     show = 0;
                 }
-                ll_context.setLayoutParams(params);
+                ll_answer.setLayoutParams(params);
                 break;
             case R.id.civ_camera:
                 // 启动相机程序
@@ -602,7 +602,7 @@ public class HomeworkTranslationFragment extends Fragment implements View.OnClic
             case R.id.ll_answer:
                 if (contentView == null) {
                     if (url_list.size() == 0) break;
-                    contentView = LayoutInflater.from(getActivity()).inflate(R.layout.picture_menu, null, false);
+                    contentView = LayoutInflater.from(getActivity()).inflate(R.layout.picture_menu_new, null, false);
                     ViewPager vp_pic = contentView.findViewById(R.id.vp_picture);
 //                    LinearLayout ll_selector = contentView.findViewById(R.id.ll_selector);
                     //  回显方法

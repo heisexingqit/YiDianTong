@@ -56,6 +56,15 @@ public class LearnPlanVideoFragment extends Fragment implements View.OnClickList
         fragment.setArguments(args);
         return fragment;
     }
+    public static LearnPlanVideoFragment newInstance(LearnPlanItemEntity learnPlanEntity,int position, int size) {
+        LearnPlanVideoFragment fragment = new LearnPlanVideoFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("learnPlanEntity", learnPlanEntity);
+        args.putInt("position", position);
+        args.putInt("size", size);
+        fragment.setArguments(args);
+        return fragment;
+    }
     public static LearnPlanVideoFragment newInstance(LearnPlanItemEntity learnPlanEntity) {
         LearnPlanVideoFragment fragment = new LearnPlanVideoFragment();
         Bundle args = new Bundle();

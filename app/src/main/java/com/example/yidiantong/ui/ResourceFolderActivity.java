@@ -211,8 +211,12 @@ public class ResourceFolderActivity extends AppCompatActivity {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
                 String itemString = json.getString("data");
+                // 使用JSONObject解析这个字符串
+                JSONObject jsonObject = new JSONObject(itemString);
 
-                if(itemString.equals("null")){
+                // 获取"url"键对应的值
+                String url = jsonObject.getString("url");
+                if(itemString.equals("null")||url.equals("预览文件不存在")){
                     // 取消遮罩
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage("该资源出错");

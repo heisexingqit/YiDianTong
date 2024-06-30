@@ -43,19 +43,19 @@ public class TLearnPlanPreviewAdapter extends FragmentPagerAdapter {
         LearnPlanItemEntity item = itemList.get(position);
         switch (item.getResourceType()) {
             case "01":
-                fragment = LearnPlanQuReviewFragment.newInstance(itemList.get(position));
+                fragment = LearnPlanQuReviewFragment.newInstance(itemList.get(position),position, itemList.size());
                 break;
             case "02":
-                fragment = LearnPlanPaperFragment.newInstance(itemList.get(position));
+                fragment = LearnPlanPaperFragment.newInstance(itemList.get(position),position, itemList.size());
                 break;
             case "03":
                 switch (item.getFormat()) {
                     case "music":
                     case "video":
-                        fragment = LearnPlanVideoFragment.newInstance(itemList.get(position));
+                        fragment = LearnPlanVideoFragment.newInstance(itemList.get(position),position, itemList.size());
                         break;
                     case "ppt":
-                        fragment = LearnPlanPPTFragment.newInstance(itemList.get(position));
+                        fragment = LearnPlanPPTFragment.newInstance(itemList.get(position),position, itemList.size());
                         break;
                     default:
                         Log.d("wen", "导学案未知类型: " + item.getFormat());

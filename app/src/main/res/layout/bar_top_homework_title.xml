@@ -41,8 +41,8 @@
 
         <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/iv_eye"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginEnd="5dp"
             android:clickable="true"
             android:focusable="true"

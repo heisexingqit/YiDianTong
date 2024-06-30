@@ -82,7 +82,6 @@ import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 
 import java.io.File;
@@ -745,7 +744,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                 }
                 if (contentView == null) {
                     if (url_list.size() == 0) return;
-                    contentView = LayoutInflater.from(getActivity()).inflate(R.layout.picture_menu, null, false);
+                    contentView = LayoutInflater.from(getActivity()).inflate(R.layout.picture_menu_new, null, false);
                     ViewPager vp_pic = contentView.findViewById(R.id.vp_picture);
 //                    LinearLayout ll_selector = contentView.findViewById(R.id.ll_selector);
                     //  回显方法

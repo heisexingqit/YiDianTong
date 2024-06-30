@@ -52,7 +52,13 @@
             android:layout_height="match_parent"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:scrollbars="none" />
+            android:scrollbars="none">
+
+            <include
+                layout="@layout/pageing_homework"
+                android:layout_x="-11dp"
+                android:layout_y="-29dp" />
+        </WebView>
     </LinearLayout>
 
     <LinearLayout
@@ -105,7 +111,6 @@
                 android:id="@+id/ll_answer"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-
                 android:background="@color/white">
 
                 <WebView
@@ -193,5 +198,4 @@
     </LinearLayout>
 
     <!--翻页按钮-->
-    <include layout="@layout/pageing_homework" />
 </RelativeLayout>

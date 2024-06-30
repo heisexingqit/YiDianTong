@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.bean.LearnPlanItemEntity;
 import com.example.yidiantong.util.LearnPlanInterface;
 import com.example.yidiantong.util.PagingInterface;
+import com.example.yidiantong.util.StringUtils;
 import com.xinlan.imageeditlibrary.editimage.view.imagezoom.easing.Linear;
 
 
@@ -41,6 +43,15 @@ public class LearnPlanQuReviewFragment extends Fragment implements View.OnClickL
         fragment.setArguments(args);
         return fragment;
     }
+    public static LearnPlanQuReviewFragment newInstance(LearnPlanItemEntity learnPlanEntity,int position, int size) {
+        LearnPlanQuReviewFragment fragment = new LearnPlanQuReviewFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("learnPlanEntity", learnPlanEntity);
+        args.putInt("position", position);
+        args.putInt("size", size);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -56,9 +67,11 @@ public class LearnPlanQuReviewFragment extends Fragment implements View.OnClickL
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_learn_plan_qu_review, container, false);
-
+        int position=0,size=0;
         if (getArguments() != null) {
             learnPlanEntity = (LearnPlanItemEntity) getArguments().getSerializable("learnPlanEntity");
+            position = getArguments().getInt("position") + 1;
+            size = getArguments().getInt("size");
         }
         tv_question_type = view.findViewById(R.id.tv_question_type);
         wv_content = view.findViewById(R.id.wv_content);
@@ -99,6 +112,12 @@ public class LearnPlanQuReviewFragment extends Fragment implements View.OnClickL
         iv_pager_next.setAlpha(0.9f);
         iv_pager_last.setOnClickListener(this);
         iv_pager_next.setOnClickListener(this);
+        //顶部题号染色
+        TextView tv_question_number = view.findViewById(R.id.tv_question_number);
+        int positionLen = String.valueOf(position).length();
+        String questionNum = position + "/" + size + "题";
+        SpannableString spannableString = StringUtils.getStringWithColor(questionNum, "#6CC1E0", 0, positionLen);
+        tv_question_number.setText(spannableString);
         return view;
     }
 

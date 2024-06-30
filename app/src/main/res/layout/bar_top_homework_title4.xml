@@ -27,7 +27,7 @@
 
         <com.example.yidiantong.View.ClickableImageView
             android:id="@+id/iv_eye"
-            android:layout_width="40dp"
+            android:layout_width="35dp"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
             android:paddingStart="3dp"

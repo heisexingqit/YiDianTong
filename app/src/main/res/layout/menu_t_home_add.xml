@@ -122,6 +122,7 @@
             android:focusable="true"
             android:padding="10dp"
             android:text="发布朗读任务"
+            android:visibility="gone"
             android:textColor="@color/gray_text" />
 
         <TextView

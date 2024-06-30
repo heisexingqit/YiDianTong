@@ -58,7 +58,6 @@ import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.MyItemDecoration;
 import com.example.yidiantong.util.PxUtils;
 import com.google.android.flexbox.FlexboxLayout;
-import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
@@ -75,7 +74,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -339,7 +337,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                     return;
                 }
                 if (contentView == null) {
-                    contentView = LayoutInflater.from(THomeworkCameraAddPickActivity.this).inflate(R.layout.picture_menu, null, false);
+                    contentView = LayoutInflater.from(THomeworkCameraAddPickActivity.this).inflate(R.layout.picture_menu_new, null, false);
                     ViewPager vp_pic = contentView.findViewById(R.id.vp_picture);
 
                     vp_pic.setAdapter(imageAdapter);
@@ -737,7 +735,7 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
                             isLegal = false;
                         }
                     }
-                    for (int j = 0; j < item.getShitiAnswer().length() - 1; i++) {
+                    for (int j = 0; j < item.getShitiAnswer().length() - 1; j++) {
                         char currentChar = item.getShitiAnswer().charAt(i);
                         char nextChar = item.getShitiAnswer().charAt(i + 1);
 

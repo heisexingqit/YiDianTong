@@ -999,7 +999,7 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
             }
             try {
                 params.put("assignType", assignType);
-
+                params.put("jsonStr","");
                 params.put("userName", MyApplication.username);
                 params.put("paperName", URLEncoder.encode(learnPlanName, "UTF-8"));
                 params.put("paperId", learnPlanId);

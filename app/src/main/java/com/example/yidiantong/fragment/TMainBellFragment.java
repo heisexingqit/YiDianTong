@@ -286,7 +286,7 @@ public class TMainBellFragment extends Fragment implements View.OnClickListener 
                     window2 = new PopupWindow(contentView2, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
                     window2.setTouchable(true);
                 }
-                window2.showAsDropDown(iv_add, -250, -20);
+                window2.showAsDropDown(iv_add, 20, -20);
                 break;
             case R.id.ftv_add_notice:
                 Intent intent;

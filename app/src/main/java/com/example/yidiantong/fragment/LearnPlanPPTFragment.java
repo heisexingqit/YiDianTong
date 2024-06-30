@@ -81,6 +81,15 @@ public class LearnPlanPPTFragment extends Fragment implements View.OnClickListen
         fragment.setArguments(args);
         return fragment;
     }
+    public static LearnPlanPPTFragment newInstance(LearnPlanItemEntity learnPlanEntity,int position, int size) {
+        LearnPlanPPTFragment fragment = new LearnPlanPPTFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("learnPlanEntity", learnPlanEntity);
+        args.putInt("position", position);
+        args.putInt("size", size);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     public static LearnPlanPPTFragment newInstance(LearnPlanItemEntity learnPlanEntity) {
         LearnPlanPPTFragment fragment = new LearnPlanPPTFragment();
@@ -117,8 +126,6 @@ public class LearnPlanPPTFragment extends Fragment implements View.OnClickListen
         // 题目类型
         TextView tv_question_type = view.findViewById(R.id.tv_question_type);
         tv_question_type.setText(learnPlanEntity.getResourceName());
-        tv_question_type.setTextSize(18);
-        tv_question_type.setTextColor(Color.BLACK);
 
         //翻页组件
         ImageView iv_pager_last = view.findViewById(R.id.iv_page_last);
@@ -131,6 +138,7 @@ public class LearnPlanPPTFragment extends Fragment implements View.OnClickListen
         ll_bottom_tab = view.findViewById(R.id.ll_bottom_tab);
         sv_bottom_tab = view.findViewById(R.id.sv_bottom_tab);
         pv_content = view.findViewById(R.id.pv_content);
+
 
         ImageButton btn_download = view.findViewById(R.id.btn_download);
         btn_download.setOnClickListener(v -> {

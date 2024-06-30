@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,7 +17,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -29,7 +27,6 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.JavascriptInterface;
-import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.EditText;
@@ -61,8 +58,6 @@ import com.example.yidiantong.bean.CourseLookEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.ImageUtils;
 import com.example.yidiantong.util.JsonUtils;
-import com.example.yidiantong.util.LogUtils;
-import com.example.yidiantong.util.PxUtils;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Rationale;
@@ -836,7 +831,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
             case R.id.fll_fcq:
                 if (contentView == null) {
                     if (url_list.size() == 0) break;
-                    contentView = LayoutInflater.from(this).inflate(R.layout.picture_menu, null, false);
+                    contentView = LayoutInflater.from(this).inflate(R.layout.picture_menu_new, null, false);
                     ViewPager vp_pic = contentView.findViewById(R.id.vp_picture);
 //                    LinearLayout ll_selector = contentView.findViewById(R.id.ll_selector);
 //                    //  回显方法

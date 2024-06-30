@@ -6,7 +6,6 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
@@ -16,22 +15,17 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,32 +34,21 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
-import com.example.yidiantong.Manager.CustomDatePicker;
-import com.example.yidiantong.Manager.DatePicker;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
-import com.example.yidiantong.adapter.BooksRecyclerAdapter;
 import com.example.yidiantong.adapter.ImagePagerAdapter;
-import com.example.yidiantong.bean.BookExerciseEntity;
-import com.example.yidiantong.fragment.ShiTiDetailSubjectFragment;
 import com.example.yidiantong.util.Constant;
-import com.example.yidiantong.util.FixedSpeedScroller;
 import com.example.yidiantong.util.ImageUtils;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.PxUtils;
-import com.example.yidiantong.util.RecyclerInterface;
 import com.google.android.flexbox.FlexboxLayout;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Rationale;
@@ -82,14 +65,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 // 朗读设置题目页
 public class TReadAloudAddActivity extends AppCompatActivity implements View.OnClickListener{
@@ -378,7 +358,7 @@ public class TReadAloudAddActivity extends AppCompatActivity implements View.OnC
             case R.id.ll_content:
                 if (contentView == null) {
                     if (url_list.size() == 0) break;
-                    contentView = LayoutInflater.from(this).inflate(R.layout.picture_menu, null, false);
+                    contentView = LayoutInflater.from(this).inflate(R.layout.picture_menu_new, null, false);
                     ViewPager vp_pic = contentView.findViewById(R.id.vp_picture);
 //                    LinearLayout ll_selector = contentView.findViewById(R.id.ll_selector);
                     //  回显方法

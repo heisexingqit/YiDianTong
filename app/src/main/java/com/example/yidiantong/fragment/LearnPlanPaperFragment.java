@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,7 @@ import com.example.yidiantong.bean.StuAnswerEntity;
 import com.example.yidiantong.util.LearnPlanInterface;
 import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.HomeworkInterface;
+import com.example.yidiantong.util.StringUtils;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Rationale;
@@ -60,6 +62,15 @@ public class LearnPlanPaperFragment extends Fragment implements View.OnClickList
         fragment.setArguments(args);
         return fragment;
     }
+    public static LearnPlanPaperFragment newInstance(LearnPlanItemEntity learnPlanEntity,int position, int size) {
+        LearnPlanPaperFragment fragment = new LearnPlanPaperFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("learnPlanEntity", learnPlanEntity);
+        args.putInt("position", position);
+        args.putInt("size", size);
+        fragment.setArguments(args);
+        return fragment;
+    }
     public static LearnPlanPaperFragment newInstance(LearnPlanItemEntity learnPlanEntity) {
         LearnPlanPaperFragment fragment = new LearnPlanPaperFragment();
         Bundle args = new Bundle();
@@ -81,10 +92,13 @@ public class LearnPlanPaperFragment extends Fragment implements View.OnClickList
                              Bundle savedInstanceState) {
 
         Log.d(TAG, "onCreateView: " + learnPlanEntity);
+        int position=0,size=0;
         // 取出携带的参数
         if (getArguments() != null) {
             learnPlanEntity = (LearnPlanItemEntity)getArguments().getSerializable("learnPlanEntity");
             stuAnswerEntity = (StuAnswerEntity) getArguments().getSerializable("stuAnswerEntity");
+            position = getArguments().getInt("position") + 1;
+            size = getArguments().getInt("size");
         }
 
         // 获取View
@@ -191,6 +205,13 @@ public class LearnPlanPaperFragment extends Fragment implements View.OnClickList
         });
 
         wv_content.loadUrl(learnPlanEntity.getUrl());
+
+        //顶部题号染色
+        TextView tv_question_number = view.findViewById(R.id.tv_question_number);
+        int positionLen = String.valueOf(position).length();
+        String questionNum = position + "/" + size + "题";
+        SpannableString spannableString = StringUtils.getStringWithColor(questionNum, "#6CC1E0", 0, positionLen);
+        tv_question_number.setText(spannableString);
 
         return view;
     }
