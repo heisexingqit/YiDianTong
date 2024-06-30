@@ -270,10 +270,16 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
                     _tv[2] = contentViewSetting.findViewById(R.id.tv_manual);
                     _tv[1].setOnClickListener(this);
                     _tv[2].setOnClickListener(this);
-
+                    if(mode.equals("2")){
+                        _tv[2].setBackgroundResource(R.color.main_bg);
+                        _tv[1].setBackgroundResource(R.color.white);
+                    }else{
+                        _tv[2].setBackgroundResource(R.color.white);
+                        _tv[1].setBackgroundResource(R.color.main_bg);
+                    }
                     // 初始化染色
-                    _tv[Integer.parseInt(mode)].setBackgroundResource(R.color.main_bg);
-                    _tv[Integer.parseInt(mode)].setTextColor(Color.WHITE);
+                   // _tv[Integer.parseInt(mode)].setBackgroundResource(R.color.main_bg);
+                   // _tv[Integer.parseInt(mode)].setTextColor(Color.WHITE);
 
                 }
 
