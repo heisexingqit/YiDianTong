@@ -11,7 +11,7 @@
         android:id="@+id/ll_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="#FFFFFF"
         android:paddingStart="5dp"
         android:paddingTop="10dp"
         android:paddingEnd="5dp"
@@ -35,7 +35,7 @@
             android:layout_centerInParent="true"
             android:singleLine="true"
             android:text="null"
-            android:textColor="@color/main_bg"
+            android:textColor="#6CC1E0"
             android:textSize="17sp" />
 
     </RelativeLayout>
@@ -45,7 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_above="@+id/ll_biaoti"
-        android:background="@color/black" />
+        android:background="#000000" />
 
     <LinearLayout
         android:id="@+id/ll_biaoti"
@@ -60,7 +60,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="标题:"
-            android:textColor="@color/black" />
+            android:textColor="#000000" />
 
         <EditText
             android:id="@+id/fet_bell_name"
@@ -80,7 +80,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_above="@+id/ll_class"
-        android:background="@color/black" />
+        android:background="#000000" />
 
     <LinearLayout
         android:id="@+id/ll_class"
@@ -102,7 +102,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="班级:"
-                android:textColor="@color/black" />
+                android:textColor="#000000" />
 
             <TextView
                 android:id="@+id/ftv_bell_class_name"
@@ -161,7 +161,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/black" />
+            android:background="#000000" />
 
 <!--        <TextView-->
 <!--            android:layout_width="match_parent"-->
@@ -225,7 +225,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_above="@+id/ll_bottom_block"
-        android:background="@color/black" />
+        android:background="#000000" />
     <!--答案输入区-->
     <RelativeLayout
         android:id="@+id/ll_bottom_block"
@@ -283,7 +283,7 @@
                 android:gravity="center"
                 android:padding="8dp"
                 android:text="发布"
-                android:textColor="@color/white"
+                android:textColor="#FFFFFF"
                 android:textSize="14sp" />
         </LinearLayout>
 

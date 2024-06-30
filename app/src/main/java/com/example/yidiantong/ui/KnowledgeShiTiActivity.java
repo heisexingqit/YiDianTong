@@ -272,7 +272,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
             TextView textName = itemView.findViewById(R.id.textName);
             TextView masteryLevel = itemView.findViewById(R.id.masteryLevel);
 
-            textName.setText(examPoint.getPointName());
+            textName.setText(examPoint.getPointName() + "(" + examPoint.getDbid() + ")");
             masteryLevel.setText(examPoint.getInfo());
             checkBox.setChecked(selectedExamPoints.contains(examPoint.getDbid()));
 
@@ -288,6 +288,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
                     if (selectedExamPoints.size() == examPoints.size()) {
                         selectAllCheckBox.setChecked(true);
                     } else {
+                        //防止一个一个取消复选框时，全选按钮都不选中
                         isUpdatingAllCheckBoxes = true;
                         selectAllCheckBox.setChecked(false);
                     }
@@ -303,7 +304,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
             if (isUpdatingAllCheckBoxes) {
                 isUpdatingAllCheckBoxes = false;
             }else {
-                isClickAllCheckBoxes = true;
+                isClickAllCheckBoxes = true;//防止点击全选按钮时，触发单个复选框的事件
                 for (int i = 0; i < layout.getChildCount(); i++) {
                     View itemView = layout.getChildAt(i);
                     if (itemView instanceof LinearLayout) {
