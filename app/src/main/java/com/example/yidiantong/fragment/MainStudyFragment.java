@@ -266,7 +266,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
                     window = new PopupWindow(contentView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
                     window.setTouchable(true);
                 }
-                window.showAsDropDown(iv_search_select, -150, 0);
+                window.showAsDropDown(iv_search_select, 20, -20);
                 break;
             case R.id.tv_all:
                 if (!type.equals("9")) {

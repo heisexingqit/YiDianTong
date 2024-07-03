@@ -24,13 +24,14 @@
             <!--左-->
             <com.example.yidiantong.View.ClickableImageView
                 android:id="@+id/iv_back"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:src="@drawable/left_ex2" />
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
+                android:src="@drawable/left_ex"/>
             <!--中-->
             <TextView
                 android:id="@+id/tv_title"

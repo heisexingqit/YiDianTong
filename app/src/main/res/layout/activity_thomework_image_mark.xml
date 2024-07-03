@@ -133,6 +133,7 @@
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="15dp"
+                android:textColor="@color/white"
                 android:text="取消"/>
             <Button
                 android:id="@+id/image_save"
@@ -144,6 +145,7 @@
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="15dp"
+                android:textColor="@color/white"
                 android:text="保存"/>
         </LinearLayout>
     </LinearLayout>
@@ -202,7 +204,7 @@
                 android:layout_gravity="center"
                 android:background="@android:color/white"
                 android:orientation="vertical"
-                android:layout_margin="60dp"
+                android:layout_margin="30dp"
                 android:padding="16dp">
                 <RelativeLayout
                     android:layout_width="match_parent"

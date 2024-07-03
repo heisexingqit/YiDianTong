@@ -330,4 +330,8 @@ public class Constant {
     // 作业预览
     public static final String T_HOMEWORK_PREVIEW = "/AppServer/ajax/teacherApp_lookZyDetial.do";
 
+    //获取作业，导学案批改状态
+    public static final String T_HOMEWORK_GET_STATUS = "/AppServer/ajax/studentApp_getTaskStatus.do";
+
+
 }

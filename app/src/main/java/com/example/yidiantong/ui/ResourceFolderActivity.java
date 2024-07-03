@@ -219,7 +219,7 @@ public class ResourceFolderActivity extends AppCompatActivity {
                 if(itemString.equals("null")||url.equals("预览文件不存在")){
                     // 取消遮罩
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage("该资源出错");
+                    builder.setMessage("提示：该资源无法预览");
                     builder.setNegativeButton("关闭", null);
                     AlertDialog dialog = builder.create();
                     dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框

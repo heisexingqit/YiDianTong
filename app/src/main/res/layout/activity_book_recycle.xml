@@ -23,6 +23,8 @@
             android:layout_centerVertical="true"
             android:clickable="true"
             android:focusable="true"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
             android:src="@drawable/left_ex" />
         <!--中-->
         <TextView
@@ -68,7 +70,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="练习模式"
-                android:textColor="@color/f_dark_blue"
+                android:textColor="@color/main_bg_title"
                 android:textSize="13sp" />
 
             <ImageView
@@ -115,10 +117,10 @@
             <ImageView
                 android:id="@+id/fiv_bd_exercise"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="24dp"
                 android:layout_gravity="right"
                 android:layout_marginBottom="10dp"
+                android:layout_weight="1"
                 android:src="@drawable/exercise" />
 
             <ImageView

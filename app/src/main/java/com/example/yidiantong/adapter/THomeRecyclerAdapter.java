@@ -213,7 +213,7 @@ public class THomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             // 未阅小球
             if (item.getfNumber() != null) {
-                if (!item.getfNumber().equals("0") &&!item.getfType().equals("4")&& !item.getfType().equals("10")) {
+                if (!item.getfNumber().equals("0") &&!item.getfType().equals("3")&&!item.getfType().equals("4")&& !item.getfType().equals("10")) {
                     tv_unread.setVisibility(View.VISIBLE);
                     tv_unread.setText(item.getfNumber());
                 } else if(item.getfFlag().equals("2")&&item.getfType().equals("4")&&item.getfNumber().equals("1")){

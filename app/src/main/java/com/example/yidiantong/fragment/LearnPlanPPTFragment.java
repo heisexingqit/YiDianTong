@@ -126,6 +126,8 @@ public class LearnPlanPPTFragment extends Fragment implements View.OnClickListen
         // 题目类型
         TextView tv_question_type = view.findViewById(R.id.tv_question_type);
         tv_question_type.setText(learnPlanEntity.getResourceName());
+        tv_question_type.setTextSize(18);
+        tv_question_type.setTextColor(Color.BLACK);
 
         //翻页组件
         ImageView iv_pager_last = view.findViewById(R.id.iv_page_last);

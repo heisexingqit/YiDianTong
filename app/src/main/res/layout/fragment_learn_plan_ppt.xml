@@ -26,8 +26,8 @@
             android:layout_gravity="center"
             android:layout_marginStart="50dp"
             android:layout_marginEnd="40dp"
-            android:maxLines="1"
             android:ellipsize="end"
+            android:maxLines="1"
             android:text="PPT标题"
             android:textSize="16sp" />
 

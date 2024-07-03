@@ -155,7 +155,8 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                             Log.e("0110", "onCreateView: 没改的");
                             checkInPos = pos;
                             checkInType = "作业";
-                            MyReadWriteLock.checkin(adapter.itemList.get(pos).getLearnId(), username, "student", "", handler, getActivity());
+                            loadTaskStatus(pos);
+                            //MyReadWriteLock.checkin(adapter.itemList.get(pos).getLearnId(), username, "student", "", handler, getActivity());
                         }
                         break;
                     case "导学案":
@@ -362,7 +363,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                     window = new PopupWindow(contentView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
                     window.setTouchable(true);
                 }
-                window.showAsDropDown(iv_search_select, -150, 0);
+                window.showAsDropDown(iv_search_select, 20, -20);
                 break;
             case R.id.tv_all:
                 if (!type.equals("all")) {
@@ -476,6 +477,21 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                     }
                 }
 
+            }else if(message.what == 102){
+                String TaskStatus = (String) message.obj;
+                int pos = checkInPos;
+                if(TaskStatus.equals("4")
+                ){
+                    Intent intent = new Intent(getActivity(), HomeworkPagerFinishActivity.class);
+                    intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
+                    intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
+                    intent.putExtra("username", username);
+                    intent.putExtra("type", "paper");
+                    intent.putExtra("isNew", Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 1 || Integer.parseInt(adapter.itemList.get(pos).getStatus()) == 5);
+                    startActivity(intent);
+                }else{
+                    MyReadWriteLock.checkin(adapter.itemList.get(pos).getLearnId(), username, "student", "", handler, getActivity());
+                }
             }
         }
     };
@@ -584,5 +600,34 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
 //            MyApplication.isRotate = true;
             Log.e(TAG, "onConfigurationChanged: 竖屏");
         }
+    }
+    private void loadTaskStatus(int pos) {
+
+        mRequestUrl = Constant.API + Constant.T_HOMEWORK_GET_STATUS + "?taskId=" +adapter.itemList.get(pos).getLearnId() +"&stuId="+MyApplication.username +"&type"+adapter.itemList.get(pos).getType();
+
+        Log.d("wen", "isRead: " + mRequestUrl);
+
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+
+                int TaskStatus = json.getInt("data");
+                Boolean isSuccess = json.getBoolean("success");
+                if (isSuccess) {
+                    Message msg = Message.obtain();
+                    msg.what = 102;
+                    handler.sendMessage(msg);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }, error -> {
+            Log.d("wen", "Volley_Error: " + error.toString());
+            rl_loading.setVisibility(View.GONE);
+            adapter.fail();
+        });
+        MyApplication.addRequest(request, TAG);
     }
 }

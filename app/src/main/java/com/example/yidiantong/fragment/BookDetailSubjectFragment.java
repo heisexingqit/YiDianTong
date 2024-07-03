@@ -429,7 +429,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                 fll_bd_answer.setVisibility(View.VISIBLE);
                 mode = 0;
             } else {
-//                fll_bd_answer.setVisibility(View.GONE);
+                fll_bd_answer.setVisibility(View.GONE);
                 fll_bd_analysis.setVisibility(View.VISIBLE);
                 mode = 1;
                 if (stuans.length() == 0) {

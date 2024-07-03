@@ -74,9 +74,9 @@
                     android:id="@+id/tv_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+
                     android:gravity="bottom"
-                    android:text="测试拍照布置作业"
+                    android:text="测试拍照布置作业1321321321321"
                     android:singleLine="true"
                     android:textColor="@color/black"
                     android:textSize="17sp"
@@ -96,10 +96,9 @@
         </LinearLayout>
         <!--右中块-->
         <LinearLayout
-            android:layout_width="100dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="right"
-            android:paddingEnd="20dp"
             android:orientation="vertical">
 
             <TextView
@@ -129,7 +128,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="bottom"
-                android:text="2022.08"
+                android:text="前天19：18"
                 android:textSize="15sp" />
         </LinearLayout>
     </LinearLayout>

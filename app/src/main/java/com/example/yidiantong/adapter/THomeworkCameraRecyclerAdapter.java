@@ -683,6 +683,9 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
                         checkBox.setTextColor(mContext.getResources().getColor(R.color.default_gray));
                         checkBox.setText(String.valueOf(word));
 
+                        checkBox.setChecked(checkString.contains(String.valueOf(word)));
+
+                        checkBox.setOnCheckedChangeListener(null);
                         // 监听状态
                         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                             @Override
@@ -703,9 +706,7 @@ public class THomeworkCameraRecyclerAdapter extends RecyclerView.Adapter<Recycle
                             }
                         });
                         ll_answer.addView(checkBox);
-                        if (checkString.contains(String.valueOf(word))) {
-                            checkBox.setChecked(true);
-                        }
+
                     }
                     break;
                 case "103":

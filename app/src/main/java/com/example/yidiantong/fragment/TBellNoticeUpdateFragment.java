@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,6 +58,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
@@ -202,7 +204,7 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
             if (message.what == 100) {
                 tBellNoticeUpdateEntity = (List<TBellUpdateEntity.TBellNoticeUpdateEntity>) message.obj;
                 showView(tBellNoticeUpdateEntity);
-                //loadClass();
+                loadClass();
             } else if (message.what == 101) {
                 showClass((Map<String, String>) message.obj);
             }
@@ -318,7 +320,6 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
                 //使用Goson框架转换Json字符串为列表
                 List<TBellUpdateEntity.TBellNoticeUpdateEntity> updateList = gson.fromJson(data1, new TypeToken<List<TBellUpdateEntity.TBellNoticeUpdateEntity>>() {
                 }.getType());
-                Log.e("updateList", "" + updateList);
 
                 //封装消息，传递给主线程
                 Message message = Message.obtain();

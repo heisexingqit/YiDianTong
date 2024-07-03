@@ -730,28 +730,24 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
 
                 case "102":
                     Set<Character> charSet = new HashSet<>();
+
                     for (char c : item.getShitiAnswer().toCharArray()) {
                         if (!charSet.add(c)) {
                             isLegal = false;
                         }
                     }
-                    for (int j = 0; j < item.getShitiAnswer().length() - 1; j++) {
-                        char currentChar = item.getShitiAnswer().charAt(i);
-                        char nextChar = item.getShitiAnswer().charAt(i + 1);
-
-                        // 检查当前字符和下一个字符是否按顺序排布
-                        if (currentChar > nextChar) {
-                            isLegal = false;
-                        }
-
-                        if (currentChar < 'A' || currentChar >= 'A' + Integer.parseInt(item.getAnswerNum())) {
-                            isLegal = false;
-                        }
-
-                        if (nextChar < 'A' || nextChar >= 'A' + Integer.parseInt(item.getAnswerNum())) {
-                            isLegal = false;
-                        }
+//                   对这个进行排序 item.getShitiAnswer()
+                    List<Character> characters = new ArrayList<>();
+                    for(char c : item.getShitiAnswer().toCharArray()){
+                        characters.add(c);
                     }
+                    Collections.sort(characters);
+                    StringBuilder sortedAnswer = new StringBuilder(characters.size());
+                    for(Character c : characters){
+                        sortedAnswer.append(c);
+                    }
+                    item.setShitiAnswer(sortedAnswer.toString());
+                    break;
                 case "108":
                     if (item.getTypeName().indexOf("阅读理解") != -1 || item.getTypeName().indexOf("完形填空") != -1) {
                         String[] strings = item.getShitiAnswer().split(",");

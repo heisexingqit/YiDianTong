@@ -27,7 +27,7 @@
         <!--中-->
         <TextView
             android:id="@+id/ftv_title"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center_horizontal"
