@@ -674,6 +674,7 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
         });
         MyApplication.addRequest(request, TAG);
     }
+    // TODO 后期需删除
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void showStu() {
         if (stuMap.size() == 0) {

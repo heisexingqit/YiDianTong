@@ -19,17 +19,17 @@
         android:paddingStart="6dp"
         android:paddingEnd="6dp"
         android:src="@drawable/left_ex" />
-<!--    &lt;!&ndash;左部&ndash;&gt;-->
-<!--    <com.example.yidiantong.View.ClickableImageView-->
-<!--        android:id="@+id/iv_back"-->
-<!--        android:layout_width="40dp"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_gravity="center_vertical"-->
-<!--        android:clickable="true"-->
-<!--        android:focusable="true"-->
-<!--        android:paddingStart="6dp"-->
-<!--        android:paddingEnd="6dp"-->
-<!--        android:src="@drawable/left_ex" />-->
+    <!--    &lt;!&ndash;左部&ndash;&gt;-->
+    <!--    <com.example.yidiantong.View.ClickableImageView-->
+    <!--        android:id="@+id/iv_back"-->
+    <!--        android:layout_width="40dp"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        android:layout_gravity="center_vertical"-->
+    <!--        android:clickable="true"-->
+    <!--        android:focusable="true"-->
+    <!--        android:paddingStart="6dp"-->
+    <!--        android:paddingEnd="6dp"-->
+    <!--        android:src="@drawable/left_ex" />-->
 
     <!--中-->
     <TextView
@@ -43,30 +43,31 @@
         android:textColor="@color/main_bg"
         android:textSize="17sp" />
 
+    <!-- TODO 后期需删除 -->
     <!--选择学生-->
     <com.example.yidiantong.View.ClickableImageView
         android:id="@+id/fiv_select_stu"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/fiv_refresh"
         android:layout_marginRight="16dp"
+        android:layout_toLeftOf="@+id/fiv_refresh"
         android:clickable="true"
         android:focusable="true"
         android:src="@drawable/select_stu"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <!--刷新-->
     <com.example.yidiantong.View.ClickableImageView
         android:id="@+id/fiv_refresh"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
         android:clickable="true"
         android:focusable="true"
         android:src="@drawable/refresh"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 
 </RelativeLayout>
