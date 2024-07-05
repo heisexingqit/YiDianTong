@@ -14,25 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/gray_back" />
-    <LinearLayout
-        android:id="@+id/ll_knowledge_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="match_parent"
-            android:layout_marginRight="5dp"
-            android:src="@drawable/zhishdian"/>
-
-        <TextView
-            android:id="@+id/tv_knowledge_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:text="知识点名称："
-            android:textSize="15sp"
-            android:textColor="@color/black"/>
-    </LinearLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -45,10 +26,38 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <LinearLayout
+            android:id="@+id/ll_knowledge_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/zhishdian"/>
+
+            <TextView
+                android:id="@+id/tv_knowledge_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="知识点名称："
+                android:textSize="15sp"
+                android:textColor="@color/black"/>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/ll_knowledge_name"
+            android:background="@color/gray_back"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/frv_detail"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_below="@id/divider"/>
     </RelativeLayout>
 
 </LinearLayout>

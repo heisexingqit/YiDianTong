@@ -44,6 +44,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -303,7 +304,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
         selectAllCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isUpdatingAllCheckBoxes) {
                 isUpdatingAllCheckBoxes = false;
-            }else {
+            } else {
                 isClickAllCheckBoxes = true;//防止点击全选按钮时，触发单个复选框的事件
                 for (int i = 0; i < layout.getChildCount(); i++) {
                     View itemView = layout.getChildAt(i);
@@ -346,16 +347,6 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
 
     //获取考点列表
     private void getKaoDianList() {
-//        if (adapter.isRefresh == 1) {
-//            fll_null.setVisibility(View.GONE);
-//            rl_loading.setVisibility(View.VISIBLE);
-//        }
-//        //如果集合中有数据，直接显示对话框
-//        if (examPoints != null && examPoints.size() > 0) {
-////            showCheckableSubjectsDialog();
-//            loadItems_Net();
-//            return;
-//        }
         String mRequestUrl = Constant.API + "//AppServer/ajax/studentApp_getPointsByCatalogId.do?" +
                 "catalogId=" + zhishidianId + "&stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + subjectId
                 + "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=" + unitId;
@@ -369,6 +360,29 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
                 //使用Goson框架转换Json字符串为列表
                 examPoints = gson.fromJson(itemString, new TypeToken<List<ExamPoint>>() {
                 }.getType());
+
+                // TODO 去掉,py算法掌握度后面的字符串 && 对考点信息info进行处理, 保留两位小数
+                for (ExamPoint examPoint : examPoints) {
+                    String info = examPoint.getInfo();
+                    // 清除两边的空格
+                    info = info.trim();
+
+                    // 去掉,py算法掌握度后面的字符串
+//                    int index1 = info.indexOf(",py算法掌握度");
+//                    info = info.substring(0, index1) + "】";
+
+                    // 对考点信息info进行处理, 保留两位小数
+                    // 例如：【掌握度:0.5555,有效答题2,正确率0.4286%,py算法掌握度】
+                    int index2 = info.indexOf(":");
+                    int index3 = info.indexOf(",");
+                    Double value = Double.valueOf(info.substring(index2 + 1, index3));
+                    DecimalFormat df = new DecimalFormat("0.00");
+                    info = info.substring(0, index2 + 1) + df.format(value) + info.substring(index3);
+                    System.out.println(info);
+                    examPoint.setInfo(info);
+                }
+
+
                 if (selectedExamPoints == null || selectedExamPoints.size() == 0) {
                     //第一次默认全选,并将全部考点dbid拼接到pointIds中
                     for (ExamPoint examPoint : examPoints) {

@@ -107,6 +107,7 @@ public class BookUpFragment extends Fragment {
         //顶栏返回按钮
         view.findViewById(R.id.fiv_back).setOnClickListener(v -> {
             getActivity().finish();
+
         });
 
         frv_detail = view.findViewById(R.id.frv_detail);
@@ -303,7 +304,11 @@ public class BookUpFragment extends Fragment {
         MyApplication.addRequest(request, TAG);
     }
 
-    private void Alert(String alert) {
+    public void Alert(String alert) {
+        if (getActivity() == null || getActivity().isFinishing()) {
+            // Activity 已销毁或正在销毁，直接返回
+            return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), AlertDialog.THEME_HOLO_LIGHT);
         //自定义title样式
         TextView tv = new TextView(getContext());

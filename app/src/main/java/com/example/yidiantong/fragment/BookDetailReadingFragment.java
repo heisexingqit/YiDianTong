@@ -43,6 +43,7 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookRecyclerEntity;
 import com.example.yidiantong.bean.XueBaAnswerEntity;
+import com.example.yidiantong.ui.BookExercise2ThreeActivity;
 import com.example.yidiantong.ui.BookExerciseActivity;
 import com.example.yidiantong.ui.MainBookExerciseActivity;
 import com.example.yidiantong.util.Constant;
@@ -510,7 +511,7 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
                 break;
 
             case R.id.fiv_bd_exercise:
-                Intent intent = new Intent(getActivity(), MainBookExerciseActivity.class);
+                Intent intent = new Intent(getActivity(), BookExercise2ThreeActivity.class);
                 intent.putExtra("userName", userName); // 用户名
                 intent.putExtra("subjectId", subjectId); // 学科id
                 intent.putExtra("courseName", courseName);  // 学科名
