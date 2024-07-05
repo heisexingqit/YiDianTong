@@ -252,8 +252,8 @@ public class BookDetailClozeFragment extends Fragment implements View.OnClickLis
             } else {
                 fll_bd_answer.setVisibility(View.GONE);
                 fll_bd_analysis.setVisibility(View.VISIBLE);
-                mode = 1;
                 reviewShowAnswer();
+                mode = 1;
             }
 
         }else {
