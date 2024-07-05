@@ -337,6 +337,7 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
                 "</style>" +
                 "    <script>\n" +
                 "        function lookImage(x) {\n" +
+                "           bigimage(x)\n"+
                 "        }\n" +
                 "        function bigimage(x) {\n" +
                 "            myInterface.bigPic()\n" +

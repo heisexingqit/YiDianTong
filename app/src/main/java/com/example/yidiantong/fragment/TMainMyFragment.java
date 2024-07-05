@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
@@ -529,12 +530,23 @@ public class TMainMyFragment extends Fragment implements View.OnClickListener {
                     // 获取权限后
                     @Override
                     public void onAction(List<String> data) {
-
-                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                        // 选择图片文件类型
-                        intent.setType("image/*");
-                        // 跳转到本地存储
+                        //打开相册
+                        Intent intent = new Intent(Intent.ACTION_PICK, null);
+                        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
                         mResultLauncher.launch(intent);
+
+//                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+//                        intent.addCategory(Intent.CATEGORY_OPENABLE);
+//                        intent.setType("image/*");
+//                        intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"image/jpeg", "image/png"}); // 添加特定的MIME类型以限制为图片
+//                        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, MediaStore.Images.Media.EXTERNAL_CONTENT_URI); // 设置初始目录为外部存储的图片目录
+//                        mResultLauncher.launch(intent);
+
+//                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+//                        // 选择图片文件类型
+//                        intent.setType("image/*");
+//                        // 跳转到本地存储
+//                        mResultLauncher.launch(intent);
                     }
                 }).onDenied(new Action<List<String>>() {
                     @Override

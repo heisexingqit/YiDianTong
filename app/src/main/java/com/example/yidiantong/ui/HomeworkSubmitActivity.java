@@ -53,6 +53,7 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
     private String[] questionTypes;
     private RelativeLayout rl_submitting;
     private RelativeLayout rl_loading;
+    private boolean isSubmitting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +112,9 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
                 finish();
                 break;
             case R.id.btn_submit:
-                submit();
+                if(!isSubmitting) {
+                    submit();
+                }
         }
     }
 
@@ -141,6 +144,7 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
 
     //提交代码
     private void submit() {
+        isSubmitting=true;
         java.util.Date day = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd:HH:mm:ss");
         String date = sdf.format(day);
