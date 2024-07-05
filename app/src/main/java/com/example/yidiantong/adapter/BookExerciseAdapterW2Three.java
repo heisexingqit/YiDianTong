@@ -223,7 +223,11 @@ public class BookExerciseAdapterW2Three extends RecyclerView.Adapter<RecyclerVie
             btn_submit.setVisibility(View.VISIBLE);
             BookExerciseEntity item = itemList.get(pos); // 获取当前item
             Log.e("wen0524", "update: " + item.getStuAnswer());
-            tv_type_name.setText(item.typeName + "(" + item.getQuestionKeyword() + ""); // 设置题目类型名称
+            // 去掉item.getQuestionKeyword()最后的逗号
+            if (item.getQuestionKeyword().endsWith(",")) {
+                item.setQuestionKeyword(item.getQuestionKeyword().substring(0, item.getQuestionKeyword().length() - 1));
+            }
+            tv_type_name.setText(item.typeName + "(" + item.getQuestionKeyword() + ")"); // 设置题目类型名称
 
             // 设置WebViewClient以便监听加载完成事件
             wv_timian.setWebViewClient(new TimianWebViewClient());
