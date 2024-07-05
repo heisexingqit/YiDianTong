@@ -176,7 +176,8 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                             } else {
                                 checkInType = "微课";
                             }
-                            MyReadWriteLock.checkin(adapter.itemList.get(pos).getLearnId(), username, "student", "", handler, getActivity());
+                            loadTaskStatus(pos);
+                            //MyReadWriteLock.checkin(adapter.itemList.get(pos).getLearnId(), username, "student", "", handler, getActivity());
                         }
                         break;
                     case "直播课消息":
@@ -478,10 +479,9 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                 }
 
             }else if(message.what == 102){
-                String TaskStatus = (String) message.obj;
+                int TaskStatus =(int) message.obj;
                 int pos = checkInPos;
-                if(TaskStatus.equals("4")
-                ){
+                if(TaskStatus==4){
                     Intent intent = new Intent(getActivity(), HomeworkPagerFinishActivity.class);
                     intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
                     intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
@@ -602,8 +602,17 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
         }
     }
     private void loadTaskStatus(int pos) {
+        String type;
+        if(adapter.itemList.get(pos).getType().equals("作业")){
+            type ="paper";
+        }else if(adapter.itemList.get(pos).getType().equals("导学案")){
+            type ="learnPlan";
+        }else {
+            type ="weike";
+        }
 
-        mRequestUrl = Constant.API + Constant.T_HOMEWORK_GET_STATUS + "?taskId=" +adapter.itemList.get(pos).getLearnId() +"&stuId="+MyApplication.username +"&type"+adapter.itemList.get(pos).getType();
+
+        mRequestUrl = Constant.API + Constant.T_HOMEWORK_GET_STATUS + "?taskId=" +adapter.itemList.get(pos).getLearnId() +"&stuId="+MyApplication.username +"&type="+type;
 
         Log.d("wen", "isRead: " + mRequestUrl);
 
@@ -614,10 +623,16 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
 
                 int TaskStatus = json.getInt("data");
                 Boolean isSuccess = json.getBoolean("success");
-                if (isSuccess) {
-                    Message msg = Message.obtain();
-                    msg.what = 102;
-                    handler.sendMessage(msg);
+                if (TaskStatus>0&&isSuccess) {
+                    // 封装消息，传递给主线程
+                    Message message = Message.obtain();
+
+                    // 携带数据
+                    message.obj = TaskStatus;
+
+                    //标识线程
+                    message.what = 102;
+                    handler.sendMessage(message);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

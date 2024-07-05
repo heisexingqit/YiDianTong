@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -161,7 +162,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.btn_login:
                 username = et_username.getText().toString().trim();
-                password = et_pw.getText().toString();
+                password = et_pw.getText().toString().trim();
                 login();
                 String ip = et_ip.getText().toString();
                 if(ip.length()>0){
@@ -319,7 +320,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     // 开启自动登录
                     MyApplication.autoLogin = true;
-
+                    //Toast.makeText(LoginActivity.this, "页面跳转", Toast.LENGTH_SHORT).show();
                     //两个一起用
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     //登录成功跳转
