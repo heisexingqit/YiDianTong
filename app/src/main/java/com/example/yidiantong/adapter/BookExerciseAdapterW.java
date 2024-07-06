@@ -1,8 +1,10 @@
 package com.example.yidiantong.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
@@ -13,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -44,6 +48,24 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
     private List<BookExerciseEntity> itemList;
     private Context mContext;
     private LayoutInflater layoutInflater;
+
+    //答题区域HTML头
+    private String html_head = "<head>\n" +
+            "    <style>\n" +
+            "        body {\n" +
+            "            color: rgb(117, 117, 117);\n" +
+            "            word-wrap: break-word;\n" +
+            "            font-size: 14px;" +
+            "        }\n" +
+            "    </style>\n" +
+            "    <script>\n" +
+            "        function bigimage(x) {\n" +
+            "            myInterface.bigPic()\n" +
+            "        }\n" +
+            "    </script>\n" +
+            "</head>\n" +
+            "\n" +
+            "<body onclick=\"bigimage(this)\">\n";
 
     public BookExerciseAdapterW(Context context, List<BookExerciseEntity> itemList) {
         this.layoutInflater = LayoutInflater.from(context);
@@ -97,6 +119,7 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
                 break;
         }
 
+
         return new MyViewHolder(v);
     }
 
@@ -104,6 +127,10 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ((MyViewHolder) holder).update(position, holder);
 
+    }
+    private Handler handler;
+    public void setHandler(Handler handler) {
+        this.handler=handler;
     }
 
     @Override
@@ -526,7 +553,26 @@ public class BookExerciseAdapterW extends RecyclerView.Adapter<RecyclerView.View
                     if(item.stuHtml == null || item.stuHtml.length() == 0){
                         ll_input_image.setVisibility(View.GONE);
                     }
-                    wv_stu_answer.loadDataWithBaseURL(null, item.stuHtml, "text/html", "utf-8", null);
+                    WebSettings webSettings = wv_stu_answer.getSettings();
+                    webSettings.setJavaScriptEnabled(true);
+                    wv_stu_answer.addJavascriptInterface(
+                            new Object() {
+                                @JavascriptInterface
+                                @SuppressLint("JavascriptInterface")
+                                public void bigPic() {
+                                    /**
+                                     * Js注册的方法无法修改主UI，需要Handler
+                                     */
+                                    Message message = Message.obtain();
+                                    // 发送消息给主线程
+                                    //标识线程
+                                    message.what = 102;
+                                    message.obj = item.stuHtml;
+                                    handler.sendMessage(message);
+                                }
+                            }
+                            , "myInterface");
+                    wv_stu_answer.loadDataWithBaseURL(null, html_head+item.stuHtml, "text/html", "utf-8", null);
 
 
                     // 解析设置

@@ -151,9 +151,10 @@ public class CustomDraw extends View {
 //        }
         // 绘制所有路径
         for (Pair<Path, PathAttributes> pair : paths) {
-            paint.setColor(pair.second.getColor()); // 设置画笔颜色为路径对应的颜色
-            paint.setStrokeWidth(pair.second.getStrokeWidth()); // 设置画笔粗细为路径对应的粗细
-            canvas.drawPath(pair.first, paint); // 绘制路径
+            Paint paint_cur = new Paint(paint);
+            paint_cur.setColor(pair.second.getColor()); // 设置画笔颜色为路径对应的颜色
+            paint_cur.setStrokeWidth(pair.second.getStrokeWidth()); // 设置画笔粗细为路径对应的粗细
+            canvas.drawPath(pair.first, paint_cur); // 绘制路径
         }
         // 恢复画布状态
         canvas.restore();
@@ -529,7 +530,6 @@ public class CustomDraw extends View {
             this.color = color;
             this.strokeWidth = strokeWidth;
         }
-
         public int getColor() {
             return color;
         }

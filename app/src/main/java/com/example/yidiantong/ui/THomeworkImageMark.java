@@ -483,7 +483,4 @@ public class THomeworkImageMark extends AppCompatActivity {
 //
 //        return ImageUtils.Bitmap2StrByBase64(this, file);
 //    }
-
-
-
 }

@@ -403,7 +403,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         fwv_bd_analysis1.loadDataWithBaseURL(null, html1, "text/html", "utf-8", null);
 
 
-//        stuans = bookrecyclerEntity.getStuAnswer();
+        stuans = bookrecyclerEntity.getStuAnswer();
         cleanStuAnswer = bookrecyclerEntity.getStuScore();
 
         if (!exerciseType) {
@@ -431,13 +431,17 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
                 fll_bd_answer.setVisibility(View.VISIBLE);
                 mode = 0;
             } else {
-                fll_bd_answer.setVisibility(View.GONE);
+                //fll_bd_answer.setVisibility(View.GONE);
+                ll_tiankong.setVisibility(View.GONE);
                 fll_bd_analysis.setVisibility(View.VISIBLE);
+                fb_bd_sumbit.setVisibility(View.GONE);
+                tv_stu_answer.setText("【你的作答】");
                 mode = 1;
                 if (stuans.length() == 0) {
                     ftv_bd_stuans.setText("【你的作答】");
                     fiv_bd_tf.setVisibility(View.GONE); // 隐藏对错图标
                 } else {
+                    ll_input_image.setVisibility(View.VISIBLE);
                     ftv_bd_stuans.setText("【你的作答】");
                     // 答案显示
                     html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getStuAnswer() + "</body>";

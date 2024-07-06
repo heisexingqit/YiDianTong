@@ -14,12 +14,15 @@ import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +37,7 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
@@ -41,6 +45,7 @@ import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.BookExerciseAdapterW;
 import com.example.yidiantong.adapter.BookExerciseAdapterW2Three;
+import com.example.yidiantong.adapter.ImagePagerAdapter;
 import com.example.yidiantong.bean.BookExerciseEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.ImageUtils;
@@ -55,6 +60,10 @@ import com.yanzhenjie.permission.runtime.Permission;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -97,6 +106,24 @@ public class BookExercise2ThreeActivity extends AppCompatActivity {
     private String questionIdd; //举一反三题目id
     private TextView tv_knowledge_name;//原试题考点
 
+    //答题区域HTML头
+    private String html_head = "<head>\n" +
+            "    <style>\n" +
+            "        body {\n" +
+            "            color: rgb(117, 117, 117);\n" +
+            "            word-wrap: break-word;\n" +
+            "            font-size: 14px;" +
+            "        }\n" +
+            "    </style>\n" +
+            "    <script>\n" +
+            "        function bigimage(x) {\n" +
+            "            myInterface.bigPic()\n" +
+            "        }\n" +
+            "    </script>\n" +
+            "</head>\n" +
+            "\n" +
+            "<body onclick=\"bigimage(this)\">\n";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +152,7 @@ public class BookExercise2ThreeActivity extends AppCompatActivity {
         //设置RecyclerViewAdapter
         if (adapter == null) {
             adapter = new BookExerciseAdapterW2Three(this, new ArrayList<>());
+            adapter.setHandler(handler);
         }
         rv_main.setAdapter(adapter);
         loadItems_Net();
@@ -239,6 +267,7 @@ public class BookExercise2ThreeActivity extends AppCompatActivity {
                 }
             }
         });
+        img_adapter = new ImagePagerAdapter(this, url_list);
 
     }
 
@@ -300,7 +329,7 @@ public class BookExercise2ThreeActivity extends AppCompatActivity {
         MyApplication.addRequest(stringRequest, "TAG");
 
     }
-
+    private String exercise_stu_html;
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @SuppressLint("NotifyDataSetChanged")
         @Override
@@ -311,7 +340,7 @@ public class BookExercise2ThreeActivity extends AppCompatActivity {
                 Log.d("wen", "handleMessage: " + url);
 //                adapter.updateData(url_list);// 关键
                 moreList.get(pos_iamge).stuHtml += "<img onclick='bigimage(this)' src='" + url + "' style=\"max-width:80px\">";
-                wv_image.loadDataWithBaseURL(null, moreList.get(pos_iamge).stuHtml, "text/html", "utf-8", null);
+                wv_image.loadDataWithBaseURL(null, html_head+moreList.get(pos_iamge).stuHtml, "text/html", "utf-8", null);
                 ll_image.setVisibility(View.VISIBLE);
 //                transmit.offLoading();
             }else if(message.what==101){
@@ -319,6 +348,10 @@ public class BookExercise2ThreeActivity extends AppCompatActivity {
                 adapter.update(moreList);
                 adapter.notifyDataSetChanged();
 
+            }else if (message.what == 102) {
+                // 复用老代码 触发点击
+                exercise_stu_html = (String) message.obj;
+                show_photo();
             }
 
         }
@@ -612,6 +645,109 @@ public class BookExercise2ThreeActivity extends AppCompatActivity {
     }
     public void hade_rl_submitting(){
         rl_submitting.setVisibility(View.GONE);
+    }
+
+    private List<String> url_list = new ArrayList<>();
+    private View contentView;
+    private PopupWindow window;
+    TextView tv;
+    private ImagePagerAdapter img_adapter;
+
+    //照片放大方法
+    public void show_photo(){
+        url_list.clear();
+        Document document = Jsoup.parse(exercise_stu_html);
+        Elements imgElements = document.getElementsByTag("img");
+
+        for (Element imgElement : imgElements) {
+            String src = imgElement.attr("src");
+            url_list.add(src);
+        }
+        if (contentView == null) {
+            if (url_list.size() == 0) return;
+            contentView = LayoutInflater.from(this).inflate(R.layout.picture_menu_new, null, false);
+            ViewPager vp_pic = contentView.findViewById(R.id.vp_picture);
+//                    LinearLayout ll_selector = contentView.findViewById(R.id.ll_selector);
+            //  回显方法
+            //  回显方法
+            //  回显方法
+//                    contentView.findViewById(R.id.btn_save).setOnClickListener(v -> {
+//                        Log.d(TAG, "onClick: ");
+//                        html_answer = html_answer.replace(originUrl, identifyUrl);
+//                        wv_answer.loadDataWithBaseURL(null, getHtmlAnswer(), "text/html", "utf-8", null);
+//
+//                        transmit.setStuAnswer(stuAnswerEntity.getOrder(), html_answer);
+//                        window.dismiss();
+//                    });
+//                    contentView.findViewById(R.id.btn_cancel).setOnClickListener(v -> {
+//                        window.dismiss();
+//                    });
+            vp_pic.setAdapter(img_adapter);
+
+
+            //顶部标签
+            tv = contentView.findViewById(R.id.tv_picNum);
+            tv.setText("1/" + url_list.size());
+            window = new PopupWindow(contentView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
+            window.setTouchable(true);
+
+            img_adapter.setClickListener(new ImagePagerAdapter.MyItemClickListener() {
+                @Override
+                public void onItemClick() {
+                    vp_pic.setCurrentItem(0);
+                    window.dismiss();
+                }
+// // 手写公式识别-弃
+//                        @Override
+//                        public void onLongItemClick(int pos) {
+//                            Toast.makeText(getActivity(), "长按", Toast.LENGTH_SHORT).show();
+//                            if (contentView2 == null) {
+//                                contentView2 = LayoutInflater.from(getActivity()).inflate(R.layout.menu_pic_identify, null, false);
+//                                //绑定点击事件
+//                                contentView2.findViewById(R.id.tv_all).setOnClickListener(v -> {
+//                                    identifyUrl = picIdentify(url_list.get(pos));
+//                                    originUrl = url_list.get(pos);
+//                                    url_list.set(pos, identifyUrl);
+//                                    adapter.notifyDataSetChanged();
+//                                    ll_selector.setVisibility(View.VISIBLE);
+//
+//                                    window2.dismiss();
+//                                });
+//
+//                                window2 = new PopupWindow(contentView2, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
+//                                window2.setTouchable(true);
+//                            }
+//                            window2.showAtLocation(contentView2, Gravity.CENTER, 0, 0);
+//
+//                        }
+            });
+
+            vp_pic.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    tv.setText(position + 1 + "/" + url_list.size());
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
+                }
+            });
+        } else {
+            //顶部标签
+            tv = contentView.findViewById(R.id.tv_picNum);
+            tv.setText("1/" + url_list.size());
+        }
+
+        img_adapter.notifyDataSetChanged();
+
+        window.showAtLocation(this.getWindow().getDecorView(), Gravity.CENTER, 0, 0);
     }
 
 }
