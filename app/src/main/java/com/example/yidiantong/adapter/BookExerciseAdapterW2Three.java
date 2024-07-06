@@ -114,6 +114,7 @@ public class BookExerciseAdapterW2Three extends RecyclerView.Adapter<RecyclerVie
         private LinearLayout ll_danxuan, ll_duoxuan, ll_panduan, ll_answer_analysis;
         private WebView wv_timian, wv_analysis;
         private Button btn_submit;
+        private LinearLayout fll_bd_answer;
         private ImageView iv_result;
         private ClickableImageView iv_a, iv_b, iv_c, iv_d;  // 单选按钮
         private ClickableImageView iv_a2, iv_b2, iv_c2, iv_d2;  // 多选按钮
@@ -146,6 +147,7 @@ public class BookExerciseAdapterW2Three extends RecyclerView.Adapter<RecyclerVie
             iv_c = itemView.findViewById(R.id.iv_c);
             iv_d = itemView.findViewById(R.id.iv_d);
             btn_submit = itemView.findViewById(R.id.btn_submit);
+            fll_bd_answer = itemView.findViewById(R.id.fll_bd_answer);
             iv_result = itemView.findViewById(R.id.iv_result);
             tv_shiti_answer = itemView.findViewById(R.id.tv_shiti_answer);
             tv_stu_answer = itemView.findViewById(R.id.tv_stu_answer);
@@ -610,6 +612,7 @@ public class BookExerciseAdapterW2Three extends RecyclerView.Adapter<RecyclerVie
                             ((BookExercise2ThreeActivity)mContext).hade_rl_submitting();
 
                             btn_submit.setVisibility(View.GONE);
+                            fll_bd_answer.setVisibility(View.GONE); // 显示答案
                             ll_answer_analysis.setVisibility(View.VISIBLE); // 显示答案解析
                         }
                     }, 1000); // 设置延迟时间
