@@ -137,7 +137,7 @@ public class BookExerciseAdapterW2Three extends RecyclerView.Adapter<RecyclerVie
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView tv_type_name, tv_shiti_answer, tv_stu_answer;
+        private TextView tv_type_name, tv_shiti_answer, tv_stu_answer, syq_vary;
         private LinearLayout ll_danxuan, ll_duoxuan, ll_panduan, ll_answer_analysis;
         private WebView wv_timian, wv_analysis;
         private Button btn_submit;
@@ -166,6 +166,7 @@ public class BookExerciseAdapterW2Three extends RecyclerView.Adapter<RecyclerVie
             ll_danxuan = itemView.findViewById(R.id.ll_danxuan);
             ll_duoxuan = itemView.findViewById(R.id.ll_duoxuan);
             ll_panduan = itemView.findViewById(R.id.ll_panduan);
+            syq_vary = itemView.findViewById(R.id.syq_vary);
             wv_timian = itemView.findViewById(R.id.wv_timian);
             wv_analysis = itemView.findViewById(R.id.wv_analysis);
             ll_answer_analysis = itemView.findViewById(R.id.ll_answer_analysis);
@@ -628,6 +629,7 @@ public class BookExerciseAdapterW2Three extends RecyclerView.Adapter<RecyclerVie
                             }
                             // 学生作答显示
                             tv_stu_answer.setText("【你的答案】" + item.stuAnswer);
+                            fll_bd_answer.setVisibility(View.GONE); // 显示答案同时隐藏作答框
 
                             break;
 
@@ -644,6 +646,11 @@ public class BookExerciseAdapterW2Three extends RecyclerView.Adapter<RecyclerVie
                                 Toast.makeText(mContext, "请填写答案", Toast.LENGTH_SHORT).show();
                                 return;
                             }
+                            syq_vary.setText("【你的答案】");
+                            // et_stu_answer不可以编辑
+                            et_stu_answer.setFocusable(false);
+                            iv_camera.setVisibility(View.GONE);
+                            iv_gallery.setVisibility(View.GONE);
                             tv_stu_answer.setVisibility(View.GONE);
                             iv_result.setVisibility(View.GONE);
                             // 取消输入框焦点
@@ -656,9 +663,7 @@ public class BookExerciseAdapterW2Three extends RecyclerView.Adapter<RecyclerVie
                         public void run() {
                             // 隐藏加载页面
                             ((BookExercise2ThreeActivity)mContext).hade_rl_submitting();
-
                             btn_submit.setVisibility(View.GONE);
-                            fll_bd_answer.setVisibility(View.GONE); // 显示答案
                             ll_answer_analysis.setVisibility(View.VISIBLE); // 显示答案解析
                         }
                     }, 1000); // 设置延迟时间
