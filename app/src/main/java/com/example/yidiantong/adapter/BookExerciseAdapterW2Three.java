@@ -157,7 +157,7 @@ public class BookExerciseAdapterW2Three extends RecyclerView.Adapter<RecyclerVie
         private WebView wv_stu_answer; // 主观题 图片展示
         private ClickableImageView iv_camera, iv_gallery; // 主观题图片按钮
         private EditText et_stu_answer;
-        private RelativeLayout rl_submitting;
+        private RelativeLayout rl_submitting, ll_tiankong;
 
 
         public MyViewHolder(@NonNull View itemView) {
@@ -237,6 +237,7 @@ public class BookExerciseAdapterW2Three extends RecyclerView.Adapter<RecyclerVie
             //加载页面
             rl_submitting = itemView.findViewById(R.id.rl_submitting);
             ll_timu = itemView.findViewById(R.id.ll_timu);
+            ll_tiankong = itemView.findViewById(R.id.ll_tiankong);
 
         }
         private class TimianWebViewClient extends WebViewClient {
@@ -250,7 +251,8 @@ public class BookExerciseAdapterW2Three extends RecyclerView.Adapter<RecyclerVie
 
         public void update(int pos, RecyclerView.ViewHolder holder) {
             // 初始化UI
-            btn_submit.setVisibility(View.VISIBLE);
+            btn_submit.setVisibility(View.VISIBLE); // 显示提交按钮
+            fll_bd_answer.setVisibility(View.VISIBLE); // 显示作答区域
             BookExerciseEntity item = itemList.get(pos); // 获取当前item
             Log.e("wen0524", "update: " + item.getStuAnswer());
             // 去掉item.getQuestionKeyword()最后的逗号
@@ -524,6 +526,13 @@ public class BookExerciseAdapterW2Three extends RecyclerView.Adapter<RecyclerVie
                     break;
                 case "104": // 填空题
                 default: // 主观题
+                    syq_vary.setText("请填写答案:");
+                    et_stu_answer.setFocusable(true);
+                    ll_tiankong.setVisibility(View.VISIBLE);
+                    iv_camera.setVisibility(View.VISIBLE);
+                    iv_gallery.setVisibility(View.VISIBLE);
+
+
                     // 设置光标的位置和长度
                     iv_camera.setOnClickListener(view -> {
                         myInterface.openDrawCamera(pos, wv_stu_answer, ll_input_image);
@@ -649,6 +658,10 @@ public class BookExerciseAdapterW2Three extends RecyclerView.Adapter<RecyclerVie
                             syq_vary.setText("【你的答案】");
                             // et_stu_answer不可以编辑
                             et_stu_answer.setFocusable(false);
+                            // 判断et_stu_answer是否有内容
+                            if (item.stuAnswer == null || item.stuAnswer.length() == 0) {
+                                ll_tiankong.setVisibility(View.GONE);
+                            }
                             iv_camera.setVisibility(View.GONE);
                             iv_gallery.setVisibility(View.GONE);
                             tv_stu_answer.setVisibility(View.GONE);
