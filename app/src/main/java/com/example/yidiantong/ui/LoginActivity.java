@@ -1,7 +1,9 @@
 package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
@@ -258,6 +260,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void login() {
         ll_loading.setVisibility(View.VISIBLE);
         String url = Constant.API + Constant.LOGIN + "?userName=" + username + "&passWord=" + password;
+        Toast.makeText(LoginActivity.this, "登录url:"+url, Toast.LENGTH_SHORT).show();
         StringRequest request = new StringRequest(url, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);

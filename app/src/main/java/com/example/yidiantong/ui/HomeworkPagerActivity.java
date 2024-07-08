@@ -434,7 +434,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                     contentView = LayoutInflater.from(this).inflate(R.layout.menu_homework, null, false);
 
                     ListView lv_homework = contentView.findViewById(R.id.lv_homework);
-                    lv_homework.getLayoutParams().width = PxUtils.dip2px(this, 180);
+                    lv_homework.getLayoutParams().width = PxUtils.dip2px(this, 110);
 
                     lv_homework.setAdapter(myArrayAdapter);
                     lv_homework.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -451,6 +451,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                      * 设置MaxHeight,先显示才能获取高度
                      */
                     lv_homework.post(() -> {
+                        // 测量并设置ListView的宽度为最宽的列表项的宽度
                         int maxHeight = PxUtils.dip2px(HomeworkPagerActivity.this, 245);
                         // 获取ListView的子项数目
                         int itemCount = lv_homework.getAdapter().getCount();
@@ -476,12 +477,15 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                     window = new PopupWindow(contentView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
                     window.setTouchable(true);
                 }
-                window.showAsDropDown(tv_content, -220, 5);
+                window.showAsDropDown(tv_content, -20, 20);
                 break;
             case R.id.iv_eye:
                 jumpToSubmitPage();
         }
     }
+
+
+
 
     //pos是接口的order属性（1...n）因此要
     @Override

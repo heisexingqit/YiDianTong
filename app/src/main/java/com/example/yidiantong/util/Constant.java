@@ -2,7 +2,8 @@ package com.example.yidiantong.util;
 
 public class Constant {
     // 服务器地址
-    public static String API = "http://www.cn901.net:8111";
+    public static String API = "http://120.133.15.246:8111";
+    //public static String API = "http://www.cn901.net:8111";
     //public static final String API = "http://www.cn901.com:8181";
     // 直播课服务器地址
     public static final String API_LIVE = "http://www.cn901.com";
