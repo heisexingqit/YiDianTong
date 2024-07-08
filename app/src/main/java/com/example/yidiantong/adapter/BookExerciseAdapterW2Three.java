@@ -527,7 +527,7 @@ public class BookExerciseAdapterW2Three extends RecyclerView.Adapter<RecyclerVie
                 case "104": // 填空题
                 default: // 主观题
                     syq_vary.setText("请填写答案:");
-                    et_stu_answer.setFocusable(true);
+                    et_stu_answer.setFocusableInTouchMode(true);
                     ll_tiankong.setVisibility(View.VISIBLE);
                     iv_camera.setVisibility(View.VISIBLE);
                     iv_gallery.setVisibility(View.VISIBLE);
@@ -657,7 +657,7 @@ public class BookExerciseAdapterW2Three extends RecyclerView.Adapter<RecyclerVie
                             }
                             syq_vary.setText("【你的答案】");
                             // et_stu_answer不可以编辑
-                            et_stu_answer.setFocusable(false);
+                            et_stu_answer.setFocusableInTouchMode(false);
                             // 判断et_stu_answer是否有内容
                             if (item.stuAnswer == null || item.stuAnswer.length() == 0) {
                                 ll_tiankong.setVisibility(View.GONE);

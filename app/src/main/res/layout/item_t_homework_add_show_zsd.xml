@@ -15,14 +15,27 @@
 
         <include layout="@layout/loading_page2" />
 
-
         <com.example.yidiantong.View.ClickableImageView
-
             android:id="@+id/iv_back"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:src="@drawable/left_ex" />
+
+        <TextView
+            android:id="@+id/tv_ok"
+            android:layout_width="32dp"
+            android:layout_height="20dp"
             android:layout_alignParentEnd="true"
-            android:src="@drawable/close_blue" />
+            android:text="确定"
+            android:textColor="@color/baby_blue" />
+
+
+        <!--        <com.example.yidiantong.View.ClickableImageView-->
+        <!--            android:id="@+id/iv_back"-->
+        <!--            android:layout_width="20dp"-->
+        <!--            android:layout_height="20dp"-->
+        <!--            android:layout_alignParentEnd="true"-->
+        <!--            android:src="@drawable/close_blue" />-->
 
         <ScrollView
             android:layout_width="match_parent"
