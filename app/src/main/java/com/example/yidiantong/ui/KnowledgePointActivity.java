@@ -123,9 +123,13 @@ public class KnowledgePointActivity extends AppCompatActivity {
             super.handleMessage(message);
             if (message.what == 100) {
                 //跳转判断
-                String stu = getIntent().getStringExtra("stu");
+//                String stu = getIntent().getStringExtra("stu");
                 String url;
-                if (stu.equals("")){
+                url = Constant.API + "/AppServer/ajax/studentApp_judgeCheck.do"
+                        + "?stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + course_Id
+                        + "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&catalogId=" + zhishidianId
+                        + "&unitId=1101010010001" + "&type=zzxx";
+                /*if (stu.equals("")){
                     url = Constant.API + "/AppServer/ajax/studentApp_judgeCheck.do"
                             + "?stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + course_Id
                             + "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&catalogId=" + zhishidianId
@@ -135,7 +139,7 @@ public class KnowledgePointActivity extends AppCompatActivity {
                             + "?stuId=" + stu + "&channelCode=" + xueduan + "&subjectCode=" + course_Id
                             + "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&catalogId=" + zhishidianId
                             + "&unitId=6105230000001" + "&type=zzxx";
-                }
+                }*/
                 Log.d("wen", "judgeCheck: " + url);
                 StringRequest request = new StringRequest(url, response -> {
                     try {
@@ -158,13 +162,15 @@ public class KnowledgePointActivity extends AppCompatActivity {
                             return;
                         }
                         intent.putExtra("zhishidianId", zhishidianId);  // 知识点id
-                        if (getIntent().getStringExtra("stu").equals("")){
+                        /*if (getIntent().getStringExtra("stu").equals("")){
                             intent.putExtra("userName", userName);  // 用户名
                             intent.putExtra("unitId", "1101010010001");    // 学科id
                         }else {
                             intent.putExtra("userName", getIntent().getStringExtra("stu"));
                             intent.putExtra("unitId", "6105230000001");    // 学科id
-                        }
+                        }*/
+                        intent.putExtra("userName", userName);  // 用户名
+                        intent.putExtra("unitId", "1101010010001");    // 学科id
                         intent.putExtra("xueduanId", xueduan);    // 学科id
                         intent.putExtra("subjectId", course_Id);    // 学科id
                         intent.putExtra("banbenId", banben);  // 版本id
@@ -173,7 +179,7 @@ public class KnowledgePointActivity extends AppCompatActivity {
                         intent.putExtra("zhishidian", zhishidian);  // 知识点
                         intent.putExtra("flag", "自主学习");
                         startActivity(intent);
-//                        finish();
+                        finish(); window.dismiss();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -303,8 +309,8 @@ public class KnowledgePointActivity extends AppCompatActivity {
         rl_loading.setVisibility(View.VISIBLE);
         iv_back.setVisibility(View.VISIBLE);
         // TODO 后期需要删除
-        String stu = getIntent().getStringExtra("stu");
-        if (stu.equals("")) {
+//        String stu = getIntent().getStringExtra("stu");
+        /*if (stu.equals("")) {
             mRequestUrl = Constant.API + Constant.HOMEWORK_ADD_ZHISHIDIAN
                     + "?stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + course_Id +
                     "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=1101010010001";
@@ -312,7 +318,10 @@ public class KnowledgePointActivity extends AppCompatActivity {
             mRequestUrl = Constant.API + Constant.HOMEWORK_ADD_ZHISHIDIAN
                     + "?stuId=" + stu + "&channelCode=" + xueduan + "&subjectCode=" + course_Id +
                     "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=" + "6105230000001";
-        }
+        }*/
+        mRequestUrl = Constant.API + Constant.HOMEWORK_ADD_ZHISHIDIAN
+                + "?stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + course_Id +
+                "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=1101010010001";
         Log.d("wen", "loadZhiShiDian: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {

@@ -325,7 +325,7 @@
 
             <!-- TODO 后期需删除 -->
             <!-- 学生  开始 -->
-            <LinearLayout
+            <!--<LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -391,7 +391,7 @@
                         app:flexWrap="wrap" />
 
                 </ScrollView>
-            </LinearLayout>
+            </LinearLayout>-->
 
             <!-- 分割线 -->
 <!--            <LinearLayout-->

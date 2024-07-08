@@ -144,14 +144,14 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
         fll_null = findViewById(R.id.fll_null);
 
         //发送请求获取学生列表
-        getStudentList();
+        /*getStudentList();*/
         //加载学生按钮
-        fiv_select_stu = findViewById(R.id.fiv_select_stu);
+        /*fiv_select_stu = findViewById(R.id.fiv_select_stu);
         fiv_select_stu.setVisibility(View.VISIBLE);
         fiv_select_stu.setOnClickListener(v -> {
             //将学生集合转换为数组
             showStusDialog();
-        });
+        });*/
 
         //刷新题目按钮
         fiv_refresh = findViewById(R.id.fiv_refresh);
@@ -188,7 +188,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
     }
 
     //展示学生列表
-    private void showStusDialog() {
+    /*private void showStusDialog() {
         String[] stuArr = new String[this.stuList.size()];
         for (int i = 0; i < this.stuList.size(); i++) {
             stuArr[i] = this.stuList.get(i);
@@ -212,10 +212,10 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
             }
         });
         builder.show();
-    }
+    }*/
 
     //加载学生列表
-    private void getStudentList() {
+    /*private void getStudentList() {
         String mRequestUrl = Constant.API + "//AppServer/ajax/studentApp_getStuList.do";
         Log.d("wen0223", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
@@ -235,7 +235,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
             Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
         });
         MyApplication.addRequest(request, TAG);
-    }
+    }*/
 
 
     //考点复选框事件

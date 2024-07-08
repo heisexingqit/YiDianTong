@@ -84,14 +84,14 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
     private boolean loadPreference = true; // 自动填写判断，仅第一次执行
 
     // TODO 后期需删除
-    private Map<String, String> stuMap = new LinkedHashMap<>();  // 教材
+    /*private Map<String, String> stuMap = new LinkedHashMap<>();  // 教材
     private FlexboxLayout fl_stu;
     private ClickableImageView iv_stu;
     private String stu = "";
     private TextView lastStu;
     private TextView tv_stu;
     private TextView tv_stu_null;
-    private ScrollView sv_stu;
+    private ScrollView sv_stu;*/
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -149,14 +149,14 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
         iv_jiaocai.setOnClickListener(this);
 
         // TODO 后期需删除
-        tv_stu = findViewById(R.id.tv_stu);
+        /*tv_stu = findViewById(R.id.tv_stu);
         tv_stu.setOnClickListener(v -> iv_stu.callOnClick());
         TextView tv_xs = findViewById(R.id.tv_jc);
         tv_stu_null = findViewById(R.id.tv_stu_null);
         sv_stu = findViewById(R.id.sv_stu);
         fl_stu = findViewById(R.id.fl_stu);
         iv_stu = findViewById(R.id.iv_stu);
-        iv_stu.setOnClickListener(this);
+        iv_stu.setOnClickListener(this);*/
 
         // --------------------------------//
         //  记住选择-本地数据读取
@@ -189,9 +189,9 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
                 showList(3);
                 break;
             // TODO 后期需删除
-            case R.id.iv_stu:
+            /*case R.id.iv_stu:
                 showList(4);
-                break;
+                break;*/
             case R.id.btn_select_knowledge:
                 if (StringUtils.hasEmptyString(xueduan, xueke, banben, jiaocai)) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -226,7 +226,7 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
                     intent.putExtra("jiaocaiId", jiaocaiMap.get(jiaocai));
 
                     // TODO 后期需删除
-                    intent.putExtra("stu", stu);
+                    /*intent.putExtra("stu", stu);*/
 
                     editor.commit();
 
@@ -264,12 +264,12 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
                 tv_jiaocai_null.setVisibility(View.GONE);
                 break;
             // TODO 后期需删除
-            case 4:
+            /*case 4:
                 fl_stu.removeAllViews();
                 iv_stu.setImageResource(R.drawable.down_icon);
                 tv_stu_null.setVisibility(View.GONE);
 //                sv_stu.setVisibility(View.GONE);
-                break;
+                break;*/
             default:
                 break;
         }
@@ -294,10 +294,10 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
                     iv_jiaocai.setImageResource(R.drawable.up_icon);
                     break;
                 // TODO 后期需删除
-                case 4:
+                /*case 4:
                     showStu();
                     iv_stu.setImageResource(R.drawable.up_icon);
-                    break;
+                    break;*/
                 default:
                     break;
             }
@@ -596,7 +596,7 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
                         // 同步教材完成，全部同步完成
                         // -----------------------//
                         // TODO 后期需删除
-                        loadStu();
+                        //loadStu();
                         loadPreference = false;
                     }
                 }
@@ -651,7 +651,7 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
     }
 
     // TODO 后期需删除
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    /*@RequiresApi(api = Build.VERSION_CODES.N)
     private void loadStu() {
         mRequestUrl = Constant.API + "//AppServer/ajax/studentApp_getStuList.do";
         Log.d("wen", "loadStu: " + mRequestUrl);
@@ -673,9 +673,9 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
             Log.d("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
-    }
+    }*/
     // TODO 后期需删除
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    /*@RequiresApi(api = Build.VERSION_CODES.N)
     private void showStu() {
         if (stuMap.size() == 0) {
             tv_stu_null.setVisibility(View.VISIBLE);
@@ -713,7 +713,7 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
             fl_stu.addView(view);
         });
 //        sv_stu.setVisibility(View.VISIBLE);
-    }
+    }*/
 
 
     // 刷新文本的内容
