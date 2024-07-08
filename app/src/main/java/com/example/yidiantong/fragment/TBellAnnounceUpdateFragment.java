@@ -141,9 +141,10 @@ public class TBellAnnounceUpdateFragment extends Fragment implements View.OnClic
         frl_bell_0.setVisibility(View.VISIBLE);
         frl_bell_1 = getActivity().findViewById(R.id.frl_bell_1);
         frl_bell_1.setVisibility(View.GONE);
-        fb_bell_cancle = getActivity().findViewById(R.id.fb_bell_cancle1);
-        fb_bell_confirm = getActivity().findViewById(R.id.fb_bell_confirm1);
+        fb_bell_cancle = getActivity().findViewById(R.id.fb_bell_cancle);
+        fb_bell_confirm = getActivity().findViewById(R.id.fb_bell_confirm);
         fb_bell_cancle.setOnClickListener(this);
+
         fb_bell_confirm.setOnClickListener(this);
 
         // 初始化
@@ -282,10 +283,10 @@ public class TBellAnnounceUpdateFragment extends Fragment implements View.OnClic
                 //mTimerPicker.show(endTime);
                 mDatePicker.show(endDatestamp);
                 break;
-            case R.id.fb_bell_cancle1:
+            case R.id.fb_bell_cancle:
                 getActivity().finish();
                 break;
-            case R.id.fb_bell_confirm1:
+            case R.id.fb_bell_confirm:
                 Log.e("在公告中的", "");
                 // 判断对象
                 if (allmode[0] == 1 && allmode[1] == 1) {

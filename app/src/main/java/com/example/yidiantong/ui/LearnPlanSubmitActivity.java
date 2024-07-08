@@ -2,6 +2,7 @@ package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -145,6 +147,46 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
         java.util.Date day = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd:HH:mm:ss");
         String date = sdf.format(day);
+        for (int i = 0; i < stuAnswer.length; ++i) {
+            if (stuAnswer[i].length() == 0) {
+                if (isF) {
+                    isF = false;
+                } else {
+                    submitZero += ",";
+                }
+                submitZero += questionIds.get(i);
+                break;
+            }
+
+        }
+        if (submitZero.length() == 0) {
+            submitZero = "-1";
+        }
+
+        if (!submitZero.equals("-1")) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("有题目未作答,是否提交?");
+            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    submit_request(date);
+                }
+            });
+            builder.setNegativeButton("取消",  new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    isSubmitting = false;
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+            dialog.show();
+        }else{
+            submit_request(date);
+        }
+
+    }
+    public void submit_request(String date) {
         String mRequestUrl;
         StringRequest request;
         mRequestUrl = Constant.API + Constant.LEARNPLAN_SUBMIT_FIN_ITEM + "?answerTime=" + date + "&learnPlanId=" + learnPlanId + "&userName=" + username +
@@ -161,7 +203,6 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
                     intent.putExtra("currentItem", -1);
                     setResult(Activity.RESULT_OK, intent);
                     rl_submitting.setVisibility(View.GONE);
-
                     finish();
                 } else {
                     Toast.makeText(LearnPlanSubmitActivity.this, "提交失败！", Toast.LENGTH_SHORT).show();

@@ -608,7 +608,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
                     android:layout_marginTop="10dp"
-                    android:background="@color/blue_btn"
+                    android:background="@color/main_bg_title"
                     android:text="@string/f_submit"
                     android:textColor="@color/white" />
 

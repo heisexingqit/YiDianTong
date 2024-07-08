@@ -548,16 +548,16 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                     // 获取权限后
                     @Override
                     public void onAction(List<String> data) {
-//                        Intent intent = new Intent(Intent.ACTION_PICK, null);
-//                        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-//                        mResultLauncher.launch(intent);
-
-                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                        intent.addCategory(Intent.CATEGORY_OPENABLE);
-                        intent.setType("image/*");
-                        intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"image/jpeg", "image/png"}); // 添加特定的MIME类型以限制为图片
-                        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, MediaStore.Images.Media.EXTERNAL_CONTENT_URI); // 设置初始目录为外部存储的图片目录
+                        Intent intent = new Intent(Intent.ACTION_PICK, null);
+                        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
                         mResultLauncher.launch(intent);
+
+//                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+//                        intent.addCategory(Intent.CATEGORY_OPENABLE);
+//                        intent.setType("image/*");
+//                        intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"image/jpeg", "image/png"}); // 添加特定的MIME类型以限制为图片
+//                        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, MediaStore.Images.Media.EXTERNAL_CONTENT_URI); // 设置初始目录为外部存储的图片目录
+//                        mResultLauncher.launch(intent);
 
 
 //                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);

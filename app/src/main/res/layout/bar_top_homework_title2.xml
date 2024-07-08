@@ -23,10 +23,12 @@
     <!--中-->
     <TextView
         android:id="@+id/tv_title"
-        android:layout_width="150dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center_horizontal"
+        android:paddingStart="46dp"
+        android:paddingEnd="46dp"
         android:singleLine="true"
         android:text="22级测试-题目"
         android:textColor="@color/main_bg_title"

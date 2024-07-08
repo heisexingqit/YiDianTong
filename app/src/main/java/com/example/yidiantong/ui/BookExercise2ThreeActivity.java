@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
@@ -286,6 +287,7 @@ public class BookExercise2ThreeActivity extends AppCompatActivity {
                 String message1 = json.getString("message");
                 Log.d("song0321", "message: " + message1);
                 String[] split = message1.split("@_@");
+                Alert(split[0]);
                 //去掉末尾的逗号
                 if (split[1].endsWith(",")) {
                     split[1] = split[1].substring(0, split[1].length() - 1);
@@ -329,6 +331,24 @@ public class BookExercise2ThreeActivity extends AppCompatActivity {
         MyApplication.addRequest(stringRequest, "TAG");
 
     }
+    private void Alert(String alert) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this, android.app.AlertDialog.THEME_HOLO_LIGHT);
+        //自定义title样式
+        TextView tv = new TextView(this);
+        tv.setText(alert);    //内容
+        tv.setTextSize(17);//字体大小
+        tv.setPadding(30, 40, 30, 40);//位置
+        tv.setTextColor(Color.parseColor("#000000"));//颜色
+        //设置title组件
+        builder.setCustomTitle(tv);
+        android.app.AlertDialog dialog = builder.create();
+        builder.setNegativeButton("ok", null);
+        //禁止返回和外部点击
+        builder.setCancelable(false);
+        //对话框弹出
+        builder.show();
+    }
+
     private String exercise_stu_html;
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @SuppressLint("NotifyDataSetChanged")

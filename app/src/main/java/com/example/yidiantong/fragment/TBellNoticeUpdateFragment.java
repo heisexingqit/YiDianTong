@@ -151,8 +151,8 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
         frl_bell_0.setVisibility(View.GONE);
         frl_bell_1 = getActivity().findViewById(R.id.frl_bell_1);
         frl_bell_1.setVisibility(View.VISIBLE);
-        fb_bell_cancle = getActivity().findViewById(R.id.fb_bell_cancle);
-        fb_bell_confirm = getActivity().findViewById(R.id.fb_bell_confirm);
+        fb_bell_cancle = getActivity().findViewById(R.id.fb_bell_cancle1);
+        fb_bell_confirm = getActivity().findViewById(R.id.fb_bell_confirm1);
         fb_bell_cancle.setOnClickListener(this);
         fb_bell_confirm.setOnClickListener(this);
 
@@ -354,10 +354,10 @@ public class TBellNoticeUpdateFragment extends Fragment implements View.OnClickL
                 //mTimerPicker.show(endTime);
                 mDatePicker.show(endDatestamp);
                 break;
-            case R.id.fb_bell_cancle:
+            case R.id.fb_bell_cancle1:
                 getActivity().finish();
                 break;
-            case R.id.fb_bell_confirm:
+            case R.id.fb_bell_confirm1:
                 //判断信息是否为空
                 Log.e("timemode", "" + timemode);
                 Log.e("fev_bell_time.length()", "" + fev_bell_time.length());
