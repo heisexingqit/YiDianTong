@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -81,6 +82,8 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
     //列表数据
     private List<BookExerciseEntity> itemList = new ArrayList<>();
     private List<String> stuList = new ArrayList<>();//学生列表
+    private List<Catalog> catalogs = new ArrayList<>();//考点列表
+    private int examPointNum = 0;
     private List<ExamPoint> examPoints = new ArrayList<>();//考点列表
     private List<String> selectedExamPoints = new ArrayList<>();//已选考点列表
     private String questionIds;
@@ -256,7 +259,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
 
         CheckBox selectAllCheckBox = new CheckBox(this);
         selectAllCheckBox.setText("全选");
-        if (selectedExamPoints.size() == examPoints.size()) {
+        if (selectedExamPoints.size() == examPointNum) {
             selectAllCheckBox.setChecked(true);
         }
 
@@ -267,37 +270,44 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
 
-        for (ExamPoint examPoint : examPoints) {
-            View itemView = inflater.inflate(R.layout.item_exam_point, null);
-            CheckBox checkBox = itemView.findViewById(R.id.checkBox);
-            TextView textName = itemView.findViewById(R.id.textName);
-            TextView masteryLevel = itemView.findViewById(R.id.masteryLevel);
+        for (Catalog catalog : catalogs) {
+            View catalogView = inflater.inflate(R.layout.item_catalog, null);
+            TextView catalogName = catalogView.findViewById(R.id.catalogName);
+            catalogName.setText(catalog.getCatalogName() + catalog.getInfo());
+            layout.addView(catalogView);
 
-            textName.setText(examPoint.getPointName() + "(" + examPoint.getDbid() + ")");
-            masteryLevel.setText(examPoint.getInfo());
-            checkBox.setChecked(selectedExamPoints.contains(examPoint.getDbid()));
+            for (ExamPoint examPoint : catalog.getList()) {
+                View itemView = inflater.inflate(R.layout.item_exam_point, null);
+                CheckBox checkBox = itemView.findViewById(R.id.checkBox);
+                TextView textName = itemView.findViewById(R.id.textName);
+                TextView masteryLevel = itemView.findViewById(R.id.masteryLevel);
 
-            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (isChecked) {
-                    if (!selectedExamPoints.contains(examPoint.getDbid())) {
-                        selectedExamPoints.add(examPoint.getDbid());
-                    }
-                } else {
-                    selectedExamPoints.remove(examPoint.getDbid());
-                }
-                if (!isClickAllCheckBoxes) {
-                    if (selectedExamPoints.size() == examPoints.size()) {
-                        selectAllCheckBox.setChecked(true);
+                textName.setText(examPoint.getPointName() + "(" + examPoint.getDbid() + ")");
+                masteryLevel.setText(examPoint.getInfo());
+                checkBox.setChecked(selectedExamPoints.contains(examPoint.getDbid()));
+
+                checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    if (isChecked) {
+                        if (!selectedExamPoints.contains(examPoint.getDbid())) {
+                            selectedExamPoints.add(examPoint.getDbid());
+                        }
                     } else {
-                        //防止一个一个取消复选框时，全选按钮都不选中
-                        isUpdatingAllCheckBoxes = true;
-                        selectAllCheckBox.setChecked(false);
+                        selectedExamPoints.remove(examPoint.getDbid());
                     }
-                }
+                    if (!isClickAllCheckBoxes) {
+                        if (selectedExamPoints.size() == examPointNum) {
+                            selectAllCheckBox.setChecked(true);
+                        } else {
+                            //防止一个一个取消复选框时，全选按钮都不选中
+                            isUpdatingAllCheckBoxes = true;
+                            selectAllCheckBox.setChecked(false);
+                        }
+                    }
 
-            });
+                });
 
-            layout.addView(itemView);
+                layout.addView(itemView);
+            }
         }
 
         //全选按钮事件,当全选按钮被选中时，将所有考点的复选框选中,否则取消选中
@@ -305,18 +315,23 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
             if (isUpdatingAllCheckBoxes) {
                 isUpdatingAllCheckBoxes = false;
             } else {
-                isClickAllCheckBoxes = true;//防止点击全选按钮时，触发单个复选框的事件
+                isClickAllCheckBoxes = true; // 防止点击全选按钮时，触发单个复选框的事件
                 for (int i = 0; i < layout.getChildCount(); i++) {
                     View itemView = layout.getChildAt(i);
-                    if (itemView instanceof LinearLayout) {
+                    // 只处理包含复选框的子视图
+                    if (itemView instanceof ViewGroup) {
                         CheckBox checkBox = itemView.findViewById(R.id.checkBox);
-                        checkBox.setChecked(isChecked);
+                        if (checkBox != null) {
+                            checkBox.setChecked(isChecked);
+                        }
                     }
                 }
                 selectedExamPoints.clear();
                 if (isChecked) {
-                    for (ExamPoint examPoint : examPoints) {
-                        selectedExamPoints.add(examPoint.getDbid());
+                    for (Catalog catalog : catalogs) {
+                        for (ExamPoint examPoint : catalog.getList()) {
+                            selectedExamPoints.add(examPoint.getDbid());
+                        }
                     }
                 }
                 isClickAllCheckBoxes = false;
@@ -358,11 +373,11 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
                 Log.d("wen0501", "itemString: " + itemString);
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
-                examPoints = gson.fromJson(itemString, new TypeToken<List<ExamPoint>>() {
+                catalogs = gson.fromJson(itemString, new TypeToken<List<Catalog>>() {
                 }.getType());
 
                 // TODO 去掉,py算法掌握度后面的字符串 && 对考点信息info进行处理, 保留两位小数
-                for (ExamPoint examPoint : examPoints) {
+                /*for (ExamPoint examPoint : examPoints) {
                     String info = examPoint.getInfo();
                     // 清除两边的空格
                     info = info.trim();
@@ -380,13 +395,15 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
                     info = info.substring(0, index2 + 1) + df.format(value) + info.substring(index3);
                     System.out.println(info);
                     examPoint.setInfo(info);
-                }
-
+                }*/
 
                 if (selectedExamPoints == null || selectedExamPoints.size() == 0) {
                     //第一次默认全选,并将全部考点dbid拼接到pointIds中
-                    for (ExamPoint examPoint : examPoints) {
-                        selectedExamPoints.add(examPoint.getDbid());
+                    for (Catalog catalog : catalogs) {
+                        for (ExamPoint examPoint : catalog.getList()) {
+                            selectedExamPoints.add(examPoint.getDbid());
+                            examPointNum++;
+                        }
                     }
                 }
                 pointIds = "";
@@ -530,6 +547,52 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
             loadFirst = false;
         }
 
+    }
+
+    private static class Catalog {
+        private String catalogName;
+        private String catalogCode;
+        private String info;
+        private List<ExamPoint> list;
+
+        public Catalog(String catalogName, String catalogCode, String info, List<ExamPoint> list) {
+            this.catalogName = catalogName;
+            this.catalogCode = catalogCode;
+            this.info = info;
+            this.list = list;
+        }
+
+        public String getCatalogName() {
+            return catalogName;
+        }
+
+        public void setCatalogName(String catalogName) {
+            this.catalogName = catalogName;
+        }
+
+        public String getCatalogCode() {
+            return catalogCode;
+        }
+
+        public void setCatalogCode(String catalogCode) {
+            this.catalogCode = catalogCode;
+        }
+
+        public String getInfo() {
+            return info;
+        }
+
+        public void setInfo(String info) {
+            this.info = info;
+        }
+
+        public List<ExamPoint> getList() {
+            return list;
+        }
+
+        public void setList(List<ExamPoint> list) {
+            this.list = list;
+        }
     }
 
     private static class ExamPoint {

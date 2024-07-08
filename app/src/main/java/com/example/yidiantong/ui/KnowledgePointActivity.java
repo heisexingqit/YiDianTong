@@ -95,7 +95,7 @@ public class KnowledgePointActivity extends AppCompatActivity {
         contentView = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_show_zsd
                 , null, false);  // 获取布局,并设置为弹出窗口的布局
         contentView.findViewById(R.id.iv_back).setOnClickListener(v -> {finish(); window.dismiss(); });
-        contentView.findViewById(R.id.tv_ok).setOnClickListener(v -> {finish(); window.dismiss(); });
+        contentView.findViewById(R.id.tv_ok).setOnClickListener(v -> {wv_content.evaluateJavascript("getCheckedIdsAndNames();", null); });
         wv_content = contentView.findViewById(R.id.wv_content);
         // 设置滚动条样式, 去掉滚动条, 但是滚动是可以的
         wv_content.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
@@ -300,6 +300,19 @@ public class KnowledgePointActivity extends AppCompatActivity {
             Message message = Message.obtain();
             zhishidian = str;
             zhishidianId = id;
+//            message.what = 100;
+//            handler.sendMessage(message);
+        }
+        // 获取选中的ID
+        @JavascriptInterface
+        public void sendCheckedIdsAndNames(String ids, String names) {
+            // 在这里处理拼接的ID字符串和名称字符串，例如显示在Log中
+            Log.d("Checked IDs", ids);
+            Log.d("Checked Names", names);
+            names = names.replaceAll("章节点有效答题[^：]*：", "");
+            Message message = Message.obtain();
+            zhishidian = names;
+            zhishidianId = ids;
             message.what = 100;
             handler.sendMessage(message);
         }
@@ -375,8 +388,22 @@ public class KnowledgePointActivity extends AppCompatActivity {
                 "</style>" +
                 "<script>\n" +
                 "    function _fk(obj) {\n" +
-                "        AndroidInterface.displayHTMLContent(obj.textContent,obj.getAttribute(\"id\"))" +
-                "     }\n" +
+                "        AndroidInterface.displayHTMLContent(obj.textContent, obj.getAttribute(\"id\"));\n" +
+                "    }\n" +
+                "    function getCheckedIdsAndNames() {\n" +
+                "        var checkboxes = document.querySelectorAll('input[type=\"checkbox\"]:checked');\n" +
+                "        var ids = [];\n" +
+                "        var names = [];\n" +
+                "        for (var i = 0; i < checkboxes.length; i++) {\n" +
+                "            var checkbox = checkboxes[i];\n" +
+                "            var label = document.querySelector('label[id=\"' + checkbox.id + '\"]');\n" +
+                "            if (label) {\n" +
+                "                ids.push(checkbox.id);\n" +
+                "                names.push(label.textContent.trim());\n" +
+                "            }\n" +
+                "        }\n" +
+                "        AndroidInterface.sendCheckedIdsAndNames(ids.join(','), names.join(','));\n" +
+                "    }\n" +
                 "</script>" +
                 "</head><body style=\"color: rgb(117, 117, 117); font-size: 16px; margin: 0px; padding: 0px\">" + modifiedStr +
                 "</body>";
