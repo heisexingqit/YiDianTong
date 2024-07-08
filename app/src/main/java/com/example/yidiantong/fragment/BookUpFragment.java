@@ -131,7 +131,7 @@ public class BookUpFragment extends Fragment {
         //发送请求获取学生列表
         getStudentList();
         //加载学生按钮
-        fiv_select_stu = view.findViewById(R.id.fiv_select_stu);
+        /*fiv_select_stu = view.findViewById(R.id.fiv_select_stu);
         fiv_select_stu.setVisibility(View.VISIBLE);
         fiv_select_stu.setOnClickListener(v -> {
             //将学生集合转换为数组
@@ -158,7 +158,7 @@ public class BookUpFragment extends Fragment {
                 }
             });
             builder.show();
-        });
+        });*/
 
         //刷新题目按钮
         fiv_refresh = view.findViewById(R.id.fiv_refresh);
