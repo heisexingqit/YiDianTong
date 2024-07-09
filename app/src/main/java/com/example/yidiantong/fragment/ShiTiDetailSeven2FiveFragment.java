@@ -134,6 +134,14 @@ public class ShiTiDetailSeven2FiveFragment extends Fragment implements View.OnCl
         allpage = arg.getString("allpage");
         flag = getActivity().getIntent().getStringExtra("flag");
 
+        //将试题答案格式化，利用正则表达式去掉<>标签及里面的内容
+        String answer1 = bookExerciseEntity.getShiTiAnswer();
+        String regEx = "<[^>]+>";
+        Pattern p = Pattern.compile(regEx);
+        Matcher m1 = p.matcher(answer1);
+        String answerStr = m1.replaceAll("").trim();
+        bookExerciseEntity.setShiTiAnswer(answerStr);
+
         //使用正则表达式获得题目答案
         Pattern pattern = Pattern.compile("故选([A-Z])");
         Matcher m = pattern.matcher(bookExerciseEntity.getShiTiAnswer());

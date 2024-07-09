@@ -119,7 +119,7 @@ public class KnowledgeShiTiDetailActivity extends AppCompatActivity implements R
             //设置title组件
             builder.setCustomTitle(tv);
             AlertDialog dialog = builder.create();
-            builder.setNegativeButton("ok", null);
+            builder.setNegativeButton("关闭", null);
             //禁止返回和外部点击
             builder.setCancelable(false);
             //对话框弹出
@@ -141,14 +141,14 @@ public class KnowledgeShiTiDetailActivity extends AppCompatActivity implements R
             AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
             //自定义title样式
             TextView tv = new TextView(this);
-            tv.setText("已经最后一题了");    //内容
+            tv.setText("已经是最后一题了");    //内容
             tv.setTextSize(17);//字体大小
             tv.setPadding(30, 40, 30, 40);//位置
             tv.setTextColor(Color.parseColor("#000000"));//颜色
             //设置title组件
             builder.setCustomTitle(tv);
             AlertDialog dialog = builder.create();
-            builder.setNegativeButton("ok", null);
+            builder.setNegativeButton("关闭", null);
             //禁止返回和外部点击
             builder.setCancelable(false);
             //对话框弹出
@@ -229,14 +229,6 @@ public class KnowledgeShiTiDetailActivity extends AppCompatActivity implements R
                 for (BookExerciseEntity item : itemList) {
                     //设置选项个数
                     item.setAnswerNumber(answerNumber);
-                    System.out.println("answerNumber ^-^:" + item.getAnswerNumber());
-                    //将试题答案格式化，利用正则表达式去掉<>标签及里面的内容
-                    String answer = item.getShiTiAnswer();
-                    String regEx = "<[^>]+>";
-                    Pattern p = Pattern.compile(regEx);
-                    Matcher m = p.matcher(answer);
-                    String answerStr = m.replaceAll("").trim();
-                    item.setShiTiAnswer(answerStr);
                 }
                 Log.e("wen0223", "loadItems_Net: " + itemList);
                 //封装消息，传递给主线程

@@ -46,6 +46,9 @@ import com.example.yidiantong.util.RecyclerInterface;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 // 单选题详情界面, 用于展示单选题详情,举一反三,标记掌握,模式切换
 public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickListener {
 
@@ -121,6 +124,14 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
         currentpage = arg.getString("currentPage");
         allpage = arg.getString("allpage");
         flag = getActivity().getIntent().getStringExtra("flag");  // 自主学习 or 巩固提升
+
+        //将试题答案格式化，利用正则表达式去掉<>标签及里面的内容
+        String answer = bookExerciseEntity.getShiTiAnswer();
+        String regEx = "<[^>]+>";
+        Pattern p = Pattern.compile(regEx);
+        Matcher m = p.matcher(answer);
+        String answerStr = m.replaceAll("").trim();
+        bookExerciseEntity.setShiTiAnswer(answerStr);
 
         //获取view
         View view = inflater.inflate(R.layout.fragment_book_detail_single, container, false);
@@ -419,10 +430,12 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
             super.handleMessage(message);
             if (message.what == 100) {
                 boolean f = (boolean) message.obj;
-                if (f) {
-                    Toast.makeText(getContext(), "答案保存成功！", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getContext(), "答案保存失败！", Toast.LENGTH_SHORT).show();
+                if (getContext() != null){
+                    if (f) {
+                        Toast.makeText(getContext(), "答案保存成功！", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "答案保存失败！", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         }

@@ -45,6 +45,9 @@ import com.example.yidiantong.util.RecyclerInterface;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class ShiTiDetailJudgeFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "BookDetailJudgeFragment";
@@ -125,6 +128,14 @@ public class ShiTiDetailJudgeFragment extends Fragment implements View.OnClickLi
         currentpage = arg.getString("currentpage");
         allpage = arg.getString("allpage");
         flag = getActivity().getIntent().getStringExtra("flag");
+
+        //将试题答案格式化，利用正则表达式去掉<>标签及里面的内容
+        String answer = bookExerciseEntity.getShiTiAnswer();
+        String regEx = "<[^>]+>";
+        Pattern p = Pattern.compile(regEx);
+        Matcher m = p.matcher(answer);
+        String answerStr = m.replaceAll("").trim();
+        bookExerciseEntity.setShiTiAnswer(answerStr);
 
         //获取view
         View view = inflater.inflate(R.layout.fragment_book_detail_judge, container, false);
