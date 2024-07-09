@@ -309,9 +309,28 @@ public class KnowledgePointActivity extends AppCompatActivity {
             // 在这里处理拼接的ID字符串和名称字符串，例如显示在Log中
             Log.d("Checked IDs", ids);
             Log.d("Checked Names", names);
-            names = names.replaceAll("章节点有效答题[^：]*：", "");
+            //            names = names.replaceAll("章节点有效答题[^：]*：", "");
+            // 在 "章节点有效答题" 前面添加换行符
+            names = names.replaceAll("(章节点有效答题)", "\n$1");
+
+            // 在 "考点" 后面添加换行符并去掉冒号和逗号，最后一个考点只去掉冒号
+            StringBuilder output = new StringBuilder();
+            String[] parts = names.split("考点");
+            for (int i = 0; i < parts.length - 1; i++) {
+                // 去掉逗号和冒号
+                String part = parts[i].replaceFirst("：,", "");
+                output.append(part).append("考点\n");
+            }
+            // 处理最后一个考点，去掉冒号
+            output.append(parts[parts.length - 1].replaceFirst("：$", ""));
+
+            // 打印结果
+            System.out.println(output.toString());
+
+
+
             Message message = Message.obtain();
-            zhishidian = names;
+            zhishidian = output.toString();
             zhishidianId = ids;
             message.what = 100;
             handler.sendMessage(message);

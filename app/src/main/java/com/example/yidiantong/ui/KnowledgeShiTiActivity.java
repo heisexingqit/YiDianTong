@@ -84,8 +84,8 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
     private List<String> stuList = new ArrayList<>();//学生列表
     private List<Catalog> catalogs = new ArrayList<>();//考点列表
     private int examPointNum = 0;
-    private List<ExamPoint> examPoints = new ArrayList<>();//考点列表
-    private List<String> selectedExamPoints = new ArrayList<>();//已选考点列表
+//    private List<ExamPoint> examPoints = new ArrayList<>();//考点列表
+    private HashSet<String> selectedExamPoints = new HashSet<>();//已选考点列表
     private String questionIds;
     BookAutoAdapter adapter;
     private RecyclerView frv_detail;
@@ -273,7 +273,9 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
         for (Catalog catalog : catalogs) {
             View catalogView = inflater.inflate(R.layout.item_catalog, null);
             TextView catalogName = catalogView.findViewById(R.id.catalogName);
-            catalogName.setText(catalog.getCatalogName() + catalog.getInfo());
+            TextView catalogInfo = catalogView.findViewById(R.id.catalogInfo);
+            catalogName.setText(catalog.getCatalogName());
+            catalogInfo.setText(catalog.getInfo());
             layout.addView(catalogView);
 
             for (ExamPoint examPoint : catalog.getList()) {
@@ -287,14 +289,31 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
                 checkBox.setChecked(selectedExamPoints.contains(examPoint.getDbid()));
 
                 checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    Log.d("syq", "onCheckedChanged: 我点击了复选框" + isChecked);
                     if (isChecked) {
                         if (!selectedExamPoints.contains(examPoint.getDbid())) {
                             selectedExamPoints.add(examPoint.getDbid());
+                            System.out.println("选中的考点：" + selectedExamPoints.size() + " " + examPointNum);
                         }
                     } else {
                         selectedExamPoints.remove(examPoint.getDbid());
                     }
+                    // 将其他与examPoint.getDbid()相同的复选框选中状态设置为与当前复选框相同
+                    for (int i = 0; i < layout.getChildCount(); i++) {
+                        View view = layout.getChildAt(i);
+                        // 只处理包含复选框的子视图
+                        if (view instanceof ViewGroup) {
+                            CheckBox cb = view.findViewById(R.id.checkBox);
+                            TextView tv = view.findViewById(R.id.textName);
+                            if (cb != null && cb != checkBox && tv.getText().toString().contains(examPoint.getPointName())) {
+                                cb.setChecked(isChecked);
+                            }
+                        }
+                    }
+
+
                     if (!isClickAllCheckBoxes) {
+                        Log.d("syq", "onCheckedChanged: 我走到了1号" + selectedExamPoints.size() + " " + examPointNum);
                         if (selectedExamPoints.size() == examPointNum) {
                             selectAllCheckBox.setChecked(true);
                         } else {
@@ -305,13 +324,13 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
                     }
 
                 });
-
                 layout.addView(itemView);
             }
         }
 
         //全选按钮事件,当全选按钮被选中时，将所有考点的复选框选中,否则取消选中
         selectAllCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Log.d("syq", "onCheckedChanged: 我点击了全选按钮" + isChecked);
             if (isUpdatingAllCheckBoxes) {
                 isUpdatingAllCheckBoxes = false;
             } else {
@@ -402,9 +421,9 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
                     for (Catalog catalog : catalogs) {
                         for (ExamPoint examPoint : catalog.getList()) {
                             selectedExamPoints.add(examPoint.getDbid());
-                            examPointNum++;
                         }
                     }
+                    examPointNum = selectedExamPoints.size();
                 }
                 pointIds = "";
                 StringBuilder sb = new StringBuilder();

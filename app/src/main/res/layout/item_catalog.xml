@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_catalog"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:padding="8dp">
+
+    <!--分割线-->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray_back" />
 
     <TextView
         android:id="@+id/catalogName"
@@ -12,6 +19,13 @@
         android:textSize="16sp"
         android:textStyle="bold"
         android:text="考点名称" />
+
+    <TextView
+        android:id="@+id/catalogInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:text="掌握程度" />
 
     <!--<LinearLayout
         android:layout_width="match_parent"
