@@ -561,14 +561,16 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
 
         switch (view.getId()) {
             case R.id.iv_page_last:
-                et_student_answer.setText("");
                 pageing.pageLast(currentpage, allpage);
-//                et_student_answer.setText("");
+                if (!currentpage.equals("1")) {
+                    et_student_answer.setText("");
+                }
                 return;
             case R.id.iv_page_next:
-                et_student_answer.setText("");
                 pageing.pageNext(currentpage, allpage);
-//                et_student_answer.setText("");
+                if (!currentpage.equals(allpage)) {
+                    et_student_answer.setText("");
+                }
                 return;
             case R.id.fb_bd_sumbit:
                 if (exercise_stu_answer.length() == 0 && exercise_stu_html.length() == 0) {

@@ -79,7 +79,7 @@
         android:layout_height="1dp"
         android:background="@color/gray_back" />
 
-    <include layout="@layout/error_null" />
+    <include layout="@layout/shiti_null" />
 
     <include layout="@layout/loading_page" />
 
