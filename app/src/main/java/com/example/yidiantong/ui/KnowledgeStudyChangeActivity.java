@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -16,6 +17,7 @@ import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -53,7 +55,8 @@ public class KnowledgeStudyChangeActivity extends AppCompatActivity {
     private String unitId;  //考点
     private String course_name;  //学科名
     private RelativeLayout rl_loading;
-    private ClickableImageView iv_back;
+    private ClickableImageView fiv_back;
+    private TextView ftv_title;
 
 
     // TODO 临时变量
@@ -70,7 +73,10 @@ public class KnowledgeStudyChangeActivity extends AppCompatActivity {
 
         //加载页
         rl_loading = findViewById(R.id.rl_loading);
-        iv_back = findViewById(R.id.iv_back);
+        ftv_title = findViewById(R.id.ftv_title);
+        ftv_title.setText("自主学习结果反馈");
+        fiv_back = findViewById(R.id.fiv_back);
+        fiv_back.setOnClickListener(v -> {finish(); if (window != null && window.isShowing()) { window.dismiss(); } });
 
         //获取Intent参数,设置学科错题本最上面的内容
         userName = getIntent().getStringExtra("userName");  //用户名
@@ -87,10 +93,7 @@ public class KnowledgeStudyChangeActivity extends AppCompatActivity {
         // 获取组件
         ll_content = findViewById(R.id.ll_content);
         // 知识点选择页面
-        contentView = LayoutInflater.from(this).inflate(R.layout.item_t_knowledge_study_change
-                , null, false);  // 获取布局,并设置为弹出窗口的布局
-        contentView.findViewById(R.id.iv_back).setOnClickListener(v -> {finish(); window.dismiss(); });
-        wv_content = contentView.findViewById(R.id.wv_content);
+        wv_content = findViewById(R.id.wv_content);
         // 设置滚动条样式, 去掉滚动条, 但是滚动是可以的
         wv_content.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         // 设置WebView属性,允许运行执行js脚本
@@ -99,16 +102,16 @@ public class KnowledgeStudyChangeActivity extends AppCompatActivity {
         wv_content.addJavascriptInterface(jsInterface, "AndroidInterface");
     }
 
-    @Override
+    /*@Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus && window == null) {
             window = new PopupWindow(contentView, LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.MATCH_PARENT, true);
-            window.showAsDropDown(ll_content, 0, 0);
+            window.showAsDropDown(ll_content,0, 0);
         }
-        if (!window.isShowing()) finish();
-    }
+        if (window != null && !window.isShowing()) finish();
+    }*/
 
 
     // JS延迟关闭PopUpWindow
@@ -179,7 +182,7 @@ public class KnowledgeStudyChangeActivity extends AppCompatActivity {
     // 加载知识点
     private void loadZhiShiDian() {
         rl_loading.setVisibility(View.VISIBLE);
-        iv_back.setVisibility(View.VISIBLE);
+        fiv_back.setVisibility(View.VISIBLE);
         mRequestUrl = Constant.API + "/AppServer/ajax/studentApp_getStuPointPossess.do" + "?catalogId=" + zhishidianId
                 + "&stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + subjectId +
                 "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=1101010010001";
@@ -237,8 +240,8 @@ public class KnowledgeStudyChangeActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         // 确保Dialog存在且显示中才去dismiss，避免空指针异常
-        if (window != null && window.isShowing()) {
+        /*if (window != null && window.isShowing()) {
             window.dismiss();
-        }
+        }*/
     }
 }

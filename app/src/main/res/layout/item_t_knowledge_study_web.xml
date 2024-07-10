@@ -4,21 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/bar_top"
-        android:id="@+id/bar"/>
-    
-    <!-- 知识点名称和下划线 -->
-    <View
-        android:id="@+id/line_knowledge_name"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@+id/bar"
-        android:background="@color/gray_back" />
-
     <RelativeLayout
-        android:id="@+id/ll_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/white"
         android:layout_below="@+id/line_knowledge_name"
         android:paddingLeft="10dp"
