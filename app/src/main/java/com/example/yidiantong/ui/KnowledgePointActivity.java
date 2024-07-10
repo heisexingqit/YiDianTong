@@ -124,6 +124,12 @@ public class KnowledgePointActivity extends AppCompatActivity {
         public void handleMessage(Message message) {
             super.handleMessage(message);
             if (message.what == 100) {
+                // 如果没有选知识点则不跳转,弹出提示:请先选择学习章节点
+                if (zhishidianId.equals("")) {
+                    Toast.makeText(KnowledgePointActivity.this, "请先选择学习章节点", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 //跳转判断
 //                String stu = getIntent().getStringExtra("stu");
                 String url;

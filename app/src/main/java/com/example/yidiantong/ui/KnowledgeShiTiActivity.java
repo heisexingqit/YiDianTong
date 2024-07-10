@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -64,6 +65,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
     private ClickableImageView fiv_refresh;//刷新题目按钮
     private ClickableImageView fiv_select_stu;//选择学生按钮
     private TextView tv_knowledge_name;
+    private TextView tv_next_exam_point;
     private LinearLayout ll_kaodian_filtrate;
 
     //请求数据参数
@@ -109,11 +111,8 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
 
         preferences = getSharedPreferences("shiti", MODE_PRIVATE);
 
-        //顶栏返回按钮
-        findViewById(R.id.fiv_back).setOnClickListener(v -> {
-            finish();
-        });
-
+        tv_next_exam_point = findViewById(R.id.tv_next_exam_point);
+        tv_next_exam_point.setOnClickListener(v -> getKaoDianList());
 
         frv_detail = findViewById(R.id.frv_detail);
         //RecyclerView两步必要配置
@@ -122,7 +121,6 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
 
         //获取Intent参数,设置学科错题本最上面的内容
         userName = getIntent().getStringExtra("userName");  //用户名
-
         subjectId = getIntent().getStringExtra("subjectId"); //学科名
         course_name = getIntent().getStringExtra("courseName"); //学科id
         zhishidian = getIntent().getStringExtra("zhishidian"); //知识点
@@ -132,6 +130,22 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
         jiaocai = getIntent().getStringExtra("jiaocaiId"); //教材
         unitId = getIntent().getStringExtra("unitId"); //考点
 //        reqName = userName;
+
+        //顶栏返回按钮
+        findViewById(R.id.fiv_back).setOnClickListener(v -> {
+            Intent intent = new Intent(this, KnowledgeStudyChangeActivity.class);
+            intent.putExtra("userName", userName);
+            intent.putExtra("subjectId", subjectId);
+            intent.putExtra("courseName", course_name);
+            intent.putExtra("zhishidian", zhishidian);
+            intent.putExtra("zhishidianId", zhishidianId);
+            intent.putExtra("xueduanId", xueduan);
+            intent.putExtra("banbenId", banben);
+            intent.putExtra("jiaocaiId", jiaocai);
+            intent.putExtra("unitId", unitId);
+            startActivity(intent);
+            finish();
+        });
 
         TextView tv_title = findViewById(R.id.ftv_title);
         tv_title.setText("知识点试题");
@@ -183,6 +197,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
             intent.putExtra("name", course_name);  // 学科名
             intent.putExtra("allpage", String.valueOf(itemList.size()));  // 总页数
             intent.putExtra("questionIds", questionIds);  // 题目id
+            intent.putExtra("itemList", (Serializable) itemList);  // 知识点
             pos = pos + 1;
             intent.putExtra("pos", String.valueOf(pos));
             startActivity(intent);

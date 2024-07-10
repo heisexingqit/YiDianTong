@@ -11,8 +11,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="50dp"
         android:gravity="center"
-        android:src="@drawable/shitinull" />
+        android:src="@drawable/favor" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="你已经很棒了，选择的考点已经全部掌握"
+        android:textSize="20sp"
+        android:textColor="@color/red"
+        android:gravity="center"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:id="@+id/tv_next_exam_point"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="继续下一个考点的学习"
+        android:textSize="20sp"
+        android:textColor="@color/baby_blue"
+        android:gravity="center"
+        android:layout_marginTop="50dp" />
 
 </LinearLayout>

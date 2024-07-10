@@ -138,7 +138,7 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
 
         // 知识点栏
         ftv_br_title = view.findViewById(R.id.ftv_br_title);
-        ftv_br_title.setText(bookExerciseEntity.getQuestionsSource());
+        ftv_br_title.setText(bookExerciseEntity.getQuestionKeyword());
 
         //题面显示
         WebView fwv_bd_content = view.findViewById(R.id.fwv_bd_content);
@@ -148,11 +148,12 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
 
         // 题号和平均分
         ftv_bd_num = view.findViewById(R.id.ftv_bd_num);
-        if (bookExerciseEntity.getQuestionKeyword().equals("")) {
-            ftv_bd_num.setText("第" + currentpage + "题" + bookExerciseEntity.getShiTiAnswer());
-        } else {
-            ftv_bd_num.setText("第" + currentpage + "题" + bookExerciseEntity.getShiTiAnswer() +  "(" + bookExerciseEntity.getQuestionKeyword() + "");
-        }
+        ftv_bd_num.setText("第" + currentpage + "题" + bookExerciseEntity.getShiTiAnswer());
+//        if (bookExerciseEntity.getQuestionKeyword().equals("")) {
+//            ftv_bd_num.setText("第" + currentpage + "题" + bookExerciseEntity.getShiTiAnswer());
+//        } else {
+//            ftv_bd_num.setText("第" + currentpage + "题" + bookExerciseEntity.getShiTiAnswer() +  "(" + bookExerciseEntity.getQuestionKeyword() + "");
+//        }
         ftv_bd_score = view.findViewById(R.id.ftv_bd_score);
         ftv_bd_score.setVisibility(View.GONE);
 

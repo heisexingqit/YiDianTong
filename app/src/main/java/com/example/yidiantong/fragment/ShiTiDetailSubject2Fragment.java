@@ -31,10 +31,12 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -72,6 +74,7 @@ import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.ImageUtils;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.RecyclerInterface;
+import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yanzhenjie.permission.Action;
@@ -107,6 +110,7 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
     private TextView ftv_pbd_quenum;
     private TextView ftv_bd_score;
     private Button fb_bd_sumbit;
+    private Button fb_bd_score;
     private TextView ftv_bd_answer;
     private TextView ftv_bd_stuans;
     private WebView fwv_bd_analysis1;
@@ -152,6 +156,7 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
     private ActivityResultLauncher<Intent> mResultLauncher2;
     private ActivityResultLauncher<Intent> mResultLauncherCrop;
     private LinearLayout ll_input_image;
+    private LinearLayout ll_stu_scores;
     private WebView wv_stu_answer1;
     private ImageView iv_gallery;
     private ImageView iv_camera;
@@ -159,6 +164,7 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
     private TextWatcher myWatcher;
     private int type;
     private String flag; // 模式标记
+    private int statusCurrent = 0; // 当前状态是否提交答案并打分
 
     //学霸答案
     private TextView tv_xueba;
@@ -173,6 +179,18 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
     private LinearLayout ll_xueba2;
     private boolean show_xueba = false;
     private RelativeLayout ll_tiankong;
+
+    // 评分
+    private int scoreNum;
+    private int score = -1; // -1表示未打分
+    private int zero5 = 0;
+    private TextView tv_zero5;
+    private Button[] btnArray;
+    private View[] viewArray;
+    private CheckBox checkBox;
+    private TextView tv_stu_scores;
+    private View popView;
+
 
     public static ShiTiDetailSubject2Fragment newInstance(BookExerciseEntity bookExerciseEntity, int type, String userName, String subjectId,
                                                           String courseName, String currentpage, String allpage) {
@@ -307,7 +325,7 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
 
         // 知识点栏
         ftv_br_title = view.findViewById(R.id.ftv_br_title);
-        ftv_br_title.setText(bookExerciseEntity.getQuestionsSource());
+        ftv_br_title.setText(bookExerciseEntity.getQuestionKeyword());
         fiv_de_icon = view.findViewById(R.id.fiv_de_icon);
 
         //题面显示
@@ -318,11 +336,12 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
 
         // 题号和平均分
         ftv_bd_num = view.findViewById(R.id.ftv_bd_num);
-        if (bookExerciseEntity.getQuestionKeyword().equals("")) {
-            ftv_bd_num.setText("第" + currentpage + "题");
-        } else {
-            ftv_bd_num.setText("第" + currentpage + "题  (" + bookExerciseEntity.getQuestionKeyword() + "");
-        }
+        ftv_bd_num.setText("第" + currentpage + "题");
+//        if (bookExerciseEntity.getQuestionKeyword().equals("")) {
+//            ftv_bd_num.setText("第" + currentpage + "题");
+//        } else {
+//            ftv_bd_num.setText("第" + currentpage + "题  (" + bookExerciseEntity.getQuestionKeyword() + "");
+//        }
 
         //翻页组件
         ImageView iv_pager_last = getActivity().findViewById(R.id.iv_page_last);
@@ -354,10 +373,6 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
         fll_bd_analysis = view.findViewById(R.id.fll_bd_analysis);
         ftv_bd_answer = view.findViewById(R.id.ftv_bd_answer);
 
-        // html清洗
-//        cleanShitiAnswer = Jsoup.clean(bookrecyclerEntity.getShitiAnswer(), Whitelist.none()).trim().replace("&nbsp;", "");
-
-
         String html_answer = "<body style=\"color: rgb(100, 100, 100); font-size: 14px;line-height: 20px;\">" + bookExerciseEntity.getShiTiAnswer() + "</body>";
         System.out.println("shiTiAnswer ^-^:" + bookExerciseEntity.getShiTiAnswer());
         System.out.println("shiTiAnswer ^-^2:" + html_answer);
@@ -379,6 +394,133 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
             fwv_bd_analysis1.loadDataWithBaseURL(null, html1, "text/html", "utf-8", null);
         }
 
+        // 评分部分
+        ll_stu_scores = view.findViewById(R.id.ll_stu_scores);
+        FlexboxLayout fl_score = view.findViewById(R.id.fl_score);
+        tv_zero5 = view.findViewById(R.id.tv_zero5);
+        // 动态加打分按钮
+        tv_stu_scores = view.findViewById(R.id.tv_stu_scores);
+        checkBox = view.findViewById(R.id.cb_zero5);
+        if (zero5 == 1) {
+            checkBox.setChecked(true);
+        }
+        // 点击事件
+        checkBox.setOnClickListener(v -> {
+            if (zero5 == 1) {
+                zero5 = 0;
+            } else {
+                zero5 = 1;
+                if (score == -1) {
+                    score = 0;
+                }
+                double nowScore = score + 0.5;
+                if (nowScore > Double.parseDouble(bookExerciseEntity.getScore())) {
+                    zero5 = 0;
+                    checkBox.setChecked(false);
+                    Toast.makeText(getActivity(), "分数超过上限", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    zero5 = 1;
+                }
+            }
+            showScoreBtn();
+        });
+        // 分数组件列表创建
+        scoreNum = Integer.parseInt(bookExerciseEntity.getScore());
+        btnArray = new Button[scoreNum + 1];
+        viewArray = new View[scoreNum + 1];
+
+        // 动态创建打分按钮
+        for (int i = 0; i < scoreNum + 1; ++i) {
+            viewArray[i] = LayoutInflater.from(getActivity()).inflate(R.layout.item_t_score_btn, fl_score, false);
+            btnArray[i] = viewArray[i].findViewById(R.id.btn_score);
+            btnArray[i].setText(String.valueOf(i));
+            btnArray[i].setTag(i);
+
+            // 点击事件
+            btnArray[i].setOnClickListener(view1 -> {
+                int idx = (int) view1.getTag();
+                if (score != idx) {
+                    double nowScore = idx + (zero5 == 1 ? 0.5 : 0);
+                    if (nowScore > Double.parseDouble(bookExerciseEntity.getScore())) {
+                        Toast.makeText(getActivity(), "分数超过上限", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    score = idx;
+                    showScoreBtn();
+
+                    /**
+                     * 测试：修改传入参数，是否能够实现实时更改
+                     */
+
+                    // 同步修改
+                    if (window != null) {
+                        window.dismiss();
+                    }
+                }
+            });
+        }
+        // ------------------------#
+        //  可伸缩打分按钮设计优化
+        // ------------------------#
+        if (scoreNum > 15) {
+            // 设计伸缩优化
+            for (int i = scoreNum; i > scoreNum - 15; --i) {
+                fl_score.addView(viewArray[i]);
+            }
+
+            View plusView = LayoutInflater.from(getActivity()).inflate(R.layout.item_t_score_btn, fl_score, false);
+            Button plusBtn = plusView.findViewById(R.id.btn_score);
+            plusBtn.setText("+");
+
+            // 点击事件
+            plusBtn.setOnClickListener(view1 -> {
+                // popUpWindows弹窗
+                showBtnPanel();
+            });
+            fl_score.addView(plusView);
+        } else {
+            // 不需要优化
+            for (int i = scoreNum; i >= 0; --i) {
+                fl_score.addView(viewArray[i]);
+            }
+        }
+
+
+        // 获取ViewTreeObserver
+        ViewTreeObserver viewTreeObserver = fl_score.getViewTreeObserver();
+        // 添加OnGlobalLayoutListener监听器
+        viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                // 在布局加载完成后调用此方法
+                for (int i = 0; i < scoreNum + 1; ++i) {
+                    ViewGroup.LayoutParams params = btnArray[i].getLayoutParams();
+                    //params.width = fl_score.getWidth() / 8 - PxUtils.dip2px(view.getContext(), 20);
+                    btnArray[i].setLayoutParams(params);
+                }
+                // 在需要的地方使用组件的宽度
+                // 例如，可以将它用于进行其他操作或调整UI
+                // ...
+
+                // 可选：如果你只想监听一次，可以在获取宽度后移除监听器
+                fl_score.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+
+        // 分数显示+按钮显示
+        showScoreBtn();
+
+        // 分数显示
+        if (score == -1) {
+            tv_stu_scores.setText("[得分]  ");
+        } else {
+            tv_stu_scores.setText("[得分]  " + score + (zero5 == 1 ? ".5" : ""));
+        }
+
+        fb_bd_score = view.findViewById(R.id.fb_bd_score);
+        fb_bd_score.setOnClickListener(v -> submitScore());
 
         //学霸答案显示
         /*tv_xueba = view.findViewById(R.id.tv_xueba);
@@ -499,10 +641,97 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                 }
             }
         });
+
+        getActivity().findViewById(R.id.fiv_back).setOnClickListener(v -> {
+            if (statusCurrent != 1) {
+                getActivity().finish();
+            } else {
+                showSubmitDialog();
+            }
+        });
+
         // 提前创建Adapter
         adapter = new ImagePagerAdapter(getActivity(), url_list);
         showLoadAnswer();
         return view;
+    }
+
+    private void submitScore() {
+        statusCurrent = 2; // 提交打分
+        ll_stu_scores.setVisibility(View.GONE);
+        String mRequestUrl = "http://www.cn901.net:8111/AppServer/ajax/studentApp_updateRecommendQueScore.do?userName=" +
+                userName + "&questionId=" + bookExerciseEntity.getQuestionId() + "&score=" + score + "&type=" + type;
+        Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String success = json.getString("success");
+                Log.d("wen0321", "success: " + success);
+
+                //封装消息，传递给主线程
+                Message message = Message.obtain();
+                message.obj = success.equals("true");
+                //标识线程
+                message.what = 101;
+                handlerSave.sendMessage(message);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(this.getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
+        });
+        MyApplication.addRequest(request, TAG);
+    }
+
+    // 如果提交答案但没有提交评分那么弹出提示框:请先进行评分
+    private void showSubmitDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("请先进行评分");
+        builder.setPositiveButton("确定", (dialog, which) -> {
+            dialog.dismiss();
+        });
+        builder.create().show();
+    }
+
+    private void showBtnPanel() {
+        // 创建一个 FlexboxLayout 实例
+        if (popView == null) {
+            popView = LayoutInflater.from(getActivity()).inflate(R.layout.t_homework_mark_btn_panel, null);
+            FlexboxLayout popwindowView = popView.findViewById(R.id.fl_main);
+            popView.findViewById(R.id.iv_close).setOnClickListener(v -> window.dismiss());
+
+            for (int i = scoreNum - 15; i >= 0; --i) {
+                popwindowView.addView(viewArray[i]);
+            }
+
+            window = new PopupWindow(
+                    popView,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    true
+            );
+        }
+        window.showAsDropDown(tv_stu_scores, 0, 0);
+
+    }
+
+    private void showScoreBtn() {
+        for (int i = 0; i < scoreNum + 1; ++i) {
+            if (score == i) {
+                btnArray[i].setBackgroundResource(R.drawable.t_homework_report);
+                btnArray[i].setTextColor(getResources().getColor(R.color.white));
+            } else {
+                btnArray[i].setBackgroundResource(R.drawable.t_homework_report_unselect);
+                btnArray[i].setTextColor(getResources().getColor(R.color.main_bg));
+            }
+            tv_stu_scores.setText("[得分]  " + score + (zero5 == 1 ? ".5" : ""));
+        }
+        if (zero5 == 1) {
+            checkBox.setChecked(true);
+        } else {
+            checkBox.setChecked(false);
+        }
     }
 
     private void showLoadAnswer() {
@@ -534,7 +763,7 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                     ll_tiankong.setVisibility(View.GONE);
                     wv_stu_answer.loadDataWithBaseURL(null, html_head + split[1], "text/html", "utf-8", null);
                     ll_input_image.setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     tv_stu_answer.setText("【你的作答】");
                     iv_camera.setVisibility(View.GONE);
                     iv_gallery.setVisibility(View.GONE);
@@ -561,16 +790,18 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
 
         switch (view.getId()) {
             case R.id.iv_page_last:
-                pageing.pageLast(currentpage, allpage);
-                if (!currentpage.equals("1")) {
-                    et_student_answer.setText("");
-                }
+                if (statusCurrent != 1) {
+                    pageing.pageLast(currentpage, allpage);
+                    if (!currentpage.equals("1")) et_student_answer.setText("");
+                } else showSubmitDialog();
                 return;
             case R.id.iv_page_next:
-                pageing.pageNext(currentpage, allpage);
-                if (!currentpage.equals(allpage)) {
-                    et_student_answer.setText("");
-                }
+                if (statusCurrent != 1) {
+                    pageing.pageNext(currentpage, allpage);
+                    if (!currentpage.equals(allpage)) {
+                        et_student_answer.setText("");
+                    }
+                }else showSubmitDialog();
                 return;
             case R.id.fb_bd_sumbit:
                 if (exercise_stu_answer.length() == 0 && exercise_stu_html.length() == 0) {
@@ -592,6 +823,8 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                     //对话框弹出
                     builder.show();
                 } else {
+                    statusCurrent = 1; // 提交状态
+                    ll_stu_scores.setVisibility(View.VISIBLE);
                     tv_stu_answer.setText("【你的作答】");
                     iv_camera.setVisibility(View.GONE);
                     iv_gallery.setVisibility(View.GONE);
@@ -600,13 +833,15 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
 //                    loadAnswer_Net();
 
 //                    fll_bd_answer.setVisibility(View.GONE);
-                    et_student_answer.setFocusableInTouchMode(false);
                     fb_bd_sumbit.setVisibility(View.GONE);
                     // 判断编辑框是否为空
                     if (exercise_stu_answer.length() == 0) {
                         ll_tiankong.setVisibility(View.GONE);
                     }
                     fll_bd_analysis.setVisibility(View.VISIBLE);
+                    et_student_answer.clearFocus();
+                    et_student_answer.setFocusableInTouchMode(false);
+
 //                    ftv_bd_stuans.setText("【你的作答】");
 //                    String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getStuAnswer() + "</body>";
 //                    String html = html_content.replace("#", "%23");
@@ -620,7 +855,7 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
 //                    }
 
                     // 保存学生答案至服务器
-                    saveAnswer2Server(bookExerciseEntity.getShiTiAnswer(), exercise_stu_answer.equals("") ? exercise_stu_answer : exercise_stu_html, type);
+                    saveAnswer2Server(bookExerciseEntity.getShiTiAnswer(), exercise_stu_answer.equals("") ? exercise_stu_html : exercise_stu_answer, type);
 
                     // 保存学生作答
                     String answer = exercise_stu_answer + "@&@" + exercise_stu_html;
@@ -675,7 +910,7 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                             }
                             if (!arrayString.contains("null")) {
                                 Toast.makeText(getContext(), "测试完成！", Toast.LENGTH_SHORT).show();
-                                if (flag.equals("自主学习")){
+                                if (flag.equals("自主学习")) {
                                     Intent intent = new Intent(getActivity(), KnowledgeShiTiActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     intent.putExtra("userName", getActivity().getIntent().getStringExtra("username"));
@@ -690,7 +925,7 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                                     intent.putExtra("flag", "自主学习");
                                     startActivity(intent);
                                     getActivity().finish();
-                                }else if (flag.equals("巩固提升")){
+                                } else if (flag.equals("巩固提升")) {
                                     Intent intent = new Intent(getActivity(), MainBookUpActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     intent.putExtra("userName", getActivity().getIntent().getStringExtra("username"));
@@ -802,11 +1037,19 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                 } else {
                     Toast.makeText(getContext(), "答案保存失败！", Toast.LENGTH_SHORT).show();
                 }
+            } else if (message.what == 101) {
+                boolean f = (boolean) message.obj;
+                if (f) {
+                    Toast.makeText(getContext(), "分数提交成功！", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "分数提交失败！", Toast.LENGTH_SHORT).show();
+                }
             }
         }
     };
 
-    private void saveAnswer2Server(String queAnswer, String stuAnswer,int type) {
+    private void saveAnswer2Server(String queAnswer, String stuAnswer, int type) {
+        System.out.println("saveAnswer2Server: "+ stuAnswer + " " + type);
         String mRequestUrl = "http://www.cn901.net:8111/AppServer/ajax/studentApp_savePythonRecommendQueAnswer.do?userId=" +
                 userName + "&questionId=" + bookExerciseEntity.getQuestionId() + "&queAnswer=" + queAnswer + "&stuAnswer=" +
                 stuAnswer + "&baseTypeId=" + bookExerciseEntity.getBaseTypeId() + "&type=" + type;
@@ -1166,32 +1409,32 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                 //学霸答案展示
                 List<XueBaAnswerEntity> list = (List<XueBaAnswerEntity>) message.obj;
 
-                    if (list.size() > 0) {
-                        tv_xueba.setVisibility(View.VISIBLE);
-                        ftv_xuebaName1.setVisibility(View.VISIBLE);
-                        ll_xueba1.setVisibility(View.VISIBLE);
-                        String xuebaName1 = list.get(0).getStuName();
-                        String xuebaAnswer1 = list.get(0).getStuAnswer();
-                        ftv_xuebaName1.setText(xuebaName1 + "的作答");
-                        setHtmlOnWebView(fwv_xuebaAnswer1, html_answer_head + xuebaAnswer1);
+                if (list.size() > 0) {
+                    tv_xueba.setVisibility(View.VISIBLE);
+                    ftv_xuebaName1.setVisibility(View.VISIBLE);
+                    ll_xueba1.setVisibility(View.VISIBLE);
+                    String xuebaName1 = list.get(0).getStuName();
+                    String xuebaAnswer1 = list.get(0).getStuAnswer();
+                    ftv_xuebaName1.setText(xuebaName1 + "的作答");
+                    setHtmlOnWebView(fwv_xuebaAnswer1, html_answer_head + xuebaAnswer1);
 
-                    }
-                    if (list.size() > 1) {
-                        ftv_xuebaName2.setVisibility(View.VISIBLE);
-                        ll_xueba2.setVisibility(View.VISIBLE);
-                        String xuebaName2 = list.get(1).getStuName();
-                        String xuebaAnswer2 = list.get(1).getStuAnswer();
-                        ftv_xuebaName2.setText(xuebaName2 + "的作答");
-                        setHtmlOnWebView(fwv_xuebaAnswer2, html_answer_head + xuebaAnswer2);
-                    }
-                    if (list.size() > 2) {
-                        ftv_xuebaName3.setVisibility(View.VISIBLE);
-                        ll_xueba3.setVisibility(View.VISIBLE);
-                        String xuebaName3 = list.get(2).getStuName();
-                        String xuebaAnswer3 = list.get(2).getStuAnswer();
-                        ftv_xuebaName3.setText(xuebaName3 + "的作答");
-                        setHtmlOnWebView(fwv_xuebaAnswer3, html_answer_head + xuebaAnswer3);
-                    }
+                }
+                if (list.size() > 1) {
+                    ftv_xuebaName2.setVisibility(View.VISIBLE);
+                    ll_xueba2.setVisibility(View.VISIBLE);
+                    String xuebaName2 = list.get(1).getStuName();
+                    String xuebaAnswer2 = list.get(1).getStuAnswer();
+                    ftv_xuebaName2.setText(xuebaName2 + "的作答");
+                    setHtmlOnWebView(fwv_xuebaAnswer2, html_answer_head + xuebaAnswer2);
+                }
+                if (list.size() > 2) {
+                    ftv_xuebaName3.setVisibility(View.VISIBLE);
+                    ll_xueba3.setVisibility(View.VISIBLE);
+                    String xuebaName3 = list.get(2).getStuName();
+                    String xuebaAnswer3 = list.get(2).getStuAnswer();
+                    ftv_xuebaName3.setText(xuebaName3 + "的作答");
+                    setHtmlOnWebView(fwv_xuebaAnswer3, html_answer_head + xuebaAnswer3);
+                }
 
             }
         }

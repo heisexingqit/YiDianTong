@@ -73,16 +73,16 @@ import java.util.List;
 public class THomeworkMarkFragment extends Fragment {
     private static final String TAG = "THomeworkMarkFragment";
 
-    // 接口需要
+    // 接口需要 todo
     private THomeworkMarkedEntity homeworkMarked;
 
     // 打分同步
     private THomeworkMarkInterface transmitInterface;
 
     // 分数上限
-    private int scoreNum;
-    private int score = -1;
-    private int zero5 = 0;
+    private int scoreNum; // todo
+    private int score = -1; // -1表示未打分 todo
+    private int zero5 = 0; // todo
     private Button[] btnArray;
     private View[] viewArray;
     private CheckBox checkBox;
@@ -130,7 +130,7 @@ public class THomeworkMarkFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Bundle arg = getArguments();
-//        position = arg.getInt("position") + 1;
+//        position = arg.getInt("position") + 1;_
 //        int size = arg.getInt("size");
         homeworkMarked = (THomeworkMarkedEntity) arg.getSerializable("homeworkMarked");
         position = Integer.parseInt(homeworkMarked.getOrder());
@@ -212,7 +212,7 @@ public class THomeworkMarkFragment extends Fragment {
             zero5 = stuScore.contains(".5") ? 1 : 0;
         }
 
-        // 如果可以批改分数
+        // 如果可以批改分数 TODO
         if (canMark) {
             if (zero5 == 1) {
                 checkBox.setChecked(true);
@@ -669,7 +669,7 @@ public class THomeworkMarkFragment extends Fragment {
         });
         MyApplication.addRequest(request, TAG);
     }
-
+    // TODO
     private void showBtnPanel() {
         // 创建一个 FlexboxLayout 实例
         if (popView == null) {
@@ -693,7 +693,7 @@ public class THomeworkMarkFragment extends Fragment {
     }
 
 
-    // 调整分数按钮显示效果
+    // 调整分数按钮显示效果 TODO
     private void showScoreBtn() {
         if (homeworkMarked.getQuestionType().equals("101") || homeworkMarked.getQuestionType().equals("103")) {
             // 单选和判断，取消中间分数

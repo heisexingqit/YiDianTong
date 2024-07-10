@@ -19,16 +19,16 @@
             android:id="@+id/iv_back"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@drawable/left_ex" />
+            android:src="@drawable/close_blue" />
 
-        <TextView
-            android:id="@+id/tv_ok"
-            android:layout_width="30dp"
-            android:layout_height="20dp"
-            android:layout_marginRight="25dp"
-            android:layout_alignParentEnd="true"
-            android:text="确定"
-            android:textColor="@color/baby_blue" />
+<!--        <TextView-->
+<!--            android:id="@+id/tv_ok"-->
+<!--            android:layout_width="30dp"-->
+<!--            android:layout_height="20dp"-->
+<!--            android:layout_alignParentEnd="true"-->
+<!--            android:layout_marginRight="25dp"-->
+<!--            android:text="确定"-->
+<!--            android:textColor="@color/baby_blue" />-->
 
 
         <!--        <com.example.yidiantong.View.ClickableImageView-->

@@ -34,6 +34,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,6 +58,7 @@ public class KnowledgeShiTiDetailActivity extends AppCompatActivity implements R
     String allpage;
     private String pos; //题目位置
     private String[] questionIds;//题目ID数组
+    private List<BookExerciseEntity> bookExerciseEntityList;  //题目列表
 
 
     @Override
@@ -72,6 +74,7 @@ public class KnowledgeShiTiDetailActivity extends AppCompatActivity implements R
             this.finish();
         });
 
+        bookExerciseEntityList = new ArrayList<>();
         //获取Intent参数
         course_name = getIntent().getStringExtra("name");
         TextView tv_title = findViewById(R.id.ftv_title);
@@ -83,6 +86,9 @@ public class KnowledgeShiTiDetailActivity extends AppCompatActivity implements R
         pos = getIntent().getStringExtra("pos");
         allpage = getIntent().getStringExtra("allpage");
         questionIds = getIntent().getStringExtra("questionIds").split(",");
+        bookExerciseEntityList = (List<BookExerciseEntity>) getIntent().getSerializableExtra("itemList");
+        System.out.println("bookExerciseEntityList ^-^:" + bookExerciseEntityList.size());
+
 
         currentItem = Integer.valueOf(pos);
         fvp_book_recycle.setCurrentItem(currentItem);
@@ -229,6 +235,7 @@ public class KnowledgeShiTiDetailActivity extends AppCompatActivity implements R
                 for (BookExerciseEntity item : itemList) {
                     //设置选项个数
                     item.setAnswerNumber(answerNumber);
+                    item.setQuestionKeyword(bookExerciseEntityList.get(pos-1).getQuestionKeyword());
                 }
                 Log.e("wen0223", "loadItems_Net: " + itemList);
                 //封装消息，传递给主线程
