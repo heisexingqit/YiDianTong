@@ -135,7 +135,6 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
     int questionId = 0;
     String[] option = {"A", "B", "C", "D"};
     private BookExerciseEntity bookExerciseEntity;
-    private ImageView fiv_bd_tf;
     private LinearLayout fll_br_model;
     private AlertDialog dialog_model;
     private TextView ftv_br_mode;
@@ -157,6 +156,8 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
     private ActivityResultLauncher<Intent> mResultLauncherCrop;
     private LinearLayout ll_input_image;
     private LinearLayout ll_stu_scores;
+    private LinearLayout ll_stu_scores2;
+    private LinearLayout ll_zero5;
     private WebView wv_stu_answer1;
     private ImageView iv_gallery;
     private ImageView iv_camera;
@@ -189,7 +190,13 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
     private View[] viewArray;
     private CheckBox checkBox;
     private TextView tv_stu_scores;
+    private TextView tv_all_scores;
+    private ImageView fiv_bd_tf;
+    private TextView tv_stu_scores2;
+    private TextView tv_all_scores2;
+    private ImageView fiv_bd_tf2;
     private View popView;
+    private FlexboxLayout fl_score;
 
 
     public static ShiTiDetailSubject2Fragment newInstance(BookExerciseEntity bookExerciseEntity, int type, String userName, String subjectId,
@@ -265,7 +272,12 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
         //获取view
         View view = inflater.inflate(R.layout.fragment_book_shiti_subject2, container, false);
         ll_tiankong = view.findViewById(R.id.ll_tiankong);
+        ll_zero5 = view.findViewById(R.id.ll_zero5);
         tv_stu_answer = view.findViewById(R.id.tv_stu_answer);
+        tv_all_scores = view.findViewById(R.id.tv_all_scores);
+        tv_all_scores.setText("[满分]  " + bookExerciseEntity.getScore());
+        tv_all_scores2 = view.findViewById(R.id.tv_all_scores2);
+        tv_all_scores2.setText("[满分]  " + bookExerciseEntity.getScore());
 
         ll_input_image = view.findViewById(R.id.ll_input_image);
         ll_input_image.setOnClickListener(this);
@@ -384,6 +396,7 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
         ftv_bd_stuans = view.findViewById(R.id.ftv_bd_stuans);
         fwv_bd_analysis1 = view.findViewById(R.id.fwv_bd_analysis);
         fiv_bd_tf = view.findViewById(R.id.fiv_bd_tf);
+        fiv_bd_tf2 = view.findViewById(R.id.fiv_bd_tf2);
         TextView tv_shiti_analysis = view.findViewById(R.id.tv_shiti_analysis);
 
         if (bookExerciseEntity.getShiTiAnalysis() == null || bookExerciseEntity.getShiTiAnalysis().length() == 0) {
@@ -396,10 +409,12 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
 
         // 评分部分
         ll_stu_scores = view.findViewById(R.id.ll_stu_scores);
-        FlexboxLayout fl_score = view.findViewById(R.id.fl_score);
+        ll_stu_scores2 = view.findViewById(R.id.ll_stu_scores2);
+        fl_score = view.findViewById(R.id.fl_score);
         tv_zero5 = view.findViewById(R.id.tv_zero5);
         // 动态加打分按钮
         tv_stu_scores = view.findViewById(R.id.tv_stu_scores);
+        tv_stu_scores2 = view.findViewById(R.id.tv_stu_scores2);
         checkBox = view.findViewById(R.id.cb_zero5);
         if (zero5 == 1) {
             checkBox.setChecked(true);
@@ -643,22 +658,127 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
         });
 
         getActivity().findViewById(R.id.fiv_back).setOnClickListener(v -> {
-            if (statusCurrent != 1) {
-                getActivity().finish();
-            } else {
-                showSubmitDialog();
+            if (getActivity() != null) {
+                if (statusCurrent != 1) {
+                    getActivity().finish();
+                } else {
+                    showSubmitDialog();
+                }
             }
         });
 
         // 提前创建Adapter
         adapter = new ImagePagerAdapter(getActivity(), url_list);
-        showLoadAnswer();
+        //showLoadAnswer();
         return view;
     }
 
     private void submitScore() {
+        // 如果未作答, 提示请先进行评分
+        if (score == -1) {
+            Toast.makeText(getActivity(), "请先进行评分", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 取分数  tv_stu_scores.getText().toString()中"[得分]  0.5"中的0.5
+        String scoreStr = tv_stu_scores.getText().toString();
+        String[] split = scoreStr.split("  ");
+        String tempscore = split[1];
+        // 保存学生作答到本地
+        String answer = exercise_stu_answer + "@&@" + exercise_stu_html + "@&@" + tempscore;
+        String arrayString = null;
+        switch (type) {
+            case 1:
+                arrayString = preferences.getString("exerciseStuLoadAnswer", null);
+                if (arrayString != null) {
+                    String[] exerciseStuLoadAnswer = arrayString.split(",");
+                    exerciseStuLoadAnswer[Integer.parseInt(currentpage) - 1] = answer; // 数组题号对应页数-1
+                    SharedPreferences.Editor editor = preferences.edit();
+                    arrayString = TextUtils.join(",", exerciseStuLoadAnswer);
+                    System.out.println("arrayString: " + arrayString);
+                    editor.putString("exerciseStuLoadAnswer", arrayString);
+                    editor.commit();
+                }
+                break;
+            case 2:
+                arrayString = preferences.getString("upStuLoadAnswer", null);
+                if (arrayString != null) {
+                    String[] upStuLoadAnswer = arrayString.split(",");
+                    upStuLoadAnswer[Integer.parseInt(currentpage) - 1] = answer; // 数组题号对应页数-1
+                    SharedPreferences.Editor editor1 = preferences.edit();
+                    arrayString = TextUtils.join(",", upStuLoadAnswer);
+                    System.out.println("arrayString: " + arrayString);
+                    editor1.putString("upStuLoadAnswer", arrayString);
+                    editor1.commit();
+                }
+                break;
+            case 3:
+                arrayString = preferences.getString("autoStuLoadAnswer", null);
+                if (arrayString != null) {
+                    String[] autoStuLoadAnswer = arrayString.split(",");
+                    autoStuLoadAnswer[Integer.parseInt(currentpage) - 1] = answer; // 数组题号对应页数-1
+                    SharedPreferences.Editor editor2 = preferences.edit();
+                    arrayString = TextUtils.join(",", autoStuLoadAnswer);
+                    System.out.println("arrayString: " + arrayString);
+                    editor2.putString("autoStuLoadAnswer", arrayString);
+                    editor2.commit();
+                }
+                break;
+            case 5:
+                arrayString = preferences.getString("OnlineTestAnswer", null);
+                if (arrayString != null) {
+                    String[] OnlineTestAnswer = arrayString.split(",");
+                    OnlineTestAnswer[Integer.parseInt(currentpage) - 1] = answer; // 数组题号对应页数-1
+                    SharedPreferences.Editor editor3 = preferences.edit();
+                    arrayString = TextUtils.join(",", OnlineTestAnswer);
+                    System.out.println("arrayString: " + arrayString);
+                    editor3.putString("OnlineTestAnswer", arrayString);
+                    editor3.commit();
+                }
+                if (!arrayString.contains("null")) {
+                    Toast.makeText(getContext(), "测试完成！", Toast.LENGTH_SHORT).show();
+                    if (flag.equals("自主学习")) {
+                        Intent intent = new Intent(getActivity(), KnowledgeShiTiActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        intent.putExtra("userName", getActivity().getIntent().getStringExtra("username"));
+                        intent.putExtra("subjectId", getActivity().getIntent().getStringExtra("subjectId"));
+                        intent.putExtra("unitId", getActivity().getIntent().getStringExtra("unitId"));
+                        intent.putExtra("xueduanId", getActivity().getIntent().getStringExtra("xueduan"));
+                        intent.putExtra("banbenId", getActivity().getIntent().getStringExtra("banben"));
+                        intent.putExtra("jiaocaiId", getActivity().getIntent().getStringExtra("jiaocai"));
+                        intent.putExtra("courseName", getActivity().getIntent().getStringExtra("name"));
+                        intent.putExtra("zhishidian", getActivity().getIntent().getStringExtra("zhishidian"));
+                        intent.putExtra("zhishidianId", getActivity().getIntent().getStringExtra("zhishidianId"));
+                        intent.putExtra("flag", "自主学习");
+                        startActivity(intent);
+                        getActivity().finish();
+                    } else if (flag.equals("巩固提升")) {
+                        Intent intent = new Intent(getActivity(), MainBookUpActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        intent.putExtra("userName", getActivity().getIntent().getStringExtra("username"));
+                        intent.putExtra("subjectId", getActivity().getIntent().getStringExtra("subjectId"));
+                        intent.putExtra("unitId", getActivity().getIntent().getStringExtra("unitId"));
+                        intent.putExtra("courseName", getActivity().getIntent().getStringExtra("name"));
+                        intent.putExtra("flag", "自主学习");
+                        startActivity(intent);
+                        getActivity().finish();
+                    }
+                }
+                break;
+        }
+
         statusCurrent = 2; // 提交打分
+        // 判断是否满分
+        if (tempscore.equals(bookExerciseEntity.getScore())) {
+            fiv_bd_tf2.setImageResource(R.drawable.ansright);
+        } else if (tempscore.equals("0")) {
+            fiv_bd_tf2.setImageResource(R.drawable.answrong);
+        } else {
+            fiv_bd_tf2.setImageResource(R.drawable.anshalf);
+        }
         ll_stu_scores.setVisibility(View.GONE);
+        ll_stu_scores2.setVisibility(View.VISIBLE);
+        tv_stu_scores2.setText("[得分]  " + tempscore);
         String mRequestUrl = "http://www.cn901.net:8111/AppServer/ajax/studentApp_updateRecommendQueScore.do?userName=" +
                 userName + "&questionId=" + bookExerciseEntity.getQuestionId() + "&score=" + score + "&type=" + type;
         Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
@@ -767,8 +887,21 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                     tv_stu_answer.setText("【你的作答】");
                     iv_camera.setVisibility(View.GONE);
                     iv_gallery.setVisibility(View.GONE);
+                    System.out.println("split[0]:" + split[0]);
+                    et_student_answer.setFocusable(true);
                     et_student_answer.setText(split[0]);
-                    et_student_answer.setFocusableInTouchMode(false);
+                    et_student_answer.setFocusable(false);
+                }
+                // 设置学生分数
+                ll_stu_scores2.setVisibility(View.VISIBLE);
+                tv_stu_scores2.setText("[得分]  " + split[2]);
+                // 判断是否满分
+                if (split[2].equals(bookExerciseEntity.getScore())) {
+                    fiv_bd_tf2.setImageResource(R.drawable.ansright);
+                } else if (split[2].equals("0")) {
+                    fiv_bd_tf2.setImageResource(R.drawable.answrong);
+                } else {
+                    fiv_bd_tf2.setImageResource(R.drawable.anshalf);
                 }
 
                 // 利用正则表达式统计"src"出现的次数
@@ -787,21 +920,18 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
 
     @Override
     public void onClick(View view) {
-
         switch (view.getId()) {
             case R.id.iv_page_last:
                 if (statusCurrent != 1) {
-                    pageing.pageLast(currentpage, allpage);
                     if (!currentpage.equals("1")) et_student_answer.setText("");
+                    pageing.pageLast(currentpage, allpage);
                 } else showSubmitDialog();
                 return;
             case R.id.iv_page_next:
                 if (statusCurrent != 1) {
+                    if (!currentpage.equals(allpage)) et_student_answer.setText("");
                     pageing.pageNext(currentpage, allpage);
-                    if (!currentpage.equals(allpage)) {
-                        et_student_answer.setText("");
-                    }
-                }else showSubmitDialog();
+                } else showSubmitDialog();
                 return;
             case R.id.fb_bd_sumbit:
                 if (exercise_stu_answer.length() == 0 && exercise_stu_html.length() == 0) {
@@ -823,6 +953,7 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                     //对话框弹出
                     builder.show();
                 } else {
+
                     statusCurrent = 1; // 提交状态
                     ll_stu_scores.setVisibility(View.VISIBLE);
                     tv_stu_answer.setText("【你的作答】");
@@ -839,8 +970,7 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                         ll_tiankong.setVisibility(View.GONE);
                     }
                     fll_bd_analysis.setVisibility(View.VISIBLE);
-                    et_student_answer.clearFocus();
-                    et_student_answer.setFocusableInTouchMode(false);
+                    et_student_answer.setFocusable(false);
 
 //                    ftv_bd_stuans.setText("【你的作答】");
 //                    String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getStuAnswer() + "</body>";
@@ -857,88 +987,6 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                     // 保存学生答案至服务器
                     saveAnswer2Server(bookExerciseEntity.getShiTiAnswer(), exercise_stu_answer.equals("") ? exercise_stu_html : exercise_stu_answer, type);
 
-                    // 保存学生作答
-                    String answer = exercise_stu_answer + "@&@" + exercise_stu_html;
-                    String arrayString = null;
-                    switch (type) {
-                        case 1:
-                            arrayString = preferences.getString("exerciseStuLoadAnswer", null);
-                            if (arrayString != null) {
-                                String[] exerciseStuLoadAnswer = arrayString.split(",");
-                                exerciseStuLoadAnswer[Integer.parseInt(currentpage) - 1] = answer; // 数组题号对应页数-1
-                                SharedPreferences.Editor editor = preferences.edit();
-                                arrayString = TextUtils.join(",", exerciseStuLoadAnswer);
-                                System.out.println("arrayString: " + arrayString);
-                                editor.putString("exerciseStuLoadAnswer", arrayString);
-                                editor.commit();
-                            }
-                            break;
-                        case 2:
-                            arrayString = preferences.getString("upStuLoadAnswer", null);
-                            if (arrayString != null) {
-                                String[] upStuLoadAnswer = arrayString.split(",");
-                                upStuLoadAnswer[Integer.parseInt(currentpage) - 1] = answer; // 数组题号对应页数-1
-                                SharedPreferences.Editor editor1 = preferences.edit();
-                                arrayString = TextUtils.join(",", upStuLoadAnswer);
-                                System.out.println("arrayString: " + arrayString);
-                                editor1.putString("upStuLoadAnswer", arrayString);
-                                editor1.commit();
-                            }
-                            break;
-                        case 3:
-                            arrayString = preferences.getString("autoStuLoadAnswer", null);
-                            if (arrayString != null) {
-                                String[] autoStuLoadAnswer = arrayString.split(",");
-                                autoStuLoadAnswer[Integer.parseInt(currentpage) - 1] = answer; // 数组题号对应页数-1
-                                SharedPreferences.Editor editor2 = preferences.edit();
-                                arrayString = TextUtils.join(",", autoStuLoadAnswer);
-                                System.out.println("arrayString: " + arrayString);
-                                editor2.putString("autoStuLoadAnswer", arrayString);
-                                editor2.commit();
-                            }
-                            break;
-                        case 5:
-                            arrayString = preferences.getString("OnlineTestAnswer", null);
-                            if (arrayString != null) {
-                                String[] OnlineTestAnswer = arrayString.split(",");
-                                OnlineTestAnswer[Integer.parseInt(currentpage) - 1] = answer; // 数组题号对应页数-1
-                                SharedPreferences.Editor editor3 = preferences.edit();
-                                arrayString = TextUtils.join(",", OnlineTestAnswer);
-                                System.out.println("arrayString: " + arrayString);
-                                editor3.putString("OnlineTestAnswer", arrayString);
-                                editor3.commit();
-                            }
-                            if (!arrayString.contains("null")) {
-                                Toast.makeText(getContext(), "测试完成！", Toast.LENGTH_SHORT).show();
-                                if (flag.equals("自主学习")) {
-                                    Intent intent = new Intent(getActivity(), KnowledgeShiTiActivity.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                    intent.putExtra("userName", getActivity().getIntent().getStringExtra("username"));
-                                    intent.putExtra("subjectId", getActivity().getIntent().getStringExtra("subjectId"));
-                                    intent.putExtra("unitId", getActivity().getIntent().getStringExtra("unitId"));
-                                    intent.putExtra("xueduanId", getActivity().getIntent().getStringExtra("xueduan"));
-                                    intent.putExtra("banbenId", getActivity().getIntent().getStringExtra("banben"));
-                                    intent.putExtra("jiaocaiId", getActivity().getIntent().getStringExtra("jiaocai"));
-                                    intent.putExtra("courseName", getActivity().getIntent().getStringExtra("name"));
-                                    intent.putExtra("zhishidian", getActivity().getIntent().getStringExtra("zhishidian"));
-                                    intent.putExtra("zhishidianId", getActivity().getIntent().getStringExtra("zhishidianId"));
-                                    intent.putExtra("flag", "自主学习");
-                                    startActivity(intent);
-                                    getActivity().finish();
-                                } else if (flag.equals("巩固提升")) {
-                                    Intent intent = new Intent(getActivity(), MainBookUpActivity.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                    intent.putExtra("userName", getActivity().getIntent().getStringExtra("username"));
-                                    intent.putExtra("subjectId", getActivity().getIntent().getStringExtra("subjectId"));
-                                    intent.putExtra("unitId", getActivity().getIntent().getStringExtra("unitId"));
-                                    intent.putExtra("courseName", getActivity().getIntent().getStringExtra("name"));
-                                    intent.putExtra("flag", "自主学习");
-                                    startActivity(intent);
-                                    getActivity().finish();
-                                }
-                            }
-                            break;
-                    }
                 }
                 break;
             case R.id.iv_camera:
@@ -1049,7 +1097,7 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
     };
 
     private void saveAnswer2Server(String queAnswer, String stuAnswer, int type) {
-        System.out.println("saveAnswer2Server: "+ stuAnswer + " " + type);
+        System.out.println("saveAnswer2Server: " + stuAnswer + " " + type);
         String mRequestUrl = "http://www.cn901.net:8111/AppServer/ajax/studentApp_savePythonRecommendQueAnswer.do?userId=" +
                 userName + "&questionId=" + bookExerciseEntity.getQuestionId() + "&queAnswer=" + queAnswer + "&stuAnswer=" +
                 stuAnswer + "&baseTypeId=" + bookExerciseEntity.getBaseTypeId() + "&type=" + type;
@@ -1479,7 +1527,7 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
     @Override
     public void onResume() {
         super.onResume();
-        et_student_answer.setText(exercise_stu_answer);
+        showLoadAnswer();
 
         Log.e("wen0603", "onResume: " + exercise_stu_answer);
     }

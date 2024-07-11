@@ -217,6 +217,12 @@ public class ShiTiDetailMultipleFragment extends Fragment implements View.OnClic
         // 举一反三or巩固提升模式
         fll_bd_analysis.setVisibility(View.GONE);
         fll_bd_answer.setVisibility(View.VISIBLE);
+
+        getActivity().findViewById(R.id.fiv_back).setOnClickListener(v -> {
+            if (getActivity() != null) {
+                getActivity().finish();
+            }
+        });
         // 获得本地学生作答
         showLoadAnswer();
 

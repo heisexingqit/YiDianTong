@@ -71,7 +71,7 @@ public class KnowledgeShiTiDetailActivity extends AppCompatActivity implements R
 
         //顶栏返回按钮
         findViewById(R.id.fiv_back).setOnClickListener(v -> {
-            this.finish();
+            finish();
         });
 
         bookExerciseEntityList = new ArrayList<>();
