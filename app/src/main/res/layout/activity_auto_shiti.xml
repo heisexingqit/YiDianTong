@@ -19,13 +19,13 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"> <!-- 确保方向为水平 -->
 
         <LinearLayout
             android:id="@+id/ll_knowledge_name"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="horizontal">
 
@@ -38,18 +38,22 @@
             <TextView
                 android:id="@+id/tv_knowledge_name"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:text="知识点名称："
                 android:textColor="@color/black"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:singleLine="false"
+                android:ellipsize="none"
+                android:scrollHorizontally="false"/>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/ll_kaodian_filtrate"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:orientation="horizontal">
 
             <ImageView
@@ -60,7 +64,7 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="考点筛选"
                 android:textColor="@color/black"
@@ -75,7 +79,7 @@
         android:layout_height="1dp"
         android:background="@color/gray_back" />
 
-    <include layout="@layout/error_null" />
+    <include layout="@layout/shiti_null" />
 
     <include layout="@layout/loading_page" />
 

@@ -22,6 +22,7 @@ import com.example.yidiantong.fragment.ShiTiDetailMultipleFragment;
 import com.example.yidiantong.fragment.ShiTiDetailReadingFragment;
 import com.example.yidiantong.fragment.ShiTiDetailSeven2FiveFragment;
 import com.example.yidiantong.fragment.ShiTiDetailSingleFragment;
+import com.example.yidiantong.fragment.ShiTiDetailSubject2Fragment;
 import com.example.yidiantong.fragment.ShiTiDetailSubjectFragment;
 
 import java.util.ArrayList;
@@ -118,13 +119,13 @@ public class BooksRecyclerAdapter extends FragmentStatePagerAdapter {
                         fragment = ShiTiDetailReadingFragment.newInstance(itemList2.get(position),type,userName,subjectId,courseName,currentpage,allpage);
                     }
                     break;
-                case "104":
-                    //填空题
-                    fragment = ShiTiDetailClozeFragment.newInstance(itemList2.get(position),type,userName,subjectId,courseName,currentpage,allpage);
-                    break;
+//                case "104":
+//                    //填空题
+//                    fragment = ShiTiDetailClozeFragment.newInstance(itemList2.get(position),type,userName,subjectId,courseName,currentpage,allpage);
+//                    break;
                 default:
                     //主观题
-                    fragment = ShiTiDetailSubjectFragment.newInstance(itemList2.get(position),type,userName,subjectId,courseName,currentpage,allpage);
+                    fragment = ShiTiDetailSubject2Fragment.newInstance(itemList2.get(position),type,userName,subjectId,courseName,currentpage,allpage);
                     break;
             }
             return fragment;

@@ -64,6 +64,7 @@ public class KnowledgePointActivity extends AppCompatActivity {
     private RelativeLayout rl_loading;
     private ClickableImageView iv_back;
 
+
     // TODO 临时变量
 //    private List<BookExerciseEntity> itemList = new ArrayList<>();
 //    private String questionIds;
@@ -94,6 +95,7 @@ public class KnowledgePointActivity extends AppCompatActivity {
         contentView = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_show_zsd
                 , null, false);  // 获取布局,并设置为弹出窗口的布局
         contentView.findViewById(R.id.iv_back).setOnClickListener(v -> {finish(); window.dismiss(); });
+        contentView.findViewById(R.id.tv_ok).setOnClickListener(v -> {wv_content.evaluateJavascript("getCheckedIdsAndNames();", null); });
         wv_content = contentView.findViewById(R.id.wv_content);
         // 设置滚动条样式, 去掉滚动条, 但是滚动是可以的
         wv_content.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
@@ -122,6 +124,12 @@ public class KnowledgePointActivity extends AppCompatActivity {
         public void handleMessage(Message message) {
             super.handleMessage(message);
             if (message.what == 100) {
+                // 如果没有选知识点则不跳转,弹出提示:请先选择学习章节点
+                if (zhishidianId.equals("")) {
+                    Toast.makeText(KnowledgePointActivity.this, "请先选择学习章节点", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 //跳转判断
 //                String stu = getIntent().getStringExtra("stu");
                 String url;
@@ -195,93 +203,93 @@ public class KnowledgePointActivity extends AppCompatActivity {
     };
 
     // TODO 加载知识点id "dlzx230240"
-//    private void loadZSDID() {
-//        String mRequestUrl = "http://www.cn901.net:8111/AppServer/ajax/studentApp_getQuestionsZZXX.do?" +
-//                "userId=" + userName + "&subjectId=" + course_Id + "&catalogId=" + zhishidianId;
-//        Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
-//        StringRequest request = new StringRequest(mRequestUrl, response -> {
-//            try {
-//                JSONObject json = JsonUtils.getJsonObjectFromString(response);
-//                String itemString = json.getString("data");
-//                //TODO 汇报结束要进行修改
-////                itemString = "[]";
-//                //当试题列表为空时,需要跳转中间页进行处理
-//                if (itemString.equals("[]") || itemString.equals("") || itemString.equals("null")) {
-//                    Intent intent = new Intent(this, OnlineTestNullActivity.class);
-//                    intent.putExtra("userName", userName);
-//                    intent.putExtra("subjectId", course_Id);
-//                    intent.putExtra("courseName", course_name);
-//                    intent.putExtra("flag", "自主学习");
-//                    startActivity(intent);
-//                    finish();
-//                }
-//
-//                Log.d("wen0501", "itemString: " + itemString);
-//                Gson gson = new Gson();
-//                //使用Goson框架转换Json字符串为列表
-//                itemList = gson.fromJson(itemString, new TypeToken<List<BookExerciseEntity>>() {}.getType());
-//                questionIds = "";
-//                for (int i = 0; i < itemList.size(); i++) {
-//                    if (i == itemList.size() - 1) {
-//                        questionIds += itemList.get(i).questionId;
-//                    } else {
-//                        questionIds += itemList.get(i).questionId + ",";
-//                    }
-//                }
-//                System.out.println("questionIds:" + questionIds);
-//                System.out.println("itemList:" + itemList);
-//
-//                String message1 = json.getString("message");
-//                Log.d("song0321", "message: " + message1);
-//                Alert(message1);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }, error -> {
-//            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
-//        });
-//        MyApplication.addRequest(request, TAG);
-//    }
+    /*private void loadZSDID() {
+        String mRequestUrl = "http://www.cn901.net:8111/AppServer/ajax/studentApp_getQuestionsZZXX.do?" +
+                "userId=" + userName + "&subjectId=" + course_Id + "&catalogId=" + zhishidianId;
+        Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String itemString = json.getString("data");
+                //TODO 汇报结束要进行修改
+//                itemString = "[]";
+                //当试题列表为空时,需要跳转中间页进行处理
+                if (itemString.equals("[]") || itemString.equals("") || itemString.equals("null")) {
+                    Intent intent = new Intent(this, OnlineTestNullActivity.class);
+                    intent.putExtra("userName", userName);
+                    intent.putExtra("subjectId", course_Id);
+                    intent.putExtra("courseName", course_name);
+                    intent.putExtra("flag", "自主学习");
+                    startActivity(intent);
+                    finish();
+                }
+
+                Log.d("wen0501", "itemString: " + itemString);
+                Gson gson = new Gson();
+                //使用Goson框架转换Json字符串为列表
+                itemList = gson.fromJson(itemString, new TypeToken<List<BookExerciseEntity>>() {}.getType());
+                questionIds = "";
+                for (int i = 0; i < itemList.size(); i++) {
+                    if (i == itemList.size() - 1) {
+                        questionIds += itemList.get(i).questionId;
+                    } else {
+                        questionIds += itemList.get(i).questionId + ",";
+                    }
+                }
+                System.out.println("questionIds:" + questionIds);
+                System.out.println("itemList:" + itemList);
+
+                String message1 = json.getString("message");
+                Log.d("song0321", "message: " + message1);
+                Alert(message1);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+        });
+        MyApplication.addRequest(request, TAG);
+    }*/
 
     // TODO 弹出提示框
-//    private void Alert(String alert) {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
-//
-//        // 自定义title样式
-//        TextView tv = new TextView(this);
-//        tv.setText(alert);    // 内容
-//        tv.setTextSize(17); // 字体大小
-//        tv.setPadding(30, 40, 30, 40); // 位置
-//        tv.setTextColor(Color.parseColor("#000000")); // 颜色
-//
-//        // 设置title组件
-//        builder.setCustomTitle(tv);
-//
-//        // 设置确定按钮及点击事件
-//        builder.setNegativeButton("ok", (dialog, which) -> {
-//            // 点击ok时执行的逻辑
-//            Intent intent = new Intent(KnowledgePointActivity.this,
-//                    KnowledgeShiTiDetailActivity.class);
-//            intent.putExtra("userName", userName);  // 用户名
-//            intent.putExtra("subjectId", course_Id);    // 学科id
-//            intent.putExtra("name", course_name);  // 学科名
-//            intent.putExtra("allpage", String.valueOf(itemList.size()));  // 总页数
-//            intent.putExtra("questionIds", questionIds);  // 试题id
-//            System.out.println("questionIds: " + questionIds);
-//            intent.putExtra("pos", "1");  // 试题id数组
-//            startActivity(intent);
-//
-//            // 关闭对话框
-//            dialog.dismiss();
-//        });
-//
-//        // 禁止返回和外部点击
-//        builder.setCancelable(false);
-//
-//        // 对话框弹出
-//        AlertDialog dialog = builder.create();
-//        dialog.show();
-//    }
+    /*private void Alert(String alert) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
+
+        // 自定义title样式
+        TextView tv = new TextView(this);
+        tv.setText(alert);    // 内容
+        tv.setTextSize(17); // 字体大小
+        tv.setPadding(30, 40, 30, 40); // 位置
+        tv.setTextColor(Color.parseColor("#000000")); // 颜色
+
+        // 设置title组件
+        builder.setCustomTitle(tv);
+
+        // 设置确定按钮及点击事件
+        builder.setNegativeButton("ok", (dialog, which) -> {
+            // 点击ok时执行的逻辑
+            Intent intent = new Intent(KnowledgePointActivity.this,
+                    KnowledgeShiTiDetailActivity.class);
+            intent.putExtra("userName", userName);  // 用户名
+            intent.putExtra("subjectId", course_Id);    // 学科id
+            intent.putExtra("name", course_name);  // 学科名
+            intent.putExtra("allpage", String.valueOf(itemList.size()));  // 总页数
+            intent.putExtra("questionIds", questionIds);  // 试题id
+            System.out.println("questionIds: " + questionIds);
+            intent.putExtra("pos", "1");  // 试题id数组
+            startActivity(intent);
+
+            // 关闭对话框
+            dialog.dismiss();
+        });
+
+        // 禁止返回和外部点击
+        builder.setCancelable(false);
+
+        // 对话框弹出
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }*/
 
 
     // Java接口注入到Js中
@@ -298,6 +306,38 @@ public class KnowledgePointActivity extends AppCompatActivity {
             Message message = Message.obtain();
             zhishidian = str;
             zhishidianId = id;
+//            message.what = 100;
+//            handler.sendMessage(message);
+        }
+        // 获取选中的ID
+        @JavascriptInterface
+        public void sendCheckedIdsAndNames(String ids, String names) {
+            // 在这里处理拼接的ID字符串和名称字符串，例如显示在Log中
+            Log.d("Checked IDs", ids);
+            Log.d("Checked Names", names);
+            //            names = names.replaceAll("章节点有效答题[^：]*：", "");
+            // 在 "章节点有效答题" 前面添加换行符
+            names = names.replaceAll("(章节点有效答题)", "\n$1");
+
+            // 在 "考点" 后面添加换行符并去掉冒号和逗号，最后一个考点只去掉冒号
+            StringBuilder output = new StringBuilder();
+            String[] parts = names.split("考点");
+            for (int i = 0; i < parts.length - 1; i++) {
+                // 去掉逗号和冒号
+                String part = parts[i].replaceFirst("：,", "");
+                output.append(part).append("考点\n");
+            }
+            // 处理最后一个考点，去掉冒号
+            output.append(parts[parts.length - 1].replaceFirst("：$", ""));
+
+            // 打印结果
+            System.out.println(output.toString());
+
+
+
+            Message message = Message.obtain();
+            zhishidian = output.toString();
+            zhishidianId = ids;
             message.what = 100;
             handler.sendMessage(message);
         }
@@ -373,8 +413,22 @@ public class KnowledgePointActivity extends AppCompatActivity {
                 "</style>" +
                 "<script>\n" +
                 "    function _fk(obj) {\n" +
-                "        AndroidInterface.displayHTMLContent(obj.textContent,obj.getAttribute(\"id\"))" +
-                "     }\n" +
+                "        AndroidInterface.displayHTMLContent(obj.textContent, obj.getAttribute(\"id\"));\n" +
+                "    }\n" +
+                "    function getCheckedIdsAndNames() {\n" +
+                "        var checkboxes = document.querySelectorAll('input[type=\"checkbox\"]:checked');\n" +
+                "        var ids = [];\n" +
+                "        var names = [];\n" +
+                "        for (var i = 0; i < checkboxes.length; i++) {\n" +
+                "            var checkbox = checkboxes[i];\n" +
+                "            var label = document.querySelector('label[id=\"' + checkbox.id + '\"]');\n" +
+                "            if (label) {\n" +
+                "                ids.push(checkbox.id);\n" +
+                "                names.push(label.textContent.trim());\n" +
+                "            }\n" +
+                "        }\n" +
+                "        AndroidInterface.sendCheckedIdsAndNames(ids.join(','), names.join(','));\n" +
+                "    }\n" +
                 "</script>" +
                 "</head><body style=\"color: rgb(117, 117, 117); font-size: 16px; margin: 0px; padding: 0px\">" + modifiedStr +
                 "</body>";

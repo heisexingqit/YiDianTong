@@ -132,6 +132,14 @@ public class ShiTiDetailReadingFragment extends Fragment implements View.OnClick
         allpage = arg.getString("allpage");
         flag = getActivity().getIntent().getStringExtra("flag");
 
+        //将试题答案格式化，利用正则表达式去掉<>标签及里面的内容
+        String answer1 = bookExerciseEntity.getShiTiAnswer();
+        String regEx = "<[^>]+>";
+        Pattern p = Pattern.compile(regEx);
+        Matcher m1 = p.matcher(answer1);
+        String answerStr = m1.replaceAll("").trim();
+        bookExerciseEntity.setShiTiAnswer(answerStr);
+
         //使用正则表达式获得题目答案
         Pattern pattern = Pattern.compile("故选([A-Z])");
         Matcher m = pattern.matcher(bookExerciseEntity.getShiTiAnswer());
@@ -149,7 +157,7 @@ public class ShiTiDetailReadingFragment extends Fragment implements View.OnClick
 
         // 知识点栏
         ftv_br_title = view.findViewById(R.id.ftv_br_title);
-        ftv_br_title.setText(bookExerciseEntity.getQuestionsSource());
+        ftv_br_title.setText(bookExerciseEntity.getQuestionKeyword());
         fiv_de_icon = view.findViewById(R.id.fiv_de_icon);
 
 
@@ -162,11 +170,12 @@ public class ShiTiDetailReadingFragment extends Fragment implements View.OnClick
 
         // 题号和平均分
         ftv_bd_num = view.findViewById(R.id.ftv_bd_num);
-        if (bookExerciseEntity.getQuestionKeyword().equals("")) {
-            ftv_bd_num.setText("第" + currentpage + "题");
-        } else {
-            ftv_bd_num.setText("第" + currentpage + "题  (" + bookExerciseEntity.getQuestionKeyword() + "");
-        }
+        ftv_bd_num.setText("第" + currentpage + "题");
+//        if (bookExerciseEntity.getQuestionKeyword().equals("")) {
+//            ftv_bd_num.setText("第" + currentpage + "题");
+//        } else {
+//            ftv_bd_num.setText("第" + currentpage + "题  (" + bookExerciseEntity.getQuestionKeyword() + "");
+//        }
         ftv_bd_score = view.findViewById(R.id.ftv_bd_score);
         ftv_bd_score.setVisibility(View.GONE);
 
@@ -238,6 +247,12 @@ public class ShiTiDetailReadingFragment extends Fragment implements View.OnClick
         // 举一反三or巩固提升
         fll_bd_analysis.setVisibility(View.GONE);
         fll_bd_answer.setVisibility(View.VISIBLE);
+
+        getActivity().findViewById(R.id.fiv_back).setOnClickListener(v -> {
+            if (getActivity() != null) {
+                getActivity().finish();
+            }
+        });
         // 获得学生本地保存的作答
         showLoadAnswer();
 

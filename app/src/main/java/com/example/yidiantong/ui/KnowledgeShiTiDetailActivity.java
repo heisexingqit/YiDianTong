@@ -34,6 +34,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,6 +58,7 @@ public class KnowledgeShiTiDetailActivity extends AppCompatActivity implements R
     String allpage;
     private String pos; //题目位置
     private String[] questionIds;//题目ID数组
+    private List<BookExerciseEntity> bookExerciseEntityList;  //题目列表
 
 
     @Override
@@ -69,9 +71,10 @@ public class KnowledgeShiTiDetailActivity extends AppCompatActivity implements R
 
         //顶栏返回按钮
         findViewById(R.id.fiv_back).setOnClickListener(v -> {
-            this.finish();
+            finish();
         });
 
+        bookExerciseEntityList = new ArrayList<>();
         //获取Intent参数
         course_name = getIntent().getStringExtra("name");
         TextView tv_title = findViewById(R.id.ftv_title);
@@ -83,6 +86,9 @@ public class KnowledgeShiTiDetailActivity extends AppCompatActivity implements R
         pos = getIntent().getStringExtra("pos");
         allpage = getIntent().getStringExtra("allpage");
         questionIds = getIntent().getStringExtra("questionIds").split(",");
+        bookExerciseEntityList = (List<BookExerciseEntity>) getIntent().getSerializableExtra("itemList");
+        System.out.println("bookExerciseEntityList ^-^:" + bookExerciseEntityList.size());
+
 
         currentItem = Integer.valueOf(pos);
         fvp_book_recycle.setCurrentItem(currentItem);
@@ -119,7 +125,7 @@ public class KnowledgeShiTiDetailActivity extends AppCompatActivity implements R
             //设置title组件
             builder.setCustomTitle(tv);
             AlertDialog dialog = builder.create();
-            builder.setNegativeButton("ok", null);
+            builder.setNegativeButton("关闭", null);
             //禁止返回和外部点击
             builder.setCancelable(false);
             //对话框弹出
@@ -141,14 +147,14 @@ public class KnowledgeShiTiDetailActivity extends AppCompatActivity implements R
             AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
             //自定义title样式
             TextView tv = new TextView(this);
-            tv.setText("已经最后一题了");    //内容
+            tv.setText("已经是最后一题了");    //内容
             tv.setTextSize(17);//字体大小
             tv.setPadding(30, 40, 30, 40);//位置
             tv.setTextColor(Color.parseColor("#000000"));//颜色
             //设置title组件
             builder.setCustomTitle(tv);
             AlertDialog dialog = builder.create();
-            builder.setNegativeButton("ok", null);
+            builder.setNegativeButton("关闭", null);
             //禁止返回和外部点击
             builder.setCancelable(false);
             //对话框弹出
@@ -229,14 +235,7 @@ public class KnowledgeShiTiDetailActivity extends AppCompatActivity implements R
                 for (BookExerciseEntity item : itemList) {
                     //设置选项个数
                     item.setAnswerNumber(answerNumber);
-                    System.out.println("answerNumber ^-^:" + item.getAnswerNumber());
-                    //将试题答案格式化，利用正则表达式去掉<>标签及里面的内容
-                    String answer = item.getShiTiAnswer();
-                    String regEx = "<[^>]+>";
-                    Pattern p = Pattern.compile(regEx);
-                    Matcher m = p.matcher(answer);
-                    String answerStr = m.replaceAll("").trim();
-                    item.setShiTiAnswer(answerStr);
+                    item.setQuestionKeyword(bookExerciseEntityList.get(pos-1).getQuestionKeyword());
                 }
                 Log.e("wen0223", "loadItems_Net: " + itemList);
                 //封装消息，传递给主线程

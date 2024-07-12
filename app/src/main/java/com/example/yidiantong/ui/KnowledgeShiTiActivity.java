@@ -10,10 +10,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -63,6 +65,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
     private ClickableImageView fiv_refresh;//刷新题目按钮
     private ClickableImageView fiv_select_stu;//选择学生按钮
     private TextView tv_knowledge_name;
+    private TextView tv_next_exam_point;
     private LinearLayout ll_kaodian_filtrate;
 
     //请求数据参数
@@ -81,8 +84,10 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
     //列表数据
     private List<BookExerciseEntity> itemList = new ArrayList<>();
     private List<String> stuList = new ArrayList<>();//学生列表
-    private List<ExamPoint> examPoints = new ArrayList<>();//考点列表
-    private List<String> selectedExamPoints = new ArrayList<>();//已选考点列表
+    private List<Catalog> catalogs = new ArrayList<>();//考点列表
+    private int examPointNum = 0;
+//    private List<ExamPoint> examPoints = new ArrayList<>();//考点列表
+    private HashSet<String> selectedExamPoints = new HashSet<>();//已选考点列表
     private String questionIds;
     BookAutoAdapter adapter;
     private RecyclerView frv_detail;
@@ -106,11 +111,8 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
 
         preferences = getSharedPreferences("shiti", MODE_PRIVATE);
 
-        //顶栏返回按钮
-        findViewById(R.id.fiv_back).setOnClickListener(v -> {
-            finish();
-        });
-
+        tv_next_exam_point = findViewById(R.id.tv_next_exam_point);
+        tv_next_exam_point.setOnClickListener(v -> getKaoDianList());
 
         frv_detail = findViewById(R.id.frv_detail);
         //RecyclerView两步必要配置
@@ -119,7 +121,6 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
 
         //获取Intent参数,设置学科错题本最上面的内容
         userName = getIntent().getStringExtra("userName");  //用户名
-
         subjectId = getIntent().getStringExtra("subjectId"); //学科名
         course_name = getIntent().getStringExtra("courseName"); //学科id
         zhishidian = getIntent().getStringExtra("zhishidian"); //知识点
@@ -129,6 +130,22 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
         jiaocai = getIntent().getStringExtra("jiaocaiId"); //教材
         unitId = getIntent().getStringExtra("unitId"); //考点
 //        reqName = userName;
+
+        //顶栏返回按钮
+        findViewById(R.id.fiv_back).setOnClickListener(v -> {
+            Intent intent = new Intent(this, KnowledgeStudyChangeActivity.class);
+            intent.putExtra("userName", userName);
+            intent.putExtra("subjectId", subjectId);
+            intent.putExtra("courseName", course_name);
+            intent.putExtra("zhishidian", zhishidian);
+            intent.putExtra("zhishidianId", zhishidianId);
+            intent.putExtra("xueduanId", xueduan);
+            intent.putExtra("banbenId", banben);
+            intent.putExtra("jiaocaiId", jiaocai);
+            intent.putExtra("unitId", unitId);
+            startActivity(intent);
+            finish();
+        });
 
         TextView tv_title = findViewById(R.id.ftv_title);
         tv_title.setText("知识点试题");
@@ -180,6 +197,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
             intent.putExtra("name", course_name);  // 学科名
             intent.putExtra("allpage", String.valueOf(itemList.size()));  // 总页数
             intent.putExtra("questionIds", questionIds);  // 题目id
+            intent.putExtra("itemList", (Serializable) itemList);  // 知识点
             pos = pos + 1;
             intent.putExtra("pos", String.valueOf(pos));
             startActivity(intent);
@@ -256,7 +274,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
 
         CheckBox selectAllCheckBox = new CheckBox(this);
         selectAllCheckBox.setText("全选");
-        if (selectedExamPoints.size() == examPoints.size()) {
+        if (selectedExamPoints.size() == examPointNum) {
             selectAllCheckBox.setChecked(true);
         }
 
@@ -267,56 +285,87 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
 
-        for (ExamPoint examPoint : examPoints) {
-            View itemView = inflater.inflate(R.layout.item_exam_point, null);
-            CheckBox checkBox = itemView.findViewById(R.id.checkBox);
-            TextView textName = itemView.findViewById(R.id.textName);
-            TextView masteryLevel = itemView.findViewById(R.id.masteryLevel);
+        for (Catalog catalog : catalogs) {
+            View catalogView = inflater.inflate(R.layout.item_catalog, null);
+            TextView catalogName = catalogView.findViewById(R.id.catalogName);
+            TextView catalogInfo = catalogView.findViewById(R.id.catalogInfo);
+            catalogName.setText(catalog.getCatalogName());
+            catalogInfo.setText(catalog.getInfo());
+            layout.addView(catalogView);
 
-            textName.setText(examPoint.getPointName() + "(" + examPoint.getDbid() + ")");
-            masteryLevel.setText(examPoint.getInfo());
-            checkBox.setChecked(selectedExamPoints.contains(examPoint.getDbid()));
+            for (ExamPoint examPoint : catalog.getList()) {
+                View itemView = inflater.inflate(R.layout.item_exam_point, null);
+                CheckBox checkBox = itemView.findViewById(R.id.checkBox);
+                TextView textName = itemView.findViewById(R.id.textName);
+                TextView masteryLevel = itemView.findViewById(R.id.masteryLevel);
 
-            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (isChecked) {
-                    if (!selectedExamPoints.contains(examPoint.getDbid())) {
-                        selectedExamPoints.add(examPoint.getDbid());
-                    }
-                } else {
-                    selectedExamPoints.remove(examPoint.getDbid());
-                }
-                if (!isClickAllCheckBoxes) {
-                    if (selectedExamPoints.size() == examPoints.size()) {
-                        selectAllCheckBox.setChecked(true);
+                textName.setText(examPoint.getPointName() + "(" + examPoint.getDbid() + ")");
+                masteryLevel.setText(examPoint.getInfo());
+                checkBox.setChecked(selectedExamPoints.contains(examPoint.getDbid()));
+
+                checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    Log.d("syq", "onCheckedChanged: 我点击了复选框" + isChecked);
+                    if (isChecked) {
+                        if (!selectedExamPoints.contains(examPoint.getDbid())) {
+                            selectedExamPoints.add(examPoint.getDbid());
+                            System.out.println("选中的考点：" + selectedExamPoints.size() + " " + examPointNum);
+                        }
                     } else {
-                        //防止一个一个取消复选框时，全选按钮都不选中
-                        isUpdatingAllCheckBoxes = true;
-                        selectAllCheckBox.setChecked(false);
+                        selectedExamPoints.remove(examPoint.getDbid());
                     }
-                }
+                    // 将其他与examPoint.getDbid()相同的复选框选中状态设置为与当前复选框相同
+                    for (int i = 0; i < layout.getChildCount(); i++) {
+                        View view = layout.getChildAt(i);
+                        // 只处理包含复选框的子视图
+                        if (view instanceof ViewGroup) {
+                            CheckBox cb = view.findViewById(R.id.checkBox);
+                            TextView tv = view.findViewById(R.id.textName);
+                            if (cb != null && cb != checkBox && tv.getText().toString().contains(examPoint.getPointName())) {
+                                cb.setChecked(isChecked);
+                            }
+                        }
+                    }
 
-            });
 
-            layout.addView(itemView);
+                    if (!isClickAllCheckBoxes) {
+                        Log.d("syq", "onCheckedChanged: 我走到了1号" + selectedExamPoints.size() + " " + examPointNum);
+                        if (selectedExamPoints.size() == examPointNum) {
+                            selectAllCheckBox.setChecked(true);
+                        } else {
+                            //防止一个一个取消复选框时，全选按钮都不选中
+                            isUpdatingAllCheckBoxes = true;
+                            selectAllCheckBox.setChecked(false);
+                        }
+                    }
+
+                });
+                layout.addView(itemView);
+            }
         }
 
         //全选按钮事件,当全选按钮被选中时，将所有考点的复选框选中,否则取消选中
         selectAllCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Log.d("syq", "onCheckedChanged: 我点击了全选按钮" + isChecked);
             if (isUpdatingAllCheckBoxes) {
                 isUpdatingAllCheckBoxes = false;
             } else {
-                isClickAllCheckBoxes = true;//防止点击全选按钮时，触发单个复选框的事件
+                isClickAllCheckBoxes = true; // 防止点击全选按钮时，触发单个复选框的事件
                 for (int i = 0; i < layout.getChildCount(); i++) {
                     View itemView = layout.getChildAt(i);
-                    if (itemView instanceof LinearLayout) {
+                    // 只处理包含复选框的子视图
+                    if (itemView instanceof ViewGroup) {
                         CheckBox checkBox = itemView.findViewById(R.id.checkBox);
-                        checkBox.setChecked(isChecked);
+                        if (checkBox != null) {
+                            checkBox.setChecked(isChecked);
+                        }
                     }
                 }
                 selectedExamPoints.clear();
                 if (isChecked) {
-                    for (ExamPoint examPoint : examPoints) {
-                        selectedExamPoints.add(examPoint.getDbid());
+                    for (Catalog catalog : catalogs) {
+                        for (ExamPoint examPoint : catalog.getList()) {
+                            selectedExamPoints.add(examPoint.getDbid());
+                        }
                     }
                 }
                 isClickAllCheckBoxes = false;
@@ -358,11 +407,11 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
                 Log.d("wen0501", "itemString: " + itemString);
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
-                examPoints = gson.fromJson(itemString, new TypeToken<List<ExamPoint>>() {
+                catalogs = gson.fromJson(itemString, new TypeToken<List<Catalog>>() {
                 }.getType());
 
                 // TODO 去掉,py算法掌握度后面的字符串 && 对考点信息info进行处理, 保留两位小数
-                for (ExamPoint examPoint : examPoints) {
+                /*for (ExamPoint examPoint : examPoints) {
                     String info = examPoint.getInfo();
                     // 清除两边的空格
                     info = info.trim();
@@ -380,14 +429,16 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
                     info = info.substring(0, index2 + 1) + df.format(value) + info.substring(index3);
                     System.out.println(info);
                     examPoint.setInfo(info);
-                }
-
+                }*/
 
                 if (selectedExamPoints == null || selectedExamPoints.size() == 0) {
                     //第一次默认全选,并将全部考点dbid拼接到pointIds中
-                    for (ExamPoint examPoint : examPoints) {
-                        selectedExamPoints.add(examPoint.getDbid());
+                    for (Catalog catalog : catalogs) {
+                        for (ExamPoint examPoint : catalog.getList()) {
+                            selectedExamPoints.add(examPoint.getDbid());
+                        }
                     }
+                    examPointNum = selectedExamPoints.size();
                 }
                 pointIds = "";
                 StringBuilder sb = new StringBuilder();
@@ -530,6 +581,52 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
             loadFirst = false;
         }
 
+    }
+
+    private static class Catalog {
+        private String catalogName;
+        private String catalogCode;
+        private String info;
+        private List<ExamPoint> list;
+
+        public Catalog(String catalogName, String catalogCode, String info, List<ExamPoint> list) {
+            this.catalogName = catalogName;
+            this.catalogCode = catalogCode;
+            this.info = info;
+            this.list = list;
+        }
+
+        public String getCatalogName() {
+            return catalogName;
+        }
+
+        public void setCatalogName(String catalogName) {
+            this.catalogName = catalogName;
+        }
+
+        public String getCatalogCode() {
+            return catalogCode;
+        }
+
+        public void setCatalogCode(String catalogCode) {
+            this.catalogCode = catalogCode;
+        }
+
+        public String getInfo() {
+            return info;
+        }
+
+        public void setInfo(String info) {
+            this.info = info;
+        }
+
+        public List<ExamPoint> getList() {
+            return list;
+        }
+
+        public void setList(List<ExamPoint> list) {
+            this.list = list;
+        }
     }
 
     private static class ExamPoint {

@@ -4,39 +4,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <RelativeLayout
-        android:id="@+id/ll_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/white"
-        android:padding="20dp">
-
+        android:layout_below="@+id/line_knowledge_name"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
 
         <include layout="@layout/loading_page2" />
 
-        <com.example.yidiantong.View.ClickableImageView
+        <!--<com.example.yidiantong.View.ClickableImageView
             android:id="@+id/iv_back"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@drawable/left_ex" />
+            android:src="@drawable/close_blue" />
 
         <TextView
             android:id="@+id/tv_ok"
             android:layout_width="30dp"
             android:layout_height="20dp"
-            android:layout_marginRight="25dp"
             android:layout_alignParentEnd="true"
-            android:text="确定"
+            android:layout_marginRight="25dp"
+            android:text="刷新"
             android:textColor="@color/baby_blue" />
 
 
-        <!--        <com.example.yidiantong.View.ClickableImageView-->
-        <!--            android:id="@+id/iv_back"-->
-        <!--            android:layout_width="20dp"-->
-        <!--            android:layout_height="20dp"-->
-        <!--            android:layout_alignParentEnd="true"-->
-        <!--            android:src="@drawable/close_blue" />-->
+                <com.example.yidiantong.View.ClickableImageView
+                    android:id="@+id/iv_back"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/close_blue" />-->
 
         <ScrollView
             android:layout_width="match_parent"

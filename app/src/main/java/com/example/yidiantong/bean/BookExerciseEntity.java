@@ -14,6 +14,15 @@ public class BookExerciseEntity implements Serializable {
     public String questionId; // 题目id
     public int answerNumber;//答案个数
     public String questionKeyword;//试题考点
+    public String score;//试题分数
+
+    public String getScore() {
+        return score;
+    }
+
+    public void setScore(String score) {
+        this.score = score;
+    }
 
     public String getQuestionKeyword() {
         return questionKeyword;

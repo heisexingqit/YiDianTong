@@ -45,6 +45,9 @@ import com.example.yidiantong.util.RecyclerInterface;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 public class ShiTiDetailMultipleFragment extends Fragment implements View.OnClickListener {
 
@@ -130,12 +133,20 @@ public class ShiTiDetailMultipleFragment extends Fragment implements View.OnClic
         allpage = arg.getString("allpage");
         flag = getActivity().getIntent().getStringExtra("flag");
 
+        //将试题答案格式化，利用正则表达式去掉<>标签及里面的内容
+        String answer = bookExerciseEntity.getShiTiAnswer();
+        String regEx = "<[^>]+>";
+        Pattern p = Pattern.compile(regEx);
+        Matcher m = p.matcher(answer);
+        String answerStr = m.replaceAll("").trim();
+        bookExerciseEntity.setShiTiAnswer(answerStr);
+
         //获取view
         View view = inflater.inflate(R.layout.fragment_book_detail_multiple, container, false);
 
         // 知识点栏
         ftv_br_title = view.findViewById(R.id.ftv_br_title);
-        ftv_br_title.setText(bookExerciseEntity.getQuestionsSource());
+        ftv_br_title.setText(bookExerciseEntity.getQuestionKeyword());
 
         //题面显示
         WebView fwv_bd_content = view.findViewById(R.id.fwv_bd_content);
@@ -144,11 +155,12 @@ public class ShiTiDetailMultipleFragment extends Fragment implements View.OnClic
 
         // 题号和平均分
         ftv_bd_num = view.findViewById(R.id.ftv_bd_num);
-        if (bookExerciseEntity.getQuestionKeyword().equals("")) {
-            ftv_bd_num.setText("第" + currentpage + "题" + bookExerciseEntity.getShiTiAnswer());
-        } else {
-            ftv_bd_num.setText("第" + currentpage + "题" + bookExerciseEntity.getShiTiAnswer() +  "(" + bookExerciseEntity.getQuestionKeyword() + "");
-        }
+        ftv_bd_num.setText("第" + currentpage + "题" + bookExerciseEntity.getShiTiAnswer());
+//        if (bookExerciseEntity.getQuestionKeyword().equals("")) {
+//            ftv_bd_num.setText("第" + currentpage + "题" + bookExerciseEntity.getShiTiAnswer());
+//        } else {
+//            ftv_bd_num.setText("第" + currentpage + "题" + bookExerciseEntity.getShiTiAnswer() +  "(" + bookExerciseEntity.getQuestionKeyword() + "");
+//        }
         ftv_bd_score = view.findViewById(R.id.ftv_bd_score);
         ftv_bd_score.setVisibility(View.GONE);
 
@@ -205,6 +217,12 @@ public class ShiTiDetailMultipleFragment extends Fragment implements View.OnClic
         // 举一反三or巩固提升模式
         fll_bd_analysis.setVisibility(View.GONE);
         fll_bd_answer.setVisibility(View.VISIBLE);
+
+        getActivity().findViewById(R.id.fiv_back).setOnClickListener(v -> {
+            if (getActivity() != null) {
+                getActivity().finish();
+            }
+        });
         // 获得本地学生作答
         showLoadAnswer();
 
