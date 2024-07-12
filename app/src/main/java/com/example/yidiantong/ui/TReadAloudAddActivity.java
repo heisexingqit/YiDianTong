@@ -147,7 +147,7 @@ public class TReadAloudAddActivity extends AppCompatActivity implements View.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tread_aloud);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         //顶栏返回按钮
         findViewById(R.id.fiv_back).setOnClickListener(v -> {
             this.finish();

@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -33,7 +34,7 @@ public class CourseScannerActivity extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_course_scanner);
             barcodeScannerView = findViewById(R.id.zxing_barcode_scanner);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         //顶栏返回按钮
         findViewById(R.id.fiv_back).setOnClickListener(v -> {
             this.finish();

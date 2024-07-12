@@ -55,7 +55,7 @@ public class THomeworkMarkSubmitActivity extends AppCompatActivity implements Vi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thomework_mark_submit);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         // 布局调整
         findViewById(R.id.iv_eye).setVisibility(View.INVISIBLE);
 

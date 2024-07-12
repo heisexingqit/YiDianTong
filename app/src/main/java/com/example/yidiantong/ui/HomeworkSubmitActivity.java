@@ -59,7 +59,7 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homework_submit);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         String title = getIntent().getStringExtra("title");
         stuAnswer = getIntent().getStringArrayExtra("stuAnswer");
         username = getIntent().getStringExtra("username");

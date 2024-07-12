@@ -82,7 +82,7 @@ public class BookSelectorActivity extends AppCompatActivity implements View.OnCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_selector);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         ll_bottom_divider = findViewById(R.id.ll_bottom_divider);
 
         findViewById(R.id.iv_back).setOnClickListener(v -> finish());

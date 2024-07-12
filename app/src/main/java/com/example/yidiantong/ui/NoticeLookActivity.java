@@ -60,7 +60,7 @@ public class NoticeLookActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notice_look);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         //顶栏返回按钮
         findViewById(R.id.fiv_back).setOnClickListener(v -> {
             this.finish();

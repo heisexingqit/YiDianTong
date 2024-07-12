@@ -70,7 +70,7 @@ public class KnowledgeStudyChangeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.item_t_knowledge_study_change);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         //加载页
         rl_loading = findViewById(R.id.rl_loading);
         ftv_title = findViewById(R.id.ftv_title);

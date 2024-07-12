@@ -71,7 +71,7 @@ public class THomeworkReportActivity extends AppCompatActivity implements View.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thomework_report);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         // 获取参数
         Intent intent = getIntent();
         username = intent.getStringExtra("username");

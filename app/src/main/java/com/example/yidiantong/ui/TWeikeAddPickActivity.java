@@ -187,7 +187,7 @@ public class TWeikeAddPickActivity extends AppCompatActivity implements View.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tweike_add_pick);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         findViewById(R.id.iv_back).setOnClickListener(v -> finish());
 
         iv_search_select = findViewById(R.id.iv_search_select);

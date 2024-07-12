@@ -24,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.DoodleView;
 import com.example.yidiantong.View.DrawEditorDialog;
@@ -59,7 +60,7 @@ public class DoodleActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_doodle);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         /**
          * 拿URI
          */

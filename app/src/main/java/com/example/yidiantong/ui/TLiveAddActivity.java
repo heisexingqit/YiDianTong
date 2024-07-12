@@ -114,6 +114,8 @@ public class TLiveAddActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tlive_add);
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
+
         // 获取各种组件变量
         builder = new AlertDialog.Builder(this);
         findViewById(R.id.iv_back).setOnClickListener(v -> finish());

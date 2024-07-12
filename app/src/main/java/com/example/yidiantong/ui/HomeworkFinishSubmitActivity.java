@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.ShowStuAnsAdapter;
 
@@ -23,7 +24,7 @@ public class HomeworkFinishSubmitActivity extends AppCompatActivity implements V
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homework_finish_submit);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         String title = getIntent().getStringExtra("title");
         stuAnswer = getIntent().getStringArrayExtra("stuAnswer");
 

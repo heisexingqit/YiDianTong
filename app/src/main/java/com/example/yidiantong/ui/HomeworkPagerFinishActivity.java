@@ -78,7 +78,7 @@ public class HomeworkPagerFinishActivity extends AppCompatActivity implements Vi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homework_pager_finish);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         /**
          * 获取传入Intent参数
          */

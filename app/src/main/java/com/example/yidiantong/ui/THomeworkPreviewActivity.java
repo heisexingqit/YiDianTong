@@ -47,6 +47,7 @@ public class THomeworkPreviewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thomework_preview);
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         paperId = getIntent().getStringExtra("paperId");
         homeworkName = getIntent().getStringExtra("homeworkName");
         findViewById(R.id.iv_back).setOnClickListener(view -> finish());

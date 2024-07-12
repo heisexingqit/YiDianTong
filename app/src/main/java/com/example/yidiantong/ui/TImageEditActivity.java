@@ -14,6 +14,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.util.ImageUtils;
@@ -34,6 +35,7 @@ public class TImageEditActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timage_edit);
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         findViewById(R.id.btn_save).setOnClickListener(this);
 
     }

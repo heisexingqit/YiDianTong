@@ -99,6 +99,7 @@ public class THomeworkActivity extends AppCompatActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         Log.e(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         setContentView(R.layout.activity_thomework);
         Intent intent = getIntent();
         taskId = intent.getStringExtra("taskId");

@@ -63,7 +63,7 @@ public class MainPagerActivity extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_pager);
         Log.e(TAG, "onCreate: 创建");
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         // 样式代码 ----------------------开始------------------------
         //获取组件
         findViewById(R.id.ll_bottom_home).setOnClickListener(this);

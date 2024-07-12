@@ -130,6 +130,7 @@ public class BookExercise2ThreeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_exercise2three);
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         questionId = getIntent().getStringExtra("questionId");
         Log.e("wen0314", "onCreate: " + questionId);
         Log.e("wen0314", "BookExerciseActivity:提分练习 " );

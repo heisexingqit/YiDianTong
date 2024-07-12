@@ -63,6 +63,7 @@ public class BookExerciseDetailActivity extends AppCompatActivity implements Rec
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_exercise_detail);
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         fvp_book_recycle = findViewById(R.id.fvp_book_recycle);
         adapter = new BooksRecyclerAdapter(getSupportFragmentManager());
         fvp_book_recycle.setAdapter(adapter);

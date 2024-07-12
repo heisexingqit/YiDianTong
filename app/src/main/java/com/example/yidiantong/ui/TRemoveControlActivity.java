@@ -143,7 +143,7 @@ public class TRemoveControlActivity extends AppCompatActivity implements THuDong
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tremove_control);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         // 下课和列表
         ftv_rc_break = findViewById(R.id.ftv_rc_break);
         fiv_rc_skbcd = findViewById(R.id.fiv_rc_skbcd);

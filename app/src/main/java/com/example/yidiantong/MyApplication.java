@@ -1,8 +1,10 @@
 package com.example.yidiantong;
 
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
@@ -15,6 +17,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.database.YDTDatabase;
+import com.example.yidiantong.ui.LoginActivity;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -146,5 +149,34 @@ public class MyApplication extends Application {
     }
 
     public static WindowManager.LayoutParams wmParams = new WindowManager.LayoutParams();
+
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        // 当应用终止时，记录状态或执行清理工作
+        Log.d(TAG, "Application is terminating.");
+    }
+
+    // 添加一个方法来检查全局变量状态
+    public static boolean checkGlobalVariablesStatus() {
+        // 假设我们以某个全局变量作为检查点
+        if (username == null || username.isEmpty()) {
+            // 如果全局变量已清空，返回true
+            return true;
+        }
+        return false;
+    }
+
+    // 在Activity的onCreate()方法中调用此检查方法
+    public void checkAndHandleGlobalVariables(Activity activity) {
+        if (checkGlobalVariablesStatus()) {
+            // 如果全局变量已清空，导航回首页或执行其他操作
+            Intent intent = new Intent(activity, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            activity.startActivity(intent);
+            activity.finish();
+        }
+    }
 
 }

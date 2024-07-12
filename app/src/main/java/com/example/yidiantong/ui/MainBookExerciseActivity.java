@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.NoScrollViewPager;
 import com.example.yidiantong.adapter.MainPagerAdapter;
@@ -17,6 +18,7 @@ public class MainBookExerciseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_book);
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         fsvp_detail = findViewById(R.id.fsvp_detail);
         MainPagerAdapter adapter = new MainPagerAdapter(getSupportFragmentManager());
         fsvp_detail.setAdapter(adapter);

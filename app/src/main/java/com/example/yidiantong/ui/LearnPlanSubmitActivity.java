@@ -58,7 +58,7 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_learn_plan_submit);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         title = getIntent().getStringExtra("title");
         stuAnswer = getIntent().getStringArrayExtra("stuAnswer");
         username = getIntent().getStringExtra("username");

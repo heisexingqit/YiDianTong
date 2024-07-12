@@ -75,7 +75,7 @@ public class KnowledgePointActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.item_t_homework_add_show_zsd);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         //加载页
         rl_loading = findViewById(R.id.rl_loading);
         iv_back = findViewById(R.id.iv_back);

@@ -60,6 +60,7 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_recycle);
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         fvp_book_recycle = findViewById(R.id.fvp_book_recycle);
         adapter = new BooksRecyclerAdapter(getSupportFragmentManager());
         fvp_book_recycle.setAdapter(adapter);

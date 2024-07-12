@@ -186,6 +186,8 @@ public class TTeachEditHomeworkCameraActivity extends AppCompatActivity implemen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tteach_edit_homework_camera);
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
+
         findViewById(R.id.iv_back).setOnClickListener(v -> finish());
         rl_loading = findViewById(R.id.rl_loading); // 遮蔽
 

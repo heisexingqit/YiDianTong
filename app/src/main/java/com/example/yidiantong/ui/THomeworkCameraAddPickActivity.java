@@ -215,6 +215,8 @@ public class THomeworkCameraAddPickActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thomework_camera_add_pick);
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
+
         findViewById(R.id.iv_back).setOnClickListener(v -> finish());
 
         findViewById(R.id.btn_save).setOnClickListener(this);

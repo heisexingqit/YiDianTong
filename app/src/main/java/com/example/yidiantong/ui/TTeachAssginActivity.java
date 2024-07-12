@@ -134,6 +134,8 @@ public class TTeachAssginActivity extends AppCompatActivity implements View.OnCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tteach_assgin);
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
+
         Intent intent = getIntent();
 
         learnPlanId = intent.getStringExtra("learnPlanId");

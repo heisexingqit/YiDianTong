@@ -175,7 +175,7 @@ public class THomeworkAddPickActivity extends AppCompatActivity implements View.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thomework_add_pick);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         findViewById(R.id.iv_back).setOnClickListener(v -> finish());
 
         iv_search_select = findViewById(R.id.iv_search_select);

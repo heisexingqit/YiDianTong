@@ -81,7 +81,7 @@ public class OnlineTestActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_book_exercise);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         preferences = getSharedPreferences("shiti", MODE_PRIVATE);
 
         //顶栏返回按钮

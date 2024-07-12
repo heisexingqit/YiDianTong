@@ -126,7 +126,7 @@ public class TPackageAddActivity extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tpackage_add);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         // 获取组件
         ll_top = findViewById(R.id.ll_top);
         et_name = findViewById(R.id.et_name);

@@ -82,7 +82,7 @@ public class LiveListActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_list);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         // 获取组件
         et_search = findViewById(R.id.et_search);
         tv_search = findViewById(R.id.tv_search);
