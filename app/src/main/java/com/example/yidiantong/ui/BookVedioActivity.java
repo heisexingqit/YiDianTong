@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
@@ -25,6 +26,7 @@ public class BookVedioActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_vedio);
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         //顶栏返回按钮
         findViewById(R.id.fiv_back).setOnClickListener(v -> {
             this.finish();

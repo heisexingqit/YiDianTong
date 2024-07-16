@@ -32,6 +32,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.CustomDraw;
 import com.example.yidiantong.util.Constant;
@@ -74,6 +75,8 @@ public class THomeworkImageMark extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thomework_image_mark);
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
+
         customDraw = findViewById(R.id.CustomDraw);
         customDraw.makeSquare();
         rl_submitting = findViewById(R.id.rl_submitting);

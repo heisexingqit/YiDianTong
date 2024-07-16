@@ -62,7 +62,7 @@ public class ResourceFolderActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resource_folder);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         findViewById(R.id.iv_back).setOnClickListener(view -> finish());
 
         //获取组件

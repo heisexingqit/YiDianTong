@@ -71,7 +71,7 @@ public class CourseLookActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_look);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         ftv_cl_classname = findViewById(R.id.ftv_cl_classname);
         ftv_cl_teaname = findViewById(R.id.ftv_cl_teaname);
         ftv_cl_stuname = findViewById(R.id.ftv_cl_stuname);

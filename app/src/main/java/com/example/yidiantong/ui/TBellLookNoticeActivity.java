@@ -96,7 +96,7 @@ public class TBellLookNoticeActivity extends AppCompatActivity implements View.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tbell_look_notice);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         //顶栏返回按钮
         findViewById(R.id.fiv_back).setOnClickListener(v -> {
             this.finish();

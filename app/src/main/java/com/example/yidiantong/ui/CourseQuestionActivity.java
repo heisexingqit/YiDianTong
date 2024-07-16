@@ -193,6 +193,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_question);
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         Log.e("wen0228", "onNewIntent: 新建");
         // 提前创建Adapter
         imgadapter = new ImagePagerAdapter(CourseQuestionActivity.this, url_list);

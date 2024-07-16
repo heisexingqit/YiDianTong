@@ -186,7 +186,7 @@ public class TTeachEditActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tteach_edit);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         learnPlanId = getIntent().getStringExtra("learnPlanId");
         learnPlanName = getIntent().getStringExtra("learnPlanName");
         learnPlanType = getIntent().getStringExtra("type");

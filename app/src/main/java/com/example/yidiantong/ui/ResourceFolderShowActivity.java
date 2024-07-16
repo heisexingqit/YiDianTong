@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.bean.LearnPlanItemEntity;
 import com.example.yidiantong.fragment.LearnPlanPPTFragment;
@@ -53,6 +54,7 @@ public class ResourceFolderShowActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resource_folder_show);
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         findViewById(R.id.iv_back).setOnClickListener(v -> finish());
         LearnPlanItemEntity itemShow = (LearnPlanItemEntity) getIntent().getSerializableExtra("itemShow");
         TextView tv_title = findViewById(R.id.tv_title);

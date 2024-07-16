@@ -99,7 +99,7 @@ public class THomeworkMarkPagerActivity extends AppCompatActivity implements Vie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thomework_mark);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         // 获取参数
         Intent intent = getIntent();
         itemEntity = (THomeworkStudentItemEntity) intent.getSerializableExtra("item");

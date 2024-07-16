@@ -124,7 +124,7 @@ public class TLearnPlanAddActivity extends AppCompatActivity implements View.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tlearn_plan_add);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         // 获取组件
         ll_top = findViewById(R.id.ll_top);
         et_name = findViewById(R.id.et_name);

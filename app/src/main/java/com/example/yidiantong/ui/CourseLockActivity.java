@@ -56,7 +56,7 @@ public class CourseLockActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_look_screen);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         ip = getIntent().getStringExtra("ip");
         String stuname = getIntent().getStringExtra("stuname");
         stunum = getIntent().getStringExtra("stunum");

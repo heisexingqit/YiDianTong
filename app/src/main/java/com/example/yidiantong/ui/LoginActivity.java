@@ -64,7 +64,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         //获取控件
         iv_username = findViewById(R.id.iv_username);
         iv_pw = findViewById(R.id.iv_pw);
@@ -260,7 +259,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void login() {
         ll_loading.setVisibility(View.VISIBLE);
         String url = Constant.API + Constant.LOGIN + "?userName=" + username + "&passWord=" + password;
-        Toast.makeText(LoginActivity.this, "登录url:"+url, Toast.LENGTH_SHORT).show();
         StringRequest request = new StringRequest(url, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);

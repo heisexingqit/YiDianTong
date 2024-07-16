@@ -109,7 +109,7 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_learn_plan_pager);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         // 获取Intent参数
         learnPlanId = getIntent().getStringExtra("learnPlanId");
         TextView tv_title = findViewById(R.id.tv_title);

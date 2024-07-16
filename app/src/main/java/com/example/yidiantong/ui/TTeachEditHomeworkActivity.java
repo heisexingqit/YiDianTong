@@ -177,7 +177,7 @@ public class TTeachEditHomeworkActivity extends AppCompatActivity implements Vie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tteach_edit_homework);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         paperId = getIntent().getStringExtra("learnPlanId");
         name = getIntent().getStringExtra("learnPlanName");
 

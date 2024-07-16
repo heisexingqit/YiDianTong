@@ -183,7 +183,7 @@ public class TLearnPlanAddPickActivity extends AppCompatActivity implements View
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tlearn_plan_add_pick);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         iv_search_select = findViewById(R.id.iv_search_select);
         iv_search_select.setOnClickListener(this);
         findViewById(R.id.iv_back).setOnClickListener(v -> finish());

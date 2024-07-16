@@ -95,6 +95,8 @@ public class TLearnPlanPreviewActivity extends AppCompatActivity implements View
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tlean_plan_preview);
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
+
         paperId = getIntent().getStringExtra("paperId");
         homeworkName = getIntent().getStringExtra("homeworkName");
         findViewById(R.id.iv_back).setOnClickListener(view -> finish());

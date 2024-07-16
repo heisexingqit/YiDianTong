@@ -108,7 +108,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auto_shiti);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         preferences = getSharedPreferences("shiti", MODE_PRIVATE);
 
         tv_massage = findViewById(R.id.tv_massage);

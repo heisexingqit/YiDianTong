@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.BooksAdapter;
 import com.example.yidiantong.adapter.SelectCouresAdapter;
@@ -51,6 +52,7 @@ public class SelectCourseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_course);
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         TextView ftv_title = findViewById(R.id.ftv_title);
         ftv_title.setText("高考选科");
 

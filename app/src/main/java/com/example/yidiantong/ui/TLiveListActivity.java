@@ -86,7 +86,7 @@ public class TLiveListActivity extends AppCompatActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tlive_list);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         // 获取组件
         et_search = findViewById(R.id.et_search);
         findViewById(R.id.iv_add).setOnClickListener(this);

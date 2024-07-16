@@ -102,7 +102,7 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tmain_pager);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         Log.e("0110", "onCreate: 创建！！！！！！！！！！！！！");
 
         rl_submitting = findViewById(R.id.rl_submitting);

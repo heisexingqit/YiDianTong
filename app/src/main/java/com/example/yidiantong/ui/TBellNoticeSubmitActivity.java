@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.NoScrollViewPager;
 import com.example.yidiantong.adapter.TBellSubmitAdapter;
@@ -25,6 +26,7 @@ public class TBellNoticeSubmitActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tbell_notice_submit);
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         findViewById(R.id.fiv_back).setOnClickListener(v -> {
             this.finish();
         });

@@ -116,7 +116,7 @@ public class TLiveEditActivity extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_tlive_edit);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         // 默认参数
         tLive = (TLiveItemEntity) getIntent().getSerializableExtra("liveItem");
 

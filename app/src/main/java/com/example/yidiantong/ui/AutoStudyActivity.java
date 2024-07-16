@@ -99,6 +99,7 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auto_study);
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
 
         // 获取组件
         Button btn_select_knowledge = findViewById(R.id.btn_select_knowledge);

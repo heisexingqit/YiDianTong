@@ -31,6 +31,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.ImagePagerAdapter;
 
@@ -67,7 +68,7 @@ public class OnlineTestNullActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shiti_null);
-
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         userName = getIntent().getStringExtra("userName");
         unitId = getIntent().getStringExtra("unitId");
         subjectId = getIntent().getStringExtra("subjectId");
