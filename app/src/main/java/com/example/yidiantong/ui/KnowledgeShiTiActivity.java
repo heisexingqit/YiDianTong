@@ -65,7 +65,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
     private ClickableImageView fiv_refresh;//刷新题目按钮
     private ClickableImageView fiv_select_stu;//选择学生按钮
     private TextView tv_knowledge_name;
-    private TextView tv_next_exam_point;
+    private TextView tv_massage;
     private LinearLayout ll_kaodian_filtrate;
 
     //请求数据参数
@@ -86,7 +86,7 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
     private List<String> stuList = new ArrayList<>();//学生列表
     private List<Catalog> catalogs = new ArrayList<>();//考点列表
     private int examPointNum = 0;
-//    private List<ExamPoint> examPoints = new ArrayList<>();//考点列表
+    //    private List<ExamPoint> examPoints = new ArrayList<>();//考点列表
     private HashSet<String> selectedExamPoints = new HashSet<>();//已选考点列表
     private String questionIds;
     BookAutoAdapter adapter;
@@ -111,8 +111,8 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
 
         preferences = getSharedPreferences("shiti", MODE_PRIVATE);
 
-        tv_next_exam_point = findViewById(R.id.tv_next_exam_point);
-        tv_next_exam_point.setOnClickListener(v -> getKaoDianList());
+        tv_massage = findViewById(R.id.tv_massage);
+//        tv_massage.setOnClickListener(v -> getKaoDianList());
 
         frv_detail = findViewById(R.id.frv_detail);
         //RecyclerView两步必要配置
@@ -129,9 +129,6 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
         banben = getIntent().getStringExtra("banbenId"); //版本
         jiaocai = getIntent().getStringExtra("jiaocaiId"); //教材
         unitId = getIntent().getStringExtra("unitId"); //考点
-//        reqName = userName;
-
-        //顶栏返回按钮
         findViewById(R.id.fiv_back).setOnClickListener(v -> {
             Intent intent = new Intent(this, KnowledgeStudyChangeActivity.class);
             intent.putExtra("userName", userName);
@@ -503,14 +500,37 @@ public class KnowledgeShiTiActivity extends AppCompatActivity {
             rl_loading.setVisibility(View.VISIBLE);
         }
         String mRequestUrl = Constant.API + Constant.GET_ZIZHUXUEXI +
-                "?userId=" + userName + "&subjectId=" + subjectId + "&catalogId=" + zhishidianId + "&pointIds=" + pointIds + "&currentPage=" + currentPage;
+                "?userId=" + userName + "&subjectId=" + subjectId + "&catalogId=" + zhishidianId;
         Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 String message1 = json.getString("message");
                 Log.d("song0321", "message: " + message1);
-                Alert(message1);
+                // 根据返回的message展示tv_massage的内容
+                if (message1.equals("选择章节已掌握")) {
+                    tv_massage.setText("重新选择章节进行学习");
+                    // 进行页面跳转 跳转到KnowledgePointActivity
+                    tv_massage.setOnClickListener(v -> {
+                        Intent intent = new Intent(this, KnowledgePointActivity.class);
+                        intent.putExtra("userName", userName);
+                        intent.putExtra("xueduanId", xueduan);
+                        intent.putExtra("xuekeId", subjectId);
+                        intent.putExtra("xueke", course_name);
+                        intent.putExtra("banbenId", banben);
+                        intent.putExtra("jiaocaiId", jiaocai);
+                        startActivity(intent);
+                        finish();
+                    });
+                } else if (message1.equals("选择考点已掌握")) {
+                    tv_massage.setText("继续下一个考点的学习");
+                    tv_massage.setOnClickListener(v -> getKaoDianList());
+                } else {
+                    tv_massage.setText("选择考点下暂无试题");
+                    // 红色字体
+                    tv_massage.setTextColor(Color.parseColor("#FF0000"));
+                }
+                //Alert(message1);
                 String itemString = json.getString("data");
                 Log.d("wen0501", "itemString: " + itemString);
                 Gson gson = new Gson();

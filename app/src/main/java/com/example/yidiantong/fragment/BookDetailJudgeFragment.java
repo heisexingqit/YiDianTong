@@ -75,6 +75,8 @@ public class BookDetailJudgeFragment extends Fragment implements View.OnClickLis
     private ImageView fiv_bd_mark; // 标记掌握
     private ImageView fiv_bd_exercise; // 举一反三
     private ImageView iv_exercise_scores; //
+    private TextView tv_all_scores;
+    private TextView tv_stu_scores;
 
     private String userName;  // 用户名
     private String subjectId;  // 学科id
@@ -138,9 +140,8 @@ public class BookDetailJudgeFragment extends Fragment implements View.OnClickLis
         ftv_br_title = view.findViewById(R.id.ftv_br_title);
         ftv_br_title.setText(bookrecyclerEntity.getSourceName());
         fiv_de_icon = view.findViewById(R.id.fiv_de_icon);
-
-
-
+        tv_all_scores = view.findViewById(R.id.tv_all_scores);
+        tv_stu_scores = view.findViewById(R.id.tv_stu_scores);
 
         //设置图标和类型
         int icon_id = -1;
@@ -281,9 +282,12 @@ public class BookDetailJudgeFragment extends Fragment implements View.OnClickLis
                 // 判断答案是否相等
                 if (loadAnswer.equals(bookrecyclerEntity.getShitiAnswer())) {
                     fiv_bd_tf.setImageResource(R.drawable.ansright);
+                    tv_stu_scores.setText("得分  " + bookrecyclerEntity.getScore());
                 } else {
                     fiv_bd_tf.setImageResource(R.drawable.answrong);
+                    tv_stu_scores.setText("得分  0");
                 }
+                tv_all_scores.setText("满分  " + bookrecyclerEntity.getScore());
             }
         }
     }
@@ -331,9 +335,12 @@ public class BookDetailJudgeFragment extends Fragment implements View.OnClickLis
                     // 判断答案是否相等
                     if(option[stuans].equals(bookrecyclerEntity.getShitiAnswer())){
                         fiv_bd_tf.setImageResource(R.drawable.ansright);
+                        tv_stu_scores.setText("得分  " + bookrecyclerEntity.getScore());
                     }else {
                         fiv_bd_tf.setImageResource(R.drawable.answrong);
+                        tv_stu_scores.setText("得分  0");
                     }
+                    tv_all_scores.setText("满分  " + bookrecyclerEntity.getScore());
 
                     // 保存学生答案至本地
                     String arrayString = preferences.getString("stuLoadAnswer", null);

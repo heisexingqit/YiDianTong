@@ -38,6 +38,7 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookExerciseEntity;
 import com.example.yidiantong.ui.KnowledgeShiTiActivity;
+import com.example.yidiantong.ui.KnowledgeShiTiDetailActivity;
 import com.example.yidiantong.ui.MainBookUpActivity;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.RecyclerInterface;
@@ -45,6 +46,9 @@ import com.example.yidiantong.util.RecyclerInterface;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -88,6 +92,8 @@ public class ShiTiDetailJudgeFragment extends Fragment implements View.OnClickLi
     private String allpage;
     private int type;
     private ImageView fiv_de_icon;  // 单元图标
+    private TextView tv_all_scores;
+    private TextView tv_stu_scores;
 
     SharedPreferences preferences;
 
@@ -117,7 +123,6 @@ public class ShiTiDetailJudgeFragment extends Fragment implements View.OnClickLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         preferences = getActivity().getSharedPreferences("shiti", Context.MODE_PRIVATE);
-
         //取出携带的参数
         Bundle arg = getArguments();
         bookExerciseEntity = (BookExerciseEntity) arg.getSerializable("bookExerciseEntity");
@@ -143,6 +148,8 @@ public class ShiTiDetailJudgeFragment extends Fragment implements View.OnClickLi
         ftv_br_title = view.findViewById(R.id.ftv_br_title);
         ftv_br_title.setText(bookExerciseEntity.getQuestionKeyword());
         fiv_de_icon = view.findViewById(R.id.fiv_de_icon);
+        tv_all_scores = view.findViewById(R.id.tv_all_scores);
+        tv_stu_scores = view.findViewById(R.id.tv_stu_scores);
 
         //题面显示
         WebView fwv_bd_content = view.findViewById(R.id.fwv_bd_content);
@@ -213,11 +220,11 @@ public class ShiTiDetailJudgeFragment extends Fragment implements View.OnClickLi
         fll_bd_analysis.setVisibility(View.GONE);
         fll_bd_answer.setVisibility(View.VISIBLE);
 
-        getActivity().findViewById(R.id.fiv_back).setOnClickListener(v -> {
+        /*getActivity().findViewById(R.id.fiv_back).setOnClickListener(v -> {
             if (getActivity() != null) {
                 getActivity().finish();
             }
-        });
+        });*/
         // 显示学生本地保存的作答
         showLoadAnswer();
 
@@ -253,9 +260,12 @@ public class ShiTiDetailJudgeFragment extends Fragment implements View.OnClickLi
                 // 判断答案是否相等
                 if (loadAnswer.equals(bookExerciseEntity.getShiTiAnswer())) {
                     fiv_bd_tf.setImageResource(R.drawable.ansright);
+                    tv_stu_scores.setText("得分  " + bookExerciseEntity.getScore());
                 } else {
                     fiv_bd_tf.setImageResource(R.drawable.answrong);
+                    tv_stu_scores.setText("得分  0");
                 }
+                tv_all_scores.setText("满分  " + bookExerciseEntity.getScore());
             }
         }
     }
@@ -303,11 +313,24 @@ public class ShiTiDetailJudgeFragment extends Fragment implements View.OnClickLi
                     // 判断答案是否相等
                     if (option[stuans].equals(bookExerciseEntity.getShiTiAnswer())) {
                         fiv_bd_tf.setImageResource(R.drawable.ansright);
+                        tv_stu_scores.setText("得分  " + bookExerciseEntity.getScore());
+                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(1);
+                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(bookExerciseEntity.getScore());
                     } else {
                         fiv_bd_tf.setImageResource(R.drawable.answrong);
+                        tv_stu_scores.setText("得分  0");
+                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(2);
+                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore("0");
                     }
+                    ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(option[stuans]);
+                    tv_all_scores.setText("满分  " + bookExerciseEntity.getScore());
+                    Date day = new Date();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String date = sdf.format(day);
+                    ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setZuodaDate(date);
+                    Toast.makeText(getContext(), "答案保存成功！", Toast.LENGTH_SHORT).show();
                     // 保存学生答案至服务器
-                    saveAnswer2Server(bookExerciseEntity.getShiTiAnswer(), option[stuans], type);
+                    //saveAnswer2Server(bookExerciseEntity.getShiTiAnswer(), option[stuans], type);
                     // 保存学生答案至本地
                     String arrayString = null;
                     switch (type) {
@@ -361,7 +384,7 @@ public class ShiTiDetailJudgeFragment extends Fragment implements View.OnClickLi
                             if (!arrayString.contains("null")) {
                                 Toast.makeText(getContext(), "测试完成！", Toast.LENGTH_SHORT).show();
                                 if (flag.equals("自主学习")){
-                                    Intent intent = new Intent(getActivity(), KnowledgeShiTiActivity.class);
+                                    Intent intent = new Intent(getActivity(), KnowledgeShiTiDetailActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     intent.putExtra("userName", getActivity().getIntent().getStringExtra("username"));
                                     intent.putExtra("subjectId", getActivity().getIntent().getStringExtra("subjectId"));

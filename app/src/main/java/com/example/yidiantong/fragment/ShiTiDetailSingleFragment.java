@@ -39,6 +39,7 @@ import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookExerciseEntity;
 import com.example.yidiantong.ui.AutoStudyActivity;
 import com.example.yidiantong.ui.KnowledgeShiTiActivity;
+import com.example.yidiantong.ui.KnowledgeShiTiDetailActivity;
 import com.example.yidiantong.ui.MainBookUpActivity;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.RecyclerInterface;
@@ -46,6 +47,10 @@ import com.example.yidiantong.util.RecyclerInterface;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.SQLOutput;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,9 +67,12 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
     private TextView ftv_bd_stuans;
     private WebView fwv_bd_analysis1;
     private LinearLayout fll_bd_answer;
+    private LinearLayout ll_stu_scores;
     private int stuans = -1;
     private LinearLayout fll_bd_analysis;
     private TextView ftv_br_title;
+    private TextView tv_all_scores;
+    private TextView tv_stu_scores;
 
     private String userName; // 用户名
     private String subjectId; // 学科ID
@@ -125,6 +133,7 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
         allpage = arg.getString("allpage");
         flag = getActivity().getIntent().getStringExtra("flag");  // 自主学习 or 巩固提升
 
+
         //将试题答案格式化，利用正则表达式去掉<>标签及里面的内容
         String answer = bookExerciseEntity.getShiTiAnswer();
         String regEx = "<[^>]+>";
@@ -139,6 +148,9 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
         // 知识点栏
         ftv_br_title = view.findViewById(R.id.ftv_br_title);
         ftv_br_title.setText(bookExerciseEntity.getQuestionKeyword());
+        ll_stu_scores = view.findViewById(R.id.ll_stu_scores);
+        tv_all_scores = view.findViewById(R.id.tv_all_scores);
+        tv_stu_scores = view.findViewById(R.id.tv_stu_scores);
 
         //题面显示
         WebView fwv_bd_content = view.findViewById(R.id.fwv_bd_content);
@@ -212,11 +224,16 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
         fll_bd_analysis.setVisibility(View.GONE);
         fll_bd_answer.setVisibility(View.VISIBLE);
 
-        getActivity().findViewById(R.id.fiv_back).setOnClickListener(v -> {
-            if (getActivity() != null) {
-                getActivity().finish();
-            }
-        });
+//        getActivity().findViewById(R.id.fiv_back).setOnClickListener(v -> {
+//            if (getActivity() != null) {
+//                try {
+//                    saveAnswer2Server();
+//                } catch (ParseException e) {
+//                    e.printStackTrace();
+//                }
+//                getActivity().finish();
+//            }
+//        });
 
         // 获取本地学生作答
         showLoadAnswer();
@@ -252,9 +269,12 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
                 // 判断答案是否相等
                 if (loadAnswer.equals(bookExerciseEntity.getShiTiAnswer())) {
                     fiv_bd_tf.setImageResource(R.drawable.ansright);
+                    tv_stu_scores.setText("得分  " + bookExerciseEntity.getScore());
                 } else {
                     fiv_bd_tf.setImageResource(R.drawable.answrong);
+                    tv_stu_scores.setText("得分  0");
                 }
+                tv_all_scores.setText("满分  " + bookExerciseEntity.getScore());
             }
         }
     }
@@ -269,6 +289,7 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
                 pageing.pageNext(currentpage, allpage);
                 return;
             case R.id.iv_a:
+
                 answer[questionId] = 0;
                 showRadioBtn();
                 break;
@@ -306,15 +327,30 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
                     fll_bd_answer.setVisibility(View.GONE);
                     fll_bd_analysis.setVisibility(View.VISIBLE);
                     ftv_bd_stuans.setText("【你的作答】" + option[stuans]);
+
                     // 判断答案是否相等
                     if (option[stuans].equals(bookExerciseEntity.getShiTiAnswer())) {
                         fiv_bd_tf.setImageResource(R.drawable.ansright);
+                        tv_stu_scores.setText("得分  " + bookExerciseEntity.getScore());
+                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(1);
+                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(bookExerciseEntity.getScore());
                     } else {
                         fiv_bd_tf.setImageResource(R.drawable.answrong);
+                        tv_stu_scores.setText("得分  0");
+                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(2);
+                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore("0");
                     }
+                    tv_all_scores.setText("满分  " + bookExerciseEntity.getScore());
+                    ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(option[stuans]);
+                    Date day = new Date();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String date = sdf.format(day);
+                    System.out.println("date:" + date);
+                    ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setZuodaDate(date);
 
+                    Toast.makeText(getContext(), "答案保存成功！", Toast.LENGTH_SHORT).show();
                     // 保存学生答案至服务器
-                    saveAnswer2Server(bookExerciseEntity.getShiTiAnswer(), option[stuans], type);
+                    //saveAnswer2Server(bookExerciseEntity.getShiTiAnswer(), option[stuans], type);
 
                     // 保存学生答案至本地
                     String arrayString = null;
@@ -369,7 +405,7 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
                             if (!arrayString.contains("null")) {
                                 Toast.makeText(getContext(), "测试完成！", Toast.LENGTH_SHORT).show();
                                 if (flag.equals("自主学习")){
-                                    Intent intent = new Intent(getActivity(), KnowledgeShiTiActivity.class);
+                                    Intent intent = new Intent(getActivity(), KnowledgeShiTiDetailActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     intent.putExtra("userName", getActivity().getIntent().getStringExtra("username"));
                                     intent.putExtra("subjectId", getActivity().getIntent().getStringExtra("subjectId"));

@@ -192,7 +192,7 @@ public class Constant {
     // 学生端获取巩固提升试题
     public static final String GET_GONGGUTISHENG= "/AppServer/ajax/studentApp_getQuestionsGGTS.do";
     // 学生端获取自主学习试题
-    public static final String GET_ZIZHUXUEXI= "/AppServer/ajax/studentApp_getQuestionsZZXX.do";
+    public static final String GET_ZIZHUXUEXI= "/AppServer/ajax/studentApp_getQuestionsZZXXNew.do";
 
     // 教师端获取题库
     public static final String T_HOMEWORK_GET_ALL_QUESTIONS = "/AppServer/ajax/teacherApp_getAllQuestions.do";

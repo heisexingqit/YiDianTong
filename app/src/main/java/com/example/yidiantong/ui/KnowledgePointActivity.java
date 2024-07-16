@@ -37,10 +37,16 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class KnowledgePointActivity extends AppCompatActivity {
     private static final String TAG = "KnowledgePointActivity";
@@ -63,12 +69,10 @@ public class KnowledgePointActivity extends AppCompatActivity {
     private String course_name;  //学科名
     private RelativeLayout rl_loading;
     private ClickableImageView iv_back;
-
-
-    // TODO 临时变量
-//    private List<BookExerciseEntity> itemList = new ArrayList<>();
-//    private String questionIds;
-
+    private HashMap<String, List<String>> map = new HashMap<>();
+    private List<BookExerciseEntity> itemList = new ArrayList<>();
+    String questionIds = "";
+    String message1 = "";
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -94,8 +98,13 @@ public class KnowledgePointActivity extends AppCompatActivity {
         // 知识点选择页面
         contentView = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_show_zsd
                 , null, false);  // 获取布局,并设置为弹出窗口的布局
-        contentView.findViewById(R.id.iv_back).setOnClickListener(v -> {finish(); window.dismiss(); });
-        contentView.findViewById(R.id.tv_ok).setOnClickListener(v -> {wv_content.evaluateJavascript("getCheckedIdsAndNames();", null); });
+        contentView.findViewById(R.id.iv_back).setOnClickListener(v -> {
+            finish();
+            window.dismiss();
+        });
+        contentView.findViewById(R.id.tv_ok).setOnClickListener(v -> {
+            jumpTo();
+        });
         wv_content = contentView.findViewById(R.id.wv_content);
         // 设置滚动条样式, 去掉滚动条, 但是滚动是可以的
         wv_content.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
@@ -116,6 +125,73 @@ public class KnowledgePointActivity extends AppCompatActivity {
         if (!window.isShowing()) finish();
     }
 
+    // 页面跳转
+    public void jumpTo() {
+        // 如果没有选知识点则不跳转,弹出提示:请先选择学习章节点
+        if (map.size() == 0) {
+            Toast.makeText(KnowledgePointActivity.this, "请先选择考点", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 将map中数据转为 key:value1,value2;key:value1,value2;key:value1,value2; 的字符串格式
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+            sb.append(entry.getKey()).append(":");
+            for (String s : entry.getValue()) {
+                sb.append(s).append(",");
+            }
+            sb.deleteCharAt(sb.length() - 1);
+            sb.append(";");
+        }
+        Log.d("map", sb.toString());
+        zhishidianId = sb.toString();
+
+        String url = Constant.API + "/AppServer/ajax/studentApp_judgeCheck.do"
+                + "?stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + course_Id
+                + "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&catalogId=" + zhishidianId
+                + "&unitId=1101010010001" + "&type=zzxx";
+        Log.d("wen", "judgeCheck: " + url);
+        StringRequest request = new StringRequest(url, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String result = json.getString("data");
+                Log.d("wen", "result: " + result);
+                Intent intent;
+                if (result.equals("0")) {
+                    //需要自我检测
+                    intent = new Intent(KnowledgePointActivity.this,
+                            OnlineTestNullActivity.class);
+                } else if (result.equals("1")) {
+                    //不需要检测直接进入自主学习
+//                    intent = new Intent(KnowledgePointActivity.this, KnowledgeShiTiActivity.class); // 试题页面
+                    intent = new Intent(KnowledgePointActivity.this,
+                            KnowledgeShiTiDetailActivity.class); // 直接到做题页面
+                } else {
+                    //功能暂未开放
+                    Toast.makeText(KnowledgePointActivity.this, "该学科自主学习功能暂未开放，敬请期待", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                intent.putExtra("zhishidianId", zhishidianId);  // 知识点id
+                intent.putExtra("userName", userName);  // 用户名
+                intent.putExtra("unitId", "1101010010001");    // 学科id
+                intent.putExtra("xueduanId", xueduan);    // 学科id
+                intent.putExtra("subjectId", course_Id);    // 学科id
+                intent.putExtra("banbenId", banben);  // 版本id
+                intent.putExtra("jiaocaiId", jiaocai);  // 教材id
+                intent.putExtra("courseName", course_name);  // 学科名
+                intent.putExtra("zhishidian", zhishidian);  // 知识点
+                intent.putExtra("flag", "自主学习");
+                startActivity(intent);
+                finish();
+                window.dismiss();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            Log.d("wen", "Volley_Error: " + error.toString());
+        });
+        MyApplication.addRequest(request, TAG);
+    }
 
     // JS延迟关闭PopUpWindow
     private Handler handler = new Handler(Looper.getMainLooper()) {
@@ -160,11 +236,11 @@ public class KnowledgePointActivity extends AppCompatActivity {
                             intent = new Intent(KnowledgePointActivity.this,
                                     OnlineTestNullActivity.class);
 
-                        }else if (result.equals("1")){
+                        } else if (result.equals("1")) {
                             //不需要检测直接进入自主学习
                             intent = new Intent(KnowledgePointActivity.this,
                                     KnowledgeShiTiActivity.class);
-                        }else {
+                        } else {
                             //功能暂未开放
                             Toast.makeText(KnowledgePointActivity.this, "该学科自主学习功能暂未开放，敬请期待", Toast.LENGTH_SHORT).show();
                             return;
@@ -187,7 +263,8 @@ public class KnowledgePointActivity extends AppCompatActivity {
                         intent.putExtra("zhishidian", zhishidian);  // 知识点
                         intent.putExtra("flag", "自主学习");
                         startActivity(intent);
-                        finish(); window.dismiss();
+                        finish();
+                        window.dismiss();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -291,59 +368,6 @@ public class KnowledgePointActivity extends AppCompatActivity {
         dialog.show();
     }*/
 
-
-    // Java接口注入到Js中
-    public class MyJavaScriptInterface {
-        private Context context;
-
-        public MyJavaScriptInterface(Context context) {
-            this.context = context;
-        }
-        @JavascriptInterface
-        public void displayHTMLContent(String str, String id) {
-            // 在这里使用htmlContent进行处理，例如显示在TextView中
-            // 封装消息，传递给主线程
-            Message message = Message.obtain();
-            zhishidian = str;
-            zhishidianId = id;
-//            message.what = 100;
-//            handler.sendMessage(message);
-        }
-        // 获取选中的ID
-        @JavascriptInterface
-        public void sendCheckedIdsAndNames(String ids, String names) {
-            // 在这里处理拼接的ID字符串和名称字符串，例如显示在Log中
-            Log.d("Checked IDs", ids);
-            Log.d("Checked Names", names);
-            //            names = names.replaceAll("章节点有效答题[^：]*：", "");
-            // 在 "章节点有效答题" 前面添加换行符
-            names = names.replaceAll("(章节点有效答题)", "\n$1");
-
-            // 在 "考点" 后面添加换行符并去掉冒号和逗号，最后一个考点只去掉冒号
-            StringBuilder output = new StringBuilder();
-            String[] parts = names.split("考点");
-            for (int i = 0; i < parts.length - 1; i++) {
-                // 去掉逗号和冒号
-                String part = parts[i].replaceFirst("：,", "");
-                output.append(part).append("考点\n");
-            }
-            // 处理最后一个考点，去掉冒号
-            output.append(parts[parts.length - 1].replaceFirst("：$", ""));
-
-            // 打印结果
-            System.out.println(output.toString());
-
-
-
-            Message message = Message.obtain();
-            zhishidian = output.toString();
-            zhishidianId = ids;
-            message.what = 100;
-            handler.sendMessage(message);
-        }
-    }
-
-
     // 加载知识点
     private void loadZhiShiDian() {
         rl_loading.setVisibility(View.VISIBLE);
@@ -384,6 +408,55 @@ public class KnowledgePointActivity extends AppCompatActivity {
 
     }
 
+    // Java接口注入到Js中
+    public class MyJavaScriptInterface {
+        private Context context;
+
+        public MyJavaScriptInterface(Context context) {
+            this.context = context;
+        }
+
+        @JavascriptInterface
+        public void displayHTMLContent(String str, String id) {
+            // 在这里使用htmlContent进行处理，例如显示在TextView中
+            // 封装消息，传递给主线程
+            Log.d("syq", "displayHTMLContent: " + 1);
+//            Message message = Message.obtain();
+//            zhishidian = str;
+//            zhishidianId = id;
+//            message.what = 100;
+//            handler.sendMessage(message);
+        }
+
+        @JavascriptInterface
+        public void add2Map(String key, String value) {
+            // 在这里处理返回的结果，例如显示在Log中
+            Log.d("add2Map", "add2Map");
+            Log.d("key", key);
+            Log.d("value", value);
+            if (map.containsKey(key)) {
+                map.get(key).add(value);
+            } else {
+                List<String> list = new ArrayList<>();
+                list.add(value);
+                map.put(key, list);
+            }
+        }
+
+        @JavascriptInterface
+        public void remove2Map(String key, String value) {
+            // 在这里处理返回的结果，例如显示在Log中
+            Log.d("remove2Map", "remove2Map");
+            Log.d("key", key);
+            Log.d("value", value);
+            if (map.containsKey(key)) {
+                map.get(key).remove(value);
+                if (map.get(key).size() == 0) {
+                    map.remove(key);
+                }
+            }
+        }
+    }
 
     /**
      * 将HTML内容显示在WebView中，包含转义和样式
@@ -402,7 +475,17 @@ public class KnowledgePointActivity extends AppCompatActivity {
         String replacement = "$1";
         // 使用正则表达式替换，移除 onclick 属性
         String modifiedStr = str.replaceAll(regex, replacement);
-        String html_content = "<head><style>" +
+
+        Document doc = Jsoup.parse(modifiedStr);
+        // 选择 body 内的所有元素
+        Element body = doc.select("body").first();
+        // 创建一个新的文档，并将 body 的内容复制到新文档中
+        Document newDoc = new Document("");
+        newDoc.appendChild(body);
+        modifiedStr = newDoc.html();
+//        System.out.println("modifiedStr: " + modifiedStr);
+
+        /*String html_content = "<head><style>" +
                 " p {\n" +
                 "   margin: 0px;" +
                 "   line-height: 30px;" +
@@ -431,7 +514,74 @@ public class KnowledgePointActivity extends AppCompatActivity {
                 "    }\n" +
                 "</script>" +
                 "</head><body style=\"color: rgb(117, 117, 117); font-size: 16px; margin: 0px; padding: 0px\">" + modifiedStr +
-                "</body>";
+                "</body>";*/
+
+        String html_content = "<head><style>" +
+                " p {\n" +
+                "   margin: 0px;" +
+                "   line-height: 30px;" +
+                "   }" +
+                " li {\n" +
+                "   margin-bottom: 15px;\n" +
+                "   }" +
+                "</style>" +
+                "<script>\n" +
+                "function _fk(obj) {\n" +
+                "    AndroidInterface.displayHTMLContent(obj.textContent, obj.getAttribute(\"id\"));\n" +
+                "}\n" +
+                "function cataLogClick(obj) {\n" +
+                "    var siblingNode = obj.nextElementSibling;\n" +
+                "    if (window.getComputedStyle(siblingNode).display == 'none') {\n" +
+                "        siblingNode.style.display = '';\n" +
+                "    } else {\n" +
+                "        siblingNode.style.display = 'none';\n" +
+                "    }\n" +
+                "}\n" +
+                "function cataLogCheckBoxClick(obj) {\n" +
+                "    obj.nextElementSibling.nextElementSibling.style.display = '';\n" +
+                "    var siblingNode = obj.nextElementSibling.nextElementSibling;\n" +
+                "    var lis = siblingNode.childNodes;\n" +
+                "    for (var i = 0; i < lis.length; i++) {\n" +
+                "        var inputNode = lis.item(i).childNodes[0];\n" +
+                "        if (!inputNode || inputNode.nodeName !== 'INPUT') {\n" +
+                "            continue;\n" +
+                "        }\n" +
+                "        var result = obj.id + ':' + inputNode.id;\n" +
+                "        if (obj.checked) {\n" +
+                "            inputNode.checked = true;\n" +
+                "            AndroidInterface.add2Map(obj.getAttribute(\"id\"), inputNode.id);\n" +
+                "        } else {\n" +
+                "            inputNode.checked = false;\n" +
+                "            AndroidInterface.remove2Map(obj.getAttribute(\"id\"), inputNode.id);\n" +
+                "        }\n" +
+                "    }\n" +
+                "}\n" +
+                "function pointCheckBoxClick(obj) {\n" +
+                "    var ulNode = obj.parentElement.parentElement;\n" +
+                "    var lis = ulNode.childNodes;\n" +
+                "    var selectLi = 0;\n" +
+                "    for (var i = 0; i < lis.length; i++) {\n" +
+                "        var inputNode = lis.item(i).childNodes[0];\n" +
+                "        if (!inputNode || inputNode.nodeName !== 'INPUT') {\n" +
+                "            continue;\n" +
+                "        }\n" +
+                "        if (inputNode.checked) {\n" +
+                "            selectLi++;\n" +
+                "        }\n" +
+                "    }\n" +
+                "    var catalogNode = obj.parentElement.parentElement.previousElementSibling.previousElementSibling;\n" +
+                "    if (obj.checked) {\n" +
+                "        if (selectLi == lis.length) {\n" +
+                "            catalogNode.checked = true;\n" +
+                "        }\n" +
+                "        AndroidInterface.add2Map(catalogNode.id, obj.id);\n" +
+                "    } else {\n" +
+                "        catalogNode.checked = false;\n" +
+                "        AndroidInterface.remove2Map(catalogNode.id, obj.getAttribute(\"id\"));\n" +
+                "    }\n" +
+                "}\n" +
+                "</script>" +
+                "</head>" + modifiedStr;
         wb.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
     }
 

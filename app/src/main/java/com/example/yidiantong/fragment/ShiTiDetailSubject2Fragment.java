@@ -69,6 +69,7 @@ import com.example.yidiantong.bean.XueBaAnswerEntity;
 import com.example.yidiantong.ui.BookExercise2ThreeActivity;
 import com.example.yidiantong.ui.BookExerciseActivity;
 import com.example.yidiantong.ui.KnowledgeShiTiActivity;
+import com.example.yidiantong.ui.KnowledgeShiTiDetailActivity;
 import com.example.yidiantong.ui.MainBookUpActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.ImageUtils;
@@ -95,7 +96,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -277,7 +280,7 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
         tv_all_scores = view.findViewById(R.id.tv_all_scores);
         tv_all_scores.setText("[满分]  " + bookExerciseEntity.getScore());
         tv_all_scores2 = view.findViewById(R.id.tv_all_scores2);
-        tv_all_scores2.setText("[满分]  " + bookExerciseEntity.getScore());
+        tv_all_scores2.setText("满分  " + bookExerciseEntity.getScore());
 
         ll_input_image = view.findViewById(R.id.ll_input_image);
         ll_input_image.setOnClickListener(this);
@@ -657,15 +660,15 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
             }
         });
 
-        getActivity().findViewById(R.id.fiv_back).setOnClickListener(v -> {
-            if (getActivity() != null) {
-                if (statusCurrent != 1) {
-                    getActivity().finish();
-                } else {
-                    showSubmitDialog();
-                }
-            }
-        });
+//        getActivity().findViewById(R.id.fiv_back).setOnClickListener(v -> {
+//            if (getActivity() != null) {
+//                if (statusCurrent != 1) {
+//                    getActivity().finish();
+//                } else {
+//                    showSubmitDialog();
+//                }
+//            }
+//        });
 
         // 提前创建Adapter
         adapter = new ImagePagerAdapter(getActivity(), url_list);
@@ -686,6 +689,12 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
         String tempscore = split[1];
         // 保存学生作答到本地
         String answer = exercise_stu_answer + "@&@" + exercise_stu_html + "@&@" + tempscore;
+        System.out.println("exercise_stu_html" + exercise_stu_html);
+        if (exercise_stu_html.equals("")) {
+            ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(exercise_stu_answer);
+        }else {
+            ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(exercise_stu_html);
+        }
         String arrayString = null;
         switch (type) {
             case 1:
@@ -738,7 +747,7 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                 if (!arrayString.contains("null")) {
                     Toast.makeText(getContext(), "测试完成！", Toast.LENGTH_SHORT).show();
                     if (flag.equals("自主学习")) {
-                        Intent intent = new Intent(getActivity(), KnowledgeShiTiActivity.class);
+                        Intent intent = new Intent(getActivity(), KnowledgeShiTiDetailActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         intent.putExtra("userName", getActivity().getIntent().getStringExtra("username"));
                         intent.putExtra("subjectId", getActivity().getIntent().getStringExtra("subjectId"));
@@ -771,14 +780,19 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
         // 判断是否满分
         if (tempscore.equals(bookExerciseEntity.getScore())) {
             fiv_bd_tf2.setImageResource(R.drawable.ansright);
+            ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(1);
         } else if (tempscore.equals("0")) {
             fiv_bd_tf2.setImageResource(R.drawable.answrong);
+            ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(2);
         } else {
             fiv_bd_tf2.setImageResource(R.drawable.anshalf);
+            ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(3);
         }
+        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setIsZuoDaMeiPingFen(false);
+        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(tempscore);
         ll_stu_scores.setVisibility(View.GONE);
         ll_stu_scores2.setVisibility(View.VISIBLE);
-        tv_stu_scores2.setText("[得分]  " + tempscore);
+        tv_stu_scores2.setText("得分  " + tempscore);
         String mRequestUrl = "http://www.cn901.net:8111/AppServer/ajax/studentApp_updateRecommendQueScore.do?userName=" +
                 userName + "&questionId=" + bookExerciseEntity.getQuestionId() + "&score=" + score + "&type=" + type;
         Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
@@ -894,7 +908,7 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                 }
                 // 设置学生分数
                 ll_stu_scores2.setVisibility(View.VISIBLE);
-                tv_stu_scores2.setText("[得分]  " + split[2]);
+                tv_stu_scores2.setText("得分  " + split[2]);
                 // 判断是否满分
                 if (split[2].equals(bookExerciseEntity.getScore())) {
                     fiv_bd_tf2.setImageResource(R.drawable.ansright);
@@ -925,13 +939,19 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                 if (statusCurrent != 1) {
                     if (!currentpage.equals("1")) et_student_answer.setText("");
                     pageing.pageLast(currentpage, allpage);
-                } else showSubmitDialog();
+                } else {
+                    Toast.makeText(getContext(), "请先进行评分!", Toast.LENGTH_SHORT).show();
+                    //showSubmitDialog();
+                }
                 return;
             case R.id.iv_page_next:
                 if (statusCurrent != 1) {
                     if (!currentpage.equals(allpage)) et_student_answer.setText("");
                     pageing.pageNext(currentpage, allpage);
-                } else showSubmitDialog();
+                } else {
+                    Toast.makeText(getContext(), "请先进行评分!", Toast.LENGTH_SHORT).show();
+                    //showSubmitDialog();
+                }
                 return;
             case R.id.fb_bd_sumbit:
                 if (exercise_stu_answer.length() == 0 && exercise_stu_html.length() == 0) {
@@ -972,20 +992,14 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                     fll_bd_analysis.setVisibility(View.VISIBLE);
                     et_student_answer.setFocusable(false);
 
-//                    ftv_bd_stuans.setText("【你的作答】");
-//                    String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + bookrecyclerEntity.getStuAnswer() + "</body>";
-//                    String html = html_content.replace("#", "%23");
-//                    wv_stu_answer.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
-
-                    // 判断答案是半对还是全对
-//                    if (Float.parseFloat(cleanStuAnswer) < 0.3) {
-//                        fiv_bd_tf.setImageResource(R.drawable.answrong);
-//                    } else {
-//                        fiv_bd_tf.setImageResource(R.drawable.anshalf);
-//                    }
-
+                    ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setIsZuoDaMeiPingFen(true);
+                    Date day = new Date();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String date = sdf.format(day);
+                    ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setZuodaDate(date);
+                    Toast.makeText(getContext(), "答案保存成功！", Toast.LENGTH_SHORT).show();
                     // 保存学生答案至服务器
-                    saveAnswer2Server(bookExerciseEntity.getShiTiAnswer(), exercise_stu_answer.equals("") ? exercise_stu_html : exercise_stu_answer, type);
+                    //saveAnswer2Server(bookExerciseEntity.getShiTiAnswer(), exercise_stu_answer.equals("") ? exercise_stu_html : exercise_stu_answer, type);
 
                 }
                 break;
