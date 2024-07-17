@@ -24,6 +24,8 @@
         android:theme="@style/Theme.YiDianTong"
         android:usesCleartextTraffic="true"
         tools:targetApi="31" >
+        <activity android:name=".ui.KnowledgeSubmitActivity"
+            android:exported="false" />
         <activity android:name=".ui.KnowledgeStudyChangeActivity"
             android:exported="false" />
         <activity android:name=".ui.BookExercise2ThreeActivity"

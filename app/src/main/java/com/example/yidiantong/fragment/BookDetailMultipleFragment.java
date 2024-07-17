@@ -83,6 +83,8 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
     private String subjectId;  //学科ID
     private String courseName;  //课程名
     private Boolean exerciseType; //是否是举一反三or巩固提升
+    private TextView tv_all_scores;
+    private TextView tv_stu_scores;
 
 
     private String currentpage;
@@ -144,6 +146,8 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
         ftv_br_title = view.findViewById(R.id.ftv_br_title);
         ftv_br_title.setText(bookrecyclerEntity.getSourceName());
         fiv_de_icon = view.findViewById(R.id.fiv_de_icon);
+        tv_all_scores = view.findViewById(R.id.tv_all_scores);
+        tv_stu_scores = view.findViewById(R.id.tv_stu_scores);
         //设置图标和类型
         int icon_id = -1;
         String SourceType = bookrecyclerEntity.getSourceType();
@@ -288,11 +292,33 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
                 fll_bd_analysis.setVisibility(View.VISIBLE);
                 ftv_bd_stuans.setText("【你的作答】" + loadAnswer);
                 // 判断答案是否相等
+                // 将字符串转换为 double 类型
+                double score = Double.parseDouble(bookrecyclerEntity.getScore());
+                // 计算分数的一半
+                double halfScore = score / 2.0;
+                String halfScoreStr;
+                // 判断是否为整数或半整数并格式化
+                if (halfScore % 1 == 0) {
+                    // 如果是整数
+                    halfScoreStr =  String.valueOf((int) halfScore);
+                } else if (halfScore % 1 == 0.5) {
+                    // 如果是半整数
+                    halfScoreStr =  String.format("%.1f", halfScore);
+                } else {
+                    // 对于其他值（虽然在此上下文中不太可能出现）
+                    halfScoreStr =  String.valueOf(halfScore);
+                }
                 if (loadAnswer.equals(bookrecyclerEntity.getShitiAnswer())) {
                     fiv_bd_tf.setImageResource(R.drawable.ansright);
+                    tv_stu_scores.setText("得分  " + bookrecyclerEntity.getScore());
+                } else if (bookrecyclerEntity.getShitiAnswer().contains(loadAnswer)) {
+                    fiv_bd_tf.setImageResource(R.drawable.anshalf);
+                    tv_stu_scores.setText("得分  " + halfScoreStr);
                 } else {
                     fiv_bd_tf.setImageResource(R.drawable.answrong);
+                    tv_stu_scores.setText("得分  0");
                 }
+                tv_all_scores.setText("满分  " + bookrecyclerEntity.getScore());
             }
         }
     }

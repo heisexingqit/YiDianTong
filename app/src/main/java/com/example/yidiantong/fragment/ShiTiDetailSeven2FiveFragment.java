@@ -39,6 +39,7 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookExerciseEntity;
 import com.example.yidiantong.ui.KnowledgeShiTiActivity;
+import com.example.yidiantong.ui.KnowledgeShiTiDetailActivity;
 import com.example.yidiantong.ui.MainBookUpActivity;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.RecyclerInterface;
@@ -46,6 +47,8 @@ import com.example.yidiantong.util.RecyclerInterface;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -272,11 +275,11 @@ public class ShiTiDetailSeven2FiveFragment extends Fragment implements View.OnCl
         fll_bd_analysis.setVisibility(View.GONE);
         fll_bd_answer.setVisibility(View.VISIBLE);
 
-        getActivity().findViewById(R.id.fiv_back).setOnClickListener(v -> {
+        /*getActivity().findViewById(R.id.fiv_back).setOnClickListener(v -> {
             if (getActivity() != null) {
                 getActivity().finish();
             }
-        });
+        });*/
         // 获得学生本地保存的作答
         showLoadAnswer();
 
@@ -401,8 +404,14 @@ public class ShiTiDetailSeven2FiveFragment extends Fragment implements View.OnCl
                         ftv_bd_stuans.setText(keywordStr);
                         judge(stuans);
                     }
+                    ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(stuopt);
+                    Date day = new Date();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String date = sdf.format(day);
+                    ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setZuodaDate(date);
+                    Toast.makeText(getContext(), "答案保存成功！", Toast.LENGTH_SHORT).show();
                     // 保存学生答案至服务器
-                    saveAnswer2Server(bookExerciseEntity.getShiTiAnswer(), stuopt, type);
+                    //saveAnswer2Server(bookExerciseEntity.getShiTiAnswer(), stuopt, type);
                     // 保存学生答案至本地
                     String arrayString = null;
                     switch (type) {
@@ -460,7 +469,7 @@ public class ShiTiDetailSeven2FiveFragment extends Fragment implements View.OnCl
                             if (!arrayString.contains("null")) {
                                 Toast.makeText(getContext(), "测试完成！", Toast.LENGTH_SHORT).show();
                                 if (flag.equals("自主学习")){
-                                    Intent intent = new Intent(getActivity(), KnowledgeShiTiActivity.class);
+                                    Intent intent = new Intent(getActivity(), KnowledgeShiTiDetailActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     intent.putExtra("userName", getActivity().getIntent().getStringExtra("username"));
                                     intent.putExtra("subjectId", getActivity().getIntent().getStringExtra("subjectId"));
@@ -510,8 +519,12 @@ public class ShiTiDetailSeven2FiveFragment extends Fragment implements View.OnCl
             // 判断答案是否相等
             if (stuanswer1.equals(shitianswer2)) {
                 fiv_bd_tf.setImageResource(R.drawable.ansright);
+                ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(1);
+                ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(bookExerciseEntity.getScore());
             } else {
                 fiv_bd_tf.setImageResource(R.drawable.answrong);
+                ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(2);
+                ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore("0");
             }
         } else if (state == 2) {
             Log.e("判断状态2", "");
@@ -519,8 +532,12 @@ public class ShiTiDetailSeven2FiveFragment extends Fragment implements View.OnCl
             // 判断答案是否相等
             if (stuopt.equals(biaozhunanswer)) {
                 fiv_bd_tf.setImageResource(R.drawable.ansright);
+                ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(1);
+                ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(bookExerciseEntity.getScore());
             } else {
                 fiv_bd_tf.setImageResource(R.drawable.answrong);
+                ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(2);
+                ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore("0");
             }
         }
     }

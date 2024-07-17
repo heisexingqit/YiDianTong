@@ -6,6 +6,7 @@
     android:orientation="vertical"
     tools:context=".ui.BookRecyclerActivity">
 
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,13 +39,55 @@
             android:textColor="@color/main_bg"
             android:textSize="17sp" />
 
+        <!--右-->
+        <LinearLayout
+            android:id="@+id/ll_eye"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical">
+
+            <com.example.yidiantong.View.ClickableImageView
+                android:id="@+id/iv_eye"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="5dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/eye_open_ex" />
+
+            <com.example.yidiantong.View.ClickableTextView
+                android:id="@+id/tv_content"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/content"
+                android:textColor="@color/main_bg_title"
+                android:textSize="17sp" />
+        </LinearLayout>
+
     </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray_back" />
 
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
+
+
+        <include layout="@layout/shiti_null" />
+
+        <include layout="@layout/loading_page" />
+
+
         <!--可滑动ViewPager-->
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/fvp_book_recycle"
@@ -62,7 +105,8 @@
             android:id="@+id/fll_bd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
 
             <!--分隔线-->

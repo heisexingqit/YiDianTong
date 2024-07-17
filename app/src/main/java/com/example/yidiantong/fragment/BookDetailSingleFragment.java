@@ -76,6 +76,8 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
     private ImageView fiv_bd_mark;
     private ImageView iv_exercise_scores;
     private ImageView fiv_bd_exercise;// 举一反三
+    private TextView tv_all_scores;
+    private TextView tv_stu_scores;
 
     private String userName; // 用户名
     private String subjectId; // 学科ID
@@ -152,6 +154,8 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
         ftv_br_title = view.findViewById(R.id.ftv_br_title);
         ftv_br_title.setText(bookrecyclerEntity.getSourceName());
         fiv_de_icon = view.findViewById(R.id.fiv_de_icon);
+        tv_all_scores = view.findViewById(R.id.tv_all_scores);
+        tv_stu_scores = view.findViewById(R.id.tv_stu_scores);
         //设置图标和类型
         int icon_id = -1;
         String SourceType = bookrecyclerEntity.getSourceType();
@@ -297,9 +301,12 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
                 // 判断答案是否相等
                 if (loadAnswer.equals(bookrecyclerEntity.getShitiAnswer())) {
                     fiv_bd_tf.setImageResource(R.drawable.ansright);
+                    tv_stu_scores.setText("得分：" + bookrecyclerEntity.getScore());
                 } else {
                     fiv_bd_tf.setImageResource(R.drawable.answrong);
+                    tv_stu_scores.setText("得分：0");
                 }
+                tv_all_scores.setText("满分：" + bookrecyclerEntity.getScore());
             }
         }
     }

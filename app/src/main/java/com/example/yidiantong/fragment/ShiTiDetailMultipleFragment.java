@@ -38,6 +38,7 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookExerciseEntity;
 import com.example.yidiantong.ui.KnowledgeShiTiActivity;
+import com.example.yidiantong.ui.KnowledgeShiTiDetailActivity;
 import com.example.yidiantong.ui.MainBookUpActivity;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.RecyclerInterface;
@@ -45,6 +46,8 @@ import com.example.yidiantong.util.RecyclerInterface;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,6 +76,8 @@ public class ShiTiDetailMultipleFragment extends Fragment implements View.OnClic
     private String subjectId;  //学科ID
     private String courseName;  //课程名
     private String flag;  //模式标记
+    private TextView tv_all_scores;
+    private TextView tv_stu_scores;
 
     private String currentpage;
     private String allpage;
@@ -147,6 +152,8 @@ public class ShiTiDetailMultipleFragment extends Fragment implements View.OnClic
         // 知识点栏
         ftv_br_title = view.findViewById(R.id.ftv_br_title);
         ftv_br_title.setText(bookExerciseEntity.getQuestionKeyword());
+        tv_all_scores = view.findViewById(R.id.tv_all_scores);
+        tv_stu_scores = view.findViewById(R.id.tv_stu_scores);
 
         //题面显示
         WebView fwv_bd_content = view.findViewById(R.id.fwv_bd_content);
@@ -218,11 +225,11 @@ public class ShiTiDetailMultipleFragment extends Fragment implements View.OnClic
         fll_bd_analysis.setVisibility(View.GONE);
         fll_bd_answer.setVisibility(View.VISIBLE);
 
-        getActivity().findViewById(R.id.fiv_back).setOnClickListener(v -> {
+        /*getActivity().findViewById(R.id.fiv_back).setOnClickListener(v -> {
             if (getActivity() != null) {
                 getActivity().finish();
             }
-        });
+        });*/
         // 获得本地学生作答
         showLoadAnswer();
 
@@ -256,13 +263,33 @@ public class ShiTiDetailMultipleFragment extends Fragment implements View.OnClic
                 fll_bd_analysis.setVisibility(View.VISIBLE);
                 ftv_bd_stuans.setText("【你的作答】" + loadAnswer);
                 // 判断答案是否相等
+                // 将字符串转换为 double 类型
+                double score = Double.parseDouble(bookExerciseEntity.getScore());
+                // 计算分数的一半
+                double halfScore = score / 2.0;
+                String halfScoreStr;
+                // 判断是否为整数或半整数并格式化
+                if (halfScore % 1 == 0) {
+                    // 如果是整数
+                    halfScoreStr =  String.valueOf((int) halfScore);
+                } else if (halfScore % 1 == 0.5) {
+                    // 如果是半整数
+                    halfScoreStr =  String.format("%.1f", halfScore);
+                } else {
+                    // 对于其他值（虽然在此上下文中不太可能出现）
+                    halfScoreStr =  String.valueOf(halfScore);
+                }
                 if (loadAnswer.equals(bookExerciseEntity.getShiTiAnswer())) {
                     fiv_bd_tf.setImageResource(R.drawable.ansright);
+                    tv_stu_scores.setText("得分  " + bookExerciseEntity.getScore());
                 } else if (bookExerciseEntity.getShiTiAnswer().contains(loadAnswer)) {
                     fiv_bd_tf.setImageResource(R.drawable.anshalf);
+                    tv_stu_scores.setText("得分  " + halfScoreStr);
                 } else {
                     fiv_bd_tf.setImageResource(R.drawable.answrong);
+                    tv_stu_scores.setText("得分  0");
                 }
+                tv_all_scores.setText("满分  " + bookExerciseEntity.getScore());
             }
         }
     }
@@ -329,15 +356,47 @@ public class ShiTiDetailMultipleFragment extends Fragment implements View.OnClic
                     }
                     ftv_bd_stuans.setText("【你的作答】" + result);
                     // 判断答案是否相等
+                    // 将字符串转换为 double 类型
+                    double score = Double.parseDouble(bookExerciseEntity.getScore());
+                    // 计算分数的一半
+                    double halfScore = score / 2.0;
+                    String halfScoreStr;
+                    // 判断是否为整数或半整数并格式化
+                    if (halfScore % 1 == 0) {
+                        // 如果是整数
+                        halfScoreStr =  String.valueOf((int) halfScore);
+                    } else if (halfScore % 1 == 0.5) {
+                        // 如果是半整数
+                        halfScoreStr =  String.format("%.1f", halfScore);
+                    } else {
+                        // 对于其他值（虽然在此上下文中不太可能出现）
+                        halfScoreStr =  String.valueOf(halfScore);
+                    }
                     if (result.equals(bookExerciseEntity.getShiTiAnswer())) {
                         fiv_bd_tf.setImageResource(R.drawable.ansright);
+                        tv_stu_scores.setText("得分  " + bookExerciseEntity.getScore());
+                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(1);
+                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(bookExerciseEntity.getScore());
                     } else if (bookExerciseEntity.getShiTiAnswer().contains(result)) {
                         fiv_bd_tf.setImageResource(R.drawable.anshalf);
+                        tv_stu_scores.setText("得分  " + halfScoreStr);
+                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(3);
+                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(halfScoreStr);
                     } else {
                         fiv_bd_tf.setImageResource(R.drawable.answrong);
+                        tv_stu_scores.setText("得分  0");
+                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(2);
+                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore("0");
                     }
+                    tv_all_scores.setText("满分  " + bookExerciseEntity.getScore());
+                    ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(result);
+                    Date day = new Date();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String date = sdf.format(day);
+                    ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setZuodaDate(date);
+                    Toast.makeText(getContext(), "答案保存成功！", Toast.LENGTH_SHORT).show();
                     // 保存学生答案至服务器
-                    saveAnswer2Server(bookExerciseEntity.getShiTiAnswer(), result, type);
+                    //saveAnswer2Server(bookExerciseEntity.getShiTiAnswer(), result, type);
 
                     // 保存学生答案至本地
                     String arrayString = null;
@@ -392,7 +451,7 @@ public class ShiTiDetailMultipleFragment extends Fragment implements View.OnClic
                             if (!arrayString.contains("null")) {
                                 Toast.makeText(getContext(), "测试完成！", Toast.LENGTH_SHORT).show();
                                 if (flag.equals("自主学习")){
-                                    Intent intent = new Intent(getActivity(), KnowledgeShiTiActivity.class);
+                                    Intent intent = new Intent(getActivity(), KnowledgeShiTiDetailActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     intent.putExtra("userName", getActivity().getIntent().getStringExtra("username"));
                                     intent.putExtra("subjectId", getActivity().getIntent().getStringExtra("subjectId"));

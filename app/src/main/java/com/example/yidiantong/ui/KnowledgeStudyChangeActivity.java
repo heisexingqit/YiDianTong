@@ -44,6 +44,7 @@ public class KnowledgeStudyChangeActivity extends AppCompatActivity {
     private String zhishidian = "";//知识点
     private String zhishidianData = "知识点列表未获取到或者为空";
     private String zhishidianId = "";
+    private String message;
 
     private View contentView;
     private PopupWindow window;
@@ -58,12 +59,6 @@ public class KnowledgeStudyChangeActivity extends AppCompatActivity {
     private ClickableImageView fiv_back;
     private TextView ftv_title;
 
-
-    // TODO 临时变量
-//    private List<BookExerciseEntity> itemList = new ArrayList<>();
-//    private String questionIds;
-
-
     @SuppressLint("JavascriptInterface")
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -76,10 +71,17 @@ public class KnowledgeStudyChangeActivity extends AppCompatActivity {
         ftv_title = findViewById(R.id.ftv_title);
         ftv_title.setText("自主学习结果反馈");
         fiv_back = findViewById(R.id.fiv_back);
-        fiv_back.setOnClickListener(v -> {finish(); if (window != null && window.isShowing()) { window.dismiss(); } });
+        fiv_back.setOnClickListener(v -> {
+            Intent intent = new Intent(KnowledgeStudyChangeActivity.this, AutoStudyActivity.class);
+            // 通过添加以下标志来清除堆栈中的所有活动，并使 `ActivityA` 成为堆栈顶部的唯一活动
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish(); if (window != null && window.isShowing()) { window.dismiss(); }
+        });
 
         //获取Intent参数,设置学科错题本最上面的内容
         userName = getIntent().getStringExtra("userName");  //用户名
+        System.out.println("userName: KnowledgeStudyChangeActivity" + userName);
         subjectId = getIntent().getStringExtra("subjectId"); //学科名
         course_name = getIntent().getStringExtra("courseName"); //学科id
         zhishidian = getIntent().getStringExtra("zhishidian"); //知识点
@@ -88,6 +90,7 @@ public class KnowledgeStudyChangeActivity extends AppCompatActivity {
         banben = getIntent().getStringExtra("banbenId"); //版本
         jiaocai = getIntent().getStringExtra("jiaocaiId"); //教材
         unitId = getIntent().getStringExtra("unitId"); //考点
+        message = getIntent().getStringExtra("message"); //任务id
 
         loadZhiShiDian();
         // 获取组件
@@ -183,8 +186,8 @@ public class KnowledgeStudyChangeActivity extends AppCompatActivity {
     private void loadZhiShiDian() {
         rl_loading.setVisibility(View.VISIBLE);
         fiv_back.setVisibility(View.VISIBLE);
-        mRequestUrl = Constant.API + "/AppServer/ajax/studentApp_getStuPointPossess.do" + "?catalogId=" + zhishidianId
-                + "&stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + subjectId +
+        mRequestUrl = Constant.API + "/AppServer/ajax/studentApp_getStuPointPossessNew.do" + "?catalogId=" + zhishidianId
+                + "&stuId=" + userName + "&taskId=" + message + "&channelCode=" + xueduan + "&subjectCode=" + subjectId +
                 "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=1101010010001";
         Log.d("wen", "loadZhiShiDian: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {

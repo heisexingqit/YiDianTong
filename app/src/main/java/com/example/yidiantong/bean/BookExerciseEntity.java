@@ -15,6 +15,51 @@ public class BookExerciseEntity implements Serializable {
     public int answerNumber;//答案个数
     public String questionKeyword;//试题考点
     public String score;//试题分数
+    public int accType = 0;//作答是否正确类型  1正确 2错误 3部分正确  也用于提交时判断是否有作答
+    public String stuInput;//学生作答信息
+    public String stuScore;//学生作答分数
+    public Boolean isZuoDaMeiPingFen = false;//是否评分
+    public String zuodaDate;//学生作答时间
+
+    public String getZuodaDate() {
+        return zuodaDate;
+    }
+
+    public void setZuodaDate(String zuodaDate) {
+        this.zuodaDate = zuodaDate;
+    }
+
+    public String getStuScore() {
+        return stuScore;
+    }
+
+    public void setStuScore(String stuScore) {
+        this.stuScore = stuScore;
+    }
+
+    public Boolean getIsZuoDaMeiPingFen() {
+        return isZuoDaMeiPingFen;
+    }
+
+    public void setIsZuoDaMeiPingFen(Boolean isZuoDaMeiPingFen) {
+        this.isZuoDaMeiPingFen = isZuoDaMeiPingFen;
+    }
+
+    public String getStuInput() {
+        return stuInput;
+    }
+
+    public void setStuInput(String stuInput) {
+        this.stuInput = stuInput;
+    }
+
+    public int getAccType() {
+        return accType;
+    }
+
+    public void setAccType(int accType) {
+        this.accType = accType;
+    }
 
     public String getScore() {
         return score;

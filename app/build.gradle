@@ -10,9 +10,8 @@ android {
         applicationId "com.example.yidiantong"
         minSdk 23
         targetSdk 32
-        versionCode 54
-        versionName "7.5.4"
-
+        versionCode 55
+        versionName "7.5.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     android {
