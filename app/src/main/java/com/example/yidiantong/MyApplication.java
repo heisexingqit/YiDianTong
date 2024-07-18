@@ -43,7 +43,7 @@ public class MyApplication extends Application {
     public static int currentItem = 0;
     public static boolean isRotate = false;
 
-    private static RequestQueue mQueue;
+    public static RequestQueue mQueue;
     //ImageLoader显示图片过程中的参数
     private static DisplayImageOptions mLoaderOptions;
     private static String lastRequestUrl;
@@ -127,7 +127,8 @@ public class MyApplication extends Application {
         initImageLoader(getApplicationContext());
 
         // 初始化Volley的请求队列，使用okhttp替代volley底层链接
-        mQueue = Volley.newRequestQueue(getApplicationContext(), new OkHttpStack(), -1);
+        //mQueue = Volley.newRequestQueue(getApplicationContext(), new OkHttpStack(), -1);
+        mQueue = Volley.newRequestQueue(this);
 
         // 获取包管理器
         PackageManager packageManager = getPackageManager();
