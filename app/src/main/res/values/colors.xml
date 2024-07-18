@@ -58,6 +58,8 @@
     <color name="draw_color20">#ffff99</color>
     <color name="progress_green">#78fee0</color>
     <color name="live_green">#66b878</color>
+    <color name="gray_back">#e8e8e8</color>
+    <color name="baby_blue">#5dc4e9</color>
 
 
     <color name="t_top_search">#4dc7f8</color>

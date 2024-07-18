@@ -36,8 +36,8 @@ import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.CustomDraw;
 import com.example.yidiantong.util.Constant;
-import com.xinlan.imageeditlibrary.editimage.JsonUtils;
-import com.xinlan.imageeditlibrary.editimage.utils.ImageUtils;
+import com.example.yidiantong.util.JsonUtils;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;

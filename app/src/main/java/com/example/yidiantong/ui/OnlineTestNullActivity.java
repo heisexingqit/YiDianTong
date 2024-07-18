@@ -33,17 +33,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
-import com.example.yidiantong.adapter.ImagePagerAdapter;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import kr.co.namee.permissiongen.PermissionGen;
-import pl.droidsonroids.gif.GifImageView;
 
 public class OnlineTestNullActivity extends AppCompatActivity {
     private static final String TAG = "OnlineTestNullActivity";

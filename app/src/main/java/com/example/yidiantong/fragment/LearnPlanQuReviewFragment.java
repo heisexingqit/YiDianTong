@@ -21,7 +21,6 @@ import com.example.yidiantong.bean.LearnPlanItemEntity;
 import com.example.yidiantong.util.LearnPlanInterface;
 import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.StringUtils;
-import com.xinlan.imageeditlibrary.editimage.view.imagezoom.easing.Linear;
 
 
 public class LearnPlanQuReviewFragment extends Fragment implements View.OnClickListener {

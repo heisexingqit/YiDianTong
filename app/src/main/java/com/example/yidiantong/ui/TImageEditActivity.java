@@ -16,9 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
-import com.example.yidiantong.View.ClickableImageView;
-import com.example.yidiantong.util.ImageUtils;
-import com.xinlan.imageeditlibrary.editimage.EditImageActivity;
+
 
 import java.io.IOException;
 

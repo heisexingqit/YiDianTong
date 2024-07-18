@@ -10,8 +10,8 @@ android {
         applicationId "com.example.yidiantong"
         minSdk 23
         targetSdk 32
-        versionCode 58
-        versionName "7.5.8"
+        versionCode 59
+        versionName "7.5.9"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     android {
@@ -114,14 +114,14 @@ dependencies {
     implementation 'com.blankj:utilcodex:1.30.5'
 
     // 画板module
-    implementation project(':imageeditlibrary')
+    //implementation project(':imageeditlibrary')
 
     // 直播课模块
-    implementation project(':TRTCAPP')
+    //implementation project(':TRTCAPP')
 
     // 录音工具
-    implementation 'com.lovedise:permissiongen:0.0.6'
+    //implementation 'com.lovedise:permissiongen:0.0.6'
 
     // 动图展示依赖
-    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.15'
+    //implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.15'
 }

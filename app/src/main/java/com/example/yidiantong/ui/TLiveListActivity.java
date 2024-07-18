@@ -1,7 +1,6 @@
 package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -43,15 +42,10 @@ import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.navigationdemo.MainActivity_stu;
-import com.navigationdemo.MainActivity_tea;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -145,24 +139,24 @@ public class TLiveListActivity extends AppCompatActivity implements View.OnClick
                 dialog.setMyInterface(new LiveEnterDialog.MyInterface() {
                     @Override
                     public void submit(boolean isCamera, boolean isMicro) {
-                        Intent intent = new Intent(TLiveListActivity.this, MainActivity_tea.class);
-                        TLiveItemEntity item = adapter.itemList.get(pos);
-                        String roomName = item.getTitle();
-                        String roomId = item.getRoomId();
-                        String subjectId = item.getSubjectId();
-                        String userSig = "null";
-                        String ketangId = item.getKetangId();
-                        String ketangName = item.getKetangName();
-                        String userHead = MyApplication.picUrl;
-                        String classAlreadtStartTime = item.getStartDate().getTime();
-                        Log.d(TAG, "已开始时间: " + classAlreadtStartTime);
-                        String params = MyApplication.username + "-@-" + MyApplication.cnName + "-@-" + roomId + "-@-" + roomName + "-@-" + subjectId + "-@-" + ketangId + "-@-" + ketangName + "-@-" + userHead + "-@-" + isCamera + "-@-" + isMicro + "-@-" + classAlreadtStartTime;
-                        intent.putExtra("params", params);
-                        // 关闭定时器
-                        shouldStopTimer = true;
-                        startActivity(intent);
-                        // 关闭对话框
-                        dialog.dismiss();
+//                        Intent intent = new Intent(TLiveListActivity.this, MainActivity_tea.class);
+//                        TLiveItemEntity item = adapter.itemList.get(pos);
+//                        String roomName = item.getTitle();
+//                        String roomId = item.getRoomId();
+//                        String subjectId = item.getSubjectId();
+//                        String userSig = "null";
+//                        String ketangId = item.getKetangId();
+//                        String ketangName = item.getKetangName();
+//                        String userHead = MyApplication.picUrl;
+//                        String classAlreadtStartTime = item.getStartDate().getTime();
+//                        Log.d(TAG, "已开始时间: " + classAlreadtStartTime);
+//                        String params = MyApplication.username + "-@-" + MyApplication.cnName + "-@-" + roomId + "-@-" + roomName + "-@-" + subjectId + "-@-" + ketangId + "-@-" + ketangName + "-@-" + userHead + "-@-" + isCamera + "-@-" + isMicro + "-@-" + classAlreadtStartTime;
+//                        intent.putExtra("params", params);
+//                        // 关闭定时器
+//                        shouldStopTimer = true;
+//                        startActivity(intent);
+//                        // 关闭对话框
+//                        dialog.dismiss();
                     }
                 });
 

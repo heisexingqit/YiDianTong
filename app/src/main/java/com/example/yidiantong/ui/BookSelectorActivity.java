@@ -36,8 +36,6 @@ import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.xinlan.imageeditlibrary.editimage.view.imagezoom.easing.Linear;
-import androidx.recyclerview.widget.DividerItemDecoration;
 
 import org.json.JSONArray;
 import org.json.JSONException;
