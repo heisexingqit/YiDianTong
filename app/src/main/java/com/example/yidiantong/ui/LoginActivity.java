@@ -92,12 +92,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // 组件样式 结束-----------------------------------------------------
 
         String user = null, pw = null;
+        preferences = getSharedPreferences("config", Context.MODE_PRIVATE);
         if (savedInstanceState != null) {
             user = savedInstanceState.getString("username");
             pw = savedInstanceState.getString("password");
         } else {
             //记住密码
-            preferences = getSharedPreferences("config", Context.MODE_PRIVATE);
+
             user = preferences.getString("username", null);
             pw = preferences.getString("password", null);
         }
