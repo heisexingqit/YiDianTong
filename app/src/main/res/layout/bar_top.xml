@@ -69,5 +69,17 @@
         android:src="@drawable/refresh"
         android:visibility="gone" />
 
+    <TextView
+        android:id="@+id/ftv_history"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:text="历史记录"
+        android:textColor="@color/baby_blue"
+        android:textSize="17sp"
+        android:visibility="gone"/>
+
 
 </RelativeLayout>

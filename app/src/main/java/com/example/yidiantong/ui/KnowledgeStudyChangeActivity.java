@@ -105,17 +105,6 @@ public class KnowledgeStudyChangeActivity extends AppCompatActivity {
         wv_content.addJavascriptInterface(jsInterface, "AndroidInterface");
     }
 
-    /*@Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus && window == null) {
-            window = new PopupWindow(contentView, LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT, true);
-            window.showAsDropDown(ll_content,0, 0);
-        }
-        if (window != null && !window.isShowing()) finish();
-    }*/
-
 
     // JS延迟关闭PopUpWindow
     private Handler handler = new Handler(Looper.getMainLooper()) {
@@ -137,48 +126,6 @@ public class KnowledgeStudyChangeActivity extends AppCompatActivity {
         public MyJavaScriptInterface(Context context) {
             this.context = context;
         }
-        /*@JavascriptInterface
-        public void displayHTMLContent(String str, String id) {
-            // 在这里使用htmlContent进行处理，例如显示在TextView中
-            // 封装消息，传递给主线程
-            Message message = Message.obtain();
-            zhishidian = str;
-            zhishidianId = id;
-//            message.what = 100;
-//            handler.sendMessage(message);
-        }
-        // 获取选中的ID
-        @JavascriptInterface
-        public void sendCheckedIdsAndNames(String ids, String names) {
-            // 在这里处理拼接的ID字符串和名称字符串，例如显示在Log中
-            Log.d("Checked IDs", ids);
-            Log.d("Checked Names", names);
-            //            names = names.replaceAll("章节点有效答题[^：]*：", "");
-            // 在 "章节点有效答题" 前面添加换行符
-            names = names.replaceAll("(章节点有效答题)", "\n$1");
-
-            // 在 "考点" 后面添加换行符并去掉冒号和逗号，最后一个考点只去掉冒号
-            StringBuilder output = new StringBuilder();
-            String[] parts = names.split("考点");
-            for (int i = 0; i < parts.length - 1; i++) {
-                // 去掉逗号和冒号
-                String part = parts[i].replaceFirst("：,", "");
-                output.append(part).append("考点\n");
-            }
-            // 处理最后一个考点，去掉冒号
-            output.append(parts[parts.length - 1].replaceFirst("：$", ""));
-
-            // 打印结果
-            System.out.println(output.toString());
-
-
-
-            Message message = Message.obtain();
-            zhishidian = output.toString();
-            zhishidianId = ids;
-            message.what = 100;
-            handler.sendMessage(message);
-        }*/
     }
 
 
@@ -186,9 +133,8 @@ public class KnowledgeStudyChangeActivity extends AppCompatActivity {
     private void loadZhiShiDian() {
         rl_loading.setVisibility(View.VISIBLE);
         fiv_back.setVisibility(View.VISIBLE);
-        mRequestUrl = Constant.API + "/AppServer/ajax/studentApp_getStuPointPossessNew.do" + "?catalogId=" + zhishidianId
-                + "&stuId=" + userName + "&taskId=" + message + "&channelCode=" + xueduan + "&subjectCode=" + subjectId +
-                "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=1101010010001";
+        mRequestUrl = Constant.API + "/AppServer/ajax/studentApp_getStuPointPossessNew.do"
+                + "?stuId=" + userName + "&taskId=" + message + "&unitId=1101010010001";
         Log.d("wen", "loadZhiShiDian: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {

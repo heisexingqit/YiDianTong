@@ -25,7 +25,7 @@
             android:layout_height="20dp"
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/ftv_detail_num"
-            android:src="@drawable/play"/>
+            android:src="@drawable/play" />
 
         <TextView
             android:id="@+id/ftv_detail_score"

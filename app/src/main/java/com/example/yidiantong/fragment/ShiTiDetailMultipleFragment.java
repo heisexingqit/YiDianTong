@@ -39,6 +39,7 @@ import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookExerciseEntity;
 import com.example.yidiantong.ui.KnowledgeShiTiActivity;
 import com.example.yidiantong.ui.KnowledgeShiTiDetailActivity;
+import com.example.yidiantong.ui.KnowledgeShiTiHistoryActivity;
 import com.example.yidiantong.ui.MainBookUpActivity;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.RecyclerInterface;
@@ -375,25 +376,47 @@ public class ShiTiDetailMultipleFragment extends Fragment implements View.OnClic
                     if (result.equals(bookExerciseEntity.getShiTiAnswer())) {
                         fiv_bd_tf.setImageResource(R.drawable.ansright);
                         tv_stu_scores.setText("得分  " + bookExerciseEntity.getScore());
-                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(1);
-                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(bookExerciseEntity.getScore());
+                        if (MyApplication.typeActivity == 1) {
+                            ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(1);
+                            ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(bookExerciseEntity.getScore());
+                        }else if (MyApplication.typeActivity == 2) {
+                            ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(1);
+                            ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(bookExerciseEntity.getScore());
+                        }
                     } else if (bookExerciseEntity.getShiTiAnswer().contains(result)) {
                         fiv_bd_tf.setImageResource(R.drawable.anshalf);
                         tv_stu_scores.setText("得分  " + halfScoreStr);
-                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(3);
-                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(halfScoreStr);
+                        if (MyApplication.typeActivity == 1) {
+                            ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(3);
+                            ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(halfScoreStr);
+                        }else if (MyApplication.typeActivity == 2) {
+                            ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(3);
+                            ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(halfScoreStr);
+                        }
                     } else {
                         fiv_bd_tf.setImageResource(R.drawable.answrong);
                         tv_stu_scores.setText("得分  0");
-                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(2);
-                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore("0");
+                        if (MyApplication.typeActivity == 1) {
+                            ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(2);
+                            ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore("0");
+                        }else if (MyApplication.typeActivity == 2) {
+                            ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(2);
+                            ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore("0");
+                        }
                     }
                     tv_all_scores.setText("满分  " + bookExerciseEntity.getScore());
-                    ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(result);
                     Date day = new Date();
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String date = sdf.format(day);
-                    ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setZuodaDate(date);
+                    if (MyApplication.typeActivity == 1) {
+                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(result);
+                        ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setZuodaDate(date);
+                    }else if (MyApplication.typeActivity == 2) {
+                        ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(result);
+                        ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setZuodaDate(date);
+                    }
+
+
                     Toast.makeText(getContext(), "答案保存成功！", Toast.LENGTH_SHORT).show();
                     // 保存学生答案至服务器
                     //saveAnswer2Server(bookExerciseEntity.getShiTiAnswer(), result, type);

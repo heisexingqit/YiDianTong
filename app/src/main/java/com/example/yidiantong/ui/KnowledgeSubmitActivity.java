@@ -138,6 +138,19 @@ public class KnowledgeSubmitActivity extends AppCompatActivity implements View.O
                 finish();
                 break;
             case R.id.btn_submit:
+                // 如果type中存在0，则说明有未答题目,进行提示
+                boolean flag = false;
+                for (int i = 0; i < itemList.size(); i++) {
+                    if (itemList.get(i).getAccType() == 0) {
+                        // 提示
+                        Toast.makeText(this, "有试题未答，无法查看反馈", Toast.LENGTH_SHORT).show();
+                        flag = true;
+                        break;
+                    }
+                }
+                if (flag) {
+                    return;
+                }
                 Intent intent = new Intent(this, KnowledgeStudyChangeActivity.class);
                 System.out.println("KnowledgeSubmitActivity: " + userName);
                 intent.putExtra("userName", userName);
@@ -181,7 +194,7 @@ public class KnowledgeSubmitActivity extends AppCompatActivity implements View.O
 
     //提交代码
     private void submit() {
-        isSubmitting=true;
+        isSubmitting = true;
         Date day = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd:HH:mm:ss");
         String date = sdf.format(day);
@@ -215,7 +228,7 @@ public class KnowledgeSubmitActivity extends AppCompatActivity implements View.O
             AlertDialog dialog = builder.create();
             dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
             dialog.show();
-        }else{
+        } else {
             submit_request(date);
         }
     }

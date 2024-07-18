@@ -109,7 +109,7 @@ public class BookUpFragment extends Fragment {
             getActivity().finish();
 
         });
-
+        MyApplication.typeActivity = 0;
         frv_detail = view.findViewById(R.id.frv_detail);
         //RecyclerView两步必要配置
         frv_detail.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));

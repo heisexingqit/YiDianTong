@@ -63,6 +63,7 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
     private String banben = "";
     private String jiaocai = "";
 
+    private TextView ftv_history;
     // 选择的标记
     private TextView lastXueduan;
     private TextView lastXueke;
@@ -102,6 +103,9 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
         ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
 
         // 获取组件
+        ftv_history = findViewById(R.id.ftv_history);
+        ftv_history.setVisibility(View.VISIBLE);
+        ftv_history.setOnClickListener(this);
         Button btn_select_knowledge = findViewById(R.id.btn_select_knowledge);
         btn_select_knowledge.setOnClickListener(this);
         ftv_title = findViewById(R.id.ftv_title);
@@ -193,6 +197,17 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
             /*case R.id.iv_stu:
                 showList(4);
                 break;*/
+            case R.id.ftv_history:
+                Intent intent2 = new Intent(this, KnowledgeHistoryActivity.class);
+                intent2.putExtra("userName", MyApplication.username);
+                intent2.putExtra("xueduanId", xueduanMap.get(xueduan));
+                intent2.putExtra("xuekeId", xuekeMap.get(xueke));
+                intent2.putExtra("xueke", xueke);
+                intent2.putExtra("banbenId", banbenMap.get(banben));
+                intent2.putExtra("jiaocaiId", jiaocaiMap.get(jiaocai));
+                intent2.putExtra("unitId", "1101010010001");
+                startActivity(intent2);
+                break;
             case R.id.btn_select_knowledge:
                 if (StringUtils.hasEmptyString(xueduan, xueke, banben, jiaocai)) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
