@@ -70,6 +70,7 @@ public class KnowledgeSubmitActivity extends AppCompatActivity implements View.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_knowledge_submit);
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
 
         itemList = (List<BookExerciseEntity>) getIntent().getSerializableExtra("itemList");
         userName = getIntent().getStringExtra("userName");

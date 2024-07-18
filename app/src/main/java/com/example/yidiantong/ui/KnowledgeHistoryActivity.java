@@ -162,10 +162,8 @@ public class KnowledgeHistoryActivity extends AppCompatActivity {
 
     //发送请求获得试题数据,对请求到的数据进行处理
     private void loadItems_Net() {
-        if (adapter.isRefresh == 1) {
-            fll_null.setVisibility(View.GONE);
-            rl_loading.setVisibility(View.VISIBLE);
-        }
+        fll_null.setVisibility(View.GONE);
+        rl_loading.setVisibility(View.VISIBLE);
         String mRequestUrl = Constant.API + "/AppServer/ajax/studentApp_getZZXXRecordList.do"
                 + "?stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + subjectId
                 + "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=1101010010001";

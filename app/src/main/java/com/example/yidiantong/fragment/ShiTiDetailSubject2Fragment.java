@@ -310,8 +310,6 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
         iv_gallery.setOnClickListener(this);
         // 学生输入
         et_student_answer = view.findViewById(R.id.et_stu_answer);
-//        Log.e("wen0603", "onCreateView: 新建了2" + et_student_answer.getText().toString());
-
 
         // 手动清空 EditText 的内容
         myWatcher = new TextWatcher() {
@@ -353,11 +351,6 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
         // 题号和平均分
         ftv_bd_num = view.findViewById(R.id.ftv_bd_num);
         ftv_bd_num.setText("第" + currentpage + "题");
-//        if (bookExerciseEntity.getQuestionKeyword().equals("")) {
-//            ftv_bd_num.setText("第" + currentpage + "题");
-//        } else {
-//            ftv_bd_num.setText("第" + currentpage + "题  (" + bookExerciseEntity.getQuestionKeyword() + "");
-//        }
 
         //翻页组件
         ImageView iv_pager_last = getActivity().findViewById(R.id.iv_page_last);
@@ -916,16 +909,18 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
             String[] stuLoadAnswer = arrayString.split(",");
             String loadAnswer = stuLoadAnswer[Integer.parseInt(currentpage) - 1];
             System.out.println("loadAnswer:" + loadAnswer);
+            et_student_answer.setText("");
             if (!loadAnswer.equals("null")) {
                 fll_bd_analysis.setVisibility(View.VISIBLE);
                 fb_bd_sumbit.setVisibility(View.GONE);
                 String[] split = loadAnswer.split("@&@");
+                tv_stu_answer.setText("【你的作答】");
                 if (split[0].equals("")) {
                     ll_tiankong.setVisibility(View.GONE);
                     wv_stu_answer.loadDataWithBaseURL(null, html_head + split[1], "text/html", "utf-8", null);
                     ll_input_image.setVisibility(View.VISIBLE);
+                    exercise_stu_html = split[1];
                 } else {
-                    tv_stu_answer.setText("【你的作答】");
                     iv_camera.setVisibility(View.GONE);
                     iv_gallery.setVisibility(View.GONE);
                     System.out.println("split[0]:" + split[0]);

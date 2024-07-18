@@ -299,11 +299,17 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
                                         else if (zuoDaXinXi.teaScore == 0)
                                             bookExerciseEntity.setAccType(2);
                                         else bookExerciseEntity.setAccType(3);
-                                        if (zuoDaXinXi.stuAnswer.contains("img")) {
-                                            answer = "@&@" + zuoDaXinXi.stuAnswer + "@&@" + zuoDaXinXi.teaScore;
+                                        // 判断是多选还是主观题
+                                        if (bookExerciseEntity.getBaseTypeId().equals("102")) {
+                                            answer = zuoDaXinXi.stuAnswer;
                                         }else {
-                                            answer = zuoDaXinXi.stuAnswer +  "@&@" + "@&@" + zuoDaXinXi.teaScore;
+                                            if (zuoDaXinXi.stuAnswer.contains("img")) {
+                                                answer = "@&@" + zuoDaXinXi.stuAnswer + "@&@" + zuoDaXinXi.teaScore;
+                                            }else {
+                                                answer = zuoDaXinXi.stuAnswer +  "@&@" + "@&@" + zuoDaXinXi.teaScore;
+                                            }
                                         }
+
                                     }
                                     // 将作答信息存至本地
                                     String arrayString = preferences.getString("autoStuLoadAnswer", null);
