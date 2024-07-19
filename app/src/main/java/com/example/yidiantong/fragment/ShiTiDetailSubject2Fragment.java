@@ -68,6 +68,8 @@ import com.example.yidiantong.bean.BookRecyclerEntity;
 import com.example.yidiantong.bean.XueBaAnswerEntity;
 import com.example.yidiantong.ui.BookExercise2ThreeActivity;
 import com.example.yidiantong.ui.BookExerciseActivity;
+import com.example.yidiantong.ui.DetectionShiTiDetailActivity;
+import com.example.yidiantong.ui.DetectionShiTiHistoryActivity;
 import com.example.yidiantong.ui.KnowledgeShiTiActivity;
 import com.example.yidiantong.ui.KnowledgeShiTiDetailActivity;
 import com.example.yidiantong.ui.KnowledgeShiTiHistoryActivity;
@@ -689,14 +691,21 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                 ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(exercise_stu_answer);
             }else if (MyApplication.typeActivity == 2) {
                 ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(exercise_stu_answer);
+            }else if (MyApplication.typeActivity == 3) {
+                ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(exercise_stu_answer);
+            }else if (MyApplication.typeActivity == 4) {
+                ((DetectionShiTiHistoryActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(exercise_stu_answer);
             }
         }else {
             if (MyApplication.typeActivity == 1) {
                 ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(exercise_stu_html);
             }else if (MyApplication.typeActivity == 2) {
                 ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(exercise_stu_html);
+            }else if (MyApplication.typeActivity == 3) {
+                ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(exercise_stu_html);
+            }else if (MyApplication.typeActivity == 4) {
+                ((DetectionShiTiHistoryActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(exercise_stu_html);
             }
-
         }
         String arrayString = null;
         switch (type) {
@@ -765,7 +774,7 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                         startActivity(intent);
                         getActivity().finish();
                     } else if (flag.equals("巩固提升")) {
-                        Intent intent = new Intent(getActivity(), MainBookUpActivity.class);
+                        Intent intent = new Intent(getActivity(), DetectionShiTiDetailActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         intent.putExtra("userName", getActivity().getIntent().getStringExtra("username"));
                         intent.putExtra("subjectId", getActivity().getIntent().getStringExtra("subjectId"));
@@ -787,6 +796,10 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                 ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(1);
             }else if (MyApplication.typeActivity == 2) {
                 ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(1);
+            }else if (MyApplication.typeActivity == 3) {
+                ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(1);
+            }else if (MyApplication.typeActivity == 4) {
+                ((DetectionShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(1);
             }
         } else if (tempscore.equals("0")) {
             fiv_bd_tf2.setImageResource(R.drawable.answrong);
@@ -794,6 +807,10 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                 ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(2);
             }else if (MyApplication.typeActivity == 2) {
                 ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(2);
+            }else if (MyApplication.typeActivity == 3) {
+                ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(2);
+            }else if (MyApplication.typeActivity == 4) {
+                ((DetectionShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(2);
             }
         } else {
             fiv_bd_tf2.setImageResource(R.drawable.anshalf);
@@ -801,6 +818,10 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                 ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(3);
             }else if (MyApplication.typeActivity == 2) {
                 ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(3);
+            }else if (MyApplication.typeActivity == 3) {
+                ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(3);
+            }else if (MyApplication.typeActivity == 4) {
+                ((DetectionShiTiHistoryActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(3);
             }
         }
         if (MyApplication.typeActivity == 1) {
@@ -809,11 +830,18 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
         }else if (MyApplication.typeActivity == 2) {
             ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setIsZuoDaMeiPingFen(false);
             ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(tempscore);
+        }else if (MyApplication.typeActivity == 3) {
+            ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setIsZuoDaMeiPingFen(false);
+            ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(tempscore);
+        }else if (MyApplication.typeActivity == 4) {
+            ((DetectionShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setIsZuoDaMeiPingFen(false);
+            ((DetectionShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(tempscore);
         }
         ll_stu_scores.setVisibility(View.GONE);
         ll_stu_scores2.setVisibility(View.VISIBLE);
         tv_stu_scores2.setText("得分  " + tempscore);
-        String mRequestUrl = Constant.API + "/AppServer/ajax/studentApp_updateRecommendQueScore.do?userName=" +
+        Toast.makeText(getContext(), "分数提交成功！", Toast.LENGTH_SHORT).show();
+        /*String mRequestUrl = Constant.API + "/AppServer/ajax/studentApp_updateRecommendQueScore.do?userName=" +
                 userName + "&questionId=" + bookExerciseEntity.getQuestionId() + "&score=" + score + "&type=" + type;
         Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
@@ -835,7 +863,7 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
         }, error -> {
             Toast.makeText(this.getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
         });
-        MyApplication.addRequest(request, TAG);
+        MyApplication.addRequest(request, TAG);*/
     }
 
     // 如果提交答案但没有提交评分那么弹出提示框:请先进行评分
@@ -1017,6 +1045,10 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                         ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setIsZuoDaMeiPingFen(true);
                     }else if (MyApplication.typeActivity == 2) {
                         ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setIsZuoDaMeiPingFen(true);
+                    }else if (MyApplication.typeActivity == 3) {
+                        ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setIsZuoDaMeiPingFen(true);
+                    }else if (MyApplication.typeActivity == 4) {
+                        ((DetectionShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setIsZuoDaMeiPingFen(true);
                     }
                     Date day = new Date();
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -1025,6 +1057,10 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                         ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setZuodaDate(date);
                     }else if (MyApplication.typeActivity == 2) {
                         ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setZuodaDate(date);
+                    }else if (MyApplication.typeActivity == 3) {
+                        ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setZuodaDate(date);
+                    }else if (MyApplication.typeActivity == 4) {
+                        ((DetectionShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setZuodaDate(date);
                     }
                     Toast.makeText(getContext(), "答案保存成功！", Toast.LENGTH_SHORT).show();
                     // 保存学生答案至服务器

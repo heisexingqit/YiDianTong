@@ -38,6 +38,8 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookExerciseEntity;
 import com.example.yidiantong.ui.AutoStudyActivity;
+import com.example.yidiantong.ui.DetectionShiTiDetailActivity;
+import com.example.yidiantong.ui.DetectionShiTiHistoryActivity;
 import com.example.yidiantong.ui.KnowledgeShiTiActivity;
 import com.example.yidiantong.ui.KnowledgeShiTiDetailActivity;
 import com.example.yidiantong.ui.KnowledgeShiTiHistoryActivity;
@@ -339,6 +341,12 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
                         }else if (MyApplication.typeActivity == 2) {
                             ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(1);
                             ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(bookExerciseEntity.getScore());
+                        }else if (MyApplication.typeActivity == 3) {
+                            ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(1);
+                            ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(bookExerciseEntity.getScore());
+                        }else if (MyApplication.typeActivity == 4) {
+                            ((DetectionShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(1);
+                            ((DetectionShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(bookExerciseEntity.getScore());
                         }
                     } else {
                         fiv_bd_tf.setImageResource(R.drawable.answrong);
@@ -349,6 +357,12 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
                         }else if (MyApplication.typeActivity == 2) {
                             ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(2);
                             ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore("0");
+                        }else if (MyApplication.typeActivity == 3) {
+                            ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(2);
+                            ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore("0");
+                        }else if (MyApplication.typeActivity == 4) {
+                            ((DetectionShiTiHistoryActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(2);
+                            ((DetectionShiTiHistoryActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore("0");
                         }
                     }
                     tv_all_scores.setText("满分  " + bookExerciseEntity.getScore());
@@ -362,6 +376,12 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
                     }else if (MyApplication.typeActivity == 2) {
                         ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(option[stuans]);
                         ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setZuodaDate(date);
+                    }else if (MyApplication.typeActivity == 3) {
+                        ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(option[stuans]);
+                        ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setZuodaDate(date);
+                    }else if (MyApplication.typeActivity == 4) {
+                        ((DetectionShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(option[stuans]);
+                        ((DetectionShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setZuodaDate(date);
                     }
                     Toast.makeText(getContext(), "答案保存成功！", Toast.LENGTH_SHORT).show();
                     // 保存学生答案至服务器
@@ -435,7 +455,7 @@ public class ShiTiDetailSingleFragment extends Fragment implements View.OnClickL
                                     startActivity(intent);
                                     getActivity().finish();
                                 }else if (flag.equals("巩固提升")){
-                                    Intent intent = new Intent(getActivity(), MainBookUpActivity.class);
+                                    Intent intent = new Intent(getActivity(), DetectionShiTiDetailActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     intent.putExtra("userName", getActivity().getIntent().getStringExtra("username"));
                                     intent.putExtra("subjectId", getActivity().getIntent().getStringExtra("subjectId"));

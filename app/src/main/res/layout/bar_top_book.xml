@@ -41,7 +41,8 @@
         android:layout_toLeftOf="@id/selector"
         android:clickable="true"
         android:focusable="true"
-        android:src="@drawable/up" />
+        android:src="@drawable/up"
+        android:visibility="gone"/>
 
     <!--右-->
     <LinearLayout
