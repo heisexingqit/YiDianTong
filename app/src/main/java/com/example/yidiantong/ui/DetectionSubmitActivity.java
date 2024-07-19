@@ -131,8 +131,8 @@ public class DetectionSubmitActivity extends AppCompatActivity implements View.O
                 finish();
                 break;
             case R.id.btn_submit:
-                // 如果type中存在0，则说明有未答题目,进行提示  TODO
-                /*boolean flag = false;
+                // 如果type中存在0，则说明有未答题目,进行提示
+                boolean flag = false;
                 for (int i = 0; i < itemList.size(); i++) {
                     if (itemList.get(i).getAccType() == 0) {
                         // 提示
@@ -143,7 +143,7 @@ public class DetectionSubmitActivity extends AppCompatActivity implements View.O
                 }
                 if (flag) {
                     return;
-                }*/
+                }
                 Intent intent = new Intent(this, IntelligentDetectionChangeActivity.class);
                 System.out.println("KnowledgeSubmitActivity: " + userName);
                 intent.putExtra("userName", userName);

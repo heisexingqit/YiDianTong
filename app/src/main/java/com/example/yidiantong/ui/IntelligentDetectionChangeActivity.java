@@ -76,16 +76,6 @@ public class IntelligentDetectionChangeActivity extends AppCompatActivity {
             finish(); if (window != null && window.isShowing()) { window.dismiss(); }
         });
 
-        // TODO 刷新
-        fiv_refresh = findViewById(R.id.fiv_refresh);
-        fiv_refresh.setVisibility(View.VISIBLE);
-        fiv_refresh.setOnClickListener(v -> {
-            if (window != null && window.isShowing()) {
-                window.dismiss();
-            }
-            loadZhiShiDian();
-        });
-
         //获取Intent参数,设置学科错题本最上面的内容
         userName = getIntent().getStringExtra("userName");  //用户名
         System.out.println("userName: KnowledgeStudyChangeActivity" + userName);
