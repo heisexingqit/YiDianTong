@@ -281,7 +281,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
                             for (ZuoDaXinXi zuoDaXinXi : tempList) {
                                 if (bookExerciseEntity.getQuestionId().equals(zuoDaXinXi.questionId)) {
                                     bookExerciseEntity.setStuInput(zuoDaXinXi.stuAnswer);  // 学生作答信息
-                                    bookExerciseEntity.setStuScore(String.valueOf(zuoDaXinXi.teaScore));   // 学生作答分数
+                                    bookExerciseEntity.setStuScore(zuoDaXinXi.teaScore);   // 学生作答分数
                                     Date day = new Date();
                                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                     String date = sdf.format(day);
@@ -294,9 +294,9 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
                                         else bookExerciseEntity.setAccType(3);
                                         answer = zuoDaXinXi.stuAnswer;
                                     } else {
-                                        if (zuoDaXinXi.teaScore == zuoDaXinXi.queSscore)
+                                        if (zuoDaXinXi.teaScore.equals(zuoDaXinXi.queSscore))
                                             bookExerciseEntity.setAccType(1);
-                                        else if (zuoDaXinXi.teaScore == 0)
+                                        else if (zuoDaXinXi.teaScore.equals("0"))
                                             bookExerciseEntity.setAccType(2);
                                         else bookExerciseEntity.setAccType(3);
                                         // 判断是多选还是主观题
@@ -670,8 +670,8 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
 
     public class ZuoDaXinXi {
         public String questionId;  // 问题id
-        public int teaScore;    // 作答分数
-        public int queSscore;   // 试题分数
+        public String teaScore;    // 作答分数
+        public String queSscore;   // 试题分数
         public String stuAnswer;   // 学生答案
         public String status;      // 是否正确
     }

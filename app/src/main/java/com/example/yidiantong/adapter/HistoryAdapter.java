@@ -96,7 +96,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             HistoryEntity item = itemList.get(pos);
             tv_title.setText(item.getName());
             tv_date.setText(item.getCreateDateStr());
-            tv_xinxi.setText("考点：" + item.getPointNum() + "  试题总数：" + item.getQNum() + "  已答试题：" + item.getAnswerQueNum());
+            tv_xinxi.setText("学科: " + item.getSubjectName() + "  考点：" + item.getPointNum() + "  题数：" + item.getQNum() + "  已答：" + item.getAnswerQueNum());
         }
     }
 

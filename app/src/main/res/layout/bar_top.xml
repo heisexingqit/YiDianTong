@@ -81,5 +81,15 @@
         android:textSize="17sp"
         android:visibility="gone"/>
 
+    <ImageView
+        android:id="@+id/fiv_filtrate"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="5dp"
+        android:src="@drawable/filtrate"
+        android:visibility="gone"/>
+
 
 </RelativeLayout>
