@@ -1,14 +1,11 @@
 package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -24,7 +21,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.util.Constant;
@@ -260,7 +259,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void login() {
         ll_loading.setVisibility(View.VISIBLE);
         String url = Constant.API + Constant.LOGIN + "?userName=" + username + "&passWord=" + password;
-        StringRequest request = new StringRequest(url, response -> {
+        Toast.makeText(LoginActivity.this, "登录URL:"+url, Toast.LENGTH_SHORT).show();
+        // 初始化RequestQueue
+        if (MyApplication.getHttpQueue()== null) {
+            MyApplication.mQueue = Volley.newRequestQueue(this);
+        }
+        StringRequest request = new StringRequest(Request.Method.GET,url, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 // 及时解除loading效果
@@ -334,11 +338,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         }, error -> {
             // 及时解除loading效果
+            Toast.makeText(LoginActivity.this, "网络连接失败:"+ error.toString(), Toast.LENGTH_SHORT).show();
             ll_loading.setVisibility(View.GONE);
             Log.e("volley", "Volley_Error: " + error.toString());
 
         });
         MyApplication.addRequest(request, TAG);
+
     }
 
 

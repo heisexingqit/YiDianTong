@@ -434,7 +434,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                     contentView = LayoutInflater.from(this).inflate(R.layout.menu_homework, null, false);
 
                     ListView lv_homework = contentView.findViewById(R.id.lv_homework);
-                    lv_homework.getLayoutParams().width = PxUtils.dip2px(this, 110);
+                    lv_homework.getLayoutParams().width = PxUtils.dip2px(this, 120);
 
                     lv_homework.setAdapter(myArrayAdapter);
                     lv_homework.setOnItemClickListener(new AdapterView.OnItemClickListener() {
