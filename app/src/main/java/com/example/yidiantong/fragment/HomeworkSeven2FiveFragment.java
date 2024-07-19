@@ -6,14 +6,12 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,10 +21,9 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.HomeworkEntity;
 import com.example.yidiantong.bean.StuAnswerEntity;
-import com.example.yidiantong.util.PagingInterface;
-import com.example.yidiantong.util.PxUtils;
-import com.example.yidiantong.util.StringUtils;
 import com.example.yidiantong.util.HomeworkInterface;
+import com.example.yidiantong.util.PagingInterface;
+import com.example.yidiantong.util.StringUtils;
 
 import org.apache.commons.text.StringEscapeUtils;
 
@@ -103,13 +100,13 @@ public class HomeworkSeven2FiveFragment extends Fragment implements View.OnClick
         int screenHeight = metrics.heightPixels;
         // 长宽像素比
         float deviceAspectRatio = (float) screenHeight / screenWidth;
-        // 获取底部布局
-        RelativeLayout block = view.findViewById(R.id.rl_bottom_block);
-        if (deviceAspectRatio > 2.0) {
-            ViewGroup.LayoutParams params = block.getLayoutParams();
-            params.height = PxUtils.dip2px(getActivity(), 80);
-            block.setLayoutParams(params);
-        }
+//        // 获取底部布局
+//        RelativeLayout block = view.findViewById(R.id.rl_bottom_block);
+//        if (deviceAspectRatio > 2.0) {
+//            ViewGroup.LayoutParams params = block.getLayoutParams();
+//            params.height = PxUtils.dip2px(getActivity(), 80);
+//            block.setLayoutParams(params);
+//        }
 
         /** 转义数据中的字符实体 */
         homeworkEntity.setQuestionContent(StringEscapeUtils.unescapeHtml4(homeworkEntity.getQuestionContent()));

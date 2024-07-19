@@ -508,5 +508,6 @@
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>
-    <include layout="@layout/pageing_homework"/>
+
+    <include layout="@layout/pageing_homework" />
 </RelativeLayout>
