@@ -37,7 +37,9 @@ public class MyApplication extends Application {
     public static String password;
     public static Boolean autoLogin;
     public static String typeName;
-    public static int typeActivity = 0; // 0代表没有 1代表KnowledgeShiTiDetailActivity   2 代表KnowledgeShiTiHistoryActivity
+    /* 0代表没有 1代表KnowledgeShiTiDetailActivity   2 代表KnowledgeShiTiHistoryActivity
+       3代表DetectionShiTiDetailActivity 4代表DetectionShiTiHistoryActivity */
+    public static int typeActivity = 0;
 
     // 旋转屏幕处理
     public static int currentItem = 0;

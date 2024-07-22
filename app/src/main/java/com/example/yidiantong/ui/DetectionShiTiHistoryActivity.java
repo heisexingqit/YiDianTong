@@ -65,13 +65,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.transform.ErrorListener;
-
 /**
  * 此页面与KnowledgeBookDetailActivity功能全部一样 只是数据获取方式不同
  */
-public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements RecyclerInterface, View.OnClickListener {
-    private static final String TAG = "KnowledgeShiTiHistoryActivity";
+public class DetectionShiTiHistoryActivity extends AppCompatActivity implements RecyclerInterface, View.OnClickListener {
+    private static final String TAG = "DetectionShiTiHistoryActivity";
     private String course_name;  //课程名称
     private ViewPager fvp_book_recycle;  //可滑动ViewPager
     private BooksRecyclerAdapter adapter;  //ViewPager适配器
@@ -101,7 +99,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
     private TextView tv_massage;
     private RelativeLayout rl_loading;
     private SharedPreferences preferences;
-    private String[] autoStuLoadAnswer;
+    private String[] upStuLoadAnswer;
     private TextView tv_content;
     private View contentView = null;
     private List<String> question_types = new ArrayList<>();
@@ -116,7 +114,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
         preferences = getSharedPreferences("shiti", MODE_PRIVATE);
         ((MyApplication) getApplication()).checkAndHandleGlobalVariables(this);
 
-        MyApplication.typeActivity = 2;
+        MyApplication.typeActivity = 4;
         fvp_book_recycle = findViewById(R.id.fvp_book_recycle);
         adapter = new BooksRecyclerAdapter(getSupportFragmentManager());
         fvp_book_recycle.setAdapter(adapter);
@@ -142,7 +140,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
         bookExerciseEntityList = new ArrayList<>();
         //获取Intent参数
         TextView tv_title = findViewById(R.id.ftv_title);
-        tv_title.setText("自主学习试题详情");
+        tv_title.setText("智能测试试题详情");
         userName = getIntent().getStringExtra("userName");  //用户名
         taskId = getIntent().getStringExtra("taskId");  //任务ID
         subjectId = getIntent().getStringExtra("subjectId"); //学科名
@@ -168,7 +166,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
                     Intent intent = result.getData();
                     int index = intent.getIntExtra("currentItem", 0);
                     if (index == -1) {
-                        Toast.makeText(KnowledgeShiTiHistoryActivity.this, "提交成功！", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DetectionShiTiHistoryActivity.this, "提交成功！", Toast.LENGTH_SHORT).show();
                     } else {
                         currentItem = index;
                         loadItems_Net(currentItem);
@@ -213,7 +211,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
                     tv_massage.setText("重新选择章节进行学习");
                     // 进行页面跳转 跳转到KnowledgePointActivity
                     tv_massage.setOnClickListener(v -> {
-                        Intent intent = new Intent(this, KnowledgePointActivity.class);
+                        Intent intent = new Intent(this, AutoDetectionActivity.class);
                         intent.putExtra("userName", userName);
                         intent.putExtra("xueduanId", xueduan);
                         intent.putExtra("xuekeId", subjectId);
@@ -227,7 +225,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
                     tv_massage.setText("重新选择章节进行学习");
                     // 进行页面跳转 跳转到KnowledgePointActivity
                     tv_massage.setOnClickListener(v -> {
-                        Intent intent = new Intent(this, KnowledgePointActivity.class);
+                        Intent intent = new Intent(this, AutoDetectionActivity.class);
                         intent.putExtra("userName", userName);
                         intent.putExtra("xueduanId", xueduan);
                         intent.putExtra("xuekeId", subjectId);
@@ -251,10 +249,10 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
                 rl_loading.setVisibility(View.VISIBLE);
                 //创建本地数组保存学生作答信息
                 SharedPreferences.Editor editor = preferences.edit();
-                autoStuLoadAnswer = new String[bookExerciseEntityList.size()];
-                String autoArrayString = TextUtils.join(",", autoStuLoadAnswer);
-                System.out.println("autoArrayString:" + autoArrayString);
-                editor.putString("autoStuLoadAnswer", autoArrayString);
+                upStuLoadAnswer = new String[bookExerciseEntityList.size()];
+                String upArrayString = TextUtils.join(",", upStuLoadAnswer);
+                System.out.println("upArrayString：" + upArrayString);
+                editor.putString("upStuLoadAnswer", upArrayString);
                 editor.apply();
                 currentItem = Integer.valueOf(pos);
                 fvp_book_recycle.setCurrentItem(currentItem);
@@ -312,14 +310,14 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
 
                                     }
                                     // 将作答信息存至本地
-                                    String arrayString = preferences.getString("autoStuLoadAnswer", null);
+                                    String arrayString = preferences.getString("upStuLoadAnswer", null);
                                     if (arrayString != null) {
-                                        String[] autoStuLoadAnswer = arrayString.split(",");
-                                        autoStuLoadAnswer[i] = answer; // 数组题号对应页数-1
+                                        String[] upStuLoadAnswer = arrayString.split(",");
+                                        upStuLoadAnswer[i] = answer; // 数组题号对应页数-1
                                         SharedPreferences.Editor editor2 = preferences.edit();
-                                        arrayString = TextUtils.join(",", autoStuLoadAnswer);
-                                        System.out.println("arrayString: " + arrayString);
-                                        editor2.putString("autoStuLoadAnswer", arrayString);
+                                        arrayString = TextUtils.join(",", upStuLoadAnswer);
+                                        System.out.println("upArrayString: " + arrayString);
+                                        editor2.putString("upStuLoadAnswer", arrayString);
                                         editor2.commit();
                                     }
                                 }
@@ -388,7 +386,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
                         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                             Boolean isZuoDaMeiPingFen = bookExerciseEntityList.get(currentItem - 1).getIsZuoDaMeiPingFen();
                             if (isZuoDaMeiPingFen) {
-                                Toast.makeText(KnowledgeShiTiHistoryActivity.this, "请先进行评分", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(DetectionShiTiHistoryActivity.this, "请先进行评分", Toast.LENGTH_SHORT).show();
                                 window.dismiss();
                             } else {
                                 //切换页+消除选项口
@@ -406,7 +404,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
                      */
                     lv_homework.post(() -> {
                         // 测量并设置ListView的宽度为最宽的列表项的宽度
-                        int maxHeight = PxUtils.dip2px(KnowledgeShiTiHistoryActivity.this, 245);
+                        int maxHeight = PxUtils.dip2px(DetectionShiTiHistoryActivity.this, 245);
                         // 获取ListView的子项数目
                         int itemCount = lv_homework.getAdapter().getCount();
 
@@ -490,7 +488,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
 
     //跳转至提交作业页面
     private void jumpToSubmitPage() {
-        Intent intent = new Intent(KnowledgeShiTiHistoryActivity.this, KnowledgeSubmitActivity.class);
+        Intent intent = new Intent(DetectionShiTiHistoryActivity.this, DetectionSubmitActivity.class);
         intent.putExtra("itemList", (Serializable) bookExerciseEntityList);
         intent.putExtra("userName", userName);
         intent.putExtra("subjectId", subjectId);
@@ -602,7 +600,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
             if (message.what == 100) {
                 List<BookExerciseEntity> list = (List<BookExerciseEntity>) message.obj;
                 String currentpage = String.valueOf(currentItem);
-                adapter.update2(list, 3, userName, subjectId, course_name, exerciseType, currentpage, allpage);
+                adapter.update2(list, 2, userName, subjectId, course_name, exerciseType, currentpage, allpage);
             }
         }
     };

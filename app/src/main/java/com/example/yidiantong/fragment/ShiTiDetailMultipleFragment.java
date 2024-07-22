@@ -37,6 +37,8 @@ import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.ClickableImageView;
 import com.example.yidiantong.bean.BookExerciseEntity;
+import com.example.yidiantong.ui.DetectionShiTiDetailActivity;
+import com.example.yidiantong.ui.DetectionShiTiHistoryActivity;
 import com.example.yidiantong.ui.KnowledgeShiTiActivity;
 import com.example.yidiantong.ui.KnowledgeShiTiDetailActivity;
 import com.example.yidiantong.ui.KnowledgeShiTiHistoryActivity;
@@ -382,6 +384,12 @@ public class ShiTiDetailMultipleFragment extends Fragment implements View.OnClic
                         }else if (MyApplication.typeActivity == 2) {
                             ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(1);
                             ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(bookExerciseEntity.getScore());
+                        }else if (MyApplication.typeActivity == 3) {
+                            ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(1);
+                            ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(bookExerciseEntity.getScore());
+                        }else if (MyApplication.typeActivity == 4) {
+                            ((DetectionShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(1);
+                            ((DetectionShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(bookExerciseEntity.getScore());
                         }
                     } else if (bookExerciseEntity.getShiTiAnswer().contains(result)) {
                         fiv_bd_tf.setImageResource(R.drawable.anshalf);
@@ -392,6 +400,12 @@ public class ShiTiDetailMultipleFragment extends Fragment implements View.OnClic
                         }else if (MyApplication.typeActivity == 2) {
                             ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(3);
                             ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(halfScoreStr);
+                        }else if (MyApplication.typeActivity == 3) {
+                            ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(3);
+                            ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(halfScoreStr);
+                        }else if (MyApplication.typeActivity == 4) {
+                            ((DetectionShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(3);
+                            ((DetectionShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(halfScoreStr);
                         }
                     } else {
                         fiv_bd_tf.setImageResource(R.drawable.answrong);
@@ -402,6 +416,12 @@ public class ShiTiDetailMultipleFragment extends Fragment implements View.OnClic
                         }else if (MyApplication.typeActivity == 2) {
                             ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(2);
                             ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore("0");
+                        }else if (MyApplication.typeActivity == 3) {
+                            ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(2);
+                            ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore("0");
+                        }else if (MyApplication.typeActivity == 4) {
+                            ((DetectionShiTiHistoryActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(2);
+                            ((DetectionShiTiHistoryActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore("0");
                         }
                     }
                     tv_all_scores.setText("满分  " + bookExerciseEntity.getScore());
@@ -414,6 +434,12 @@ public class ShiTiDetailMultipleFragment extends Fragment implements View.OnClic
                     }else if (MyApplication.typeActivity == 2) {
                         ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(result);
                         ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setZuodaDate(date);
+                    }else if (MyApplication.typeActivity == 3) {
+                        ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(result);
+                        ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setZuodaDate(date);
+                    }else if (MyApplication.typeActivity == 4) {
+                        ((DetectionShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(result);
+                        ((DetectionShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setZuodaDate(date);
                     }
 
 
@@ -489,7 +515,7 @@ public class ShiTiDetailMultipleFragment extends Fragment implements View.OnClic
                                     startActivity(intent);
                                     getActivity().finish();
                                 }else if (flag.equals("巩固提升")){
-                                    Intent intent = new Intent(getActivity(), MainBookUpActivity.class);
+                                    Intent intent = new Intent(getActivity(), DetectionShiTiDetailActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     intent.putExtra("userName", getActivity().getIntent().getStringExtra("username"));
                                     intent.putExtra("subjectId", getActivity().getIntent().getStringExtra("subjectId"));

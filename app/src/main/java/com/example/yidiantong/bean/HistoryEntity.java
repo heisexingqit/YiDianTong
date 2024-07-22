@@ -10,7 +10,7 @@ public class HistoryEntity implements Serializable {
     public String id; // 已答试题
     public String createDateStr; // 已答试题
     public String pointNum; // 考点总数
-    public String subjectName; // 已答试题
+    public String subjectName; // 学科名称
 
     public String getQNum() {
         return qNum;

@@ -1,27 +1,22 @@
 package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,11 +29,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
-import com.example.yidiantong.View.ClickableImageView;
-import com.example.yidiantong.adapter.BookAutoAdapter;
 import com.example.yidiantong.adapter.HistoryAdapter;
 import com.example.yidiantong.adapter.MyArrayAdapter;
-import com.example.yidiantong.bean.BookExerciseEntity;
 import com.example.yidiantong.bean.HistoryEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
@@ -51,15 +43,11 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 
-public class KnowledgeHistoryActivity extends AppCompatActivity {
-    private static final String TAG = "KnowledgeHistoryActivity";
+public class DetectionHistoryActivity extends AppCompatActivity {
+    private static final String TAG = "DetectionHistoryActivity";
 
     private SwipeRefreshLayout swipeRf;
     private Boolean loadFirst = true;
@@ -122,7 +110,7 @@ public class KnowledgeHistoryActivity extends AppCompatActivity {
         });
 
         TextView tv_title = findViewById(R.id.ftv_title);
-        tv_title.setText("自主学习历史记录");
+        tv_title.setText("智能检测历史记录");
 
         //加载页
         rl_loading = findViewById(R.id.rl_loading);
@@ -136,7 +124,7 @@ public class KnowledgeHistoryActivity extends AppCompatActivity {
 
         //设置item点击事件
         adapter.setmItemClickListener((v, pos) -> {
-            Intent intent = new Intent(this, KnowledgeShiTiHistoryActivity.class);
+            Intent intent = new Intent(this, DetectionShiTiHistoryActivity.class);
             HistoryEntity item = itemList.get(pos);
             intent.putExtra("userName", userName); //用户名
             intent.putExtra("taskId", item.getId()); //用户名
@@ -176,7 +164,7 @@ public class KnowledgeHistoryActivity extends AppCompatActivity {
                  */
                 lv_homework.post(() -> {
                     // 测量并设置ListView的宽度为最宽的列表项的宽度
-                    int maxHeight = PxUtils.dip2px(KnowledgeHistoryActivity.this, 245);
+                    int maxHeight = PxUtils.dip2px(DetectionHistoryActivity.this, 245);
                     // 获取ListView的子项数目
                     int itemCount = lv_homework.getAdapter().getCount();
 
@@ -231,12 +219,12 @@ public class KnowledgeHistoryActivity extends AppCompatActivity {
         }
     };
 
-    //发送请求获得试题数据,对请求到的数据进行处理
+    //发送请求获得历史记录数据,对请求到的数据进行处理
     private void loadItems_Net() {
         fll_null.setVisibility(View.GONE);
         rl_loading.setVisibility(View.VISIBLE);
         String mRequestUrl = Constant.API + "/AppServer/ajax/studentApp_getZZXXRecordList.do"
-                + "?stuId=" + userName + "&subjectCode=" + requestSubjectId + "&type=1";
+                + "?stuId=" + userName + "&subjectCode=" + requestSubjectId + "&type=2";
         Log.e("syq", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -279,7 +267,7 @@ public class KnowledgeHistoryActivity extends AppCompatActivity {
 
     private void loadItems_subject() {
         String mRequestUrl = Constant.API + "/AppServer/ajax/studentApp_getZZXXRecordSubjectList.do"
-                + "?stuId=" + userName + "&type=1";
+                + "?stuId=" + userName + "&type=2";
         Log.e("syq", "loadItems_subject: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {

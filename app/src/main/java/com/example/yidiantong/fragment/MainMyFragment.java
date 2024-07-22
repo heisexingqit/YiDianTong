@@ -43,6 +43,7 @@ import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.PswDialog;
 import com.example.yidiantong.View.TouxiangDialog;
+import com.example.yidiantong.ui.AutoDetectionActivity;
 import com.example.yidiantong.ui.AutoStudyActivity;
 import com.example.yidiantong.ui.LoginActivity;
 import com.example.yidiantong.ui.MyIntroductionActivity;
@@ -77,6 +78,7 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
     private LinearLayout f_ll_update;  // 检查更新
     private LinearLayout f_ll_psw;   // 修改密码
     private LinearLayout f_ll_auto_study;  // 自主学习
+    private LinearLayout f_ll_intelligent_detection;  // 智能检测
     private LinearLayout f_ll_center;  // 选课中心
     private Button fbtn_exit;  // 退出登录
     private ImageView fiv_my;  // 头像
@@ -132,6 +134,7 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         f_ll_update = view.findViewById(R.id.f_ll_update);
         f_ll_psw = view.findViewById(R.id.f_ll_psw);
         f_ll_auto_study = view.findViewById(R.id.f_ll_auto_study);
+        f_ll_intelligent_detection = view.findViewById(R.id.f_ll_intelligent_detection);
 
         f_ll_center = view.findViewById(R.id.f_ll_center);
         fbtn_exit = view.findViewById(R.id.fbtn_exit);
@@ -151,6 +154,7 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         f_ll_update.setOnClickListener(this);
         f_ll_psw.setOnClickListener(this);
         f_ll_auto_study.setOnClickListener(this);
+        f_ll_intelligent_detection.setOnClickListener(this);
         f_ll_center.setOnClickListener(this);
         fbtn_exit.setOnClickListener(this);
         fiv_my.setOnClickListener(this);
@@ -387,6 +391,12 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
                 Intent intent_auto = new Intent(getActivity(), AutoStudyActivity.class);
                 intent_auto.putExtra("username", username);
                 startActivity(intent_auto);
+                break;
+            //智能检测
+            case R.id.f_ll_intelligent_detection:
+                Intent intent_check = new Intent(getActivity(), AutoDetectionActivity.class);
+                intent_check.putExtra("username", username);
+                startActivity(intent_check);
                 break;
             case R.id.f_ll_center:
                 Intent intent_center = new Intent(getActivity(), SelectCourseActivity.class);

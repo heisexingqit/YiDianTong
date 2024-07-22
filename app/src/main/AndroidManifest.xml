@@ -27,6 +27,18 @@
         <activity
             android:name=".ui.HudongActivity"
             android:exported="false" />
+        <activity android:name=".ui.DetectionShiTiHistoryActivity"
+            android:exported="false" />
+        <activity android:name=".ui.IntelligentDetectionChangeActivity"
+            android:exported="false" />
+        <activity android:name=".ui.DetectionSubmitActivity"
+            android:exported="false" />
+        <activity android:name=".ui.DetectionHistoryActivity"
+            android:exported="false" />
+        <activity android:name=".ui.DetectionShiTiDetailActivity"
+            android:exported="false" />
+        <activity android:name=".ui.AutoDetectionActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.KnowledgeShiTiHistoryActivity"
             android:exported="false" />

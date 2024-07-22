@@ -57,21 +57,15 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.transform.ErrorListener;
 
-/**
- * 此页面与KnowledgeBookDetailActivity功能全部一样 只是数据获取方式不同
- */
-public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements RecyclerInterface, View.OnClickListener {
-    private static final String TAG = "KnowledgeShiTiHistoryActivity";
+public class DetectionShiTiDetailActivity extends AppCompatActivity implements RecyclerInterface, View.OnClickListener {
+    private static final String TAG = "DetectionShiTiDetailActivity";
     private String course_name;  //课程名称
     private ViewPager fvp_book_recycle;  //可滑动ViewPager
     private BooksRecyclerAdapter adapter;  //ViewPager适配器
@@ -81,9 +75,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
 
     // 接口参数
     String userName;  //用户名
-    String taskId;  //用户名
     String subjectId;  //学科ID
-    String questionId; //题目ID
     String allpage;
     String zhishidian;  //知识点
     String zhishidianId;  //知识点ID
@@ -101,7 +93,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
     private TextView tv_massage;
     private RelativeLayout rl_loading;
     private SharedPreferences preferences;
-    private String[] autoStuLoadAnswer;
+    private String[] upStuLoadAnswer;
     private TextView tv_content;
     private View contentView = null;
     private List<String> question_types = new ArrayList<>();
@@ -114,9 +106,9 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_exercise_detail);
         preferences = getSharedPreferences("shiti", MODE_PRIVATE);
-        ((MyApplication) getApplication()).checkAndHandleGlobalVariables(this);
+        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
 
-        MyApplication.typeActivity = 2;
+        MyApplication.typeActivity = 3;
         fvp_book_recycle = findViewById(R.id.fvp_book_recycle);
         adapter = new BooksRecyclerAdapter(getSupportFragmentManager());
         fvp_book_recycle.setAdapter(adapter);
@@ -128,6 +120,12 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
         //顶栏返回按钮
         findViewById(R.id.fiv_back).setOnClickListener(v -> {
             if (bookExerciseEntityList.size() > 0 && bookExerciseEntityList.get(currentItem - 1).isZuoDaMeiPingFen) {
+                /*AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("请先进行评分");
+                builder.setPositiveButton("确定", (dialog, which) -> {
+                    dialog.dismiss();
+                });
+                builder.create().show();*/
                 Toast.makeText(this, "请先进行评分!", Toast.LENGTH_SHORT).show();
             } else {
                 try {
@@ -142,13 +140,10 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
         bookExerciseEntityList = new ArrayList<>();
         //获取Intent参数
         TextView tv_title = findViewById(R.id.ftv_title);
-        tv_title.setText("自主学习试题详情");
+        tv_title.setText("智能检测试题详情");
         userName = getIntent().getStringExtra("userName");  //用户名
-        taskId = getIntent().getStringExtra("taskId");  //任务ID
-        subjectId = getIntent().getStringExtra("subjectId"); //学科名
-        course_name = getIntent().getStringExtra("courseName"); //学科id
-        zhishidian = getIntent().getStringExtra("zhishidian"); //知识点
-        zhishidianId = getIntent().getStringExtra("zhishidianId"); //知识点id
+        subjectId = getIntent().getStringExtra("xuekeId"); //学科名
+        course_name = getIntent().getStringExtra("xueke"); //学科id
         xueduan = getIntent().getStringExtra("xueduanId"); //学段
         banben = getIntent().getStringExtra("banbenId"); //版本
         jiaocai = getIntent().getStringExtra("jiaocaiId"); //教材
@@ -168,7 +163,10 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
                     Intent intent = result.getData();
                     int index = intent.getIntExtra("currentItem", 0);
                     if (index == -1) {
-                        Toast.makeText(KnowledgeShiTiHistoryActivity.this, "提交成功！", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DetectionShiTiDetailActivity.this, "提交成功！", Toast.LENGTH_SHORT).show();
+//                        Intent toHome = new Intent(KnowledgeShiTiDetailActivity.this, MainPagerActivity.class);
+//                        toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//                        startActivity(toHome);
                     } else {
                         currentItem = index;
                         loadItems_Net(currentItem);
@@ -177,9 +175,10 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
             }
         });
 
-        // 获取自主学习历史中的试题信息
-        String mRequestUrl = Constant.API + "/AppServer/ajax/studentApp_getQuestionsByRecordId.do" +
-                "?stuId=" + userName + "&taskId=" + taskId;
+
+        String mRequestUrl = Constant.API + "/AppServer/ajax/studentApp_getQuestionsZNJC.do" +
+                "?stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + subjectId +
+                "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai;
         Log.d("song", "mRequestUrl: " + mRequestUrl);
         StringRequest request1 = new StringRequest(mRequestUrl, response1 -> {
             try {
@@ -213,7 +212,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
                     tv_massage.setText("重新选择章节进行学习");
                     // 进行页面跳转 跳转到KnowledgePointActivity
                     tv_massage.setOnClickListener(v -> {
-                        Intent intent = new Intent(this, KnowledgePointActivity.class);
+                        Intent intent = new Intent(this, AutoDetectionActivity.class);
                         intent.putExtra("userName", userName);
                         intent.putExtra("xueduanId", xueduan);
                         intent.putExtra("xuekeId", subjectId);
@@ -227,7 +226,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
                     tv_massage.setText("重新选择章节进行学习");
                     // 进行页面跳转 跳转到KnowledgePointActivity
                     tv_massage.setOnClickListener(v -> {
-                        Intent intent = new Intent(this, KnowledgePointActivity.class);
+                        Intent intent = new Intent(this, AutoDetectionActivity.class);
                         intent.putExtra("userName", userName);
                         intent.putExtra("xueduanId", xueduan);
                         intent.putExtra("xuekeId", subjectId);
@@ -250,89 +249,15 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
                 fll_null.setVisibility(View.GONE);
                 rl_loading.setVisibility(View.VISIBLE);
                 //创建本地数组保存学生作答信息
-                SharedPreferences.Editor editor = preferences.edit();
-                autoStuLoadAnswer = new String[bookExerciseEntityList.size()];
-                String autoArrayString = TextUtils.join(",", autoStuLoadAnswer);
-                System.out.println("autoArrayString:" + autoArrayString);
-                editor.putString("autoStuLoadAnswer", autoArrayString);
-                editor.apply();
+                SharedPreferences.Editor edit = preferences.edit();
+                upStuLoadAnswer = new String[bookExerciseEntityList.size()];
+                String upArrayString = TextUtils.join(",", upStuLoadAnswer);
+                System.out.println("upArrayString：" + upArrayString);
+                edit.putString("upStuLoadAnswer", upArrayString);
+                edit.apply();
                 currentItem = Integer.valueOf(pos);
                 fvp_book_recycle.setCurrentItem(currentItem);
-
-
-                // 获取历史中的作答信息
-                String mRequestUrl2 = Constant.API + "/AppServer/ajax/studentApp_getZZXXAnswerList.do" +
-                        "?stuId=" + userName + "&taskId=" + taskId;
-                Log.d("song", "mRequestUrl2: " + mRequestUrl2);
-                StringRequest request2 = new StringRequest(mRequestUrl2, response2 -> {
-                    try {
-                        JSONObject json2 = JsonUtils.getJsonObjectFromString(response2);
-                        String bianhao = json2.getString("message");
-                        Log.d("song", "bianhao: " + bianhao);
-                        String itemString2 = json2.getString("data");
-                        Log.d("song", "itemString2: " + itemString2);
-                        //使用Gson框架转换Json字符串为列表
-                        List<ZuoDaXinXi> tempList = gson.fromJson(itemString2, new TypeToken<List<ZuoDaXinXi>>() {
-                        }.getType());
-
-                        // 将作答信息输入到bookExerciseEntityList中
-                        for (int i = 0; i < bookExerciseEntityList.size(); i++) {
-                            BookExerciseEntity bookExerciseEntity = bookExerciseEntityList.get(i);
-                            for (ZuoDaXinXi zuoDaXinXi : tempList) {
-                                if (bookExerciseEntity.getQuestionId().equals(zuoDaXinXi.questionId)) {
-                                    bookExerciseEntity.setStuInput(zuoDaXinXi.stuAnswer);  // 学生作答信息
-                                    bookExerciseEntity.setStuScore(zuoDaXinXi.teaScore);   // 学生作答分数
-                                    Date day = new Date();
-                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                    String date = sdf.format(day);
-                                    bookExerciseEntity.setZuodaDate(date); // 学生作答时间
-                                    String answer = ""; // 本地需保存的答案
-                                    if (bookExerciseEntity.getBaseTypeId().equals("101") || bookExerciseEntity.getBaseTypeId().equals("103")
-                                            || bookExerciseEntity.getBaseTypeId().equals("108") || bookExerciseEntity.getBaseTypeId().equals("109")) {
-                                        if (zuoDaXinXi.status.equals("right"))
-                                            bookExerciseEntity.setAccType(1);
-                                        else bookExerciseEntity.setAccType(3);
-                                        answer = zuoDaXinXi.stuAnswer;
-                                    } else {
-                                        if (zuoDaXinXi.teaScore.equals(zuoDaXinXi.queSscore))
-                                            bookExerciseEntity.setAccType(1);
-                                        else if (zuoDaXinXi.teaScore.equals("0"))
-                                            bookExerciseEntity.setAccType(2);
-                                        else bookExerciseEntity.setAccType(3);
-                                        // 判断是多选还是主观题
-                                        if (bookExerciseEntity.getBaseTypeId().equals("102")) {
-                                            answer = zuoDaXinXi.stuAnswer;
-                                        }else {
-                                            if (zuoDaXinXi.stuAnswer.contains("img")) {
-                                                answer = "@&@" + zuoDaXinXi.stuAnswer + "@&@" + zuoDaXinXi.teaScore;
-                                            }else {
-                                                answer = zuoDaXinXi.stuAnswer +  "@&@" + "@&@" + zuoDaXinXi.teaScore;
-                                            }
-                                        }
-
-                                    }
-                                    // 将作答信息存至本地
-                                    String arrayString = preferences.getString("autoStuLoadAnswer", null);
-                                    if (arrayString != null) {
-                                        String[] autoStuLoadAnswer = arrayString.split(",");
-                                        autoStuLoadAnswer[i] = answer; // 数组题号对应页数-1
-                                        SharedPreferences.Editor editor2 = preferences.edit();
-                                        arrayString = TextUtils.join(",", autoStuLoadAnswer);
-                                        System.out.println("arrayString: " + arrayString);
-                                        editor2.putString("autoStuLoadAnswer", arrayString);
-                                        editor2.commit();
-                                    }
-                                }
-                            }
-                        }
-                        loadItems_Net(currentItem);// 加载试题信息
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }, error -> {
-                    Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
-                });
-                MyApplication.addRequest(request2, TAG);
+                loadItems_Net(currentItem);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -388,7 +313,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
                         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                             Boolean isZuoDaMeiPingFen = bookExerciseEntityList.get(currentItem - 1).getIsZuoDaMeiPingFen();
                             if (isZuoDaMeiPingFen) {
-                                Toast.makeText(KnowledgeShiTiHistoryActivity.this, "请先进行评分", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(DetectionShiTiDetailActivity.this, "请先进行评分", Toast.LENGTH_SHORT).show();
                                 window.dismiss();
                             } else {
                                 //切换页+消除选项口
@@ -406,7 +331,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
                      */
                     lv_homework.post(() -> {
                         // 测量并设置ListView的宽度为最宽的列表项的宽度
-                        int maxHeight = PxUtils.dip2px(KnowledgeShiTiHistoryActivity.this, 245);
+                        int maxHeight = PxUtils.dip2px(DetectionShiTiDetailActivity.this, 245);
                         // 获取ListView的子项数目
                         int itemCount = lv_homework.getAdapter().getCount();
 
@@ -490,7 +415,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
 
     //跳转至提交作业页面
     private void jumpToSubmitPage() {
-        Intent intent = new Intent(KnowledgeShiTiHistoryActivity.this, KnowledgeSubmitActivity.class);
+        Intent intent = new Intent(DetectionShiTiDetailActivity.this, DetectionSubmitActivity.class);
         intent.putExtra("itemList", (Serializable) bookExerciseEntityList);
         intent.putExtra("userName", userName);
         intent.putExtra("subjectId", subjectId);
@@ -602,7 +527,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
             if (message.what == 100) {
                 List<BookExerciseEntity> list = (List<BookExerciseEntity>) message.obj;
                 String currentpage = String.valueOf(currentItem);
-                adapter.update2(list, 3, userName, subjectId, course_name, exerciseType, currentpage, allpage);
+                adapter.update2(list, 2, userName, subjectId, course_name, exerciseType, currentpage, allpage);
             }
         }
     };
@@ -666,13 +591,5 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
                 fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
             }
         }
-    }
-
-    public class ZuoDaXinXi {
-        public String questionId;  // 问题id
-        public String teaScore;    // 作答分数
-        public String queSscore;   // 试题分数
-        public String stuAnswer;   // 学生答案
-        public String status;      // 是否正确
     }
 }
