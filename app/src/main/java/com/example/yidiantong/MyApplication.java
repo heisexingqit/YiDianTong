@@ -40,6 +40,7 @@ public class MyApplication extends Application {
     /* 0代表没有 1代表KnowledgeShiTiDetailActivity   2 代表KnowledgeShiTiHistoryActivity
        3代表DetectionShiTiDetailActivity 4代表DetectionShiTiHistoryActivity */
     public static int typeActivity = 0;
+    public static int typeHistory = 0; // 0代表没有 1代表正门进入 2代表从历史记录进入
 
     // 旋转屏幕处理
     public static int currentItem = 0;

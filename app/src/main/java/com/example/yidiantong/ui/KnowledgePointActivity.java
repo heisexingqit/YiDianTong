@@ -213,17 +213,6 @@ public class KnowledgePointActivity extends AppCompatActivity {
                         + "?stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + course_Id
                         + "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&catalogId=" + zhishidianId
                         + "&unitId=1101010010001" + "&type=zzxx";
-                /*if (stu.equals("")){
-                    url = Constant.API + "/AppServer/ajax/studentApp_judgeCheck.do"
-                            + "?stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + course_Id
-                            + "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&catalogId=" + zhishidianId
-                            + "&unitId=1101010010001" + "&type=zzxx";
-                }else {
-                    url = Constant.API + "/AppServer/ajax/studentApp_judgeCheck.do"
-                            + "?stuId=" + stu + "&channelCode=" + xueduan + "&subjectCode=" + course_Id
-                            + "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&catalogId=" + zhishidianId
-                            + "&unitId=6105230000001" + "&type=zzxx";
-                }*/
                 Log.d("wen", "judgeCheck: " + url);
                 StringRequest request = new StringRequest(url, response -> {
                     try {
@@ -246,13 +235,6 @@ public class KnowledgePointActivity extends AppCompatActivity {
                             return;
                         }
                         intent.putExtra("zhishidianId", zhishidianId);  // 知识点id
-                        /*if (getIntent().getStringExtra("stu").equals("")){
-                            intent.putExtra("userName", userName);  // 用户名
-                            intent.putExtra("unitId", "1101010010001");    // 学科id
-                        }else {
-                            intent.putExtra("userName", getIntent().getStringExtra("stu"));
-                            intent.putExtra("unitId", "6105230000001");    // 学科id
-                        }*/
                         intent.putExtra("userName", userName);  // 用户名
                         intent.putExtra("unitId", "1101010010001");    // 学科id
                         intent.putExtra("xueduanId", xueduan);    // 学科id
@@ -279,110 +261,10 @@ public class KnowledgePointActivity extends AppCompatActivity {
         }
     };
 
-    // TODO 加载知识点id "dlzx230240"
-    /*private void loadZSDID() {
-        String mRequestUrl = "http://www.cn901.net:8111/AppServer/ajax/studentApp_getQuestionsZZXX.do?" +
-                "userId=" + userName + "&subjectId=" + course_Id + "&catalogId=" + zhishidianId;
-        Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
-        StringRequest request = new StringRequest(mRequestUrl, response -> {
-            try {
-                JSONObject json = JsonUtils.getJsonObjectFromString(response);
-                String itemString = json.getString("data");
-                //TODO 汇报结束要进行修改
-//                itemString = "[]";
-                //当试题列表为空时,需要跳转中间页进行处理
-                if (itemString.equals("[]") || itemString.equals("") || itemString.equals("null")) {
-                    Intent intent = new Intent(this, OnlineTestNullActivity.class);
-                    intent.putExtra("userName", userName);
-                    intent.putExtra("subjectId", course_Id);
-                    intent.putExtra("courseName", course_name);
-                    intent.putExtra("flag", "自主学习");
-                    startActivity(intent);
-                    finish();
-                }
-
-                Log.d("wen0501", "itemString: " + itemString);
-                Gson gson = new Gson();
-                //使用Goson框架转换Json字符串为列表
-                itemList = gson.fromJson(itemString, new TypeToken<List<BookExerciseEntity>>() {}.getType());
-                questionIds = "";
-                for (int i = 0; i < itemList.size(); i++) {
-                    if (i == itemList.size() - 1) {
-                        questionIds += itemList.get(i).questionId;
-                    } else {
-                        questionIds += itemList.get(i).questionId + ",";
-                    }
-                }
-                System.out.println("questionIds:" + questionIds);
-                System.out.println("itemList:" + itemList);
-
-                String message1 = json.getString("message");
-                Log.d("song0321", "message: " + message1);
-                Alert(message1);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }, error -> {
-            Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
-        });
-        MyApplication.addRequest(request, TAG);
-    }*/
-
-    // TODO 弹出提示框
-    /*private void Alert(String alert) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
-
-        // 自定义title样式
-        TextView tv = new TextView(this);
-        tv.setText(alert);    // 内容
-        tv.setTextSize(17); // 字体大小
-        tv.setPadding(30, 40, 30, 40); // 位置
-        tv.setTextColor(Color.parseColor("#000000")); // 颜色
-
-        // 设置title组件
-        builder.setCustomTitle(tv);
-
-        // 设置确定按钮及点击事件
-        builder.setNegativeButton("ok", (dialog, which) -> {
-            // 点击ok时执行的逻辑
-            Intent intent = new Intent(KnowledgePointActivity.this,
-                    KnowledgeShiTiDetailActivity.class);
-            intent.putExtra("userName", userName);  // 用户名
-            intent.putExtra("subjectId", course_Id);    // 学科id
-            intent.putExtra("name", course_name);  // 学科名
-            intent.putExtra("allpage", String.valueOf(itemList.size()));  // 总页数
-            intent.putExtra("questionIds", questionIds);  // 试题id
-            System.out.println("questionIds: " + questionIds);
-            intent.putExtra("pos", "1");  // 试题id数组
-            startActivity(intent);
-
-            // 关闭对话框
-            dialog.dismiss();
-        });
-
-        // 禁止返回和外部点击
-        builder.setCancelable(false);
-
-        // 对话框弹出
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }*/
-
     // 加载知识点
     private void loadZhiShiDian() {
         rl_loading.setVisibility(View.VISIBLE);
         iv_back.setVisibility(View.VISIBLE);
-        // TODO 后期需要删除
-//        String stu = getIntent().getStringExtra("stu");
-        /*if (stu.equals("")) {
-            mRequestUrl = Constant.API + Constant.HOMEWORK_ADD_ZHISHIDIAN
-                    + "?stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + course_Id +
-                    "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=1101010010001";
-        }else {
-            mRequestUrl = Constant.API + Constant.HOMEWORK_ADD_ZHISHIDIAN
-                    + "?stuId=" + stu + "&channelCode=" + xueduan + "&subjectCode=" + course_Id +
-                    "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=" + "6105230000001";
-        }*/
         mRequestUrl = Constant.API + Constant.HOMEWORK_ADD_ZHISHIDIAN
                 + "?stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + course_Id +
                 "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=1101010010001";

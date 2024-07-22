@@ -696,7 +696,7 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
             }else if (MyApplication.typeActivity == 4) {
                 ((DetectionShiTiHistoryActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(exercise_stu_answer);
             }
-        }else {
+        }else if (exercise_stu_answer.equals("")){
             if (MyApplication.typeActivity == 1) {
                 ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(exercise_stu_html);
             }else if (MyApplication.typeActivity == 2) {
@@ -705,6 +705,16 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                 ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(exercise_stu_html);
             }else if (MyApplication.typeActivity == 4) {
                 ((DetectionShiTiHistoryActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(exercise_stu_html);
+            }
+        }else {
+            if (MyApplication.typeActivity == 1) {
+                ((KnowledgeShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(exercise_stu_answer + exercise_stu_html);
+            }else if (MyApplication.typeActivity == 2) {
+                ((KnowledgeShiTiHistoryActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(exercise_stu_answer + exercise_stu_html);
+            }else if (MyApplication.typeActivity == 3) {
+                ((DetectionShiTiDetailActivity)getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(exercise_stu_answer + exercise_stu_html);
+            }else if (MyApplication.typeActivity == 4) {
+                ((DetectionShiTiHistoryActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(exercise_stu_answer + exercise_stu_html);
             }
         }
         String arrayString = null;
@@ -937,7 +947,7 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
             String[] stuLoadAnswer = arrayString.split(",");
             String loadAnswer = stuLoadAnswer[Integer.parseInt(currentpage) - 1];
             System.out.println("loadAnswer:" + loadAnswer);
-            et_student_answer.setText("");
+//            et_student_answer.setText("");
             if (!loadAnswer.equals("null")) {
                 fll_bd_analysis.setVisibility(View.VISIBLE);
                 fb_bd_sumbit.setVisibility(View.GONE);
@@ -948,13 +958,23 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                     wv_stu_answer.loadDataWithBaseURL(null, html_head + split[1], "text/html", "utf-8", null);
                     ll_input_image.setVisibility(View.VISIBLE);
                     exercise_stu_html = split[1];
-                } else {
+                } else if (split[1].equals("")) {
                     iv_camera.setVisibility(View.GONE);
                     iv_gallery.setVisibility(View.GONE);
                     System.out.println("split[0]:" + split[0]);
                     et_student_answer.setFocusable(true);
                     et_student_answer.setText(split[0]);
                     et_student_answer.setFocusable(false);
+                }else {
+                    iv_camera.setVisibility(View.GONE);
+                    iv_gallery.setVisibility(View.GONE);
+                    System.out.println("split[0]:" + split[0]);
+                    et_student_answer.setFocusable(true);
+                    et_student_answer.setText(split[0]);
+                    et_student_answer.setFocusable(false);
+                    wv_stu_answer.loadDataWithBaseURL(null, html_head + split[1], "text/html", "utf-8", null);
+                    ll_input_image.setVisibility(View.VISIBLE);
+                    exercise_stu_html = split[1];
                 }
                 // 设置学生分数
                 ll_stu_scores2.setVisibility(View.VISIBLE);
@@ -1032,7 +1052,6 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
 
 //                    show_xueba = true;
 //                    loadAnswer_Net();
-
 //                    fll_bd_answer.setVisibility(View.GONE);
                     fb_bd_sumbit.setVisibility(View.GONE);
                     // 判断编辑框是否为空
