@@ -1,8 +1,6 @@
 package com.example.yidiantong.adapter;
 
 import android.content.Context;
-
-import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -174,6 +172,9 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 case "直播课消息":
                     icon_id = R.drawable.live_icon;
                     break;
+                case "互动课堂":
+                    icon_id = R.drawable.interactive_icon;
+                    break;
                 default:
                     Log.d("wen", "update: " + item.getType());
                     throw new IllegalStateException("Unexpected value: " + item.getType());
@@ -191,6 +192,7 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
             tv_type.setText(item.getType());
             tv_title.setText(item.getBottomTitle());
+
             //清除底栏
             if (item.getContent().equals("")) {
                 tv_bottom.setVisibility(View.GONE);
@@ -199,19 +201,35 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 tv_bottom.setText(item.getContent());
             }
             //设置时间
-            tv_date.setText(item.getTime());
+            if(item.getType().equals("互动课堂")){
+                tv_date.setText(item.getCourseName());
+            }else{
+                tv_date.setText(item.getTime());
+            }
+
             //设置第二行
             String second_line = item.getCourseName() + item.getTimeStop();
-            tv_second_line.setText(second_line);
-
-
+            if(item.getType().equals("互动课堂")){
+                tv_second_line.setText(item.getTime());
+            }else{
+                tv_second_line.setText(second_line);
+            }
             //学习内容状态
             if (item.getStatus().length() == 0) {
-                iv_top_icon1.setVisibility(View.GONE);
-                iv_top_icon2.setVisibility(View.GONE);
-                // 直播类型
-                tv_is_live.setVisibility(View.VISIBLE);
-                tv_teacher.setVisibility(View.GONE);
+                if(!item.getType().equals("互动课堂")){
+                    iv_top_icon1.setVisibility(View.GONE);
+                    iv_top_icon2.setVisibility(View.GONE);
+                    // 直播类型
+                    tv_is_live.setVisibility(View.VISIBLE);
+                    tv_teacher.setVisibility(View.GONE);
+                }else{
+                    iv_top_icon1.setVisibility(View.INVISIBLE);
+                    iv_top_icon2.setVisibility(View.GONE);
+                    tv_is_live.setVisibility(View.GONE);
+                    tv_teacher.setVisibility(View.VISIBLE);
+                    tv_teacher.setText(item.getCreaterName());
+                }
+
             }else{
                 // 非直播类型
                 tv_is_live.setVisibility(View.GONE);

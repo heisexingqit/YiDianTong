@@ -18,7 +18,8 @@ public class Constant {
     // 登录接口
     public static final String LOGIN = "/AppServer/ajax/userManage_login.do";
     // 获取最新信息
-    public static final String NEW_ITEM = "/AppServer/ajax/studentApp_getStudentPlan.do";
+//    public static final String NEW_ITEM = "/AppServer/ajax/studentApp_getStudentPlan.do";
+    public static final String NEW_ITEM = "/AppServer/ajax/studentApp_getStudentPlanNew.do";
     // 获取作业题信息
     public static final String HOMEWORK_ITEM = "/AppServer/ajax/studentApp_getJobDetails.do";
     //获取“我的”版本更新信息
@@ -333,6 +334,9 @@ public class Constant {
 
     //获取作业，导学案批改状态
     public static final String T_HOMEWORK_GET_STATUS = "/AppServer/ajax/studentApp_getTaskStatus.do";
+
+    //互动课堂
+    public static final String T_HOMEWORK_GET_HUDONG = "www.cn901.com/ShopGoods/view/tpdata_showOneKetangByStu.do";
 
 
 }
