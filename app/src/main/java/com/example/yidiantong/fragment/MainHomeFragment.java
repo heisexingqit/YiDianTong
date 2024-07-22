@@ -42,6 +42,7 @@ import com.example.yidiantong.adapter.HomeRecyclerAdapter;
 import com.example.yidiantong.bean.HomeItemEntity;
 import com.example.yidiantong.ui.HomeworkPagerActivity;
 import com.example.yidiantong.ui.HomeworkPagerFinishActivity;
+import com.example.yidiantong.ui.HudongActivity;
 import com.example.yidiantong.ui.LearnPlanPagerActivity;
 import com.example.yidiantong.ui.LiveListActivity;
 import com.example.yidiantong.ui.NoticeLookActivity;
@@ -213,6 +214,13 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                         reload(adapter.itemList.get(pos).getType(), adapter.itemList.get(pos).getLearnId()); //修改已读状态
                         adapter.itemList.get(pos).setStatus("4");
                         adapter.notifyDataSetChanged();
+                        break;
+                    case "互动课堂":
+                        intent = new Intent(getActivity(), HudongActivity.class);
+                        intent.putExtra("keciID", adapter.itemList.get(pos).getLearnId());
+                        intent.putExtra("stuId", username);
+                        intent.putExtra("BottomTitle", adapter.itemList.get(pos).getBottomTitle());
+                        startActivity(intent);
                         break;
 
                 }
@@ -506,7 +514,8 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
         // 获取本地app的版本名称
         String versionName = BuildConfig.VERSION_NAME;
 
-        mRequestUrl = Constant.API + Constant.NEW_ITEM + "?currentPage=" + currentPage + "&userId=" + username + "&resourceType=" + type + "&searchStr=" + searchStr + "&source=RN";
+        //mRequestUrl = Constant.API + Constant.NEW_ITEM + "?currentPage=" + currentPage + "&userId=" + username + "&resourceType=" + type + "&searchStr=" + searchStr + "&source=RN";
+        mRequestUrl = Constant.API + Constant.NEW_ITEM +"?userId="+ username+"&source=RN&currentPage=" + currentPage + "&resourceType=" + type+"&unitId=1101010010001";
         Log.e("wen", "home: " + mRequestUrl);
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
@@ -528,8 +537,6 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                 // 携带数据
                 message.obj = moreList;
 
-                // 发送消息给主线程
-                Log.e("wen", "loadItems_Net: " + moreList.toString());
                 //标识线程
                 message.what = 100;
                 handler.sendMessage(message);
