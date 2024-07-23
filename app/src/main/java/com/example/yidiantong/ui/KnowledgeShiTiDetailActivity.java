@@ -115,6 +115,7 @@ public class KnowledgeShiTiDetailActivity extends AppCompatActivity implements R
         ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
 
         MyApplication.typeActivity = 1;
+        MyApplication.typeHistory = 1;
         fvp_book_recycle = findViewById(R.id.fvp_book_recycle);
         adapter = new BooksRecyclerAdapter(getSupportFragmentManager());
         fvp_book_recycle.setAdapter(adapter);
@@ -310,11 +311,15 @@ public class KnowledgeShiTiDetailActivity extends AppCompatActivity implements R
         switch (view.getId()) {
             //目录切换作业题面
             case R.id.tv_content:
+                if (bookExerciseEntityList.size() == 0) {
+                    Toast.makeText(this, "没有试题!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if (contentView == null) {
                     contentView = LayoutInflater.from(this).inflate(R.layout.menu_homework, null, false);
 
                     ListView lv_homework = contentView.findViewById(R.id.lv_homework);
-                    lv_homework.getLayoutParams().width = PxUtils.dip2px(this, 130);
+                    lv_homework.getLayoutParams().width = PxUtils.dip2px(this, 145);
 
                     lv_homework.setAdapter(myArrayAdapter);
                     lv_homework.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -368,6 +373,10 @@ public class KnowledgeShiTiDetailActivity extends AppCompatActivity implements R
                 window.showAsDropDown(tv_content, -20, 20);
                 break;
             case R.id.iv_eye:
+                if (bookExerciseEntityList.size() == 0) {
+                    Toast.makeText(this, "没有试题!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Boolean isZuoDaMeiPingFen = bookExerciseEntityList.get(currentItem - 1).getIsZuoDaMeiPingFen();
                 if (isZuoDaMeiPingFen) {
                     Toast.makeText(this, "请先进行评分!", Toast.LENGTH_SHORT).show();

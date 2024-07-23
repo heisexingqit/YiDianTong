@@ -72,10 +72,19 @@ public class KnowledgeStudyChangeActivity extends AppCompatActivity {
         ftv_title.setText("自主学习结果反馈");
         fiv_back = findViewById(R.id.fiv_back);
         fiv_back.setOnClickListener(v -> {
-            Intent intent = new Intent(KnowledgeStudyChangeActivity.this, AutoStudyActivity.class);
-            // 通过添加以下标志来清除堆栈中的所有活动，并使 `ActivityA` 成为堆栈顶部的唯一活动
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
+            if (MyApplication.typeHistory == 1) {
+                Intent intent = new Intent(KnowledgeStudyChangeActivity.this, AutoStudyActivity.class);
+                // 通过添加以下标志来清除堆栈中的所有活动，并使 `ActivityA` 成为堆栈顶部的唯一活动
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+            }
+            if (MyApplication.typeHistory == 2) {
+                Intent intent = new Intent(KnowledgeStudyChangeActivity.this, KnowledgeHistoryActivity.class);
+                // 通过添加以下标志来清除堆栈中的所有活动，并使 `ActivityA` 成为堆栈顶部的唯一活动
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+            }
+
             finish(); if (window != null && window.isShowing()) { window.dismiss(); }
         });
 

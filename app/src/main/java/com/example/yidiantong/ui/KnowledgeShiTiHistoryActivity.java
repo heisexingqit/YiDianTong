@@ -117,6 +117,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
         ((MyApplication) getApplication()).checkAndHandleGlobalVariables(this);
 
         MyApplication.typeActivity = 2;
+        MyApplication.typeHistory = 2;
         fvp_book_recycle = findViewById(R.id.fvp_book_recycle);
         adapter = new BooksRecyclerAdapter(getSupportFragmentManager());
         fvp_book_recycle.setAdapter(adapter);
@@ -291,7 +292,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
                                             || bookExerciseEntity.getBaseTypeId().equals("108") || bookExerciseEntity.getBaseTypeId().equals("109")) {
                                         if (zuoDaXinXi.status.equals("right"))
                                             bookExerciseEntity.setAccType(1);
-                                        else bookExerciseEntity.setAccType(3);
+                                        else bookExerciseEntity.setAccType(2);
                                         answer = zuoDaXinXi.stuAnswer;
                                     } else {
                                         if (zuoDaXinXi.teaScore.equals(zuoDaXinXi.queSscore))
@@ -304,7 +305,8 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
                                             answer = zuoDaXinXi.stuAnswer;
                                         }else {
                                             if (zuoDaXinXi.stuAnswer.contains("img")) {
-                                                answer = "@&@" + zuoDaXinXi.stuAnswer + "@&@" + zuoDaXinXi.teaScore;
+                                                int index = zuoDaXinXi.stuAnswer.indexOf('<');
+                                                answer = zuoDaXinXi.stuAnswer.substring(0, index) + "@&@" + zuoDaXinXi.stuAnswer.substring(index) + "@&@" + zuoDaXinXi.teaScore;
                                             }else {
                                                 answer = zuoDaXinXi.stuAnswer +  "@&@" + "@&@" + zuoDaXinXi.teaScore;
                                             }
@@ -376,11 +378,15 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
         switch (view.getId()) {
             //目录切换作业题面
             case R.id.tv_content:
+                if (bookExerciseEntityList.size() == 0) {
+                    Toast.makeText(this, "没有试题!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if (contentView == null) {
                     contentView = LayoutInflater.from(this).inflate(R.layout.menu_homework, null, false);
 
                     ListView lv_homework = contentView.findViewById(R.id.lv_homework);
-                    lv_homework.getLayoutParams().width = PxUtils.dip2px(this, 130);
+                    lv_homework.getLayoutParams().width = PxUtils.dip2px(this, 145);
 
                     lv_homework.setAdapter(myArrayAdapter);
                     lv_homework.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -434,6 +440,10 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
                 window.showAsDropDown(tv_content, -20, 20);
                 break;
             case R.id.iv_eye:
+                if (bookExerciseEntityList.size() == 0) {
+                    Toast.makeText(this, "没有试题!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Boolean isZuoDaMeiPingFen = bookExerciseEntityList.get(currentItem - 1).getIsZuoDaMeiPingFen();
                 if (isZuoDaMeiPingFen) {
                     Toast.makeText(this, "请先进行评分!", Toast.LENGTH_SHORT).show();

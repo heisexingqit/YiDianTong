@@ -147,7 +147,6 @@ public class KnowledgeHistoryActivity extends AppCompatActivity {
             intent.putExtra("jiaocaiId", jiaocai); //教材
             intent.putExtra("unitId", unitId); //考点
             startActivity(intent);
-            finish();
         });
 
 
@@ -157,7 +156,7 @@ public class KnowledgeHistoryActivity extends AppCompatActivity {
                 contentView = LayoutInflater.from(this).inflate(R.layout.menu_homework, null, false);
 
                 ListView lv_homework = contentView.findViewById(R.id.lv_homework);
-                lv_homework.getLayoutParams().width = PxUtils.dip2px(this, 90);
+                lv_homework.getLayoutParams().width = PxUtils.dip2px(this, 100);
 
                 lv_homework.setAdapter(myArrayAdapter);
                 lv_homework.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -292,6 +291,7 @@ public class KnowledgeHistoryActivity extends AppCompatActivity {
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
                 mapSubject = gson.fromJson(itemString, new TypeToken<List<SubjectFiltrate>>() {}.getType());
+                tempList.clear();
                 for (SubjectFiltrate subjectFiltrate : mapSubject) {
                     tempList.add(subjectFiltrate.value);
                 }
@@ -304,8 +304,17 @@ public class KnowledgeHistoryActivity extends AppCompatActivity {
         MyApplication.addRequest(request, TAG);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadItems_subject();
+        loadItems_Net();
+    }
+
     class SubjectFiltrate {
         public String key;
         public String value;
     }
+
+
 }
