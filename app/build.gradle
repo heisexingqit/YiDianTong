@@ -37,7 +37,7 @@ android {
     // 自定义打包名称
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "learning-${versionName}.apk"
+            outputFileName = "learning-${variant.versionName}-${}.apk"
         }
     }
 }

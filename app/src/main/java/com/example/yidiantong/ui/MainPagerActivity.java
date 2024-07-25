@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +24,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.View.NoScrollViewPager;
-import com.example.yidiantong.adapter.MainPagerAdapter;
 import com.example.yidiantong.fragment.MainBookFragment;
 import com.example.yidiantong.fragment.MainCourseFragment;
 import com.example.yidiantong.fragment.MainHomeFragment;
@@ -104,13 +104,17 @@ public class MainPagerActivity extends AppCompatActivity implements View.OnClick
         courseFragment = new MainCourseFragment();
         bookFragment = new MainBookFragment();
         myFragment = new MainMyFragment();
-
         int idx_new = 0;
         if (savedInstanceState != null) {
             // 恢复默认fragment
             idx_new = savedInstanceState.getInt("id_bottom_onclick");
         }else{
             checkUpdate(); // 版本更新检查
+        }
+        if(MyApplication.online_class){
+            idx_new=2;
+            LinearLayout ll_bottom_bar = findViewById(R.id.ll_bottom_bar);
+            ll_bottom_bar.setVisibility(View.GONE);
         }
         switch (idx_new){
             case 0:

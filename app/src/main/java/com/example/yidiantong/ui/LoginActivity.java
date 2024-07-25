@@ -292,15 +292,37 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         keysList.add(it.next());
                     }
                     String typeName = null;
+                    Object intent_name;
+
                     if (keysList.contains("STUDENT")) {
+                        if(MyApplication.edution.equals("TEACHER")){
+                            Toast.makeText(LoginActivity.this, "请使用学生账号登录", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         typeName = "STUDENT";
-                        intent = new Intent(this, MainPagerActivity.class);
+                        if(MyApplication.online_class){
+                            intent = new Intent(this, MainPagerActivity.class);
+                        }else{
+                            intent = new Intent(this, MainPagerActivity.class);
+                        }
+
                     } else if (keysList.contains("COMMON_TEACHER")) {
+                        if(MyApplication.edution.equals("STUDENT")){
+                            Toast.makeText(LoginActivity.this, "请使用教师账号登录", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         typeName = "COMMON_TEACHER";
-                        intent = new Intent(this, TMainPagerActivity.class);
+                        if(MyApplication.online_class){
+                            intent = new Intent(this, TCourseScannerActivity.class);
+                        }else{
+                            intent = new Intent(this, TMainPagerActivity.class);
+                        }
+
                     } else if (keysList.contains("ADMIN_TEACHER")) {
                         typeName = "ADMIN_TEACHER";
-                        intent = new Intent(this, TMainPagerActivity.class);
+                        if (MyApplication.online_class){
+                            intent = new Intent(this, TCourseScannerActivity.class);
+                        }else intent = new Intent(this, TMainPagerActivity.class);
                     }
                     JSONObject userInfo = obj.getJSONObject(typeName);
 //                    String token = obj.getString("token");
