@@ -5,7 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -19,15 +23,20 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.blankj.utilcode.util.SPUtils;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
+import com.example.yidiantong.bean.CourseScannerEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,6 +67,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     //ip修改
     private EditText et_ip;
+    private String ip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +83,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         et_username = findViewById(R.id.et_username);
         Button btn_login = findViewById(R.id.btn_login);
         btn_login.setOnClickListener(this);
-
         //组件样式 开始------------------------------------------------------
         //eye控制密码显示
         iv_eye.setOnClickListener(this);
@@ -258,7 +267,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     //请求数据后台验证-Volley框架
     private void login() {
         ll_loading.setVisibility(View.VISIBLE);
-        String url = Constant.API + Constant.LOGIN + "?userName=" + username + "&passWord=" + password;
+        String url = Constant.API + Constant.LOGIN + "?userName=" + username + "&passWord=" + password+"&callback=ha";
         Toast.makeText(LoginActivity.this, "登录URL:"+url, Toast.LENGTH_SHORT).show();
         // 初始化RequestQueue
         if (MyApplication.getHttpQueue()== null) {
@@ -301,6 +310,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
                         typeName = "STUDENT";
                         if(MyApplication.online_class){
+                            if (et_ip.getText().length() == 0) {
+                                Toast.makeText(LoginActivity.this, "请输入课程ip", Toast.LENGTH_SHORT).show();
+                                return;
+                            } else {
+                                loadItems_Net();
+                            }
                             intent = new Intent(this, MainPagerActivity.class);
                         }else{
                             intent = new Intent(this, MainPagerActivity.class);
@@ -312,17 +327,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             return;
                         }
                         typeName = "COMMON_TEACHER";
-                        if(MyApplication.online_class){
-                            intent = new Intent(this, TCourseScannerActivity.class);
-                        }else{
-                            intent = new Intent(this, TMainPagerActivity.class);
-                        }
-
+                        intent = new Intent(this, TMainPagerActivity.class);
                     } else if (keysList.contains("ADMIN_TEACHER")) {
                         typeName = "ADMIN_TEACHER";
-                        if (MyApplication.online_class){
-                            intent = new Intent(this, TCourseScannerActivity.class);
-                        }else intent = new Intent(this, TMainPagerActivity.class);
+                        intent = new Intent(this, TMainPagerActivity.class);
                     }
                     JSONObject userInfo = obj.getJSONObject(typeName);
 //                    String token = obj.getString("token");
@@ -367,6 +375,92 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
         MyApplication.addRequest(request, TAG);
 
+    }
+
+    private void loadItems_Net() {
+        String password = MyApplication.password;
+        username = MyApplication.username;
+        ip = et_ip.getText().toString();
+
+        String mRequestUrl = "http://" + ip + ":8901" + Constant.KETANGPLAYBYSTU + "?userName=" + username + "&password=" + password;
+        Log.e("mReq", "" + mRequestUrl);
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String itemString = json.getString("learnPlan");
+                Log.e("wen0228", "loadItems_Net: " + json);
+
+                itemString = "[" + itemString + "]";
+                Gson gson = new Gson();
+                //使用Goson框架转换Json字符串为列表
+                List<CourseScannerEntity> moreList = gson.fromJson(itemString, new TypeToken<List<CourseScannerEntity>>() {
+                }.getType());
+                Log.e("moreList", "" + moreList);
+                //封装消息，传递给主线程
+                Message message = Message.obtain();
+                message.obj = moreList;
+
+                //标识线程
+                message.what = 100;
+                if (moreList.size() == 0) {
+                  Toast.makeText(LoginActivity.this, "暂无课程开始", Toast.LENGTH_SHORT).show();
+                } else {
+                    // 判断学生username是否匹配
+                    if (moreList.get(0).getIntroduction().equals("unExist")) {
+                        Toast.makeText(LoginActivity.this, "您不是该课堂学生；或账户填写错误，请检查", Toast.LENGTH_SHORT).show();
+                    } else if (moreList.get(0).getIntroduction().equals("noKetang")) {
+                        Toast.makeText(LoginActivity.this, "暂无课程开始", Toast.LENGTH_SHORT).show();
+                    } else {
+                        handler.sendMessage(message);
+                    }
+                }
+            } catch (JSONException e) {
+                Log.e("wen20228", "loadItems_Net: " + e);
+            }
+        }, error -> {
+            Toast.makeText(LoginActivity.this, "暂无课程开始", Toast.LENGTH_SHORT).show();
+        });
+        MyApplication.addRequest(request, TAG);
+    }
+    private Handler handler = new Handler(Looper.getMainLooper()) {
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @SuppressLint("NotifyDataSetChanged")
+        @Override
+        public void handleMessage(Message message) {
+            super.handleMessage(message);
+            if (message.what == 100) {
+
+                SPUtils.getInstance().put("easyip", et_ip.getText().toString());
+//                String ip = et_ip.getText().toString();
+//
+//                // 使用 Stream API 进行判断和删除
+//                ipList = ipList.stream()
+//                        .filter(str -> !str.equals(ip))
+//                        .collect(Collectors.toList());
+//                String newIpLog;
+//                ArrayList<String> editIpList = new ArrayList<>(ipList.subList(0, ipList.size() - 1));
+//
+//                if (ipString.length() > 0) {
+//                    newIpLog = ip + ", " + String.join(", ", editIpList);
+//                } else {
+//                    newIpLog = ip;
+//                }
+//                SharedPreferences.Editor editor = preferences.edit();
+//                editor.putString("ips", newIpLog);
+//                editor.commit();
+
+                turnLookCourse((List<CourseScannerEntity>) message.obj);
+            }
+        }
+    };
+    private void turnLookCourse(List<CourseScannerEntity> moreList) {
+        Intent intent = new Intent(this, CourseLookActivity.class);
+        intent.putExtra("username", username);
+        intent.putExtra("ip", ip);
+        intent.putExtra("classname", moreList.get(0).getCourseName());
+        intent.putExtra("teaname", moreList.get(0).getTeacherName());
+        intent.putExtra("stuname", moreList.get(0).getIntroduction());
+        startActivity(intent);
     }
 
 

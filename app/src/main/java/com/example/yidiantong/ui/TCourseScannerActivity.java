@@ -77,7 +77,7 @@ public class TCourseScannerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tcourse_scanner);
-        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
+        //((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         //顶栏返回按钮
         findViewById(R.id.fiv_back).setOnClickListener(v -> {
             if(MyApplication.online_class){
