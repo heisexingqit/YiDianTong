@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,9 +29,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.blankj.utilcode.util.SPUtils;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
@@ -51,7 +48,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TCourseScannerActivity extends AppCompatActivity {
 
@@ -81,10 +77,20 @@ public class TCourseScannerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tcourse_scanner);
-        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
+        //((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         //顶栏返回按钮
         findViewById(R.id.fiv_back).setOnClickListener(v -> {
-            this.finish();
+            if(MyApplication.online_class){
+                // 关闭自动登录
+                MyApplication.autoLogin = false;
+                // 退出登录
+                Intent intent = new Intent(this, LoginActivity.class);
+                //两个一起用
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                //登录成功跳转
+                startActivity(intent);
+            }else this.finish();
         });
         ftv_title = findViewById(R.id.ftv_title);
         ftv_title.setText("遥控器登录");

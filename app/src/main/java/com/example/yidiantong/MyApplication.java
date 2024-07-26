@@ -27,7 +27,8 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
 public class MyApplication extends Application {
     private static final String TAG = "MyApplication";
-
+    public static String edution = "STUDENT";//STUDENT和TEACHER//
+    public static boolean online_class = false;
     // 全局变量
     public static String username;
     public static String userId;

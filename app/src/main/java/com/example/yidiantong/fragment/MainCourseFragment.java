@@ -1,10 +1,9 @@
 package com.example.yidiantong.fragment;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,9 +23,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
@@ -43,6 +42,7 @@ import com.example.yidiantong.adapter.IpLogAdapter;
 import com.example.yidiantong.bean.CourseScannerEntity;
 import com.example.yidiantong.ui.CourseLookActivity;
 import com.example.yidiantong.ui.CourseScannerActivity;
+import com.example.yidiantong.ui.LoginActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.MyViewModel;
@@ -55,10 +55,7 @@ import com.google.zxing.integration.android.IntentResult;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class MainCourseFragment extends Fragment {
@@ -123,6 +120,26 @@ public class MainCourseFragment extends Fragment {
             }
 
         });
+        if(MyApplication.online_class){
+            view.findViewById(R.id.rl_bar_top).setVisibility(View.VISIBLE);
+        }
+        //顶栏返回按钮
+        view.findViewById(R.id.fiv_back).setOnClickListener(v -> {
+            if(MyApplication.online_class){
+                // 关闭自动登录
+                MyApplication.autoLogin = false;
+                // 退出登录
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                //两个一起用
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                //登录成功跳转
+                startActivity(intent);
+            }
+        });
+        TextView ftv_title = view.findViewById(R.id.ftv_title);
+        ftv_title.setText("在线课堂");
+        ftv_title.setTypeface(Typeface.DEFAULT_BOLD);
 
         et_ip = view.findViewById(R.id.et_ip);
         if(savedInstanceState != null){

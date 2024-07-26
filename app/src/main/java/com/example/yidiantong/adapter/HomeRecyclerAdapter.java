@@ -201,16 +201,11 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 tv_bottom.setText(item.getContent());
             }
             //设置时间
-            if(item.getType().equals("互动课堂")){
-                tv_date.setText(item.getCourseName());
-            }else{
-                tv_date.setText(item.getTime());
-            }
-
+            tv_date.setText(item.getTime());
             //设置第二行
             String second_line = item.getCourseName() + item.getTimeStop();
             if(item.getType().equals("互动课堂")){
-                tv_second_line.setText(item.getTime());
+                tv_second_line.setText(item.getCourseName());
             }else{
                 tv_second_line.setText(second_line);
             }

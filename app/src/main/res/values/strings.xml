@@ -1,9 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="app_name">学习一点通</string>
-
+    <string name="app_name">学习一点通(学生端)</string>
+<!--    学习一点通(学生端)，学习一点通(教师端)-->
+<!--    课堂互动的两个端叫：课堂一点通，授课一点通-->
+    <string name="app_edition">STUDENT</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
     <string name="f_user_info">账号信息</string>
     <string name="f_about_us">关于我们</string>
     <string name="f_detect_update">检测更新</string>
