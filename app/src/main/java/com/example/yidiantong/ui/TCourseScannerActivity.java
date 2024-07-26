@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -95,7 +96,10 @@ public class TCourseScannerActivity extends AppCompatActivity {
         ftv_title = findViewById(R.id.ftv_title);
         ftv_title.setText("遥控器登录");
         ftv_title.setTypeface(Typeface.DEFAULT_BOLD);
-
+        RelativeLayout bar_top = findViewById(R.id.bar_top);
+        if(MyApplication.online_class&&MyApplication.edution.equals("TEACHER")){
+            bar_top.setVisibility(View.GONE);
+        }
         // 点击扫码图像
         iv_saoma = findViewById(R.id.fiv_saoma);
         iv_saoma.setOnClickListener(new View.OnClickListener() {
