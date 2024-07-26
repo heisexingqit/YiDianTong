@@ -109,6 +109,7 @@ public class DetectionShiTiDetailActivity extends AppCompatActivity implements R
         ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
 
         MyApplication.typeActivity = 3;
+        MyApplication.typeHistory = 1;
         fvp_book_recycle = findViewById(R.id.fvp_book_recycle);
         adapter = new BooksRecyclerAdapter(getSupportFragmentManager());
         fvp_book_recycle.setAdapter(adapter);

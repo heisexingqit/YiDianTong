@@ -47,6 +47,10 @@ public class MyArrayAdapter extends BaseAdapter {
         // 拿控件
         TextView tv_item = v.findViewById(R.id.tv_item);
         tv_item.setText(question_types.get(i));
+        // 设置字体大小
+        /*float dp = context.getResources().getConfiguration().fontScale * 16;
+        tv_item.setTextSize(dp);*/
+
         return v;
     }
 }
