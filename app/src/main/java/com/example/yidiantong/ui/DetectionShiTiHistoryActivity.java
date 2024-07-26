@@ -115,6 +115,7 @@ public class DetectionShiTiHistoryActivity extends AppCompatActivity implements 
         ((MyApplication) getApplication()).checkAndHandleGlobalVariables(this);
 
         MyApplication.typeActivity = 4;
+        MyApplication.typeHistory = 2;
         fvp_book_recycle = findViewById(R.id.fvp_book_recycle);
         adapter = new BooksRecyclerAdapter(getSupportFragmentManager());
         fvp_book_recycle.setAdapter(adapter);

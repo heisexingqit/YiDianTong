@@ -2,8 +2,10 @@ package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -685,4 +688,14 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
         public String stuAnswer;   // 学生答案
         public String status;      // 是否正确
     }
+
+    /*@Override
+    protected void attachBaseContext(Context newBase) {
+        Configuration newConfig = new Configuration(newBase.getResources().getConfiguration());
+        if (newConfig.fontScale != 1) {
+            newConfig.fontScale = 1;
+        }
+        Context context = newBase.createConfigurationContext(newConfig);
+        super.attachBaseContext(context);
+    }*/
 }

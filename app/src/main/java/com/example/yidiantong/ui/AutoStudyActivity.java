@@ -3,6 +3,7 @@ package com.example.yidiantong.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -761,4 +762,15 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
         tv.setBackgroundResource(R.drawable.t_homework_add_unselect);
         tv.setTextColor(getColor(R.color.default_gray));
     }
+
+    // 保持字体不随系统设置变化
+    /*@Override
+    protected void attachBaseContext(Context newBase) {
+        Configuration newConfig = new Configuration(newBase.getResources().getConfiguration());
+        if (newConfig.fontScale != 1) {
+            newConfig.fontScale = 1;
+        }
+        Context context = newBase.createConfigurationContext(newConfig);
+        super.attachBaseContext(context);
+    }*/
 }
