@@ -282,7 +282,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 ll_loading.setVisibility(View.GONE);
 
                 boolean success = json.getBoolean("success");
-
+                if(!success){
+                    Toast.makeText(LoginActivity.this, json.getString("message"), Toast.LENGTH_SHORT).show();
+                }
                 if (success) {
                     //记住密码
                     SharedPreferences.Editor editor = preferences.edit();
