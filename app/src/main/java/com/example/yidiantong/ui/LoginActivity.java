@@ -326,11 +326,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     MyApplication.cnName = userInfo.getString("name");
                     MyApplication.token = obj.getString("token");
                     MyApplication.picUrl = userInfo.getString("userPhoto");
+                    if(!keysList.contains("STUDENT")){
+                        Toast.makeText(LoginActivity.this, "请使用学生账号登录", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     if (keysList.contains("STUDENT")) {
-                        if(MyApplication.edution.equals("TEACHER")){
-                            Toast.makeText(LoginActivity.this, "请使用学生账号登录", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
                         typeName = "STUDENT";
                         if(MyApplication.online_class){
                             if (et_ip.getText().length() == 0) {
@@ -345,32 +345,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
 
                     } else if (keysList.contains("COMMON_TEACHER")) {
-                        if(MyApplication.edution.equals("STUDENT")){
-                            Toast.makeText(LoginActivity.this, "请使用教师账号登录", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
                         typeName = "COMMON_TEACHER";
                         intent = new Intent(this, TMainPagerActivity.class);
                     } else if (keysList.contains("ADMIN_TEACHER")) {
                         typeName = "ADMIN_TEACHER";
                         intent = new Intent(this, TMainPagerActivity.class);
                     }
-                    if(!(MyApplication.online_class&&MyApplication.edution.equals("STUDENT"))){
-                        intent.putExtra("userId", MyApplication.userId);
-                        intent.putExtra("realName", MyApplication.cnName);
+                    intent.putExtra("userId", MyApplication.userId);
+                    intent.putExtra("realName", MyApplication.cnName);
 
-                        intent.putExtra("username", username);
-                        intent.putExtra("picUrl", userInfo.getString("userPhoto"));
-                        intent.putExtra("password", password);
-                        //两个一起用
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        // 开启自动登录
-                        MyApplication.autoLogin = true;
-                        //Toast.makeText(LoginActivity.this, "页面跳转", Toast.LENGTH_SHORT).show();
+                    intent.putExtra("username", username);
+                    intent.putExtra("picUrl", userInfo.getString("userPhoto"));
+                    intent.putExtra("password", password);
+                    //两个一起用
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    // 开启自动登录
+                    MyApplication.autoLogin = true;
+                    //Toast.makeText(LoginActivity.this, "页面跳转", Toast.LENGTH_SHORT).show();
 
-                        //登录成功跳转
-                        startActivity(intent);
-                    }
+                    //登录成功跳转
+                    startActivity(intent);
+
                 }
             } catch (JSONException e) {
                 Log.d("wen", "login: " + e);
