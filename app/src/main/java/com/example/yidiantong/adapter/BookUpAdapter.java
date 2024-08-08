@@ -24,13 +24,9 @@ public class BookUpAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public List<BookExerciseEntity> itemList;  // itemList中保存单元列表,每个单元中有错题列表
     private final Context context;
     private final LayoutInflater layoutInflater;
-
     private MyItemClickListener mItemClickListener;
-
     //item类型，数据
     public int isRefresh = 0;
-
-
 
     public BookUpAdapter(Context context, List<BookExerciseEntity> itemList) {
         this.context = context;
@@ -62,7 +58,6 @@ public class BookUpAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         });
     }
 
-
     @Override
     public int getItemCount() {
         return itemList.size();
@@ -73,7 +68,6 @@ public class BookUpAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         this.itemList = itemList;
         this.notifyDataSetChanged();
     }
-
 
     //ItemHolder类,更新item中内容
     class ItemViewHolder extends RecyclerView.ViewHolder {
