@@ -16,7 +16,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
@@ -1052,7 +1051,7 @@ public class CourseQuestionActivity extends AppCompatActivity implements View.On
                     msg.what = 100;
                     handler.sendMessage(msg);
                     html_answer = null;
-                    content = null;
+                    //content = null;
 
                 } catch (JSONException e) {
                     e.printStackTrace();

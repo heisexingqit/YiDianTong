@@ -229,7 +229,7 @@ public class MainPagerActivity extends AppCompatActivity implements View.OnClick
         // 创建AlertDialog.Builder实例
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        String mRequestUrl = Constant.API + Constant.CHECK_VERSION + "?version=" + MyApplication.versionName + "&type=stu&autoType=auto" + "&userId=" + MyApplication.username;
+        String mRequestUrl = Constant.API + Constant.CHECK_VERSION + "?version=" + MyApplication.versionName + "&type=stu&autoType=auto" + "&userId=" + MyApplication.username+"&flag=1";
         Log.e("0124", "checkUpdate: " + mRequestUrl);
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
@@ -283,7 +283,7 @@ public class MainPagerActivity extends AppCompatActivity implements View.OnClick
 
     private void saveRecord(String latestVersion) {
 
-        String mRequestUrl = Constant.API + Constant.CHECK_VERSION_SAVE + "?version=" + latestVersion + "&userName=" + MyApplication.username;
+        String mRequestUrl = Constant.API + Constant.CHECK_VERSION_SAVE + "?version=" + latestVersion + "&userName=" + MyApplication.username+"&flag=1";
         Log.e("0124", "checkUpdate: " + mRequestUrl);
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {

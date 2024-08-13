@@ -11,7 +11,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -117,14 +116,15 @@ public class HudongActivity extends AppCompatActivity {
         if (myWebView.canGoBack()) {
             myWebView.goBack();
         } else {
-            if ((System.currentTimeMillis() - exitTime) > 2000) {
-                Toast.makeText(getApplicationContext(), "再按一次返回退出",
-                        Toast.LENGTH_SHORT).show();
-                exitTime = System.currentTimeMillis();
-            } else {
-                //super.onBackPressed();
-                finish();
-            }
+//            if ((System.currentTimeMillis() - exitTime) > 2000) {
+//                Toast.makeText(getApplicationContext(), "再按一次返回退出",
+//                        Toast.LENGTH_SHORT).show();
+//                exitTime = System.currentTimeMillis();
+//            } else {
+//                //super.onBackPressed();
+//                finish();
+//            }
+            finish(); // 这将关闭当前Activity
         }
     }
     private void loadTaskStatus() {
@@ -156,4 +156,5 @@ public class HudongActivity extends AppCompatActivity {
         });
         MyApplication.addRequest(request, TAG);
     }
+
 }

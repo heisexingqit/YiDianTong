@@ -68,6 +68,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     //ip修改
     private EditText et_ip;
     private String ip;
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,11 +174,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.btn_login:
                 username = et_username.getText().toString().trim();
                 password = et_pw.getText().toString().trim();
-                login();
                 String ip = et_ip.getText().toString();
                 if(ip.length()>0){
-                    Constant.API=ip;
+                    if(MyApplication.edution.equals("STUDENT")&&MyApplication.online_class){
+                    }else Constant.API=ip;
                 }
+                login();
                 break;
             case R.id.ll_username:
                 ll_username.requestFocus();
@@ -268,7 +270,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void login() {
         ll_loading.setVisibility(View.VISIBLE);
         String url = Constant.API + Constant.LOGIN + "?userName=" + username + "&passWord=" + password+"&callback=ha";
-        Toast.makeText(LoginActivity.this, "登录URL:"+url, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(LoginActivity.this, "登录URL:"+url, Toast.LENGTH_SHORT).show();
         // 初始化RequestQueue
         if (MyApplication.getHttpQueue()== null) {
             MyApplication.mQueue = Volley.newRequestQueue(this);
@@ -278,9 +280,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 // 及时解除loading效果
                 ll_loading.setVisibility(View.GONE);
-                Toast.makeText(LoginActivity.this, json.getString("message"), Toast.LENGTH_SHORT).show();
-                boolean success = json.getBoolean("success");
 
+                boolean success = json.getBoolean("success");
+                if(!success){
+                    Toast.makeText(LoginActivity.this, json.getString("message"), Toast.LENGTH_SHORT).show();
+                }
                 if (success) {
                     //记住密码
                     SharedPreferences.Editor editor = preferences.edit();
@@ -291,7 +295,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     /**
                      * 分角色登录
                      */
-                    Intent intent = null;
+                    intent = null;
                     JSONObject obj = json.getJSONObject("data");
 
                     // 将未知key转为list
@@ -302,35 +306,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                     String typeName = null;
                     Object intent_name;
-
                     if (keysList.contains("STUDENT")) {
-                        if(MyApplication.edution.equals("TEACHER")){
-                            Toast.makeText(LoginActivity.this, "请使用学生账号登录", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
                         typeName = "STUDENT";
-                        if(MyApplication.online_class){
-                            if (et_ip.getText().length() == 0) {
-                                Toast.makeText(LoginActivity.this, "请输入课程ip", Toast.LENGTH_SHORT).show();
-                                return;
-                            } else {
-                                loadItems_Net();
-                            }
-                            intent = new Intent(this, MainPagerActivity.class);
-                        }else{
-                            intent = new Intent(this, MainPagerActivity.class);
-                        }
-
                     } else if (keysList.contains("COMMON_TEACHER")) {
-                        if(MyApplication.edution.equals("STUDENT")){
-                            Toast.makeText(LoginActivity.this, "请使用教师账号登录", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
                         typeName = "COMMON_TEACHER";
-                        intent = new Intent(this, TMainPagerActivity.class);
                     } else if (keysList.contains("ADMIN_TEACHER")) {
                         typeName = "ADMIN_TEACHER";
-                        intent = new Intent(this, TMainPagerActivity.class);
                     }
                     JSONObject userInfo = obj.getJSONObject(typeName);
 //                    String token = obj.getString("token");
@@ -345,20 +326,43 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     MyApplication.cnName = userInfo.getString("name");
                     MyApplication.token = obj.getString("token");
                     MyApplication.picUrl = userInfo.getString("userPhoto");
+                    if(!keysList.contains("STUDENT")){
+                        Toast.makeText(LoginActivity.this, "请使用学生账号登录", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (keysList.contains("STUDENT")) {
+                        typeName = "STUDENT";
+                        if(MyApplication.online_class){
+                            if (et_ip.getText().length() == 0) {
+                                Toast.makeText(LoginActivity.this, "请输入课程ip", Toast.LENGTH_SHORT).show();
+                                return;
+                            } else {
+                                loadItems_Net();
+                            }
+                            //intent = new Intent(this, MainPagerActivity.class);
+                        }else{
+                            intent = new Intent(this, MainPagerActivity.class);
+                        }
 
-
+                    } else if (keysList.contains("COMMON_TEACHER")) {
+                        typeName = "COMMON_TEACHER";
+                        intent = new Intent(this, TMainPagerActivity.class);
+                    } else if (keysList.contains("ADMIN_TEACHER")) {
+                        typeName = "ADMIN_TEACHER";
+                        intent = new Intent(this, TMainPagerActivity.class);
+                    }
                     intent.putExtra("userId", MyApplication.userId);
                     intent.putExtra("realName", MyApplication.cnName);
 
                     intent.putExtra("username", username);
                     intent.putExtra("picUrl", userInfo.getString("userPhoto"));
                     intent.putExtra("password", password);
-
+                    //两个一起用
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     // 开启自动登录
                     MyApplication.autoLogin = true;
                     //Toast.makeText(LoginActivity.this, "页面跳转", Toast.LENGTH_SHORT).show();
-                    //两个一起用
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+
                     //登录成功跳转
                     startActivity(intent);
 
@@ -388,6 +392,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 String itemString = json.getString("learnPlan");
+                //Toast.makeText(LoginActivity.this, json.getString("message"), Toast.LENGTH_SHORT).show();
                 Log.e("wen0228", "loadItems_Net: " + json);
 
                 itemString = "[" + itemString + "]";
@@ -454,7 +459,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     };
     private void turnLookCourse(List<CourseScannerEntity> moreList) {
-        Intent intent = new Intent(this, CourseLookActivity.class);
+        intent = new Intent(this, CourseLookActivity.class);
         intent.putExtra("username", username);
         intent.putExtra("ip", ip);
         intent.putExtra("classname", moreList.get(0).getCourseName());

@@ -10,8 +10,8 @@ android {
         applicationId "com.example.yidiantong"
         minSdk 23
         targetSdk 32
-        versionCode 66
-        versionName "7.6.6"
+        versionCode 5
+        versionName "1.0.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     android {
@@ -37,7 +37,7 @@ android {
     // 自定义打包名称
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "learning-${variant.versionName}-stu.apk"
+            outputFileName = "learning-stu-${variant.versionName}.apk"
         }
     }
 }

@@ -10,7 +10,10 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-
+<!--    android:roundIcon="@mipmap/ic_launcher_stu"-->
+<!--    android:roundIcon="@mipmap/ic_launcher_class_stu"-->
+<!--    android:roundIcon="@mipmap/ic_launcher_tea"-->
+<!--    android:roundIcon="@mipmap/ic_launcher_class_tea"-->
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -24,6 +27,9 @@
         android:theme="@style/Theme.YiDianTong"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.TCourseScannerActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.HudongActivity"
             android:exported="false" />
@@ -243,9 +249,6 @@
         <activity
             android:name=".ui.TRemoveControlActivity"
             android:exported="false" />
-<!--        <activity-->
-<!--            android:name=".ui.TCourseScannerActivity"-->
-<!--            android:exported="false" />-->
         <activity
             android:name=".ui.CourseLookActivity"
             android:configChanges="orientation|screenSize"
@@ -386,7 +389,8 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- 内容提供者-相机 -->
+        </activity>
+        <!-- 内容提供者-相机 -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.yidiantong.fileprovider"
