@@ -104,7 +104,7 @@ public class DetectionShiTiDetailActivity extends AppCompatActivity implements R
     MyArrayAdapter myArrayAdapter = new MyArrayAdapter(this, question_types);
     private PopupWindow window;
     private ActivityResultLauncher<Intent> mResultLauncher;
-    public MyViewModel viewModel = new MyViewModel();
+    public MyViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -300,7 +300,7 @@ public class DetectionShiTiDetailActivity extends AppCompatActivity implements R
             scroller.setmDuration(400);
         } catch (Exception e) {
         }
-
+        viewModel = new MyViewModel();
         // 获取 LiveData 对象
         LiveData<Integer> allAnswerFlag = viewModel.getMyVariable();
 
@@ -309,7 +309,7 @@ public class DetectionShiTiDetailActivity extends AppCompatActivity implements R
             @Override
             public void onChanged(Integer newValue) {
                 // 这里写当变量变化时要执行的代码
-                if (newValue == 1) {
+                if (newValue == 3) {
                     // 发送请求,保存学生的答案
                     try {
                         saveAnswer2Server();

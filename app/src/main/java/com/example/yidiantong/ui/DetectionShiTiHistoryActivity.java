@@ -382,7 +382,7 @@ public class DetectionShiTiHistoryActivity extends AppCompatActivity implements 
             @Override
             public void onChanged(Integer newValue) {
                 // 这里写当变量变化时要执行的代码
-                if (newValue == 1) {
+                if (newValue == 4) {
                     // 发送请求,保存学生的答案
                     try {
                         saveAnswer2Server();

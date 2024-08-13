@@ -115,7 +115,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
     MyArrayAdapter myArrayAdapter = new MyArrayAdapter(this, question_types);
     private PopupWindow window;
     private ActivityResultLauncher<Intent> mResultLauncher;
-    public MyViewModel viewModel = new MyViewModel();
+    public MyViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -379,7 +379,7 @@ public class KnowledgeShiTiHistoryActivity extends AppCompatActivity implements 
             scroller.setmDuration(400);
         } catch (Exception e) {
         }
-
+        viewModel = new MyViewModel();
         // 获取 LiveData 对象
         LiveData<Integer> allAnswerFlag = viewModel.getMyVariable();
 
