@@ -110,8 +110,7 @@ public class DetectionShiTiHistoryActivity extends AppCompatActivity implements 
     MyArrayAdapter myArrayAdapter = new MyArrayAdapter(this, question_types);
     private PopupWindow window;
     private ActivityResultLauncher<Intent> mResultLauncher;
-    public MyViewModel viewModel = new MyViewModel();
-
+    public MyViewModel viewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,7 +120,7 @@ public class DetectionShiTiHistoryActivity extends AppCompatActivity implements 
 
         MyApplication.typeActivity = 4;
         MyApplication.typeHistory = 2;
-        viewModel.setMyVariable(0);
+
         fvp_book_recycle = findViewById(R.id.fvp_book_recycle);
         adapter = new BooksRecyclerAdapter(getSupportFragmentManager());
         fvp_book_recycle.setAdapter(adapter);
@@ -373,7 +372,7 @@ public class DetectionShiTiHistoryActivity extends AppCompatActivity implements 
             scroller.setmDuration(400);
         } catch (Exception e) {
         }
-
+        viewModel = new MyViewModel();
         // 获取 LiveData 对象
         LiveData<Integer> allAnswerFlag = viewModel.getMyVariable();
 
