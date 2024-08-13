@@ -487,7 +487,7 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
         // 创建AlertDialog.Builder实例
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        String mRequestUrl = Constant.API + Constant.CHECK_VERSION + "?version=" + MyApplication.versionName + "&type=tea&autoType=auto" + "&userId=" + MyApplication.username;
+        String mRequestUrl = Constant.API + Constant.CHECK_VERSION + "?version=" + MyApplication.versionName + "&type=tea&autoType=auto" + "&userId=" + MyApplication.username+"&flag=1";
         Log.e("0124", "checkUpdate: " + mRequestUrl);
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
@@ -541,7 +541,7 @@ public class TMainPagerActivity extends AppCompatActivity implements View.OnClic
 
     private void saveRecord(String latestVersion) {
 
-        String mRequestUrl = Constant.API + Constant.CHECK_VERSION_SAVE + "?version=" + latestVersion + "&userName=" + MyApplication.username;
+        String mRequestUrl = Constant.API + Constant.CHECK_VERSION_SAVE + "?version=" + latestVersion + "&userName=" + MyApplication.username+"&flag=1";
         Log.e("0124", "checkUpdate: " + mRequestUrl);
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {

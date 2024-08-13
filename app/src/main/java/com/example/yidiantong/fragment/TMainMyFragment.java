@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
@@ -700,7 +699,7 @@ public class TMainMyFragment extends Fragment implements View.OnClickListener {
         // 创建AlertDialog.Builder实例
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        String mRequestUrl = Constant.API + Constant.CHECK_VERSION + "?version=" + MyApplication.versionName + "&type=tea&autoType=noauto" + "&userId=" + username;
+        String mRequestUrl = Constant.API + Constant.CHECK_VERSION + "?version=" + MyApplication.versionName + "&type=tea&autoType=noauto" + "&userId=" + username+"&flag=1";
         Log.e("0124", "checkUpdate: " + mRequestUrl);
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
