@@ -718,6 +718,7 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
             }
         }
         String arrayString = null;
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         switch (type) {
             case 1:
                 arrayString = preferences.getString("exerciseStuLoadAnswer", null);
@@ -742,6 +743,29 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                     editor1.putString("upStuLoadAnswer", arrayString);
                     editor1.commit();
                 }
+                if (!arrayString.contains("null")) {
+                    builder.setTitle("提示")
+                            .setMessage("所有试题已经作答完毕，前往查看学习结果？")
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    // Feedback information to the Activity
+                                    if (MyApplication.typeActivity == 3) {
+                                        ((DetectionShiTiDetailActivity) getActivity()).viewModel.setMyVariable(3);
+                                    } else if (MyApplication.typeActivity == 4) {
+                                        ((DetectionShiTiHistoryActivity) getActivity()).viewModel.setMyVariable(4);
+                                    }
+                                }
+                            })
+                            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
+                }
                 break;
             case 3:
                 arrayString = preferences.getString("autoStuLoadAnswer", null);
@@ -753,6 +777,29 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
                     System.out.println("arrayString: " + arrayString);
                     editor2.putString("autoStuLoadAnswer", arrayString);
                     editor2.commit();
+                }
+                if (!arrayString.contains("null")) {
+                    builder.setTitle("提示")
+                            .setMessage("所有试题已经作答完毕，前往查看学习结果？")
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    // Feedback information to the Activity
+                                    if (MyApplication.typeActivity == 1) {
+                                        ((KnowledgeShiTiDetailActivity) getActivity()).viewModel.setMyVariable(1);
+                                    } else if (MyApplication.typeActivity == 2) {
+                                        ((KnowledgeShiTiHistoryActivity) getActivity()).viewModel.setMyVariable(2);
+                                    }
+                                }
+                            })
+                            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
                 }
                 break;
             case 5:
@@ -851,29 +898,6 @@ public class ShiTiDetailSubject2Fragment extends Fragment implements View.OnClic
         ll_stu_scores2.setVisibility(View.VISIBLE);
         tv_stu_scores2.setText("得分  " + tempscore);
         Toast.makeText(getContext(), "分数提交成功！", Toast.LENGTH_SHORT).show();
-        /*String mRequestUrl = Constant.API + "/AppServer/ajax/studentApp_updateRecommendQueScore.do?userName=" +
-                userName + "&questionId=" + bookExerciseEntity.getQuestionId() + "&score=" + score + "&type=" + type;
-        Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
-        StringRequest request = new StringRequest(mRequestUrl, response -> {
-            try {
-                JSONObject json = JsonUtils.getJsonObjectFromString(response);
-                String success = json.getString("success");
-                Log.d("wen0321", "success: " + success);
-
-                //封装消息，传递给主线程
-                Message message = Message.obtain();
-                message.obj = success.equals("true");
-                //标识线程
-                message.what = 101;
-                handlerSave.sendMessage(message);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }, error -> {
-            Toast.makeText(this.getActivity(), error.toString(), Toast.LENGTH_SHORT).show();
-        });
-        MyApplication.addRequest(request, TAG);*/
     }
 
     // 如果提交答案但没有提交评分那么弹出提示框:请先进行评分

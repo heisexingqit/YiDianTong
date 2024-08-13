@@ -3,6 +3,7 @@ package com.example.yidiantong.fragment;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -428,6 +429,7 @@ public class ShiTiDetailSeven2FiveFragment extends Fragment implements View.OnCl
                     //saveAnswer2Server(bookExerciseEntity.getShiTiAnswer(), stuopt, type);
                     // 保存学生答案至本地
                     String arrayString = null;
+                    AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
                     switch (type) {
                         case 1:
                             arrayString = preferences.getString("exerciseStuLoadAnswer", null);
@@ -454,6 +456,29 @@ public class ShiTiDetailSeven2FiveFragment extends Fragment implements View.OnCl
                                 editor.putString("upStuLoadAnswer", arrayString);
                                 editor.commit();
                             }
+                            if (!arrayString.contains("null")) {
+                                builder.setTitle("提示")
+                                        .setMessage("所有试题已经作答完毕，前往查看学习结果？")
+                                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                                // Feedback information to the Activity
+                                                if (MyApplication.typeActivity == 3) {
+                                                    ((DetectionShiTiDetailActivity) getActivity()).viewModel.setMyVariable(3);
+                                                } else if (MyApplication.typeActivity == 4) {
+                                                    ((DetectionShiTiHistoryActivity) getActivity()).viewModel.setMyVariable(4);
+                                                }
+                                            }
+                                        })
+                                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        })
+                                        .show();
+                            }
                             break;
                         case 3:
                             arrayString = preferences.getString("autoStuLoadAnswer", null);
@@ -466,6 +491,29 @@ public class ShiTiDetailSeven2FiveFragment extends Fragment implements View.OnCl
                                 System.out.println("arrayString: " + arrayString);
                                 editor.putString("autoStuLoadAnswer", arrayString);
                                 editor.commit();
+                            }
+                            if (!arrayString.contains("null")) {
+                                builder.setTitle("提示")
+                                        .setMessage("所有试题已经作答完毕，前往查看学习结果？")
+                                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                                // Feedback information to the Activity
+                                                if (MyApplication.typeActivity == 1) {
+                                                    ((KnowledgeShiTiDetailActivity) getActivity()).viewModel.setMyVariable(1);
+                                                } else if (MyApplication.typeActivity == 2) {
+                                                    ((KnowledgeShiTiHistoryActivity) getActivity()).viewModel.setMyVariable(2);
+                                                }
+                                            }
+                                        })
+                                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        })
+                                        .show();
                             }
                             break;
                         case 5:
