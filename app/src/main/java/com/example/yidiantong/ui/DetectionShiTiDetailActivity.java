@@ -2,6 +2,7 @@ package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -32,10 +33,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
+import com.example.yidiantong.MyViewModel;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.BooksRecyclerAdapter;
 import com.example.yidiantong.adapter.MyArrayAdapter;
@@ -100,6 +104,7 @@ public class DetectionShiTiDetailActivity extends AppCompatActivity implements R
     MyArrayAdapter myArrayAdapter = new MyArrayAdapter(this, question_types);
     private PopupWindow window;
     private ActivityResultLauncher<Intent> mResultLauncher;
+    public MyViewModel viewModel = new MyViewModel();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +115,7 @@ public class DetectionShiTiDetailActivity extends AppCompatActivity implements R
 
         MyApplication.typeActivity = 3;
         MyApplication.typeHistory = 1;
+        viewModel.setMyVariable(0);
         fvp_book_recycle = findViewById(R.id.fvp_book_recycle);
         adapter = new BooksRecyclerAdapter(getSupportFragmentManager());
         fvp_book_recycle.setAdapter(adapter);
@@ -295,6 +301,25 @@ public class DetectionShiTiDetailActivity extends AppCompatActivity implements R
         } catch (Exception e) {
         }
 
+        // 获取 LiveData 对象
+        LiveData<Integer> allAnswerFlag = viewModel.getMyVariable();
+
+        // 观察 LiveData 的变化
+        allAnswerFlag.observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer newValue) {
+                // 这里写当变量变化时要执行的代码
+                if (newValue == 1) {
+                    // 发送请求,保存学生的答案
+                    try {
+                        saveAnswer2Server();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    jumpToSubmitPage();
+                }
+            }
+        });
     }
 
     @Override
