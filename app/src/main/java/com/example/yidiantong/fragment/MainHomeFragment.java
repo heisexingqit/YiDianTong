@@ -368,6 +368,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                     contentView.findViewById(R.id.tv_2).setOnClickListener(this);
                     contentView.findViewById(R.id.tv_3).setOnClickListener(this);
                     contentView.findViewById(R.id.tv_4).setOnClickListener(this);
+                    contentView.findViewById(R.id.tv_11).setOnClickListener(this);
                     contentView.findViewById(R.id.tv_7).setOnClickListener(this);
                     window = new PopupWindow(contentView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
                     window.setTouchable(true);
@@ -405,6 +406,13 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
             case R.id.tv_4:
                 if (!type.equals("4")) {
                     type = "4";
+                    refreshList();
+                }
+                window.dismiss();
+                break;
+            case R.id.tv_11:
+                if (!type.equals("11")) {
+                    type = "11";
                     refreshList();
                 }
                 window.dismiss();
