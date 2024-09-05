@@ -45,6 +45,7 @@ import com.example.yidiantong.ui.KnowledgeShiTiDetailActivity;
 import com.example.yidiantong.ui.KnowledgeShiTiHistoryActivity;
 import com.example.yidiantong.ui.MainBookUpActivity;
 import com.example.yidiantong.ui.OnlineTestActivity;
+import com.example.yidiantong.ui.OnlineTestDetailActivity;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.RecyclerInterface;
 
@@ -331,6 +332,9 @@ public class ShiTiDetailJudgeFragment extends Fragment implements View.OnClickLi
                         } else if (MyApplication.typeActivity == 4) {
                             ((DetectionShiTiHistoryActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(1);
                             ((DetectionShiTiHistoryActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(bookExerciseEntity.getScore());
+                        } else if (MyApplication.typeActivity == 5) {
+                            ((OnlineTestDetailActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(1);
+                            ((OnlineTestDetailActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore(bookExerciseEntity.getScore());
                         }
                     } else {
                         fiv_bd_tf.setImageResource(R.drawable.answrong);
@@ -347,6 +351,9 @@ public class ShiTiDetailJudgeFragment extends Fragment implements View.OnClickLi
                         } else if (MyApplication.typeActivity == 4) {
                             ((DetectionShiTiHistoryActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(2);
                             ((DetectionShiTiHistoryActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore("0");
+                        } else if (MyApplication.typeActivity == 5) {
+                            ((OnlineTestDetailActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setAccType(2);
+                            ((OnlineTestDetailActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuScore("0");
                         }
                     }
                     tv_all_scores.setText("满分  " + bookExerciseEntity.getScore());
@@ -365,6 +372,9 @@ public class ShiTiDetailJudgeFragment extends Fragment implements View.OnClickLi
                     } else if (MyApplication.typeActivity == 4) {
                         ((DetectionShiTiHistoryActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(option[stuans]);
                         ((DetectionShiTiHistoryActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setZuodaDate(date);
+                    } else if (MyApplication.typeActivity == 5) {
+                        ((OnlineTestDetailActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setStuInput(option[stuans]);
+                        ((OnlineTestDetailActivity) getActivity()).bookExerciseEntityList.get(Integer.parseInt(currentpage) - 1).setZuodaDate(date);
                     }
                     Toast.makeText(getContext(), "答案保存成功！", Toast.LENGTH_SHORT).show();
                     // 保存学生答案至服务器
@@ -467,33 +477,25 @@ public class ShiTiDetailJudgeFragment extends Fragment implements View.OnClickLi
                                 editor.commit();
                             }
                             if (!arrayString.contains("null")) {
-                                Toast.makeText(getContext(), "测试完成！", Toast.LENGTH_SHORT).show();
-                                if (flag.equals("自主学习")) {
-                                    Intent intent = new Intent(getActivity(), KnowledgeShiTiDetailActivity.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                    intent.putExtra("userName", getActivity().getIntent().getStringExtra("username"));
-                                    intent.putExtra("subjectId", getActivity().getIntent().getStringExtra("subjectId"));
-                                    intent.putExtra("unitId", getActivity().getIntent().getStringExtra("unitId"));
-                                    intent.putExtra("xueduanId", getActivity().getIntent().getStringExtra("xueduan"));
-                                    intent.putExtra("banbenId", getActivity().getIntent().getStringExtra("banben"));
-                                    intent.putExtra("jiaocaiId", getActivity().getIntent().getStringExtra("jiaocai"));
-                                    intent.putExtra("courseName", getActivity().getIntent().getStringExtra("name"));
-                                    intent.putExtra("zhishidian", getActivity().getIntent().getStringExtra("zhishidian"));
-                                    intent.putExtra("zhishidianId", getActivity().getIntent().getStringExtra("zhishidianId"));
-                                    intent.putExtra("flag", "自主学习");
-                                    startActivity(intent);
-                                    getActivity().finish();
-                                } else if (flag.equals("巩固提升")) {
-                                    Intent intent = new Intent(getActivity(), DetectionShiTiDetailActivity.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                    intent.putExtra("userName", getActivity().getIntent().getStringExtra("username"));
-                                    intent.putExtra("subjectId", getActivity().getIntent().getStringExtra("subjectId"));
-                                    intent.putExtra("unitId", getActivity().getIntent().getStringExtra("unitId"));
-                                    intent.putExtra("courseName", getActivity().getIntent().getStringExtra("name"));
-                                    intent.putExtra("flag", "自主学习");
-                                    startActivity(intent);
-                                    getActivity().finish();
-                                }
+                                builder.setTitle("提示")
+                                        .setMessage("所有试题已经作答完毕，前往查看学习结果？")
+                                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                                // Feedback information to the Activity
+                                                if (MyApplication.typeActivity == 5) {
+                                                    ((OnlineTestDetailActivity) getActivity()).viewModel.setMyVariable(1);
+                                                }
+                                            }
+                                        })
+                                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        })
+                                        .show();
                             }
                             break;
                     }

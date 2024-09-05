@@ -218,7 +218,98 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
                     dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
                     dialog.show();
                 } else {
-                    // 记住选择-本地写入 + Intent传参
+                    // 发送请求
+                    String mRequestUrlModel = Constant.API + "/AppServer/ajax/studentApp_checkModelExists.do?"
+                            + "channelCode=" + xueduanMap.get(xueduan) + "&subjectCode=" + xuekeMap.get(xueke) + "&textBookCode=" + banbenMap.get(banben)
+                            + "&gradeLevelCode=" + jiaocaiMap.get(jiaocai) + "&stuId=" + MyApplication.username + "&unitId=1101010010001";
+                    Log.d("song", "mRequestUrlModel: " + mRequestUrlModel);
+                    StringRequest request = new StringRequest(mRequestUrlModel, response -> {
+                        try {
+                            JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                            String data = json.getString("data");
+                            Log.d("song", "data: " + data);
+                            if (data.equals("no")) {
+                                Toast.makeText(this, "模型不存在，无法进行自主学习", Toast.LENGTH_SHORT).show();
+                            }
+                            if (data.equals("test")) {
+                                // 记住选择-本地写入 + Intent传参
+                                SharedPreferences.Editor editor = preferences.edit();
+                                Intent intent = new Intent(this, OnlineTestNullActivity.class);
+                                intent.putExtra("userName", MyApplication.username);
+                                // 学段
+                                editor.putString("xueduan", xueduan);
+                                intent.putExtra("xueduan", xueduan);
+                                intent.putExtra("xueduanId", xueduanMap.get(xueduan));
+
+                                // 学科
+                                editor.putString("xueke", xueke);
+                                intent.putExtra("xueke", xueke);
+                                intent.putExtra("xuekeId", xuekeMap.get(xueke));
+
+                                // 版本
+                                editor.putString("banben", banben);
+                                intent.putExtra("banben", banben);
+                                intent.putExtra("banbenId", banbenMap.get(banben));
+
+                                // 教材
+                                editor.putString("jiaocai", jiaocai);
+                                intent.putExtra("jiaocai", jiaocai);
+                                intent.putExtra("jiaocaiId", jiaocaiMap.get(jiaocai));
+
+                                intent.putExtra("unitId", "1101010010001");
+                                intent.putExtra("flag", "自主学习");
+
+                                // TODO 后期需删除
+                                /*intent.putExtra("stu", stu);*/
+
+                                editor.commit();
+
+                                startActivity(intent);
+                            }
+                            if (data.equals("yes")) {
+                                // 记住选择-本地写入 + Intent传参
+                                SharedPreferences.Editor editor = preferences.edit();
+                                Intent intent = new Intent(this, KnowledgePointActivity.class);
+                                intent.putExtra("userName", MyApplication.username);
+                                // 学段
+                                editor.putString("xueduan", xueduan);
+                                intent.putExtra("xueduan", xueduan);
+                                intent.putExtra("xueduanId", xueduanMap.get(xueduan));
+
+                                // 学科
+                                editor.putString("xueke", xueke);
+                                intent.putExtra("xueke", xueke);
+                                intent.putExtra("xuekeId", xuekeMap.get(xueke));
+
+                                // 版本
+                                editor.putString("banben", banben);
+                                intent.putExtra("banben", banben);
+                                intent.putExtra("banbenId", banbenMap.get(banben));
+
+                                // 教材
+                                editor.putString("jiaocai", jiaocai);
+                                intent.putExtra("jiaocai", jiaocai);
+                                intent.putExtra("jiaocaiId", jiaocaiMap.get(jiaocai));
+
+                                intent.putExtra("unitId", "1101010010001");
+
+                                // TODO 后期需删除
+                                /*intent.putExtra("stu", stu);*/
+
+                                editor.commit();
+
+                                startActivity(intent);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }, error -> {
+                        Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+                        Log.d("wen", "Volley_Error: " + error.toString());
+                    });
+                    MyApplication.addRequest(request, TAG);
+
+                    /*// 记住选择-本地写入 + Intent传参
                     SharedPreferences.Editor editor = preferences.edit();
                     Intent intent = new Intent(this, KnowledgePointActivity.class);
                     intent.putExtra("userName", MyApplication.username);
@@ -243,11 +334,11 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
                     intent.putExtra("jiaocaiId", jiaocaiMap.get(jiaocai));
 
                     // TODO 后期需删除
-                    /*intent.putExtra("stu", stu);*/
+                    *//*intent.putExtra("stu", stu);*//*
 
                     editor.commit();
 
-                    startActivity(intent);
+                    startActivity(intent);*/
                 }
                 break;
         }
@@ -324,6 +415,7 @@ public class AutoStudyActivity extends AppCompatActivity implements View.OnClick
             showPos = -1;
         }
     }
+
 
     /**
      * 发送请求,获取学段信息

@@ -139,6 +139,11 @@ public class DetectionShiTiDetailActivity extends AppCompatActivity implements R
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+                // 跳转至AutoStudyActivity,并将之前的从栈中弹出,AutoStudyActivity在顶部
+                Intent intent = new Intent(DetectionShiTiDetailActivity.this, AutoDetectionActivity.class);
+                // 通过添加以下标志来清除堆栈中的所有活动，并使 `ActivityA` 成为堆栈顶部的唯一活动
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
                 finish();
             }
         });
@@ -247,6 +252,7 @@ public class DetectionShiTiDetailActivity extends AppCompatActivity implements R
                     // 红色字体
                     tv_massage.setTextColor(Color.parseColor("#FF0000"));
                 }
+                tv_massage.setText("选择考点下暂无试题");
                 if (bookExerciseEntityList == null || bookExerciseEntityList.size() == 0 || bookExerciseEntityList.equals("[]")) {
                     fll_null.setVisibility(View.VISIBLE);
                     rl_loading.setVisibility(View.GONE);

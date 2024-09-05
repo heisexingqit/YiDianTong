@@ -49,8 +49,6 @@ public class OnlineTestNullActivity extends AppCompatActivity {
     private String banben="";  //版本
     private String jiaocai="";  //教材
     private String courseName;  //课程名称
-    private String zhishidianId="";  //知识点id
-    private String zhishidian="";  //知识点
     private String flag;  //标记
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -61,30 +59,22 @@ public class OnlineTestNullActivity extends AppCompatActivity {
         ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
         userName = getIntent().getStringExtra("userName");
         unitId = getIntent().getStringExtra("unitId");
-        subjectId = getIntent().getStringExtra("subjectId");
+        subjectId = getIntent().getStringExtra("xuekeId");
         courseName = getIntent().getStringExtra("courseName");
         flag = getIntent().getStringExtra("flag");
         if (flag.equals("自主学习")) {
             xueduan = getIntent().getStringExtra("xueduanId");
             banben = getIntent().getStringExtra("banbenId");
             jiaocai = getIntent().getStringExtra("jiaocaiId");
-            zhishidianId = getIntent().getStringExtra("zhishidianId");
-            zhishidian = getIntent().getStringExtra("zhishidian");
         }
 
         ftv_title = findViewById(R.id.ftv_title);
-        if (flag.equals("巩固提升")) {
-            ftv_title.setText("巩固提升");
+        if (flag.equals("智能检测")) {
+            ftv_title.setText("智能检测");
             fiv_up_null = findViewById(R.id.fiv_up_null);
             fiv_up_null.setVisibility(View.VISIBLE);
             //顶栏返回按钮
             findViewById(R.id.fiv_back).setOnClickListener(v -> {
-                Intent intent = new Intent(this, MainBookActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                intent.putExtra("username", userName);
-                intent.putExtra("subjectId", subjectId);
-                intent.putExtra("subjectName", courseName);
-                startActivity(intent);
                 finish();
             });
         } else {
@@ -103,17 +93,15 @@ public class OnlineTestNullActivity extends AppCompatActivity {
         btn_test = findViewById(R.id.btn_test);
         btn_test.setOnClickListener(v -> {
             //跳转到在线测试页面
-            Intent intent = new Intent(this, OnlineTestActivity.class);
+            Intent intent = new Intent(this, OnlineTestDetailActivity.class);
             intent.putExtra("userName", userName);
             intent.putExtra("subjectId", subjectId);
             intent.putExtra("courseName", courseName);
             intent.putExtra("flag", flag);
             intent.putExtra("unitId", unitId);
-            intent.putExtra("xueduan", xueduan);
-            intent.putExtra("banben", banben);
-            intent.putExtra("jiaocai", jiaocai);
-            intent.putExtra("zhishidian", zhishidian);
-            intent.putExtra("zhishidianId", zhishidianId);
+            intent.putExtra("xueduanId", xueduan);
+            intent.putExtra("banbenId", banben);
+            intent.putExtra("jiaocaiId", jiaocai);
             startActivity(intent);
         });
     }

@@ -99,6 +99,12 @@ public class KnowledgePointActivity extends AppCompatActivity {
         contentView = LayoutInflater.from(this).inflate(R.layout.item_t_homework_add_show_zsd
                 , null, false);  // 获取布局,并设置为弹出窗口的布局
         contentView.findViewById(R.id.iv_back).setOnClickListener(v -> {
+            // 跳转至AutoStudyActivity,并将之前的从栈中弹出,AutoStudyActivity在顶部
+            Intent intent = new Intent(KnowledgePointActivity.this, AutoStudyActivity.class);
+            // 通过添加以下标志来清除堆栈中的所有活动，并使 `ActivityA` 成为堆栈顶部的唯一活动
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+
             finish();
             window.dismiss();
         });
@@ -150,7 +156,23 @@ public class KnowledgePointActivity extends AppCompatActivity {
         Log.d("map", sb.toString());
         zhishidianId = sb.toString();
 
-        String url = Constant.API + "/AppServer/ajax/studentApp_judgeCheck.do"
+        Intent intent = new Intent(KnowledgePointActivity.this,
+                KnowledgeShiTiDetailActivity.class); // 直接到做题页面
+        intent.putExtra("zhishidianId", zhishidianId);  // 知识点id
+        intent.putExtra("userName", userName);  // 用户名
+        intent.putExtra("unitId", "1101010010001");    // 学科id
+        intent.putExtra("xueduanId", xueduan);    // 学科id
+        intent.putExtra("subjectId", course_Id);    // 学科id
+        intent.putExtra("banbenId", banben);  // 版本id
+        intent.putExtra("jiaocaiId", jiaocai);  // 教材id
+        intent.putExtra("courseName", course_name);  // 学科名
+        intent.putExtra("zhishidian", zhishidian);  // 知识点
+        intent.putExtra("flag", "自主学习");
+        startActivity(intent);
+        finish();
+        window.dismiss();
+
+        /*String url = Constant.API + "/AppServer/ajax/studentApp_judgeCheck.do"
                 + "?stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + course_Id
                 + "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&catalogId=" + zhishidianId
                 + "&unitId=1101010010001" + "&type=zzxx";
@@ -194,7 +216,7 @@ public class KnowledgePointActivity extends AppCompatActivity {
         }, error -> {
             Log.d("wen", "Volley_Error: " + error.toString());
         });
-        MyApplication.addRequest(request, TAG);
+        MyApplication.addRequest(request, TAG);*/
     }
 
     // JS延迟关闭PopUpWindow

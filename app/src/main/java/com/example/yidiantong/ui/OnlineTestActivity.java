@@ -181,10 +181,12 @@ public class OnlineTestActivity extends AppCompatActivity {
             fll_null.setVisibility(View.GONE);
             rl_loading.setVisibility(View.VISIBLE);
         }
-        String mRequestUrl = Constant.API +"/AppServer/ajax/studentApp_getQuestionsZDJC.do?subjectId="
+        /*String mRequestUrl = Constant.API +"/AppServer/ajax/studentApp_getQuestionsZDJC.do?subjectId="
                 + "?stuId=" + userName + "&channelCode=" + xueduan + "&subjectCode=" + subjectId
                 + "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&catalogId=" + zhishidianId
-                + "&unitId=" + unitId + "&type=zzxx";
+                + "&unitId=" + unitId + "&type=zzxx";*/
+        String mRequestUrl = Constant.API +"/AppServer/ajax/studentApp_getQuestionsZDJC.do?channelCode=" + xueduan + "&subjectCode=" + subjectId
+                + "&textBookCode=" + banben + "&gradeLevelCode=" + jiaocai + "&unitId=" + unitId;
         Log.e("wen0223", "loadItems_Net: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {

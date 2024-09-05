@@ -49,6 +49,8 @@
         <activity
             android:name=".ui.IntelligentDetectionChangeActivity"
             android:exported="false" />
+        <activity android:name=".ui.OnlineTestSubmitActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.DetectionSubmitActivity"
             android:exported="false" />
