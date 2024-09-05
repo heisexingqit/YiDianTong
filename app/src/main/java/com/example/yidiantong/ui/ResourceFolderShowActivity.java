@@ -1,45 +1,28 @@
 package com.example.yidiantong.ui;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-
-import android.Manifest;
 import android.app.DownloadManager;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.bean.LearnPlanItemEntity;
-import com.example.yidiantong.fragment.LearnPlanPPTFragment;
-import com.example.yidiantong.fragment.LearnPlanPaperFragment;
-import com.example.yidiantong.fragment.LearnPlanVideoFragment;
+import com.example.yidiantong.fragment.ResourceFolderImgFragment;
 import com.example.yidiantong.fragment.ResourceFolderPPTFragment;
 import com.example.yidiantong.fragment.ResourceFolderPaperFragment;
 import com.example.yidiantong.fragment.ResourceFolderVideoFragment;
-import com.example.yidiantong.util.HomeworkInterface;
-import com.example.yidiantong.util.PagingInterface;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Rationale;
@@ -61,7 +44,6 @@ public class ResourceFolderShowActivity extends AppCompatActivity {
         tv_title.setText(itemShow.getResourceName());
         FrameLayout fl_main = findViewById(R.id.fl_main);
         ImageButton btn_download  = findViewById(R.id.btn_download);
-
         btn_download.setOnClickListener(v -> {
             // 权限请求
             AndPermission.with(this)
@@ -76,8 +58,18 @@ public class ResourceFolderShowActivity extends AppCompatActivity {
                             if (downloadUrl != null && !downloadUrl.isEmpty()) {
                                 // 创建DownloadManager请求
                                 DownloadManager.Request request = new DownloadManager.Request(Uri.parse(downloadUrl));
+                                String fileName;
                                 // 设置下载文件的名称
-                                String fileName = itemShow.getResourceName() + "." + itemShow.getFormat();
+                                if(itemShow.getFormat().equals("word")){
+                                    fileName= itemShow.getResourceName() + "." + "docx";
+                                }else if(itemShow.getFormat().equals("image")){
+                                    fileName = itemShow.getResourceName() + "." + "png";
+                                }else if(itemShow.getFormat().equals("ppt")){
+                                    fileName = itemShow.getResourceName() + "." + "pptx";
+                                }else {
+                                    fileName = itemShow.getResourceName() + "." + itemShow.getFormat();
+                                }
+
                                 request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
 
                                 // 使用系统默认通知，当下载开始和结束时会自动显示通知
@@ -122,70 +114,15 @@ public class ResourceFolderShowActivity extends AppCompatActivity {
 
         });
 
-       //下载并打开文件夹
-//        btn_download.setOnClickListener(v -> {
-//            // 获取资源的下载链接
-//            String downloadUrl = itemShow.getUrl();
-//            if (downloadUrl != null && !downloadUrl.isEmpty()) {
-//                // 创建DownloadManager请求
-//                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(downloadUrl));
-//                // 设置下载文件的名称
-//                String fileName = itemShow.getResourceName() + "." +  itemShow.getFormat();
-//                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
-//
-//                // 禁用DownloadManager自带通知
-//                //request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN);
-//
-//                // 获取DownloadManager实例
-//                DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-//
-//                // 开始下载
-//                long downloadId = downloadManager.enqueue(request);
-//
-//                // 监听下载完成广播实现点击打开问价夹功能
-//                BroadcastReceiver onComplete = new BroadcastReceiver() {
-//                    public void onReceive(Context ctxt, Intent intent) {
-//                        long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
-//                        if (id == downloadId) {
-//                            Uri downloadUri = downloadManager.getUriForDownloadedFile(downloadId);
-//                            if (downloadUri != null) {
-//                                Intent openFileIntent = new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
-//                                openFileIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                                PendingIntent pendingIntent = PendingIntent.getActivity(ctxt, 0, openFileIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//                                // 发送带有意图的通知
-//                                NotificationManager notificationManager = (NotificationManager) ctxt.getSystemService(Context.NOTIFICATION_SERVICE);
-//                                NotificationCompat.Builder builder = new NotificationCompat.Builder(ctxt, "download_channel")
-//                                        .setContentTitle("下载完成")
-//                                        .setContentText("点击查看下载的文件")
-//                                        .setSmallIcon(android.R.drawable.stat_sys_download_done)
-//                                        .setContentIntent(pendingIntent)
-//                                        .setAutoCancel(true);
-//
-//                                if (notificationManager != null) {
-//                                    notificationManager.notify(1, builder.build());
-//                                }
-//                            }
-//                        }
-//                        ctxt.unregisterReceiver(this);
-//                    }
-//                };
-//
-//                // 注册监听广播
-//                registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-//
-//                // 显示下载提示
-//                Toast.makeText(this, "开始下载 " + fileName, Toast.LENGTH_SHORT).show();
-//            } else {
-//                Toast.makeText(this, "缺少下载链接", Toast.LENGTH_SHORT).show();
-//            }
-//        });
         Fragment fragment = null;
         Log.d("wen", "onCreate: " + itemShow);
         switch (itemShow.getFormat()) {
             case "word":
             case "pdf":
                 fragment = ResourceFolderPaperFragment.newInstance(itemShow);
+                break;
+            case "image":
+                fragment = ResourceFolderImgFragment.newInstance(itemShow);
                 break;
             case "video":
             case "music":

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/f_mihui"
+    android:orientation="vertical"
+    tools:context=".ui.TLiveListActivity">
+
+    <!-- 顶栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:background="@color/white">
+
+        <com.example.yidiantong.View.ClickableImageView
+            android:id="@+id/iv_back"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
+            android:src="@drawable/left_ex" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="课堂回放"
+            android:paddingEnd="35dp"
+            android:textColor="@color/main_bg"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+    <include layout="@layout/loading_page"/>
+    <!-- 查询顶栏 -->
+    <RelativeLayout
+        android:id="@+id/rl_selector"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/tv_schoolYearName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:background="@color/white"
+            android:text="2024学年下学期"
+            android:textColor="@color/main_bg_title"
+            android:textSize="20sp" />
+        <com.example.yidiantong.View.ClickableImageView
+            android:layout_width="25dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_baseline_arrow_drop_down_24" />
+
+<!--        <Button-->
+<!--            android:id="@+id/btn_selector"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="30dp"-->
+<!--            android:layout_alignParentEnd="true"-->
+<!--            android:background="@color/main_bg_title"-->
+<!--            android:text="切换学期"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textSize="16sp" />-->
+        </RelativeLayout>
+    <!-- 查询顶栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="horizontal">
+
+        <!-- 左侧选择器 -->
+        <LinearLayout
+            android:id="@+id/ll_selector"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:gravity="center">
+
+            <com.example.yidiantong.View.ClickableTextView
+                android:id="@+id/tv_selector"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="全部"
+                android:paddingLeft="5dp"
+                android:paddingEnd="5dp"
+                android:textColor="@color/main_bg_title"
+                android:textSize="15sp" />
+
+            <com.example.yidiantong.View.ClickableImageView
+                android:layout_width="25dp"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_baseline_arrow_drop_down_24" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_start"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:layout_marginStart="10dp">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
+                android:paddingEnd="5dp"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/calendar"/>
+            <TextView
+                android:id="@+id/tv_timeStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:background="@color/white"
+                android:maxLines="1"
+                android:gravity="right|center"
+                android:text="开始日期" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_end"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
+                android:paddingEnd="5dp"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/calendar"/>
+            <TextView
+                android:id="@+id/tv_timeEnd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:maxLines="1"
+                android:background="@color/white"
+                android:text="结束日期" />
+        </LinearLayout>
+        <TextView
+            android:id="@+id/tv_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:textColor="@color/white"
+            android:background="@color/main_bg_title"
+            android:textSize="15sp"
+            android:text="清空" />
+    </LinearLayout>
+
+
+    <!-- 列表 -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</LinearLayout>

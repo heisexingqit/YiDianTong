@@ -37,6 +37,7 @@ import com.example.yidiantong.bean.HomeItemEntity;
 import com.example.yidiantong.ui.HomeworkPagerActivity;
 import com.example.yidiantong.ui.HomeworkPagerFinishActivity;
 import com.example.yidiantong.ui.LearnPlanPagerActivity;
+import com.example.yidiantong.ui.PlaybackActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.MyItemDecoration;
@@ -170,6 +171,9 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
 
                             MyReadWriteLock.checkin(adapter.itemList.get(pos).getLearnId(), username, "student", "", handler, getActivity());
                         }
+                        break;
+                    case "课堂回放":
+                        checkYearTerm();
                         break;
                 }
             });
@@ -370,7 +374,7 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
             rl_loading.setVisibility(View.VISIBLE);
         }
 
-        String mRequestUrl = Constant.API + Constant.NEW_ITEM + "?currentPage=" + currentPage + "&userId=" + username + "&resourceType=" + type + "&searchStr=" + searchStr;
+        String mRequestUrl = Constant.API + Constant.NEW_ITEM + "?currentPage=" + currentPage + "&userId=" + username + "&resourceType=" + type + "&searchStr=" + searchStr+"&unitId=1101010010001";
 
         Log.d("wen", "study2: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
@@ -410,6 +414,30 @@ public class MainStudyFragment extends Fragment implements View.OnClickListener 
             adapter.fail();
         });
 
+        MyApplication.addRequest(request, TAG);
+    }
+    //判断是否存在学年学期
+    private void checkYearTerm() {
+        String mRequestUrl = Constant.API + Constant.T_HOMEWORK_GET_HUIFANG;
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String data = json.getString("data");
+                Log.e("0124", "检查版本: " + json);
+                if(data.equals("-1")){
+                    Toast.makeText(getActivity(), "该学校未设置学年学期数据，无法查看课堂回放", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Intent intent = new Intent(getActivity(), PlaybackActivity.class);
+                intent.putExtra("data", data);
+                startActivity(intent);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }, error -> {
+            Log.e("wen", "Volley_Error: " + error.toString());
+        });
         MyApplication.addRequest(request, TAG);
     }
 }

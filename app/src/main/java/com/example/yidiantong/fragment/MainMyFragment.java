@@ -46,6 +46,7 @@ import com.example.yidiantong.ui.AutoDetectionActivity;
 import com.example.yidiantong.ui.AutoStudyActivity;
 import com.example.yidiantong.ui.LoginActivity;
 import com.example.yidiantong.ui.MyIntroductionActivity;
+import com.example.yidiantong.ui.PlaybackActivity;
 import com.example.yidiantong.ui.SelectCourseActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.ImageUtils;
@@ -79,6 +80,7 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
     private LinearLayout f_ll_auto_study;  // 自主学习
     private LinearLayout f_ll_intelligent_detection;  // 智能检测
     private LinearLayout f_ll_center;  // 选课中心
+    private LinearLayout f_ll_playback;//课堂回放
     private Button fbtn_exit;  // 退出登录
     private ImageView fiv_my;  // 头像
 
@@ -134,7 +136,7 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         f_ll_psw = view.findViewById(R.id.f_ll_psw);
         f_ll_auto_study = view.findViewById(R.id.f_ll_auto_study);
         f_ll_intelligent_detection = view.findViewById(R.id.f_ll_intelligent_detection);
-
+        f_ll_playback = view.findViewById(R.id.f_ll_playback);
         f_ll_center = view.findViewById(R.id.f_ll_center);
         fbtn_exit = view.findViewById(R.id.fbtn_exit);
         fbtn_cancel = view.findViewById(R.id.fbtn_cancel);
@@ -157,6 +159,7 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         f_ll_center.setOnClickListener(this);
         fbtn_exit.setOnClickListener(this);
         fiv_my.setOnClickListener(this);
+        f_ll_playback.setOnClickListener(this);
 
         // 注册Gallery回调组件
         mResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -418,6 +421,9 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
             case R.id.fiv_my:
                 // 修改头像
                 openDialog();
+                break;
+            case R.id.f_ll_playback:
+                checkYearTerm();
                 break;
         }
     }
@@ -787,6 +793,31 @@ public class MainMyFragment extends Fragment implements View.OnClickListener {
         });
         MyApplication.addRequest(request, TAG);
     }
+    //判断是否存在学年学期
+    private void checkYearTerm() {
+        String mRequestUrl = Constant.API + Constant.T_HOMEWORK_GET_HUIFANG;
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String data = json.getString("data");
+                Log.e("0124", "检查版本: " + json);
+                if(data.equals("-1")){
+                    Toast.makeText(getActivity(), "该学校未设置学年学期数据，无法查看课堂回放", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Intent intent = new Intent(getActivity(), PlaybackActivity.class);
+                intent.putExtra("data", data);
+                startActivity(intent);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }, error -> {
+            Log.e("wen", "Volley_Error: " + error.toString());
+        });
+        MyApplication.addRequest(request, TAG);
+    }
+
 
 }
 

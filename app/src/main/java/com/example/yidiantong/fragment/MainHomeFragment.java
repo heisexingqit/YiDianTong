@@ -42,10 +42,10 @@ import com.example.yidiantong.adapter.HomeRecyclerAdapter;
 import com.example.yidiantong.bean.HomeItemEntity;
 import com.example.yidiantong.ui.HomeworkPagerActivity;
 import com.example.yidiantong.ui.HomeworkPagerFinishActivity;
-import com.example.yidiantong.ui.HudongActivity;
 import com.example.yidiantong.ui.LearnPlanPagerActivity;
 import com.example.yidiantong.ui.LiveListActivity;
 import com.example.yidiantong.ui.NoticeLookActivity;
+import com.example.yidiantong.ui.PlaybackActivity;
 import com.example.yidiantong.ui.ResourceFolderActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
@@ -73,6 +73,8 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
     private String mRequestUrl;
     private MyItemDecoration divider;
     private ImageView iv_folder_ball;
+    private String bottomTitle;
+    private String keciID;
 
     //获得实例，并绑定参数
     public static MainHomeFragment newInstance() {
@@ -215,13 +217,17 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                         adapter.itemList.get(pos).setStatus("4");
                         adapter.notifyDataSetChanged();
                         break;
-                    case "互动课堂":
-                        intent = new Intent(getActivity(), HudongActivity.class);
-                        intent.putExtra("keciID", adapter.itemList.get(pos).getLearnId());
-                        intent.putExtra("stuId", username);
-                        intent.putExtra("BottomTitle", adapter.itemList.get(pos).getBottomTitle());
-                        startActivity(intent);
+//                    case "互动课堂":
+//                        intent = new Intent(getActivity(), HudongActivity.class);
+//                        intent.putExtra("keciID", adapter.itemList.get(pos).getLearnId());
+//                        intent.putExtra("stuId", username);
+//                        intent.putExtra("BottomTitle", adapter.itemList.get(pos).getBottomTitle());
+//                        startActivity(intent);
+//                        break;
+                    case "课堂回放":
+                        checkYearTerm();
                         break;
+
 
                 }
             });
@@ -368,7 +374,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                     contentView.findViewById(R.id.tv_2).setOnClickListener(this);
                     contentView.findViewById(R.id.tv_3).setOnClickListener(this);
                     contentView.findViewById(R.id.tv_4).setOnClickListener(this);
-                    contentView.findViewById(R.id.tv_11).setOnClickListener(this);
+//                    contentView.findViewById(R.id.tv_11).setOnClickListener(this);
                     contentView.findViewById(R.id.tv_7).setOnClickListener(this);
                     window = new PopupWindow(contentView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
                     window.setTouchable(true);
@@ -410,13 +416,13 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                 }
                 window.dismiss();
                 break;
-            case R.id.tv_11:
-                if (!type.equals("11")) {
-                    type = "11";
-                    refreshList();
-                }
-                window.dismiss();
-                break;
+//            case R.id.tv_11:
+//                if (!type.equals("11")) {
+//                    type = "11";
+//                    refreshList();
+//                }
+//                window.dismiss();
+//                break;
             case R.id.tv_7:
                 if (!type.equals("7")) {
                     type = "7";
@@ -657,6 +663,32 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
             Log.d("wen", "Volley_Error: " + error.toString());
             rl_loading.setVisibility(View.GONE);
             adapter.fail();
+        });
+        MyApplication.addRequest(request, TAG);
+    }
+    //判断是否存在学年学期
+    private void checkYearTerm() {
+        String mRequestUrl = Constant.API + Constant.T_HOMEWORK_GET_HUIFANG;
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                String data = json.getString("data");
+                Log.e("0124", "检查版本: " + json);
+                if(data.equals("-1")){
+                    Toast.makeText(getActivity(), "该学校未设置学年学期数据，无法查看课堂回放", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Intent intent = new Intent(getActivity(), PlaybackActivity.class);
+                intent.putExtra("data", data);
+                intent.putExtra("keciID", keciID);
+                intent.putExtra("BottomTitle", bottomTitle);
+                startActivity(intent);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }, error -> {
+            Log.e("wen", "Volley_Error: " + error.toString());
         });
         MyApplication.addRequest(request, TAG);
     }

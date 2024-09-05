@@ -10,10 +10,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-<!--    android:roundIcon="@mipmap/ic_launcher_stu"-->
-<!--    android:roundIcon="@mipmap/ic_launcher_class_stu"-->
-<!--    android:roundIcon="@mipmap/ic_launcher_tea"-->
-<!--    android:roundIcon="@mipmap/ic_launcher_class_tea"-->
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -28,22 +25,41 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".ui.PlayMp4Activity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.ResActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.BigImageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.PlaybackActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.TCourseScannerActivity"
             android:exported="false" />
         <activity
             android:name=".ui.HudongActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.DetectionShiTiHistoryActivity"
             android:exported="false" />
-        <activity android:name=".ui.DetectionShiTiHistoryActivity"
+        <activity
+            android:name=".ui.IntelligentDetectionChangeActivity"
             android:exported="false" />
-        <activity android:name=".ui.IntelligentDetectionChangeActivity"
+        <activity
+            android:name=".ui.DetectionSubmitActivity"
             android:exported="false" />
-        <activity android:name=".ui.DetectionSubmitActivity"
+        <activity
+            android:name=".ui.DetectionHistoryActivity"
             android:exported="false" />
-        <activity android:name=".ui.DetectionHistoryActivity"
+        <activity
+            android:name=".ui.DetectionShiTiDetailActivity"
             android:exported="false" />
-        <activity android:name=".ui.DetectionShiTiDetailActivity"
-            android:exported="false" />
-        <activity android:name=".ui.AutoDetectionActivity"
+        <activity
+            android:name=".ui.AutoDetectionActivity"
             android:exported="false" />
         <activity
             android:name=".ui.KnowledgeShiTiHistoryActivity"
@@ -372,15 +388,14 @@
             android:name=".ui.MainPagerActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustPan" /> <!-- 登录 -->
-<!--        <activity-->
-<!--            android:name=".ui.TCourseScannerActivity"-->
-<!--            android:exported="true">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-<!--        </activity>-->
+        <!-- <activity -->
+        <!-- android:name=".ui.TCourseScannerActivity" -->
+        <!-- android:exported="true"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.MAIN" /> -->
+        <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+        <!-- </intent-filter> -->
+        <!-- </activity> -->
         <activity
             android:name=".ui.LoginActivity"
             android:exported="true">
@@ -389,8 +404,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <!-- 内容提供者-相机 -->
+        </activity> <!-- 内容提供者-相机 -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.yidiantong.fileprovider"

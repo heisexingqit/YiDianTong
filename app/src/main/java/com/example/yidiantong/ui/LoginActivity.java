@@ -97,7 +97,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         ll_pw.setOnClickListener(this);
 
         //ip获取
-        et_ip = findViewById(R.id.et_ip);
+        //et_ip = findViewById(R.id.et_ip);
         // 组件样式 结束-----------------------------------------------------
 
         String user = null, pw = null;
@@ -174,11 +174,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.btn_login:
                 username = et_username.getText().toString().trim();
                 password = et_pw.getText().toString().trim();
-                String ip = et_ip.getText().toString();
-                if(ip.length()>0){
-                    if(MyApplication.edution.equals("STUDENT")&&MyApplication.online_class){
-                    }else Constant.API=ip;
-                }
+                //String ip = et_ip.getText().toString();
+//                if(ip.length()>0){
+//                    if(MyApplication.edution.equals("STUDENT")&&MyApplication.online_class){
+//                    }else Constant.API=ip;
+//                }
                 login();
                 break;
             case R.id.ll_username:

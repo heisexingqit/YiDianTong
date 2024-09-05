@@ -338,5 +338,13 @@ public class Constant {
     //互动课堂
     public static final String T_HOMEWORK_GET_HUDONG = "www.cn901.com/ShopGoods/view/tpdata_showOneKetangByStu.do";
 
+    //课堂回放
+    public static final String T_HOMEWORK_GET_HUIFANG = "/AppServer/ajax/studentApp_exitSchoolYearTerm.do?unitId=1101010010001";
+    //获取课堂回放记录
+    public static final String T_HOMEWORK_GET_HUIFANG_RECORD = "/AppServer/ajax/studentApp_getKeTangRecordList.do?unitId=1101010010001";
+    //获取学科数据
+    public static final String T_HOMEWORK_GET_SUBJECT = "/AppServer/ajax/studentApp_getSubjectListByKeTangRecord.do";
+    //获取学年学期数据
+    public static final String T_HOMEWORK_GET_YEAR_TERM = "/AppServer/ajax/studentApp_getSchoolYearTermList.do?unitId=1101010010001";
 
 }

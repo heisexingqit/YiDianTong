@@ -172,7 +172,7 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 case "直播课消息":
                     icon_id = R.drawable.live_icon;
                     break;
-                case "互动课堂":
+                case "课堂回放":
                     icon_id = R.drawable.interactive_icon;
                     break;
                 default:
@@ -191,7 +191,12 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
             }
             tv_type.setText(item.getType());
-            tv_title.setText(item.getBottomTitle());
+            if(!item.getType().equals("课堂回放")){
+                tv_title.setText(item.getBottomTitle());
+            }else{
+                tv_title.setVisibility(View.INVISIBLE);
+            }
+
 
             //清除底栏
             if (item.getContent().equals("")) {
@@ -202,16 +207,17 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
             //设置时间
             tv_date.setText(item.getTime());
+
             //设置第二行
             String second_line = item.getCourseName() + item.getTimeStop();
-            if(item.getType().equals("互动课堂")){
+            if(item.getType().equals("课堂回放")){
                 tv_second_line.setText(item.getCourseName());
             }else{
                 tv_second_line.setText(second_line);
             }
             //学习内容状态
             if (item.getStatus().length() == 0) {
-                if(!item.getType().equals("互动课堂")){
+                if(!item.getType().equals("课堂回放")){
                     iv_top_icon1.setVisibility(View.GONE);
                     iv_top_icon2.setVisibility(View.GONE);
                     // 直播类型
@@ -221,8 +227,6 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     iv_top_icon1.setVisibility(View.INVISIBLE);
                     iv_top_icon2.setVisibility(View.GONE);
                     tv_is_live.setVisibility(View.GONE);
-                    tv_teacher.setVisibility(View.VISIBLE);
-                    tv_teacher.setText(item.getCreaterName());
                 }
 
             }else{
