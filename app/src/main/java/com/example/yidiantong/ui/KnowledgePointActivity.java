@@ -133,6 +133,10 @@ public class KnowledgePointActivity extends AppCompatActivity {
             return;
         }
 
+        // 增加一个loading
+        rl_loading.setVisibility(View.VISIBLE);
+        wv_content.setVisibility(View.GONE);
+
         // 将map中数据转为 key:value1,value2;key:value1,value2;key:value1,value2; 的字符串格式
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, List<String>> entry : map.entrySet()) {
