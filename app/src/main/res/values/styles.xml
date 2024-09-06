@@ -15,6 +15,12 @@
         <item name="android:windowBackground">@null</item> <!--除去背景色-->
     </style>
 
+    <style name="MyDialog_transparent" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <!-- 自定义属性，例如背景颜色 -->
+        <item name="android:windowBackground">#7f7f7f</item>
+        <!-- 其他自定义属性 -->
+    </style>
+
     <!-- dialog样式 -->
     <style name="DialogTheme" parent="@android:style/Theme.Dialog">
         <!-- 边框 -->

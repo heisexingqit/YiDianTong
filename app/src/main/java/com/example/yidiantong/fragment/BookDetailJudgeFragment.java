@@ -300,11 +300,11 @@ public class BookDetailJudgeFragment extends Fragment implements View.OnClickLis
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_last:  // 上一题
-                if (!currentpage.equals("1")) rl_loading.setVisibility(View.VISIBLE);
+//                if (!currentpage.equals("1")) rl_loading.setVisibility(View.VISIBLE);
                 pageing.pageLast(currentpage, allpage);
                 return;
             case R.id.iv_page_next:  // 下一题
-                if (!currentpage.equals(allpage)) rl_loading.setVisibility(View.VISIBLE);
+//                if (!currentpage.equals(allpage)) rl_loading.setVisibility(View.VISIBLE);
                 pageing.pageNext(currentpage, allpage);
                 return;
             case R.id.iv_e:  // 选择错

@@ -584,13 +584,13 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
 
         switch (view.getId()) {
             case R.id.iv_page_last:
-                if (!currentpage.equals("1")) rl_loading.setVisibility(View.VISIBLE);
+//                if (!currentpage.equals("1")) rl_loading.setVisibility(View.VISIBLE);
                 pageing.pageLast(currentpage, allpage);
                 et_student_answer.setText("");
 
                 return;
             case R.id.iv_page_next:
-                if (!currentpage.equals(allpage)) rl_loading.setVisibility(View.VISIBLE);
+//                if (!currentpage.equals(allpage)) rl_loading.setVisibility(View.VISIBLE);
                 pageing.pageNext(currentpage, allpage);
                 et_student_answer.setText("");
 

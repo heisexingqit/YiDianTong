@@ -330,11 +330,11 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.iv_page_last:
-                if (!currentpage.equals("1")) rl_loading.setVisibility(View.VISIBLE);
+//                if (!currentpage.equals("1")) rl_loading.setVisibility(View.VISIBLE);
                 pageing.pageLast(currentpage, allpage);
                 break;
             case R.id.iv_page_next:
-                if (!currentpage.equals(allpage)) rl_loading.setVisibility(View.VISIBLE);
+//                if (!currentpage.equals(allpage)) rl_loading.setVisibility(View.VISIBLE);
                 pageing.pageNext(currentpage, allpage);
                 break;
             case R.id.iv_a:

@@ -2,6 +2,8 @@ package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,9 +11,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,12 +64,13 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
     String questionId; //题目ID
     private String pos; //题目位置
     private String num;
+    AlertDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_recycle);
-        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
+        ((MyApplication) getApplication()).checkAndHandleGlobalVariables(this);
         fvp_book_recycle = findViewById(R.id.fvp_book_recycle);
         adapter = new BooksRecyclerAdapter(getSupportFragmentManager());
         fvp_book_recycle.setAdapter(adapter);
@@ -97,7 +104,6 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
                     new AccelerateInterpolator());
             field.set(fvp_book_recycle, scroller);
             scroller.setmDuration(400);
-            rl_loading.setVisibility(View.VISIBLE);
         } catch (Exception e) {
         }
     }
@@ -124,6 +130,33 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
             //对话框弹出
             builder.show();
         } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyDialog_transparent);
+            builder.setCancelable(false); // 禁止返回和外部点击
+
+            // 自定义布局
+            LinearLayout layout = new LinearLayout(this);
+            layout.setOrientation(LinearLayout.VERTICAL);
+            layout.setGravity(Gravity.CENTER_HORIZONTAL); // 水平居中
+
+            // 添加一个进度条
+            ProgressBar progressBar = new ProgressBar(this);
+            layout.addView(progressBar);
+
+            // 添加一个提示文字
+            TextView tv = new TextView(this);
+            tv.setText("正在加载...");
+            tv.setTextSize(17);
+            tv.setTextColor(Color.parseColor("#59b9e0"));
+            tv.setGravity(Gravity.CENTER_HORIZONTAL);
+            layout.addView(tv);
+
+            // 将自定义布局设置为 AlertDialog 的内容
+            builder.setView(layout);
+
+            // 创建并显示对话框
+            dialog = builder.create();
+            dialog.show();
+
             currentItem -= 1;
             System.out.println("减一后currentItem ^-^:" + currentItem);
             loadItems_Net(currentItem);
@@ -153,8 +186,36 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
             //对话框弹出
             builder.show();
         } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyDialog_transparent);
+            builder.setCancelable(false); // 禁止返回和外部点击
+
+            // 自定义布局
+            LinearLayout layout = new LinearLayout(this);
+            layout.setOrientation(LinearLayout.VERTICAL);
+            layout.setGravity(Gravity.CENTER_HORIZONTAL); // 水平居中
+
+            // 添加一个进度条
+            ProgressBar progressBar = new ProgressBar(this);
+            layout.addView(progressBar);
+
+            // 添加一个提示文字
+            TextView tv = new TextView(this);
+            tv.setText("正在加载...");
+            tv.setTextSize(17);
+            tv.setTextColor(Color.parseColor("#59b9e0"));
+            tv.setGravity(Gravity.CENTER_HORIZONTAL);
+            layout.addView(tv);
+
+            // 将自定义布局设置为 AlertDialog 的内容
+            builder.setView(layout);
+
+            // 创建并显示对话框
+            dialog = builder.create();
+            dialog.show();
+
             currentItem += 1;
             loadItems_Net(currentItem);
+
             //fvp_book_recycle.setCurrentItem(currentItem);
         }
     }
@@ -164,9 +225,9 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
     public void updatepage(String currentpage, String allpage) {
         currentItem = Integer.parseInt(currentpage);
         int allpage1 = Integer.parseInt(allpage);
-        if(allpage1 == 1){  //只有一题时
-           this.finish();
-        }else if(currentItem == allpage1) {
+        if (allpage1 == 1) {  //只有一题时
+            this.finish();
+        } else if (currentItem == allpage1) {
             currentItem -= 1;
             // 延迟1秒
             try {
@@ -176,7 +237,7 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
             }
             loadItems_Net(currentItem);
             //fvp_book_recycle.setCurrentItem(currentItem);
-        }else{
+        } else {
             // 延迟0.1秒
             try {
                 Thread.sleep(1000); // 延迟1秒，单位为毫秒
@@ -196,24 +257,26 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
         public void handleMessage(Message message) {
             super.handleMessage(message);
             if (message.what == 100) {
-                List<BookRecyclerEntity> list = (List<BookRecyclerEntity>)message.obj;
-                adapter.update1(list,userName,subjectId,course_name,exerciseType);
+                List<BookRecyclerEntity> list = (List<BookRecyclerEntity>) message.obj;
+                adapter.update1(list, userName, subjectId, course_name, exerciseType);
+                if (dialog != null && dialog.isShowing()) dialog.dismiss();
             }
         }
     };
 
     // 获取错题详情信息
     private void loadItems_Net(int pos) {
-        String mRequestUrl = Constant.API + Constant.ERROR_QUE_ANSWER_QUESTION + "?sourceId=" + sourceId +"&userName=" +userName +"&subjectId=" + subjectId +"&currentPage=" + pos + "&questionId=" + questionId;
+        String mRequestUrl = Constant.API + Constant.ERROR_QUE_ANSWER_QUESTION + "?sourceId=" + sourceId + "&userName=" + userName + "&subjectId=" + subjectId + "&currentPage=" + pos + "&questionId=" + questionId;
         Log.e("wen0601", "详细信息单题请求" + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 String itemString = json.getString("data");
-                itemString = "["+itemString+"]";
+                itemString = "[" + itemString + "]";
                 Gson gson = new Gson();
                 //使用Goson框架转换Json字符串为列表
-                List<BookRecyclerEntity> itemList = gson.fromJson(itemString, new TypeToken<List<BookRecyclerEntity>>() {}.getType());
+                List<BookRecyclerEntity> itemList = gson.fromJson(itemString, new TypeToken<List<BookRecyclerEntity>>() {
+                }.getType());
                 Log.e("wen0223", "loadItems_Net: " + itemList);
                 //封装消息，传递给主线程
                 Message message = Message.obtain();
