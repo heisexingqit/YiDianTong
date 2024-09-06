@@ -27,6 +27,7 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,6 +79,7 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
     private AlertDialog dialog_model;
     private ImageView fiv_bd_exercise;// 举一反三
     private ImageView iv_exercise_scores;//
+    private RelativeLayout rl_loading;
 
     private String userName;  //用户名
     private String subjectId;  //学科ID
@@ -143,6 +145,7 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
         View view = inflater.inflate(R.layout.fragment_book_detail_multiple, container, false);
 
         // 知识点栏
+        rl_loading = view.findViewById(R.id.rl_loading);
         ftv_br_title = view.findViewById(R.id.ftv_br_title);
         ftv_br_title.setText(bookrecyclerEntity.getSourceName());
         fiv_de_icon = view.findViewById(R.id.fiv_de_icon);
@@ -327,9 +330,11 @@ public class BookDetailMultipleFragment extends Fragment implements View.OnClick
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.iv_page_last:
+                if (!currentpage.equals("1")) rl_loading.setVisibility(View.VISIBLE);
                 pageing.pageLast(currentpage, allpage);
                 break;
             case R.id.iv_page_next:
+                if (!currentpage.equals(allpage)) rl_loading.setVisibility(View.VISIBLE);
                 pageing.pageNext(currentpage, allpage);
                 break;
             case R.id.iv_a:

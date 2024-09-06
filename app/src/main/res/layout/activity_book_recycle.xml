@@ -90,6 +90,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
+        <!--loading-->
+        <include layout="@layout/loading_page" />
+
         <!--可滑动ViewPager-->
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/fvp_book_recycle"

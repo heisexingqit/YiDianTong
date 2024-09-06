@@ -9,6 +9,9 @@
     android:focusableInTouchMode="true"
     tools:context=".fragment.BookDetailSingleFragment">
 
+    <include layout="@layout/loading_page"
+        android:visibility="gone"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

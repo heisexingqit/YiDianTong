@@ -83,6 +83,7 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
     private String allpage;
     private RelativeLayout frl_vedio;
     String[] option = {"A", "B", "C", "D", "E", "F", "G"};
+    private RelativeLayout rl_loading;
 
     private ImageView fiv_bd_exercise; // 举一反三
     private ImageView iv_exercise_scores; //
@@ -142,6 +143,7 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
         View view = inflater.inflate(R.layout.fragment_book_detail_seven2five, container, false);
 
         // 知识点栏
+        rl_loading = view.findViewById(R.id.rl_loading);
         ftv_br_title = view.findViewById(R.id.ftv_br_title);
         ftv_br_title.setText(bookrecyclerEntity.getSourceName());
         fiv_de_icon = view.findViewById(R.id.fiv_de_icon);
@@ -423,9 +425,11 @@ public class BookDetailReadingFragment extends Fragment implements View.OnClickL
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_last:
+                if (!currentpage.equals("1")) rl_loading.setVisibility(View.VISIBLE);
                 pageing.pageLast(currentpage, allpage);
                 return;
             case R.id.iv_page_next:
+                if (!currentpage.equals(allpage)) rl_loading.setVisibility(View.VISIBLE);
                 pageing.pageNext(currentpage, allpage);
                 return;
             case R.id.fb_bd_sumbit:

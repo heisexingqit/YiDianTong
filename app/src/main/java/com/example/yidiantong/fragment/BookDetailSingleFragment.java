@@ -27,6 +27,7 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -83,6 +84,7 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
     private String subjectId; // 学科ID
     private String courseName; // 课程名
     private Boolean exerciseType; // 是否是举一反三or巩固提升
+    private RelativeLayout rl_loading;
 
     //学霸答案
     private TextView tv_xueba;
@@ -151,6 +153,7 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
         View view = inflater.inflate(R.layout.fragment_book_detail_single, container, false);
 
         // 知识点栏
+        rl_loading = view.findViewById(R.id.rl_loading);
         ftv_br_title = view.findViewById(R.id.ftv_br_title);
         ftv_br_title.setText(bookrecyclerEntity.getSourceName());
         fiv_de_icon = view.findViewById(R.id.fiv_de_icon);
@@ -315,9 +318,11 @@ public class BookDetailSingleFragment extends Fragment implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_page_last:
+                if (!currentpage.equals("1")) rl_loading.setVisibility(View.VISIBLE);
                 pageing.pageLast(currentpage, allpage);
                 return;
             case R.id.iv_page_next:
+                if (!currentpage.equals(allpage)) rl_loading.setVisibility(View.VISIBLE);
                 pageing.pageNext(currentpage, allpage);
                 return;
             case R.id.iv_a:

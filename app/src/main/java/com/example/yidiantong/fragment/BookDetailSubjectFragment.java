@@ -153,6 +153,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
     private ImageView iv_camera;
     private TextView tv_stu_answer;
     private TextWatcher myWatcher;
+    private RelativeLayout rl_loading;
 
     //学霸答案
     private TextView tv_xueba;
@@ -236,6 +237,7 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
         View view = inflater.inflate(R.layout.fragment_book_detail_subject, container, false);
         ll_tiankong = view.findViewById(R.id.ll_tiankong);
         tv_stu_answer = view.findViewById(R.id.tv_stu_answer);
+        rl_loading = view.findViewById(R.id.rl_loading);
 
         ll_input_image = view.findViewById(R.id.ll_input_image);
         ll_input_image.setOnClickListener(this);
@@ -582,11 +584,13 @@ public class BookDetailSubjectFragment extends Fragment implements View.OnClickL
 
         switch (view.getId()) {
             case R.id.iv_page_last:
+                if (!currentpage.equals("1")) rl_loading.setVisibility(View.VISIBLE);
                 pageing.pageLast(currentpage, allpage);
                 et_student_answer.setText("");
 
                 return;
             case R.id.iv_page_next:
+                if (!currentpage.equals(allpage)) rl_loading.setVisibility(View.VISIBLE);
                 pageing.pageNext(currentpage, allpage);
                 et_student_answer.setText("");
 

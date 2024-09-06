@@ -239,7 +239,8 @@ public class BooksDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             // 列表序号即错题序号
             ftv_detail_num.setText("题目" + itemerror.getNum());
             // 列表平均分
-            ftv_detail_score.setText("得分: " + itemerror.getStuScore() + " 全班均分: " + itemerror.getAvgScore() + "/" + itemerror.getScore());
+//            ftv_detail_score.setText("得分: " + itemerror.getStuScore() + " 全班均分: " + itemerror.getAvgScore() + "/" + itemerror.getScore());
+            ftv_detail_score.setText("得分: " + itemerror.getStuScore() + "/" + itemerror.getScore());
             //错题内容显示
             String html_content = "<body style=\"color: rgb(117, 117, 117); font-size: 15px;line-height: 30px;\">" + itemerror.getShitiShow() + "</body>";
             String html = html_content.replace("#", "%23");

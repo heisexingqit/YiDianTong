@@ -9,8 +9,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +49,7 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
     private int currentItem = 0;  //当前ViewPager位置
     private int pageCount = 0;
     private boolean exerciseType = false;  //是否是巩固提升
+    private RelativeLayout rl_loading;  //加载中布局
 
     // 接口参数
     String sourceId;  //单元ID
@@ -64,6 +67,7 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
         fvp_book_recycle = findViewById(R.id.fvp_book_recycle);
         adapter = new BooksRecyclerAdapter(getSupportFragmentManager());
         fvp_book_recycle.setAdapter(adapter);
+        rl_loading = findViewById(R.id.rl_loading);
 
         //顶栏返回按钮
         findViewById(R.id.fiv_back).setOnClickListener(v -> {
@@ -93,6 +97,7 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
                     new AccelerateInterpolator());
             field.set(fvp_book_recycle, scroller);
             scroller.setmDuration(400);
+            rl_loading.setVisibility(View.VISIBLE);
         } catch (Exception e) {
         }
     }
