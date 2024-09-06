@@ -107,15 +107,6 @@
             android:paddingTop="10dp">
 
             <ImageView
-                android:id="@+id/iv_exercise_scores"
-                android:layout_width="0dp"
-                android:layout_height="24dp"
-                android:layout_gravity="right"
-                android:layout_marginBottom="10dp"
-                android:layout_weight="1"
-                android:src="@drawable/recommend" />
-
-            <ImageView
                 android:id="@+id/fiv_bd_exercise"
                 android:layout_width="0dp"
                 android:layout_height="24dp"
@@ -123,6 +114,16 @@
                 android:layout_marginBottom="10dp"
                 android:layout_weight="1"
                 android:src="@drawable/exercise" />
+
+            <ImageView
+                android:id="@+id/iv_exercise_scores"
+                android:layout_width="0dp"
+                android:layout_height="24dp"
+                android:layout_gravity="right"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:src="@drawable/recommend"
+                android:visibility="gone"/>
 
             <ImageView
                 android:id="@+id/fiv_bd_mark"

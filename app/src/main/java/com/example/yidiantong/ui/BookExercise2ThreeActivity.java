@@ -288,7 +288,7 @@ public class BookExercise2ThreeActivity extends AppCompatActivity {
                 String message1 = json.getString("message");
                 Log.d("song0321", "message: " + message1);
                 String[] split = message1.split("@_@");
-                Alert(split[0]);
+//                Alert(split[0]);
                 //去掉末尾的逗号
                 if (split[1].endsWith(",")) {
                     split[1] = split[1].substring(0, split[1].length() - 1);
