@@ -38,9 +38,11 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.LearnPlanPagerAdapter;
 import com.example.yidiantong.adapter.MyArrayAdapter;
 import com.example.yidiantong.bean.LearnPlanActivityEntity;
+import com.example.yidiantong.bean.LearnPlanAnswerBatchEntity;
 import com.example.yidiantong.bean.LearnPlanItemEntity;
 import com.example.yidiantong.bean.LearnPlanLinkEntity;
 import com.example.yidiantong.bean.StuAnswerEntity;
+import com.example.yidiantong.entity.HomeworkStuAnswerInfo;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.FixedSpeedScroller;
 import com.example.yidiantong.util.JsonUtils;
@@ -56,10 +58,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
-import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,8 +105,17 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
 
     // Adapter 参数
     List<LearnPlanItemEntity> moreList;
-    List<StuAnswerEntity> moreList2;
+    List<StuAnswerEntity> moreList2 = new ArrayList<>();
 
+    private  ArrayList<LearnPlanAnswerBatchEntity> stuAnswerBatchList = new ArrayList<>();
+
+    // 设置数据加载方式
+    private static final int LOAD_FROM_NET = 1;
+    private static final int LOAD_FROM_DB = 2;
+    private int loadFrom = 0;
+
+    // 计时器
+    private long currentTimeMillis;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,7 +145,8 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
                 //翻页同步下标
                 currentItem = position;
                 tv_question_number.setText(String.valueOf(currentItem + 1));
-                Log.e("currentItem", ":" + currentItem);
+                MyApplication.currentItem = currentItem;
+                currentTimeMillis = System.currentTimeMillis();
             }
 
             @Override
@@ -170,6 +182,50 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
         // 顶栏眼睛
         findViewById(R.id.iv_eye).setOnClickListener(this);
 
+        // 20240906 修改
+        countReady = 0;
+        // 双数据请求
+        loadFrom = LOAD_FROM_NET;
+        List<HomeworkStuAnswerInfo> homeworkStuAnswerInfos = MyApplication.database.homeworkStuAnswerDao().queryByUserAndHomework(username, learnPlanId);
+        /*
+         * public class HomeworkStuAnswerInfo {
+         *     @NonNull
+         *     public String userId; // 学生id
+         *     @NonNull
+         *     public String homeworkId; // 作业id
+         *     @NonNull
+         *     public String questionId; // 试题id
+         *     public String stuAnswer; // 学生作答
+         *     public String userName; // 学生名称
+         *     public int order; // 题目顺序
+         *     public String updateDate; // 更新日期
+         *     // new params
+         *     public String answerTime;
+         *     public String useTime;
+         * }
+         */
+
+        moreList2 = new ArrayList<>();
+        for (HomeworkStuAnswerInfo info : homeworkStuAnswerInfos) {
+            StuAnswerEntity entity = new StuAnswerEntity(info.order, info.questionId, "", info.stuAnswer, "", info.answerTime, info.useTime);
+            entity.setId(info.questionId); // LearnPlan 中的配置名不同，不是questinId，而是id
+            entity.setOptionTime(info.answerTime); // LearnPlan 中的配置名不同，answerTime，而是optionTime
+            /*
+             * public class StuAnswerEntity implements Serializable {
+             *     private int order;
+             *     private String questionId;
+             *     private String status;
+             *     private String stuAnswer;
+             *     private String teaScore;
+             *     // new params
+             *     private String answerTime;
+             *     private String useTime;
+             * }
+             */
+
+            moreList2.add(entity);
+        }
+
         // 数据请求
         loadItems_Net();
 
@@ -181,7 +237,6 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
                     Intent intent = result.getData();
                     int index = intent.getIntExtra("currentItem", 0);
                     if (index == -1) {
-                        Toast.makeText(LearnPlanPagerActivity.this, "提交成功！", Toast.LENGTH_SHORT).show();
                         Intent toHome = new Intent(LearnPlanPagerActivity.this, MainPagerActivity.class);
                         toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(toHome);
@@ -270,8 +325,11 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
         intent.putExtra("questionIds", (Serializable) questionIds);
         intent.putExtra("questionIdx", (Serializable) questionIdx);
         intent.putExtra("isNew", isNew);
+        intent.putExtra("stuAnswerBatchList", stuAnswerBatchList);
         mResultLauncher.launch(intent);
     }
+
+    private int countReady = 0;
 
     private final Handler handler = new Handler(Looper.getMainLooper()) {
         @RequiresApi(api = Build.VERSION_CODES.N)
@@ -279,6 +337,7 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
         @Override
         public void handleMessage(Message message) {
             super.handleMessage(message);
+            // 设计两请求锁，仅当两个请求都完成时才进行adapter更新
             if (message.what == 100) {
                 /**
                  * 题面信息
@@ -322,42 +381,78 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
                 oldStuAnswer = new String[moreList.size()];
                 pageCount = sumCount;
                 setTopNum();
-                if (moreList2 != null) {
-                    adjustStuAnswerList();
-                    adapter.update(moreList, moreList2);
-                    rl_loading.setVisibility(View.GONE);
-                }
+                countReady += 1;
             } else if (message.what == 101) {
                 /**
                  * 学生作答信息
                  */
                 moreList2 = (List<StuAnswerEntity>) message.obj;
-                if (moreList != null && moreList.size() > 0) {
-                    Log.d("wen", "handleMessage: 作答内容请求完毕");
-                    adjustStuAnswerList();
-                    adapter.update(moreList, moreList2);
-                    rl_loading.setVisibility(View.GONE);
+
+                countReady += 1;
+            }
+            // 页面显示
+            if (countReady >= 2) {
+                adjustStuAnswerList();
+                adapter.update(moreList, moreList2);
+                rl_loading.setVisibility(View.GONE);
+                if (MyApplication.isRotate) {
+                    vp_homework.setCurrentItem(MyApplication.currentItem, false);
+                    MyApplication.isRotate = false;
                 }
             }
         }
     };
 
     private void adjustStuAnswerList() {
+        java.util.Date day = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String date = sdf.format(day);
+        // 学生作答列表moreList2不包含多媒体，需要补充
         for (int i = 0; i < moreList.size(); ++i) {
             LearnPlanItemEntity item = moreList.get(i);
-            if (moreList2.size() <= i || !moreList2.get(i).getQuestionId().equals(item.getResourceId())) {
-                moreList2.add(i, new StuAnswerEntity(i + 1));
+            if (moreList2.size() <= i || moreList2.get(i).getOrder() > i + 1) {
+                // 作答列表中缺少某个多媒体导致不对应，添加一个多媒体的空数据
+                StuAnswerEntity newItem = new StuAnswerEntity(i + 1, item.getResourceId(), "", "", "", "", "0");
+                moreList2.add(i, newItem);
             }
         }
         for (int i = 0; i < moreList2.size(); ++i) {
-            if (questionIdx.contains(i)) {
+            String type = "res";
+            if(questionIdx.contains(i)){
+                type = "que";
+            }
+
+            if ("que".equals(type)) {
                 // 学生作答内容
                 stuAnswer[i] = moreList2.get(i).getStuAnswer();
                 oldStuAnswer[i] = stuAnswer[i];
             } else {
                 stuAnswer[i] = moreList.get(i).getResourceName();
             }
+
+            // 初次写入数据库
+            if(loadFrom == LOAD_FROM_NET) {
+                HomeworkStuAnswerInfo info = new HomeworkStuAnswerInfo(username, learnPlanId, moreList2.get(i).getId(), moreList2.get(i).getStuAnswer(), MyApplication.cnName, i + 1, date);
+                info.type = type;
+                if (moreList2.get(i).getOptionTime() != null && moreList2.get(i).getOptionTime().length() > 0) {
+                    info.answerTime = moreList2.get(i).getOptionTime();// TODO 可能接口中有值moreList2
+                }
+                if (moreList2.get(i).getUseTime() != null && moreList2.get(i).getUseTime().length() > 0) {
+                    info.useTime = moreList2.get(i).getUseTime();// TODO 可能接口中有值moreList2
+                }
+                MyApplication.database.homeworkStuAnswerDao().insert(info);
+            }
+            // 20240906作答信息初始化同步
+            LearnPlanAnswerBatchEntity batchInfo = new LearnPlanAnswerBatchEntity(moreList2.get(i).getId(), type, i + 1, moreList2.get(i).getStuAnswer());
+            if(moreList2.get(i).getOptionTime() != null && moreList2.get(i).getOptionTime().length() > 0){
+                batchInfo.setOptionTime(moreList2.get(i).getOptionTime());// TODO 可能接口中有值moreList2
+            }
+            if(moreList2.get(i).getUseTime() != null && moreList2.get(i).getUseTime().length() > 0){
+                batchInfo.setUseTime(moreList2.get(i).getUseTime());// TODO 可能接口中有值moreList2
+            }
+            stuAnswerBatchList.add(batchInfo);
         }
+
     }
 
     private void loadItems_Net() {
@@ -390,8 +485,20 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
         });
         MyApplication.addRequest(request, TAG);
 
+
+        // 数据库加载
+        if (moreList2.size() > 0) {
+            loadFrom = LOAD_FROM_DB;
+            Log.e("0130", "loadItems_Net: 数据库读取");
+            Message message = Message.obtain();
+            message.obj = moreList2;
+            message.what = 101;
+            handler.sendMessage(message);
+            return;
+        }
+
         // 学生答题情况
-        mRequestUrl = Constant.API + Constant.LEARNPLAN_ANSWER_ITEM + "?learnPlanId=" + learnPlanId + "&userName=" + username;
+        mRequestUrl = Constant.API + Constant.LEARNPLAN_ANSWER_ITEM_NEW + "?learnPlanId=" + learnPlanId + "&userName=" + username;
         Log.d("wen", "导学案答题URL: " + mRequestUrl);
         request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -403,6 +510,13 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
                 // 使用Gson框架转换Json字符串为列表
                 List<StuAnswerEntity> itemList = gson.fromJson(itemString, new TypeToken<List<StuAnswerEntity>>() {
                 }.getType());
+
+                // 遍历 itemList 并修改 stuAnswer 为 "未答" 的条目
+                for (StuAnswerEntity item : itemList) {
+                    if ("未答".equals(item.getStuAnswer())) {
+                        item.setStuAnswer("");  // 将 "未答" 改为 ""
+                    }
+                }
 
                 // 封装消息，传递给主线程
                 Message message = Message.obtain();
@@ -485,12 +599,21 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        currentTimeMillis = System.currentTimeMillis();
+    }
+
     //pos是接口的order属性（1...n）因此要
     @Override
     public void setStuAnswer(int pos, String stuStr) {
 
         if(stuAnswer != null && stuAnswer.length >= pos){
             stuAnswer[pos - 1] = stuStr;
+            moreList2.get(pos - 1).setStuAnswer(stuStr);
+            // 20240906 同步答案
+            stuAnswerBatchList.get(pos - 1).setStuAnswer(stuStr);
         }
 
     }
@@ -507,57 +630,92 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
 
     @Override
     public void uploadTime(long timeLong) {
-        Log.e("wen0610", "uploadTime: " );
-
-        int pos = vp_homework.getCurrentItem();
-        String mRequestUrl = Constant.API + Constant.LEARNPLAN_SUBMIT_TIME + "?learnPlanId=" + learnPlanId + "&contentId=" + adapter.itemList.get(pos).getResourceId() +
-                "&userName=" + username + "&useTime=" + timeLong;
-
-        StringRequest request = new StringRequest(mRequestUrl, response -> {
-            try {
-                JSONObject json = JsonUtils.getJsonObjectFromString(response);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }, error -> {
-//            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
-        });
-
-        MyApplication.addRequest(request, TAG);
+//        Log.e("wen0610", "uploadTime: " );
+//
+//        int pos = vp_homework.getCurrentItem();
+//        String mRequestUrl = Constant.API + Constant.LEARNPLAN_SUBMIT_TIME + "?learnPlanId=" + learnPlanId + "&contentId=" + adapter.itemList.get(pos).getResourceId() +
+//                "&userName=" + username + "&useTime=" + timeLong;
+//
+//        StringRequest request = new StringRequest(mRequestUrl, response -> {
+//            try {
+//                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+//
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }, error -> {
+////            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+//            Log.d("wen", "Volley_Error: " + error.toString());
+//        });
+//
+//        MyApplication.addRequest(request, TAG);
     }
 
     // 上传试题
     private void uploadQuestion() {
-        int pos = vp_homework.getCurrentItem();
-        if (stuAnswer[pos] == null || stuAnswer[pos].equals(oldStuAnswer[pos]) || !questionIdx.contains(pos)) {
-            return;
-        }
+        int pos = currentItem;
+        // 做题时间数据必须要更新，所以取消判断
+//        if (stuAnswer[pos] == null || stuAnswer[pos].equals(oldStuAnswer[pos]) || !questionIdx.contains(pos)) {
+//            return;
+//        }
         Log.e("wen0610", "uploadQuestion: " + pos);
+        // 计算做题用时
+        long useTime = Long.parseLong(stuAnswerBatchList.get(pos).getUseTime()) + System.currentTimeMillis() - currentTimeMillis;
+        stuAnswerBatchList.get(pos).setUseTime(String.valueOf(useTime / 1000));
 
-        String mRequestUrl = null;
-        try {
-            mRequestUrl = Constant.API + Constant.LEARNPLAN_SUBMIT_QUS_ITEM + "?learnPlanId=" + learnPlanId + "&learnPlanName=" + URLEncoder.encode(title, "UTF-8") +
-                    "&userName=" + username + "&questionId=" + adapter.itemList.get(pos).getResourceId() + "&answer=" + URLEncoder.encode(stuAnswer[pos], "UTF-8") + "&status=" + (isNew ? 1 : 3);
-            Log.d(TAG, "submit: " + mRequestUrl);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        // 计算切题时间
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date day = new Date();
+        String date = sdf.format(day);
+        stuAnswerBatchList.get(pos).setOptionTime(date);
+        /*
+        public class HomeworkStuAnswerInfo {
+            @NonNull
+            public String userId; // 学生id
+            @NonNull
+            public String homeworkId; // 作业id
+            @NonNull
+            public String questionId; // 试题id
+            public String stuAnswer; // 学生作答
+            public String userName; // 学生名称
+            public int order; // 题目顺序
+            public String updateDate; // 更新日期
+
+            public String answerTime; // 作答时间
+            public String useTime; // 页面用时
         }
+        */
 
-        StringRequest request = new StringRequest(mRequestUrl, response -> {
-            try {
-                JSONObject json = JsonUtils.getJsonObjectFromString(response);
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }, error -> {
-//            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
-        });
+        HomeworkStuAnswerInfo info = new HomeworkStuAnswerInfo(username, learnPlanId, moreList2.get(pos).getId(), stuAnswerBatchList.get(pos).getStuAnswer(), MyApplication.cnName, pos + 1, date);
+        info.answerTime = stuAnswerBatchList.get(pos).getOptionTime();
+        info.useTime = stuAnswerBatchList.get(pos).getUseTime();
+        info.type = stuAnswerBatchList.get(pos).getType(); // 注意类型
+        MyApplication.database.homeworkStuAnswerDao().insert(info);
 
-        MyApplication.addRequest(request, TAG);
+// 20240906：不在单题进行提交，改为最后统一提交
+//        String mRequestUrl = null;
+//        try {
+//            mRequestUrl = Constant.API + Constant.LEARNPLAN_SUBMIT_QUS_ITEM + "?learnPlanId=" + learnPlanId + "&learnPlanName=" + URLEncoder.encode(title, "UTF-8") +
+//                    "&userName=" + username + "&questionId=" + adapter.itemList.get(pos).getResourceId() + "&answer=" + URLEncoder.encode(stuAnswer[pos], "UTF-8") + "&status=" + (isNew ? 1 : 3);
+//            Log.d(TAG, "submit: " + mRequestUrl);
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+//
+//        StringRequest request = new StringRequest(mRequestUrl, response -> {
+//            try {
+//                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+//
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }, error -> {
+////            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+//            Log.d("wen", "Volley_Error: " + error.toString());
+//        });
+//
+//        MyApplication.addRequest(request, TAG);
 
         // 同步更新
         oldStuAnswer[pos] = stuAnswer[pos];

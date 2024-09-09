@@ -37,6 +37,7 @@ import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.HomeworkPagerAdapter;
 import com.example.yidiantong.adapter.MyArrayAdapter;
+import com.example.yidiantong.bean.HomeworkAnswerBatchEntity;
 import com.example.yidiantong.bean.HomeworkEntity;
 import com.example.yidiantong.bean.StuAnswerEntity;
 import com.example.yidiantong.entity.HomeworkStuAnswerInfo;
@@ -53,9 +54,7 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -98,6 +97,16 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
 
     private int count = 0;
 
+    private ArrayList<HomeworkAnswerBatchEntity> stuAnswerBatchList = new ArrayList<>();
+
+    // 设置数据加载方式
+    private static final int LOAD_FROM_NET = 1;
+    private static final int LOAD_FROM_DB = 2;
+    private int loadFrom = 0;
+
+    // 计时器
+    private long currentTimeMillis;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,6 +137,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                 //翻页同步下标
                 currentItem = position;
                 MyApplication.currentItem = currentItem;
+                currentTimeMillis = System.currentTimeMillis();
             }
 
             @Override
@@ -146,15 +156,43 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
 
         countReady = 0;
         // 双数据请求
-
+        loadFrom = LOAD_FROM_NET;
         List<HomeworkStuAnswerInfo> homeworkStuAnswerInfos = MyApplication.database.homeworkStuAnswerDao().queryByUserAndHomework(username, learnPlanId);
+        /*
+         * public class HomeworkStuAnswerInfo {
+         *     @NonNull
+         *     public String userId; // 学生id
+         *     @NonNull
+         *     public String homeworkId; // 作业id
+         *     @NonNull
+         *     public String questionId; // 试题id
+         *     public String stuAnswer; // 学生作答
+         *     public String userName; // 学生名称
+         *     public int order; // 题目顺序
+         *     public String updateDate; // 更新日期
+         *     // new params
+         *     public String answerTime;
+         *     public String useTime;
+         * }
+         */
+
         stuAnswerList.clear();
         for (HomeworkStuAnswerInfo info : homeworkStuAnswerInfos) {
-            StuAnswerEntity i = new StuAnswerEntity();
-            i.setOrder(info.order);
-            i.setQuestionId(info.questionId);
-            i.setStuAnswer(info.stuAnswer);
-            stuAnswerList.add(i);
+            StuAnswerEntity entity = new StuAnswerEntity(info.order, info.questionId, "", info.stuAnswer, "", info.answerTime, info.useTime);
+            /*
+             * public class StuAnswerEntity implements Serializable {
+             *     private int order;
+             *     private String questionId;
+             *     private String status;
+             *     private String stuAnswer;
+             *     private String teaScore;
+             *     // new params
+             *     private String answerTime;
+             *     private String useTime;
+             * }
+             */
+
+            stuAnswerList.add(entity);
         }
         loadItems_Net();
 
@@ -185,7 +223,6 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                     Intent intent = result.getData();
                     int index = intent.getIntExtra("currentItem", 0);
                     if (index == -1) {
-                        Toast.makeText(HomeworkPagerActivity.this, "提交成功！", Toast.LENGTH_SHORT).show();
                         Intent toHome = new Intent(HomeworkPagerActivity.this, MainPagerActivity.class);
                         toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(toHome);
@@ -264,8 +301,10 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
         intent.putExtra("questionIds", questionIds);
         intent.putExtra("questionTypes", question_types_array);
         intent.putExtra("isNew", isNew);
+        intent.putExtra("stuAnswerBatchList", stuAnswerBatchList);
         mResultLauncher.launch(intent);
     }
+
 
     List<HomeworkEntity> timianList = new ArrayList<>();
     List<StuAnswerEntity> stuAnswerList = new ArrayList<>();
@@ -318,24 +357,54 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                     stuAnswer[i] = list2.get(i).getStuAnswer();
                     oldStuAnswer[i] = list2.get(i).getStuAnswer();
 
-                    // 数据库同步
-                    Log.e("0130", "handleMessage: 数据库同步");
-                    java.util.Date day = new Date();
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    String date = sdf.format(day);
-                    HomeworkStuAnswerInfo info = new HomeworkStuAnswerInfo();
-                    info.userId = username;
-                    info.homeworkId = learnPlanId;
-                    info.questionId = list2.get(i).getQuestionId();
-                    info.userName = MyApplication.cnName;
-                    info.updateDate = date;
-                    info.stuAnswer = stuAnswer[i];
-                    info.order = i + 1;
-                    MyApplication.database.homeworkStuAnswerDao().insert(info);
+                    if (loadFrom == LOAD_FROM_NET) {
+                        // 数据库同步
+                        Log.e("0130", "handleMessage: 数据库同步");
+                        java.util.Date day = new Date();
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String date = sdf.format(day);
+                        /*
+                         * public class HomeworkStuAnswerInfo {
+                         *     @NonNull
+                         *     public String userId; // 学生id
+                         *     @NonNull
+                         *     public String homeworkId; // 作业id
+                         *     @NonNull
+                         *     public String questionId; // 试题id
+                         *     public String stuAnswer; // 学生作答
+                         *     public String userName; // 学生名称
+                         *     public int order; // 题目顺序
+                         *     public String updateDate; // 更新日期
+                         *     // new params
+                         *     public String answerTime;
+                         *     public String useTime;
+                         * }
+                         */
+                        HomeworkStuAnswerInfo info = new HomeworkStuAnswerInfo(username, learnPlanId, list2.get(i).getQuestionId(), stuAnswer[i], MyApplication.cnName, i + 1, date);
+                        if (list2.get(i).getAnswerTime() != null && list2.get(i).getAnswerTime().length() > 0) {
+                            info.answerTime = list2.get(i).getAnswerTime();// TODO 可能接口中有值list2
+                        }
+                        if (list2.get(i).getUseTime() != null && list2.get(i).getUseTime().length() > 0) {
+                            info.useTime = list2.get(i).getUseTime();// TODO 可能接口中有值list2
+                        }
+
+                        MyApplication.database.homeworkStuAnswerDao().insert(info);
+                    }
+
+                    // 20240906作答信息初始化同步
+                    HomeworkAnswerBatchEntity batchInfo = new HomeworkAnswerBatchEntity(list2.get(i).getQuestionId(), i + 1, list2.get(i).getStuAnswer());
+                    if (list2.get(i).getAnswerTime() != null && list2.get(i).getAnswerTime().length() > 0) {
+                        batchInfo.setAnswerTime(list2.get(i).getAnswerTime());// TODO 可能接口中有值list2
+                    }
+                    if (list2.get(i).getUseTime() != null && list2.get(i).getUseTime().length() > 0) {
+                        batchInfo.setUseTime(list2.get(i).getUseTime());// TODO 可能接口中有值list2
+                    }
+                    stuAnswerBatchList.add(batchInfo);
                 }
                 stuAnswerList = list2;
                 countReady += 1;
                 Log.e("wen0221", "handleMessage2: " + countReady);
+
             }
             // 页面显示
             if (countReady >= 2) {
@@ -354,7 +423,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
     // 加载作业条目，进行ViewPager渲染；同时加载学生答题情况
     private void loadItems_Net() {
 
-        String mRequestUrl = Constant.API + Constant.HOMEWORK_ITEM + "?learnPlanId=" + learnPlanId+"&userName=" + username;
+        String mRequestUrl = Constant.API + Constant.HOMEWORK_ITEM + "?learnPlanId=" + learnPlanId + "&userName=" + username;
         Log.d(TAG, "题目信息: " + mRequestUrl);
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -382,6 +451,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
 
 
         if (stuAnswerList.size() > 0) {
+            loadFrom = LOAD_FROM_DB;
             Log.e("0130", "loadItems_Net: 数据库读取");
             Message message = Message.obtain();
             message.obj = stuAnswerList;
@@ -393,7 +463,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
         Log.e("0130", "loadItems_Net: 请求读取");
 
         //学生答题情况
-        mRequestUrl = Constant.API + Constant.ANSWER_ITEM + "?paperId=" + learnPlanId + "&userName=" + username;
+        mRequestUrl = Constant.API + Constant.ANSWER_ITEM_NEW + "?paperId=" + learnPlanId + "&userName=" + username;
         Log.d(TAG, "答题信息: " + mRequestUrl);
         request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -405,6 +475,13 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                 //使用Gson框架转换Json字符串为列表
                 List<StuAnswerEntity> itemList = gson.fromJson(itemString, new TypeToken<List<StuAnswerEntity>>() {
                 }.getType());
+                // 遍历 itemList 并修改 stuAnswer 为 "未答" 的条目
+                for (StuAnswerEntity item : itemList) {
+                    if ("未答".equals(item.getStuAnswer())) {
+                        item.setStuAnswer("");  // 将 "未答" 改为 ""
+                    }
+                }
+
                 Log.e(TAG, "loadItems_Net: 学生作答" + itemList.toString());
                 //封装消息，传递给主线程
                 Message message = Message.obtain();
@@ -485,15 +562,26 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
     }
 
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        currentTimeMillis = System.currentTimeMillis();
+    }
 
     //pos是接口的order属性（1...n）因此要
     @Override
     public void setStuAnswer(int pos, String stuStr) {
+        Log.e("wen0907", "setStuAnswer: " + pos + " " + stuStr);
+
         if (stuAnswer != null && stuAnswer.length >= pos) {
             stuAnswer[pos - 1] = stuStr;
-            Log.e(TAG, "setStuAnswer: pos" + (pos - 1));
-            Log.e(TAG, "setStuAnswer: 新答案" + stuStr);
+
+            stuAnswerList.get(pos - 1).setStuAnswer(stuStr);
+            // 20240906 同步答案
+            stuAnswerBatchList.get(pos - 1).setStuAnswer(stuStr);
+
+//            Log.e(TAG, "setStuAnswer: pos" + (pos - 1));
+//            Log.e(TAG, "setStuAnswer: 新答案" + stuStr);
         }
     }
 
@@ -509,48 +597,75 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
 
     // 上传试题
     private void uploadQuestion() {
-        int pos = vp_homework.getCurrentItem();
-//        Log.e("wen0304", "uploadQuestion: 老答案" + oldStuAnswer[pos]);
-//        Log.e("wen0304", "uploadQuestion: 新答案" + stuAnswer[pos]);
-        if (stuAnswer[pos].equals(oldStuAnswer[pos])) {
-            return;
-        }
 
-        java.util.Date day = new Date();
+        /*
+        上传方法在切换题目时触发，以为要计算做题时间，所以不能直接上传，
+        注意，上传的数据是翻页的上一页，或者当前页，所以是currentItem
+        知道要上传的数据位置了，拿到数据即可，但是需要修改的一个点就是【花费时间】
+        花费时间需要在这里进行计算，同时写入数据库
+        计算花费时间的逻辑，通过翻页组件+onResume方法来启动时间，然后通过触发这个方法时截止
+         */
+        int pos = currentItem;
+        // 做题时间数据必须要更新，所以取消判断
+//        if (stuAnswer[pos] == null || stuAnswer[pos].equals(oldStuAnswer[pos])) {
+//            return;
+//        }
+        Log.e("wen0907", "uploadQuestion: " + pos);
+
+        // 计算做题用时
+        long useTime = Long.parseLong(stuAnswerBatchList.get(pos).getUseTime()) + System.currentTimeMillis() - currentTimeMillis;
+        stuAnswerBatchList.get(pos).setUseTime(String.valueOf(useTime / 1000));
+
+        // 计算切题时间
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date day = new Date();
         String date = sdf.format(day);
+        stuAnswerBatchList.get(pos).setAnswerTime(date);
+        /*
+        public class HomeworkStuAnswerInfo {
+            @NonNull
+            public String userId; // 学生id
+            @NonNull
+            public String homeworkId; // 作业id
+            @NonNull
+            public String questionId; // 试题id
+            public String stuAnswer; // 学生作答
+            public String userName; // 学生名称
+            public int order; // 题目顺序
+            public String updateDate; // 更新日期
 
-        HomeworkStuAnswerInfo info = new HomeworkStuAnswerInfo();
-        info.userId = username;
-        info.homeworkId = learnPlanId;
-        info.questionId = stuAnswerList.get(pos).getQuestionId();
-        info.userName = MyApplication.cnName;
-        info.updateDate = date;
-        info.stuAnswer = stuAnswer[pos];
-        info.order = pos + 1;
+            public String answerTime; // 作答时间
+            public String useTime; // 页面用时
+        }
+         */
+
+
+        HomeworkStuAnswerInfo info = new HomeworkStuAnswerInfo(username, learnPlanId, stuAnswerList.get(pos).getQuestionId(), stuAnswerBatchList.get(pos).getStuAnswer(), MyApplication.cnName, pos + 1, date);
+        info.answerTime = stuAnswerBatchList.get(pos).getAnswerTime();
+        info.useTime = stuAnswerBatchList.get(pos).getUseTime();
         MyApplication.database.homeworkStuAnswerDao().insert(info);
 
-
-        String mRequestUrl = null;
-        try {
-            mRequestUrl = Constant.API + Constant.SUBMIT_ANSWER + "?learnPlanId=" + learnPlanId +
-                    "&stuId=" + username + "&questionId=" + questionIds[pos] + "&answer=" + URLEncoder.encode(stuAnswer[pos], "UTF-8") + "&answerTime=" + date;
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        StringRequest request = new StringRequest(mRequestUrl, response -> {
-            try {
-                JSONObject json = JsonUtils.getJsonObjectFromString(response);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }, error -> {
-            Log.e("volley", "Volley_Error: " + error.toString());
-
-        });
-
-        MyApplication.addRequest(request, TAG);
+        // 20240906：不在单题进行提交，改为最后统一提交
+//        String mRequestUrl = null;
+//        try {
+//            mRequestUrl = Constant.API + Constant.SUBMIT_ANSWER + "?learnPlanId=" + learnPlanId +
+//                    "&stuId=" + username + "&questionId=" + questionIds[pos] + "&answer=" + URLEncoder.encode(stuAnswer[pos], "UTF-8") + "&answerTime=" + date;
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+//        StringRequest request = new StringRequest(mRequestUrl, response -> {
+//            try {
+//                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+//
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }, error -> {
+//            Log.e("volley", "Volley_Error: " + error.toString());
+//
+//        });
+//
+//        MyApplication.addRequest(request, TAG);
 
         // 同步更新
         oldStuAnswer[pos] = stuAnswer[pos];
