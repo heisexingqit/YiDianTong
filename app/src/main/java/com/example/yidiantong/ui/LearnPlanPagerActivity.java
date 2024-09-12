@@ -660,8 +660,8 @@ public class LearnPlanPagerActivity extends AppCompatActivity implements View.On
 //        }
         Log.e("wen0610", "uploadQuestion: " + pos);
         // 计算做题用时
-        long useTime = Long.parseLong(stuAnswerBatchList.get(pos).getUseTime()) + System.currentTimeMillis() - currentTimeMillis;
-        stuAnswerBatchList.get(pos).setUseTime(String.valueOf(useTime / 1000));
+        long useTime = Long.parseLong(stuAnswerBatchList.get(pos).getUseTime()) + (System.currentTimeMillis() - currentTimeMillis) / 1000;
+        stuAnswerBatchList.get(pos).setUseTime(String.valueOf(useTime));
 
         // 计算切题时间
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

@@ -305,7 +305,6 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
         mResultLauncher.launch(intent);
     }
 
-
     List<HomeworkEntity> timianList = new ArrayList<>();
     List<StuAnswerEntity> stuAnswerList = new ArrayList<>();
     private int countReady = 0;
@@ -392,6 +391,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                     }
 
                     // 20240906作答信息初始化同步
+                    // 此处同步userTime，与list2一致
                     HomeworkAnswerBatchEntity batchInfo = new HomeworkAnswerBatchEntity(list2.get(i).getQuestionId(), i + 1, list2.get(i).getStuAnswer());
                     if (list2.get(i).getAnswerTime() != null && list2.get(i).getAnswerTime().length() > 0) {
                         batchInfo.setAnswerTime(list2.get(i).getAnswerTime());// TODO 可能接口中有值list2
@@ -403,7 +403,7 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
                 }
                 stuAnswerList = list2;
                 countReady += 1;
-                Log.e("wen0221", "handleMessage2: " + countReady);
+                Log.e("wen0221", "stuAnswerBatchList: " + stuAnswerBatchList.get(0).getUseTime());
 
             }
             // 页面显示
@@ -561,7 +561,6 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
         }
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -613,8 +612,8 @@ public class HomeworkPagerActivity extends AppCompatActivity implements PagingIn
         Log.e("wen0907", "uploadQuestion: " + pos);
 
         // 计算做题用时
-        long useTime = Long.parseLong(stuAnswerBatchList.get(pos).getUseTime()) + System.currentTimeMillis() - currentTimeMillis;
-        stuAnswerBatchList.get(pos).setUseTime(String.valueOf(useTime / 1000));
+        long useTime = Long.parseLong(stuAnswerBatchList.get(pos).getUseTime()) + (System.currentTimeMillis() - currentTimeMillis) / 1000;
+        stuAnswerBatchList.get(pos).setUseTime(String.valueOf(useTime));
 
         // 计算切题时间
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
