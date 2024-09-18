@@ -50,6 +50,7 @@ public class Constant {
     public static final String UPLOAD_HEAD_PHOTO = "/AppServer/ajax/studentApp_uploadUserPhoto.do";
     // 获取答题情况
     public static final String ANSWER_ITEM = "/AppServer/ajax/studentApp_getStudentAnswerList.do";
+    public static final String ANSWER_ITEM_NEW = "/AppServer/ajax/studentApp_getStudentAnswerListAndroid.do";
     // 提交试题答案
     public static final String SUBMIT_ANSWER = "/AppServer/ajax/studentApp_saveAnswer.do";
     // 最终提交作业
@@ -70,6 +71,7 @@ public class Constant {
 
     // 导学案学生答题详情
     public static final String LEARNPLAN_ANSWER_ITEM = "/AppServer/ajax/studentApp_getstuAnswerLearnPlanList.do";
+    public static final String LEARNPLAN_ANSWER_ITEM_NEW = "/AppServer/ajax/studentApp_getStuAnswerLearnPlanListAndroid.do";
 
     // 导学案试题提交
     public static final String LEARNPLAN_SUBMIT_QUS_ITEM = "/AppServer/ajax/studentApp_stuSaveLpAnswer.do";
@@ -346,5 +348,9 @@ public class Constant {
     public static final String T_HOMEWORK_GET_SUBJECT = "/AppServer/ajax/studentApp_getSubjectListByKeTangRecord.do";
     //获取学年学期数据
     public static final String T_HOMEWORK_GET_YEAR_TERM = "/AppServer/ajax/studentApp_getSchoolYearTermList.do?unitId=1101010010001";
+
+    // 批量提交作业
+    public static final String HOMEWORK_SUBMIT_BATCH = "/AppServer/ajax/studentApp_saveStudentHomeWorkAndroid.do";
+    public static final String LEARNPLAN_SUBMIT_BATCH = "/AppServer/ajax/studentApp_saveStudentLearnPlanAndroid.do";
 
 }

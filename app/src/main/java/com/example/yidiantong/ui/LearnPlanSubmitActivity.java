@@ -24,20 +24,30 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.ShowStuAnsAdapter2;
+import com.example.yidiantong.bean.HomeworkAnswerBatchEntity;
+import com.example.yidiantong.bean.LearnPlanAnswerBatchEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class LearnPlanSubmitActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "LearnPlanSubmitActivity";
@@ -53,6 +63,8 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
     private RelativeLayout rl_loading;
     private String title;
     private boolean isSubmitting;
+    private ArrayList<LearnPlanAnswerBatchEntity> stuAnswerBatchList;
+    private String type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +78,9 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
         questionIds = (ArrayList<String>) getIntent().getSerializableExtra("questionIds");
         isNew = getIntent().getBooleanExtra("isNew", true);
         questionIdx = (ArrayList<Integer>) getIntent().getSerializableExtra("questionIdx");
-        String type = getIntent().getStringExtra("type");
+        type = getIntent().getStringExtra("type");
+        stuAnswerBatchList = (ArrayList<LearnPlanAnswerBatchEntity>) getIntent().getSerializableExtra("stuAnswerBatchList");
+
         Button btn_submit = findViewById(R.id.btn_submit);
         isSubmitting = false;
         if (type.equals("learnPlan")) {
@@ -137,7 +151,28 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
         public void handleMessage(Message message) {
             super.handleMessage(message);
             if (message.what == 100) {
-                // 报错再用
+                JSONObject obj = (JSONObject) message.obj;
+                Log.e("wen0907", "handleMessage: " + obj);
+                boolean success;
+                String msg;
+                try {
+                    success = obj.getBoolean("success");
+                    msg = obj.getString("message");
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                if(!success){
+                    Toast.makeText(LearnPlanSubmitActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    isSubmitting = false;
+                    return;
+                }
+
+                Toast.makeText(LearnPlanSubmitActivity.this, msg, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                intent.putExtra("currentItem", -1);
+                setResult(Activity.RESULT_OK, intent);
+                rl_submitting.setVisibility(View.GONE);
+                finish();
             }
         }
     };
@@ -145,7 +180,7 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
     private void submitFinal() {
         isSubmitting = true;
         java.util.Date day = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd:HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String date = sdf.format(day);
         for (int i = 0; i < stuAnswer.length; ++i) {
             if (stuAnswer[i].length() == 0) {
@@ -169,7 +204,7 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
             builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    submit_request(date);
+                    submit_request();
                 }
             });
             builder.setNegativeButton("取消",  new DialogInterface.OnClickListener() {
@@ -182,38 +217,89 @@ public class LearnPlanSubmitActivity extends AppCompatActivity implements View.O
             dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
             dialog.show();
         }else{
-            submit_request(date);
+            submit_request();
         }
 
     }
-    public void submit_request(String date) {
-        String mRequestUrl;
-        StringRequest request;
-        mRequestUrl = Constant.API + Constant.LEARNPLAN_SUBMIT_FIN_ITEM + "?answerTime=" + date + "&learnPlanId=" + learnPlanId + "&userName=" + username +
-                "&status=" + (isNew ? 1 : 3) + "&learnPlanName=" + title + "&userCn=" + MyApplication.cnName;
-        Log.d(TAG, "submit: " + mRequestUrl);
-        request = new StringRequest(mRequestUrl, response -> {
+    public void submit_request() {
+//        String mRequestUrl = Constant.API + Constant.LEARNPLAN_SUBMIT_FIN_ITEM + "?answerTime=" + date + "&learnPlanId=" + learnPlanId + "&userName=" + username +
+//                "&status=" + (isNew ? 1 : 3) + "&learnPlanName=" + title + "&userCn=" + MyApplication.cnName;
+//        Log.d(TAG, "submit: " + mRequestUrl);
+//        StringRequest request = new StringRequest(mRequestUrl, response -> {
+//            try {
+//                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+//                //结果信息
+//                Boolean isSuccess = json.getBoolean("success");
+//                if (isSuccess) {
+//                    Log.d(TAG, "submit: 总");
+//                    Intent intent = new Intent();
+//                    intent.putExtra("currentItem", -1);
+//                    setResult(Activity.RESULT_OK, intent);
+//                    rl_submitting.setVisibility(View.GONE);
+//                    finish();
+//                } else {
+//                    Toast.makeText(LearnPlanSubmitActivity.this, "提交失败！", Toast.LENGTH_SHORT).show();
+//                }
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }, error -> {
+//            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
+//            Log.d("wen", "Volley_Error: " + error.toString());
+//        });
+
+        // 20240906批量请求方式
+        String mRequestUrl = Constant.API + Constant.LEARNPLAN_SUBMIT_BATCH;
+        // 修复提交BatchJson中的时间为空的情况，改为当前时间
+        for(LearnPlanAnswerBatchEntity entity:stuAnswerBatchList){
+            if(entity.getOptionTime() == null || entity.getOptionTime().length() == 0){
+                entity.setOptionTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            }
+        }
+        // 使用 Gson 将 stuAnswerBatchList 转换为 JSON 字符串
+        Gson gson = new Gson();
+        String answerJsonString = gson.toJson(stuAnswerBatchList);
+        Map<String, String> params = new HashMap<>();
+
+        String learnPlanType = "1";
+        if (type.equals("weike")) {
+            learnPlanType = "2";
+        }
+        // 定义要传输的参数
+        try {
+            params.put("answerJson", URLEncoder.encode(answerJsonString, "UTF-8"));
+            params.put("id", learnPlanId);
+            params.put("name", URLEncoder.encode(title, "UTF-8"));
+
+            params.put("type", learnPlanType);
+            params.put("userCn", URLEncoder.encode(MyApplication.cnName, "UTF-8"));
+            params.put("userName", username);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        StringRequest request = new StringRequest(Request.Method.POST, mRequestUrl, response -> {
+            JSONObject json = null;
             try {
-                JSONObject json = JsonUtils.getJsonObjectFromString(response);
-                //结果信息
-                Boolean isSuccess = json.getBoolean("success");
-                if (isSuccess) {
-                    Log.d(TAG, "submit: 总");
-                    Intent intent = new Intent();
-                    intent.putExtra("currentItem", -1);
-                    setResult(Activity.RESULT_OK, intent);
-                    rl_submitting.setVisibility(View.GONE);
-                    finish();
-                } else {
-                    Toast.makeText(LearnPlanSubmitActivity.this, "提交失败！", Toast.LENGTH_SHORT).show();
-                }
+                json = JsonUtils.getJsonObjectFromString(response);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            // 处理服务器返回的 JSON 响应
+            Message msg = Message.obtain();
+            msg.obj = json;
+            msg.what = 100;
+            handler.sendMessage(msg);
+
         }, error -> {
-            Toast.makeText(this, "网络连接失败", Toast.LENGTH_SHORT).show();
-            Log.d("wen", "Volley_Error: " + error.toString());
-        });
+            Log.e("volley", "Volley_Error: " + error.toString());
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                return params;
+            }
+        };
+
         MyApplication.addRequest(request, TAG);
     }
 

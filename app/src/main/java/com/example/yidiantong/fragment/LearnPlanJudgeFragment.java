@@ -136,6 +136,9 @@ public class LearnPlanJudgeFragment extends Fragment implements View.OnClickList
         iv_r.setOnClickListener(this);
         iv_e.setOnClickListener(this);
 
+        // 同步答案显示
+        showRadioBtn();
+
         return view;
     }
 

@@ -22,24 +22,28 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.DividerItemDecoration;
 
-import com.android.volley.RequestQueue;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.ShowStuAnsAdapter;
+import com.example.yidiantong.bean.HomeworkAnswerBatchEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
-import com.example.yidiantong.util.MyItemDecoration;
+import com.google.gson.Gson;
 
-import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HomeworkSubmitActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "HomeworkSubmitActivity";
@@ -54,12 +58,14 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
     private RelativeLayout rl_submitting;
     private RelativeLayout rl_loading;
     private boolean isSubmitting;
+    // 20240906 批量提交数据
+    private ArrayList<HomeworkAnswerBatchEntity> stuAnswerBatchList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homework_submit);
-        ((MyApplication)getApplication()).checkAndHandleGlobalVariables(this);
+        ((MyApplication) getApplication()).checkAndHandleGlobalVariables(this);
         String title = getIntent().getStringExtra("title");
         stuAnswer = getIntent().getStringArrayExtra("stuAnswer");
         username = getIntent().getStringExtra("username");
@@ -67,6 +73,8 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
         questionIds = getIntent().getStringArrayExtra("questionIds");
         isNew = getIntent().getBooleanExtra("isNew", true);
         questionTypes = getIntent().getStringArrayExtra("questionTypes");
+        stuAnswerBatchList = (ArrayList<HomeworkAnswerBatchEntity>) getIntent().getSerializableExtra("stuAnswerBatchList");
+
 
         //标题设置
         TextView tv_title = findViewById(R.id.tv_title);
@@ -112,7 +120,7 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
                 finish();
                 break;
             case R.id.btn_submit:
-                if(!isSubmitting) {
+                if (!isSubmitting) {
                     submit();
                 }
         }
@@ -128,11 +136,23 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
         public void handleMessage(Message message) {
             super.handleMessage(message);
             if (message.what == 100) {
-                int f = (int) message.obj;
-                if (f == 0) {
-                    Toast.makeText(HomeworkSubmitActivity.this, "提交失败！", Toast.LENGTH_SHORT).show();
+                JSONObject obj = (JSONObject) message.obj;
+                Log.e("wen0907", "handleMessage: " + obj);
+                boolean success;
+                String msg;
+                try {
+                    success = obj.getBoolean("success");
+                    msg = obj.getString("message");
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                if (!success) {
+                    Toast.makeText(HomeworkSubmitActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    isSubmitting = false;
+                    return;
                 }
 
+                Toast.makeText(HomeworkSubmitActivity.this, msg, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
                 intent.putExtra("currentItem", -1);
                 setResult(Activity.RESULT_OK, intent);
@@ -144,10 +164,10 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
 
     //提交代码
     private void submit() {
-        isSubmitting=true;
-        java.util.Date day = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd:HH:mm:ss");
-        String date = sdf.format(day);
+        isSubmitting = true;
+//        java.util.Date day = new Date();
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        String date = sdf.format(day);
 
         for (int i = 0; i < stuAnswer.length; ++i) {
             if (stuAnswer[i].length() == 0) {
@@ -161,6 +181,7 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
             }
 
         }
+
         if (submitZero.length() == 0) {
             submitZero = "-1";
         }
@@ -171,42 +192,88 @@ public class HomeworkSubmitActivity extends AppCompatActivity implements View.On
             builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    submit_request(date);
+                    submit_request();
                 }
             });
             builder.setNegativeButton("取消", null);
             AlertDialog dialog = builder.create();
             dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
             dialog.show();
-        }else{
-            submit_request(date);
+        } else {
+            submit_request();
         }
     }
 
-    private void submit_request(String date) {
-        String mRequestUrl = Constant.API + Constant.SUBMIT_ANSWER_FINAL + "?answerTime=" + date + "&paperId=" + learnPlanId + "&userName=" + username +
-                "&status=" + (isNew ? 1 : 3) + "&noAnswerQueId=" + submitZero;
+    private void submit_request() {
+//        String mRequestUrl = Constant.API + Constant.SUBMIT_ANSWER_FINAL + "?answerTime=" + date + "&paperId=" + learnPlanId + "&userName=" + username +
+//                "&status=" + (isNew ? 1 : 3) + "&noAnswerQueId=" + submitZero;
+//
+//        StringRequest request = new StringRequest(mRequestUrl, response -> {
+//            try {
+//                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+//                //结果信息
+//                Boolean isSuccess = json.getBoolean("success");
+//                Message msg = Message.obtain();
+//                if (isSuccess) {
+//                    msg.obj = 1;
+//                } else {
+//                    msg.obj = 0;
+//                }
+//                msg.what = 100;
+//                handler.sendMessage(msg);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }, error -> {
+//            Log.e("volley", "Volley_Error: " + error.toString());
+//
+//        });
 
-        StringRequest request = new StringRequest(mRequestUrl, response -> {
+        // 20240906批量请求方式
+        String mRequestUrl = Constant.API + Constant.HOMEWORK_SUBMIT_BATCH;
+
+        // 修复提交BatchJson中的时间为空的情况，改为当前时间
+        for (HomeworkAnswerBatchEntity entity : stuAnswerBatchList) {
+            if (entity.getAnswerTime() == null || entity.getAnswerTime().length() == 0) {
+                entity.setAnswerTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            }
+        }
+        // 使用 Gson 将 stuAnswerBatchList 转换为 JSON 字符串
+        Gson gson = new Gson();
+        String answerJsonString = gson.toJson(stuAnswerBatchList);
+        Map<String, String> params = new HashMap<>();
+
+        // 定义要传输的参数
+        try {
+            params.put("answerJson", URLEncoder.encode(answerJsonString, "UTF-8"));
+            params.put("paperId", learnPlanId);
+            params.put("userName", username);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        StringRequest request = new StringRequest(Request.Method.POST, mRequestUrl, response -> {
+            JSONObject json = null;
             try {
-                JSONObject json = JsonUtils.getJsonObjectFromString(response);
-                //结果信息
-                Boolean isSuccess = json.getBoolean("success");
-                Message msg = Message.obtain();
-                if (isSuccess) {
-                    msg.obj = 1;
-                } else {
-                    msg.obj = 0;
-                }
-                msg.what = 100;
-                handler.sendMessage(msg);
+                json = JsonUtils.getJsonObjectFromString(response);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            // 处理服务器返回的 JSON 响应
+            Message msg = Message.obtain();
+            msg.obj = json;
+            msg.what = 100;
+            handler.sendMessage(msg);
+
         }, error -> {
             Log.e("volley", "Volley_Error: " + error.toString());
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                return params;
+            }
+        };
 
-        });
 
         MyApplication.addRequest(request, TAG);
         rl_submitting.setVisibility(View.VISIBLE);

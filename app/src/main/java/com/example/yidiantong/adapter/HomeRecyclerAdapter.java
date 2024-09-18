@@ -191,8 +191,10 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
             }
             tv_type.setText(item.getType());
+            tv_title.setText(item.getBottomTitle());
+
             if(!item.getType().equals("课堂回放")){
-                tv_title.setText(item.getBottomTitle());
+                tv_title.setVisibility(View.VISIBLE);
             }else{
                 tv_title.setVisibility(View.INVISIBLE);
             }

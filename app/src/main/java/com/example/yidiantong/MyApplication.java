@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.util.Log;
 import android.view.WindowManager;
 
+import androidx.room.Database;
 import androidx.room.Room;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -149,7 +150,7 @@ public class MyApplication extends Application {
         // 数据库对象
         // 1. 学生作答数据表
         database = Room.databaseBuilder(this, YDTDatabase.class, "ydt_db")
-                .addMigrations()
+                .addMigrations(YDTDatabase.MIGRATION_1_2)
                 .allowMainThreadQueries()
                 .build();
     }
