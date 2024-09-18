@@ -17,7 +17,7 @@
 
     <style name="MyDialog_transparent" parent="Theme.MaterialComponents.Light.Dialog.Alert">
         <!-- 自定义属性，例如背景颜色 -->
-        <item name="android:windowBackground">#7f7f7f</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
         <!-- 其他自定义属性 -->
     </style>
 

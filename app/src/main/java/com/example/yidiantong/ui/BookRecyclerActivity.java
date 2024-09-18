@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +16,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -138,8 +141,12 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
             layout.setOrientation(LinearLayout.VERTICAL);
             layout.setGravity(Gravity.CENTER_HORIZONTAL); // 水平居中
 
-            // 添加一个进度条
+            // 添加一个蓝色进度条
             ProgressBar progressBar = new ProgressBar(this);
+            progressBar.setIndeterminateDrawable(getResources().getDrawable(R.drawable.circular_progress_bar));
+            // 加载并应用旋转动画
+            Animation rotation = AnimationUtils.loadAnimation(this, R.anim.rotate);
+            progressBar.startAnimation(rotation);
             layout.addView(progressBar);
 
             // 添加一个提示文字
@@ -196,6 +203,10 @@ public class BookRecyclerActivity extends AppCompatActivity implements RecyclerI
 
             // 添加一个进度条
             ProgressBar progressBar = new ProgressBar(this);
+            progressBar.setIndeterminateDrawable(getResources().getDrawable(R.drawable.circular_progress_bar));
+            // 加载并应用旋转动画
+            Animation rotation = AnimationUtils.loadAnimation(this, R.anim.rotate);
+            progressBar.startAnimation(rotation);
             layout.addView(progressBar);
 
             // 添加一个提示文字
