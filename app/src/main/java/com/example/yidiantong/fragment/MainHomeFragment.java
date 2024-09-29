@@ -46,6 +46,7 @@ import com.example.yidiantong.ui.LearnPlanPagerActivity;
 import com.example.yidiantong.ui.LiveListActivity;
 import com.example.yidiantong.ui.NoticeLookActivity;
 import com.example.yidiantong.ui.PlaybackActivity;
+import com.example.yidiantong.ui.ReadAloudLookActivity;
 import com.example.yidiantong.ui.ResourceFolderActivity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
@@ -226,6 +227,12 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
 //                        break;
                     case "课堂回放":
                         checkYearTerm();
+                        break;
+                    case "朗读":
+                        intent = new Intent(getActivity(), ReadAloudLookActivity.class);
+                        intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
+                        intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
+                        startActivity(intent);
                         break;
 
 
@@ -528,7 +535,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
         // 获取本地app的版本名称
         String versionName = BuildConfig.VERSION_NAME;
 
-        //mRequestUrl = Constant.API + Constant.NEW_ITEM + "?currentPage=" + currentPage + "&userId=" + username + "&resourceType=" + type + "&searchStr=" + searchStr + "&source=RN";
+//        mRequestUrl = Constant.API + Constant.NEW_ITEM + "?currentPage=" + currentPage + "&userId=" + username + "&resourceType=" + type + "&searchStr=" + searchStr + "&source=RN";
         mRequestUrl = Constant.API + Constant.NEW_ITEM +"?userId="+ username+"&source=RN&currentPage=" + currentPage + "&resourceType=" + type+"&unitId=1101010010001";
         Log.e("wen", "home: " + mRequestUrl);
 

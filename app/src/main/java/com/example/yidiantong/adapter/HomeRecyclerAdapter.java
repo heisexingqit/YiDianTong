@@ -175,6 +175,9 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 case "课堂回放":
                     icon_id = R.drawable.interactive_icon;
                     break;
+                case "朗读":
+                    icon_id = R.drawable.read_icon;
+                    break;
                 default:
                     Log.d("wen", "update: " + item.getType());
                     throw new IllegalStateException("Unexpected value: " + item.getType());
@@ -218,8 +221,8 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 tv_second_line.setText(second_line);
             }
             //学习内容状态
-            if (item.getStatus().length() == 0) {
-                if(!item.getType().equals("课堂回放")){
+            if (item.getStatus().length() == 0 ) {
+                if(!item.getType().equals("课堂回放") && !item.getType().equals("朗读")){
                     iv_top_icon1.setVisibility(View.GONE);
                     iv_top_icon2.setVisibility(View.GONE);
                     // 直播类型
@@ -230,7 +233,10 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     iv_top_icon2.setVisibility(View.GONE);
                     tv_is_live.setVisibility(View.GONE);
                 }
-
+                if(item.getType().equals("朗读")){
+                    tv_teacher.setVisibility(View.VISIBLE);
+                    tv_teacher.setText(item.getCreaterName());
+                }
             }else{
                 // 非直播类型
                 tv_is_live.setVisibility(View.GONE);

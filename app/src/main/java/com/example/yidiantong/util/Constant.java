@@ -4,6 +4,7 @@ public class Constant {
     // 服务器地址
     //public static String API = "http://120.133.15.246:8111";
     public static String API = "http://www.cn901.net:8111";
+    public static String API_NEW = "http://www.cn901.com";
     //public static final String API = "http://www.cn901.com:8181";
     // 直播课服务器地址
     public static final String API_LIVE = "http://www.cn901.com";
@@ -352,5 +353,27 @@ public class Constant {
     // 批量提交作业
     public static final String HOMEWORK_SUBMIT_BATCH = "/AppServer/ajax/studentApp_saveStudentHomeWorkAndroid.do";
     public static final String LEARNPLAN_SUBMIT_BATCH = "/AppServer/ajax/studentApp_saveStudentLearnPlanAndroid.do";
+
+    // 获取朗读任务图片列表
+    public static final String GET_READ_TASK_INFO = "/AppServer/ajax/studentApp_zyRecordGetTask.do";
+
+    // 上传音频
+    public static final String UPLOAD_AUDIO = "/AppServer/ajax/studentApp_zyRecordSave.do";
+
+    // 获取音频列表
+    public static final String GET_AUDIO_LIST = "/AppServer/ajax/studentApp_zyRecordGetList.do";
+
+    // MP3转PCM
+    public static final String PM3_TO_PCM_TO_TEXT = "/ShopGoods/ajax/tpdata_MP3ToPCM.do";
+
+    // 获取朗读任务结果
+    public static final String GET_READ_TASK_RESULT = "/AppServer/ajax/studentApp_zyRecordGetDetials.do";
+
+    // 删除已上传录音
+    public static final String DELETE_AUDIO = "/AppServer/ajax/studentApp_zyRecordDelete.do";
+
+    // 提交朗读结果
+    public static final String SUBMIT_READ_TASK_RESULT = "/AppServer/ajax/studentApp__zyRecordSaveTask.do";
+
 
 }

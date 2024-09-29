@@ -10,6 +10,7 @@
     <color name="yellow">#FFFF00</color>
 
     <!--wen-->
+    <color name="gray_text_light">#979797</color>
     <color name="gray_ccc">#FFCCCCCC</color>
     <color name="gray_new">#a3a1ae</color>
     <color name="main_bg">#FF6CC1E0</color>

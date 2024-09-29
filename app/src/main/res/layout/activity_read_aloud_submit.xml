@@ -7,7 +7,7 @@
     android:background="@color/white"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".ui.ReadAloudLookActivity">
+    tools:context=".ui.ReadAloudSubmitActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -41,7 +41,7 @@
                 android:layout_centerInParent="true"
                 android:gravity="center_horizontal"
                 android:singleLine="true"
-                android:text="朗读训练"
+                android:text="朗读结果"
                 android:textColor="@color/gray_text"
                 android:textSize="17sp" />
 
@@ -74,7 +74,7 @@
                     android:gravity="bottom"
                     android:layout_height="wrap_content"
                     android:textColor="@color/gray_new"
-                    android:text="n"/>
+                    android:text="3"/>
             </LinearLayout>
 
         </RelativeLayout>
@@ -93,8 +93,15 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_below="@id/ll_divider" />
-
-
+        <Button
+            android:id="@+id/btn_submit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="15dp"
+            android:backgroundTint="@color/main_blue"
+            android:text="提   交"
+            android:textColor="@color/white" />
     </RelativeLayout>
 
     <!--遮蔽-->
@@ -105,7 +112,6 @@
         layout="@layout/loading_page"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/ll_divider"
-        android:visibility="visible" />
+        android:layout_below="@id/ll_divider" />
 </RelativeLayout>
 
