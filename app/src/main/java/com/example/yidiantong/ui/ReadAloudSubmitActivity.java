@@ -1,6 +1,7 @@
 package com.example.yidiantong.ui;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,6 +31,7 @@ import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.MyArrayAdapter;
 import com.example.yidiantong.adapter.ReadAloudSubmitPagerAdapter;
 import com.example.yidiantong.bean.ReadTaskEntity;
+import com.example.yidiantong.bean.ReadTaskResultEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.FixedSpeedScroller;
 import com.example.yidiantong.util.HomeworkInterface2;
@@ -87,7 +89,6 @@ public class ReadAloudSubmitActivity extends AppCompatActivity implements View.O
     private TextView tv_current;
     private TextView tv_all;
     private String recordId;
-    private List<String> imageList;
     private int pos;
     private Button btn_submit;
 
@@ -102,7 +103,6 @@ public class ReadAloudSubmitActivity extends AppCompatActivity implements View.O
 
         //获取Intent参数
         recordId = getIntent().getStringExtra("recordId");
-        imageList = getIntent().getStringArrayListExtra("imageList");
         currentItem = getIntent().getIntExtra("pos", 0);
 
         // findViewById
@@ -111,20 +111,14 @@ public class ReadAloudSubmitActivity extends AppCompatActivity implements View.O
         rl_loading = findViewById(R.id.rl_loading);
         rl_submitting = findViewById(R.id.rl_submitting);
         tv_submitting = findViewById(R.id.tv_submitting);
-        if(imageList != null && imageList.size() > 0){
-            tv_all.setText(String.valueOf(imageList.size()));
-            pageCount = imageList.size();
-            rl_loading.setVisibility(View.GONE);
-        }else{
-            loadItems_Net();
-        }
+
         btn_submit = findViewById(R.id.btn_submit);
         btn_submit.setOnClickListener(this);
 
         //ViewPager适配器设置
         vp_homework = findViewById(R.id.vp_homework);
         vp_homework.setOffscreenPageLimit(0); // 禁止预加载
-        adapter = new ReadAloudSubmitPagerAdapter(getSupportFragmentManager(), recordId);
+        adapter = new ReadAloudSubmitPagerAdapter(getSupportFragmentManager());
         vp_homework.setAdapter(adapter);
         // ViewPager滑动变速
         try {
@@ -157,11 +151,13 @@ public class ReadAloudSubmitActivity extends AppCompatActivity implements View.O
         });
 
         Log.e(TAG, "currentItem: " + MyApplication.currentItem);
-        vp_homework.setCurrentItem(currentItem);
 
 
         // 顶栏返回按钮
         findViewById(R.id.iv_back).setOnClickListener(v -> {
+            Intent intent = new Intent();
+            intent.putExtra("currentItem", currentItem);
+            setResult(Activity.RESULT_OK, intent);
             this.finish();
         });
         loadItems_Net();
@@ -175,17 +171,16 @@ public class ReadAloudSubmitActivity extends AppCompatActivity implements View.O
             super.handleMessage(message);
             switch (message.what){
                 case 100:
-                    List<ReadTaskEntity> readTaskList = (List<ReadTaskEntity>) message.obj;
+                    List<ReadTaskResultEntity> readTaskResultList = (List<ReadTaskResultEntity>) message.obj;
 
-                    imageList = new ArrayList<>();
-
-                    for (ReadTaskEntity task : readTaskList) {
-                        imageList.add(task.imageId);
-                    }
-                    adapter.update(imageList);
-                    pageCount = imageList.size();
+                    adapter.update(readTaskResultList);
+                    pageCount = readTaskResultList.size();
                     tv_all.setText(String.valueOf(pageCount));
+                    tv_current.setText(String.valueOf(currentItem + 1));
+                    vp_homework.setCurrentItem(currentItem, false);
+
                     rl_loading.setVisibility(View.GONE);
+                    offLoading();
                     break;
             }
         }
@@ -194,7 +189,7 @@ public class ReadAloudSubmitActivity extends AppCompatActivity implements View.O
     private void loadItems_Net() {
         rl_loading.setVisibility(View.VISIBLE);
         // 跟读作业列表
-        String mRequestUrl = Constant.API + Constant.GET_READ_TASK_INFO + "?recordId=" + recordId;
+        String mRequestUrl = Constant.API + Constant.GET_READ_TASK_RESULT + "?recordId=" + recordId + "&stuId=" + MyApplication.username;
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -202,10 +197,10 @@ public class ReadAloudSubmitActivity extends AppCompatActivity implements View.O
                 String itemString = json.getString("data");
                 Gson gson = new Gson();
                 // 使用Gson框架转换Json字符串为列表
-                List<ReadTaskEntity> itemList = gson.fromJson(itemString, new TypeToken<List<ReadTaskEntity>>() {}.getType());
+                List<ReadTaskResultEntity> itemList = gson.fromJson(itemString, new TypeToken<List<ReadTaskResultEntity>>() {}.getType());
                 if(itemList == null || itemList.size() == 0){
                     rl_loading.setVisibility(View.GONE);
-                    Toast.makeText(this, "图片数据出错!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "数据加载出错", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 Message msg = new Message();
@@ -320,5 +315,10 @@ public class ReadAloudSubmitActivity extends AppCompatActivity implements View.O
     @Override
     public void offLoading() {
         rl_submitting.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void refreshData() {
+        loadItems_Net();
     }
 }

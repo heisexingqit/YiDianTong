@@ -167,7 +167,7 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
                         startActivity(toHome);
                     } else {
                         currentItem = index;
-                        vp_homework.setCurrentItem(currentItem);
+                        vp_homework.setCurrentItem(currentItem, false);
                     }
                 }
             }
@@ -288,8 +288,6 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
         for(ReadTaskEntity task : readTaskList){
             imageList.add(task.imageId);
         }
-        intent.putExtra("imageList", (Serializable) imageList);
-
         mResultLauncher.launch(intent);
     }
 
@@ -302,6 +300,11 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
     @Override
     public void offLoading() {
         rl_submitting.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void refreshData() {
+
     }
 
 }

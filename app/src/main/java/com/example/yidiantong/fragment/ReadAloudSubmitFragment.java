@@ -69,7 +69,6 @@ public class ReadAloudSubmitFragment extends Fragment implements View.OnClickLis
 
     // 是否返回
     private boolean isBack = false;
-    private int pos;
     private int total;
 
     @Override
@@ -79,12 +78,10 @@ public class ReadAloudSubmitFragment extends Fragment implements View.OnClickLis
         homework = (HomeworkInterface2) context;
     }
 
-    public static ReadAloudSubmitFragment newInstance(String recordId, String imageId, int pos, int total) {
+    public static ReadAloudSubmitFragment newInstance(ReadTaskResultEntity readTaskResult, int total) {
         ReadAloudSubmitFragment fragment = new ReadAloudSubmitFragment();
         Bundle args = new Bundle();
-        args.putString("recordId", recordId);
-        args.putString("imageId", imageId);
-        args.putInt("pos", pos);
+        args.putSerializable("readTaskResult", readTaskResult);
         args.putInt("total", total);
         fragment.setArguments(args);
         return fragment;
@@ -94,12 +91,9 @@ public class ReadAloudSubmitFragment extends Fragment implements View.OnClickLis
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            recordId = getArguments().getString("recordId");
-            imageId = getArguments().getString("imageId");
-            pos = getArguments().getInt("pos");
+            readTaskResult = (ReadTaskResultEntity) getArguments().getSerializable("readTaskResult");
             total = getArguments().getInt("total");
         }
-
     }
 
     @Override
@@ -109,6 +103,9 @@ public class ReadAloudSubmitFragment extends Fragment implements View.OnClickLis
         View view = inflater.inflate(R.layout.fragment_read_aloud_submit, container, false);
 
         iv_empty = view.findViewById(R.id.iv_empty);
+        if(readTaskResult.ZYRecordAnswerList != null && readTaskResult.ZYRecordAnswerList.size() > 0){
+            iv_empty.setVisibility(View.GONE);
+        }
         //翻页组件
         ImageView iv_pager_last = view.findViewById(R.id.iv_page_last);
         ImageView iv_pager_next = view.findViewById(R.id.iv_page_next);
@@ -124,7 +121,7 @@ public class ReadAloudSubmitFragment extends Fragment implements View.OnClickLis
             ll_pageing.setVisibility(View.GONE);
         }
         // 创建一个 List<String>
-        adapter = new TReadAloudResultRecyclerAdapter(getActivity(), new ArrayList<>());
+        adapter = new TReadAloudResultRecyclerAdapter(getActivity(), readTaskResult.ZYRecordAnswerList);
         adapter.setmItemClickListener(new TReadAloudResultRecyclerAdapter.MyItemClickListener() {
             @Override
             public void deleteVedio(int pos) {
@@ -175,7 +172,6 @@ public class ReadAloudSubmitFragment extends Fragment implements View.OnClickLis
         });
 
         rv_main.setAdapter(adapter);
-        loadItems_Net();
         return view;
     }
 
@@ -197,7 +193,7 @@ public class ReadAloudSubmitFragment extends Fragment implements View.OnClickLis
                         getActivity().setResult(Activity.RESULT_OK, intent);
                         getActivity().finish();
                     } else {
-                        loadItems_Net();
+                        homework.refreshData();
                     }
                 } else {
                     Toast.makeText(getActivity(), json.getString("message"), Toast.LENGTH_SHORT).show();
@@ -279,34 +275,6 @@ public class ReadAloudSubmitFragment extends Fragment implements View.OnClickLis
         }
     }
 
-    private void loadItems_Net() {
-        // 图片录音列表
-        String mRequestUrl = Constant.API + Constant.GET_READ_TASK_RESULT + "?recordId=" + recordId + "&imageId=" + imageId + "&stuId=" + MyApplication.username;
-
-        StringRequest request = new StringRequest(mRequestUrl, response -> {
-            try {
-                JSONObject json = JsonUtils.getJsonObjectFromString(response);
-                String itemString = json.getJSONArray("data").getString(0);
-                Gson gson = new Gson();
-                // 使用Gson框架转换Json字符串为列表
-                readTaskResult = gson.fromJson(itemString, ReadTaskResultEntity.class);
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        refreshListUI();
-                    }
-                });
-            } catch (JSONException e) {
-                e.printStackTrace();
-//                rl_loading.setVisibility(View.GONE);
-            }
-        }, error -> {
-            Log.d("wen", "Volley_Error: " + error.toString());
-//            rl_loading.setVisibility(View.GONE);
-        });
-        MyApplication.addRequest(request, TAG);
-    }
 
     @Override
     public void onPause() {
@@ -314,13 +282,4 @@ public class ReadAloudSubmitFragment extends Fragment implements View.OnClickLis
         stopAudioIfPlay();
     }
 
-    private void refreshListUI() {
-        adapter.update(readTaskResult.ZYRecordAnswerList);
-        if (readTaskResult.ZYRecordAnswerList.size() == 0) {
-            iv_empty.setVisibility(View.VISIBLE);
-        } else {
-            iv_empty.setVisibility(View.GONE);
-        }
-        homework.offLoading();
-    }
 }

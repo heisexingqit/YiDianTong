@@ -40,4 +40,9 @@ public class ReadAloudLookPagerAdapter extends FragmentStatePagerAdapter {
     public int getCount() {
         return itemList.size();
     }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE; // 这样可以保证notifyDataSetChanged时，所有Fragment都会被重新创建
+    }
 }

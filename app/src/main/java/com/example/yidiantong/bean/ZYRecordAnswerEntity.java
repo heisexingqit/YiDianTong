@@ -12,6 +12,7 @@ public class ZYRecordAnswerEntity implements Serializable {
     public String content;
     public String order;
     public String status;
+    public String time;
     public class TextStatus{
         public String text;
         public String status;

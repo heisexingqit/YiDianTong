@@ -114,8 +114,9 @@ public class TReadAloudResultRecyclerAdapter extends RecyclerView.Adapter<Recycl
         // 数据更新放在这里(频繁调用，不能放一次性操作，例如绑定点击事件)
         public void update(int pos) {
             ZYRecordAnswerEntity item = itemList.get(pos);
+            tv_No.setText("(" + (pos + 1) + ")");
             // 数据更新
-            tv_time.setText("10″"); // TODO 参数不全
+            tv_time.setText(item.time + "″"); // TODO 参数不全
            if (item.status.equals("2")) {
                 // 语音识别成功，找到出处
                 tv_scores.setText(item.score + " 分");

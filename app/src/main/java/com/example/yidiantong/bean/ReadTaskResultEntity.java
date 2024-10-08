@@ -8,6 +8,4 @@ public class ReadTaskResultEntity implements Serializable {
     public String imageUrl;
     public List<ZYRecordAnswerEntity> ZYRecordAnswerList;
     public String imageOrder;
-
-
 }
