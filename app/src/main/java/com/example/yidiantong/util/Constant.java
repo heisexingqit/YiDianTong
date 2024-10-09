@@ -373,7 +373,6 @@ public class Constant {
     public static final String DELETE_AUDIO = "/AppServer/ajax/studentApp_zyRecordDelete.do";
 
     // 提交朗读结果
-    public static final String SUBMIT_READ_TASK_RESULT = "/AppServer/ajax/studentApp__zyRecordSaveTask.do";
-
+    public static final String SUBMIT_READ_TASK_RESULT = "/AppServer/ajax/studentApp_zyRecordSaveTask.do";
 
 }

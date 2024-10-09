@@ -247,15 +247,18 @@ public class ReadAloudSubmitActivity extends AppCompatActivity implements View.O
                     Intent toHome = new Intent(ReadAloudSubmitActivity.this, MainPagerActivity.class);
                     toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(toHome);
-                    this.offLoading();
+                    offLoading();
+                }else{
+                    Toast.makeText(this, json.getString("message"), Toast.LENGTH_SHORT).show();
+                    offLoading();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-                this.offLoading();
+                offLoading();
             }
         }, error -> {
             Log.d("wen", "Volley_Error: " + error.toString());
-            this.offLoading();
+            offLoading();
         });
         MyApplication.addRequest(request, TAG);
 

@@ -15,9 +15,6 @@
             android:id="@+id/iv_main"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginStart="70dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginEnd="70dp"
             android:layout_weight="1"
             android:src="@drawable/logo" />
         <!-- 左边的空白空间 -->

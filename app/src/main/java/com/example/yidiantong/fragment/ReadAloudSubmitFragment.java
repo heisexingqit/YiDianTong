@@ -70,6 +70,7 @@ public class ReadAloudSubmitFragment extends Fragment implements View.OnClickLis
     // 是否返回
     private boolean isBack = false;
     private int total;
+    private int pagePos;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -78,11 +79,12 @@ public class ReadAloudSubmitFragment extends Fragment implements View.OnClickLis
         homework = (HomeworkInterface2) context;
     }
 
-    public static ReadAloudSubmitFragment newInstance(ReadTaskResultEntity readTaskResult, int total) {
+    public static ReadAloudSubmitFragment newInstance(ReadTaskResultEntity readTaskResult, int total, int pagePos) {
         ReadAloudSubmitFragment fragment = new ReadAloudSubmitFragment();
         Bundle args = new Bundle();
         args.putSerializable("readTaskResult", readTaskResult);
         args.putInt("total", total);
+        args.putInt("pagePos", pagePos);
         fragment.setArguments(args);
         return fragment;
     }
@@ -93,6 +95,7 @@ public class ReadAloudSubmitFragment extends Fragment implements View.OnClickLis
         if (getArguments() != null) {
             readTaskResult = (ReadTaskResultEntity) getArguments().getSerializable("readTaskResult");
             total = getArguments().getInt("total");
+            pagePos = getArguments().getInt("pagePos");
         }
     }
 
@@ -189,7 +192,7 @@ public class ReadAloudSubmitFragment extends Fragment implements View.OnClickLis
                     Toast.makeText(getActivity(), json.getString("message"), Toast.LENGTH_SHORT).show();
                     if (isBack) {
                         Intent intent = new Intent();
-                        intent.putExtra("currentItem", pos);
+                        intent.putExtra("currentItem", pagePos);
                         getActivity().setResult(Activity.RESULT_OK, intent);
                         getActivity().finish();
                     } else {

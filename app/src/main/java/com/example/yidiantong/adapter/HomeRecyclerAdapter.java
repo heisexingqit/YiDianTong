@@ -221,7 +221,7 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 tv_second_line.setText(second_line);
             }
             //学习内容状态
-            if (item.getStatus().length() == 0 ) {
+            if (item.getStatus().length() == 0) {
                 if(!item.getType().equals("课堂回放") && !item.getType().equals("朗读")){
                     iv_top_icon1.setVisibility(View.GONE);
                     iv_top_icon2.setVisibility(View.GONE);

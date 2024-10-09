@@ -33,7 +33,7 @@ public class ReadAloudSubmitPagerAdapter extends FragmentStatePagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        return ReadAloudSubmitFragment.newInstance(itemList.get(position), itemList.size());
+        return ReadAloudSubmitFragment.newInstance(itemList.get(position), itemList.size(), position);
     }
 
     @Override
