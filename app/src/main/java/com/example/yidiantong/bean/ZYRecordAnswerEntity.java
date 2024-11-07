@@ -7,13 +7,13 @@ public class ZYRecordAnswerEntity implements Serializable {
     public String path;
     public String score;
     public String id;
-    public String text;
-    public List<TextStatus> list;
+    public List<TextStatus> yuyinlist;
+    public List<TextStatus> yuanwenlist;
     public String content;
     public String order;
     public String status;
     public String time;
-    public class TextStatus{
+    public class TextStatus implements Serializable{
         public String text;
         public String status;
     }

@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.AudioFormat;
+import android.media.AudioRecord;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -12,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +31,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import com.android.volley.Request;
@@ -35,6 +39,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
+import com.example.yidiantong.View.AudioWaveView;
 import com.example.yidiantong.bean.ReadTaskAudioEntity;
 import com.example.yidiantong.bean.ReadTaskEntity;
 import com.example.yidiantong.util.Constant;
@@ -42,6 +47,7 @@ import com.example.yidiantong.util.HomeworkInterface2;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.PagingInterface;
 import com.example.yidiantong.util.PxUtils;
+import com.example.yidiantong.util.TimeUtil;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -56,6 +62,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -84,7 +91,6 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
 
     private FlexboxLayout fl_video;
     private TextView tv_duration;
-    private ImageView iv_reading_gif;
 
     private String mRequestUrl;
     private ImageView iv_close;
@@ -117,6 +123,7 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
     //是否正在播放
     private boolean isPlaying = false;
     private ImageView last_iv_icon;
+    private AudioWaveView audioWaveView;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -179,9 +186,9 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
         tv_recording_num2 = view.findViewById(R.id.tv_recording_num2);
 
         // 录制中面板
+        audioWaveView = view.findViewById(R.id.audioWaveView);
         rl_reading_panel = view.findViewById(R.id.rl_reading_panel);
         tv_duration = view.findViewById(R.id.tv_duration);
-        iv_reading_gif = view.findViewById(R.id.iv_reading_gif);
         ll_playing = view.findViewById(R.id.ll_playing);
         ll_playing.setOnClickListener(this);
         tv_time = view.findViewById(R.id.tv_time);
@@ -206,6 +213,12 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
         ll_start_read.setOnClickListener(this);
         ll_my_recording.setOnClickListener(this);
 
+        // 如果已经提交，那么进行屏蔽
+        if(!readTask.isNew){
+            ImageView iv_start_read = view.findViewById(R.id.iv_start_read);
+            iv_start_read.setImageResource(R.drawable.microphone_gray);
+            ll_start_read.setEnabled(false);
+        }
 
         return view;
     }
@@ -290,6 +303,7 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
                         mPlayer.prepare();
                         mPlayer.start();
                         isPlaying = true;
+                        last_iv_icon = iv_icon;
                         mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                             @Override
                             public void onCompletion(MediaPlayer mp) {
@@ -315,7 +329,7 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
     private void stopRecoding() {
         ll_playing.setVisibility(View.GONE);
         rl_stop.setVisibility(View.VISIBLE);
-        tv_time.setText(audioTime + "″");
+        tv_time.setText(TimeUtil.getRecordTime(audioTime));
         // 停止计时器
         if (timer != null) {
             timer.cancel(); // 取消定时器
@@ -328,6 +342,8 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
             mRecorder.release();
             mRecorder = null;
         }
+        audioWaveView.stopRecording();
+
     }
 
     // 开始录制的页面UI相关，包括录音组件相关
@@ -351,8 +367,7 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
                     @Override
                     public void run() {
                         // 更新UI
-                        tv_duration.setText("(" + audioTime + "秒)");
-
+                        tv_duration.setText("(" + TimeUtil.getRecordTimeCharacter(audioTime) +")");
                     }
                 });
             }
@@ -377,13 +392,21 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
                 }
 
                 fl_video_width = fl_video.getWidth();
-                if (fl_video_width > 0) { // 确保宽度大于0
-                    for (int i = 0; i < audioList.size(); i++) {
-                        addOneVedioBlock(i, audioList.get(i).time);
-                    }
-                }
+                refreshRecordPanel();
             }
         });
+    }
+
+    private void refreshRecordPanel() {
+        if (fl_video_width > 0) { // 确保宽度大于0
+            fl_video.removeAllViews();
+            for (int i = 0; i < audioList.size(); i++) {
+                addOneVedioBlock(i, audioList.get(i).time);
+            }
+        }
+        if(audioList.size() == 0){
+            switchPanel(1);
+        }
     }
 
 
@@ -403,7 +426,7 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
         ImageView iv_icon = view.findViewById(R.id.iv_icon);
         ImageView iv_delete = view.findViewById(R.id.iv_delete);
 
-        tv_time.setText(time + "″");
+        tv_time.setText(time);
 
         View.OnClickListener playVideoListener = new View.OnClickListener() {
             @Override
@@ -438,9 +461,13 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
 
             }
         });
+        if(!readTask.isNew){
+            iv_delete.setImageResource(R.drawable.delete_recording_small_gray);
+            iv_delete.setEnabled(false);
+        }
 
 
-        RelativeLayout rl_block = view.findViewById(R.id.rl_block);
+        ConstraintLayout rl_block = view.findViewById(R.id.rl_block);
         ViewGroup.LayoutParams params = rl_block.getLayoutParams();
         params.width = fl_video_width / 3 - PxUtils.dip2px(view.getContext(), 15);
         rl_block.setLayoutParams(params);
@@ -448,17 +475,18 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
     }
 
     private void startMico() {
-        mRecorder = new MediaRecorder();
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION);  // 使用优化的音源
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);  // 使用高质量输出格式
-        mRecorder.setOutputFile(audioPath);  // 设置输出路径
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);  // 使用更高质量的AAC编码
-        try {
-            mRecorder.prepare();
-            mRecorder.start();
-        } catch (IOException e) {
-            Log.e(TAG, "prepare() failed ---" + e.getMessage());
-        }
+//        mRecorder = new MediaRecorder();
+//        mRecorder.setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION);  // 使用优化的音源
+//        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);  // 使用高质量输出格式
+//        mRecorder.setOutputFile(audioPath);  // 设置输出路径
+//        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);  // 使用更高质量的AAC编码
+//        try {
+//            mRecorder.prepare();
+//            mRecorder.start();
+            audioWaveView.startRecording(audioPath);
+//        } catch (IOException e) {
+//            Log.e(TAG, "prepare() failed ---" + e.getMessage());
+//        }
     }
 
     private static byte[] getBytes(InputStream inputStream) throws IOException {
@@ -482,7 +510,12 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
             switch (message.what) {
                 case 100:
                     audioList = (List<ReadTaskAudioEntity>) message.obj;
+                    for (int i = 0; i < audioList.size(); i++){
+                        ReadTaskAudioEntity audio = audioList.get(i);
+                        audio.time = TimeUtil.getRecordTime(Integer.parseInt(audio.time));
+                    }
                     refreshNum();
+                    refreshRecordPanel();
                     homework.offLoading();
                     break;
 
@@ -526,6 +559,7 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
     }
 
     private void uploadAudioFile() {
+        stopAudioIfPlay();
         homework.onLoading("录音上传中...");
         Uri fileUri = Uri.fromFile(new File(audioPath));
         String mRequestUrl = Constant.API + Constant.UPLOAD_AUDIO;
@@ -636,14 +670,17 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
 
     private void playAudioByView(int pos, ImageView iv_icon) {
         // 如果当前正在播放，则停止并释放播放器
-        stopAudioIfPlay();
-        if (last_iv_icon == iv_icon) {
+        if (last_iv_icon == iv_icon && isPlaying) {
+            stopAudioIfPlay();
             return;
         }
+        stopAudioIfPlay();
         last_iv_icon = iv_icon;
         // 创建新的 MediaPlayer 实例
         mPlayer = new MediaPlayer();
         try {
+            homework.onLoading("音频加载中...");
+
             mPlayer.setDataSource(audioList.get(pos).url);  // 设置数据源为 URL
 
             // 异步准备播放器
@@ -652,6 +689,7 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
                 @Override
                 public void onPrepared(MediaPlayer mp) {
                     mp.start();  // 当准备好时开始播放
+                    homework.offLoading();
                     isPlaying = true;
                     iv_icon.setImageResource(R.drawable.play_recording_on);  // 更改图标为暂停
                 }
@@ -683,9 +721,13 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        stopAudioIfPlay();
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (!isVisibleToUser) {
+            // 当 Fragment 不可见时，调用 stopAudioIfPlay() 方法
+            stopAudioIfPlay();
+        }
     }
 
     @Override

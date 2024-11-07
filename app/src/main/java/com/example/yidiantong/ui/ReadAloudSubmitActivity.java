@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -30,8 +31,8 @@ import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.MyArrayAdapter;
 import com.example.yidiantong.adapter.ReadAloudSubmitPagerAdapter;
-import com.example.yidiantong.bean.ReadTaskEntity;
 import com.example.yidiantong.bean.ReadTaskResultEntity;
+import com.example.yidiantong.bean.ZYRecordAnswerEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.FixedSpeedScroller;
 import com.example.yidiantong.util.HomeworkInterface2;
@@ -42,7 +43,6 @@ import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
@@ -91,6 +91,9 @@ public class ReadAloudSubmitActivity extends AppCompatActivity implements View.O
     private String recordId;
     private int pos;
     private Button btn_submit;
+    private List<ReadTaskResultEntity> readTaskResults;
+    private ImageView iv_refresh;
+
 
     public ReadAloudSubmitActivity() {
     }
@@ -104,6 +107,7 @@ public class ReadAloudSubmitActivity extends AppCompatActivity implements View.O
         //获取Intent参数
         recordId = getIntent().getStringExtra("recordId");
         currentItem = getIntent().getIntExtra("pos", 0);
+        isNew = getIntent().getBooleanExtra("isNew", true);
 
         // findViewById
         tv_current = findViewById(R.id.tv_current);
@@ -115,11 +119,17 @@ public class ReadAloudSubmitActivity extends AppCompatActivity implements View.O
         btn_submit = findViewById(R.id.btn_submit);
         btn_submit.setOnClickListener(this);
 
+        // 刷新组件
+        iv_refresh = findViewById(R.id.iv_refresh);
+        iv_refresh.setOnClickListener(this);
+
         //ViewPager适配器设置
         vp_homework = findViewById(R.id.vp_homework);
         vp_homework.setOffscreenPageLimit(0); // 禁止预加载
         adapter = new ReadAloudSubmitPagerAdapter(getSupportFragmentManager());
         vp_homework.setAdapter(adapter);
+        vp_homework.setOffscreenPageLimit(0);
+
         // ViewPager滑动变速
         try {
             Field field = ViewPager.class.getDeclaredField("mScroller");
@@ -162,23 +172,30 @@ public class ReadAloudSubmitActivity extends AppCompatActivity implements View.O
         });
         loadItems_Net();
 
+        if (!isNew) {
+            btn_submit.setEnabled(false);
+        }
+
     }
+
     private Handler handler = new Handler(Looper.getMainLooper()) {
 
         @SuppressLint("NotifyDataSetChanged")
         @Override
         public void handleMessage(Message message) {
             super.handleMessage(message);
-            switch (message.what){
+            switch (message.what) {
                 case 100:
                     List<ReadTaskResultEntity> readTaskResultList = (List<ReadTaskResultEntity>) message.obj;
-
+                    for (ReadTaskResultEntity readTaskResultEntity : readTaskResultList) {
+                        readTaskResultEntity.isNew = isNew;
+                    }
+                    readTaskResults = readTaskResultList;
                     adapter.update(readTaskResultList);
                     pageCount = readTaskResultList.size();
                     tv_all.setText(String.valueOf(pageCount));
                     tv_current.setText(String.valueOf(currentItem + 1));
                     vp_homework.setCurrentItem(currentItem, false);
-
                     rl_loading.setVisibility(View.GONE);
                     offLoading();
                     break;
@@ -197,8 +214,9 @@ public class ReadAloudSubmitActivity extends AppCompatActivity implements View.O
                 String itemString = json.getString("data");
                 Gson gson = new Gson();
                 // 使用Gson框架转换Json字符串为列表
-                List<ReadTaskResultEntity> itemList = gson.fromJson(itemString, new TypeToken<List<ReadTaskResultEntity>>() {}.getType());
-                if(itemList == null || itemList.size() == 0){
+                List<ReadTaskResultEntity> itemList = gson.fromJson(itemString, new TypeToken<List<ReadTaskResultEntity>>() {
+                }.getType());
+                if (itemList == null || itemList.size() == 0) {
                     rl_loading.setVisibility(View.GONE);
                     Toast.makeText(this, "数据加载出错", Toast.LENGTH_SHORT).show();
                     return;
@@ -226,10 +244,26 @@ public class ReadAloudSubmitActivity extends AppCompatActivity implements View.O
             case R.id.btn_submit:
                 submitResult();
                 break;
+            case R.id.iv_refresh:
+                loadItems_Net();
+                break;
         }
     }
 
     private void submitResult() {
+        for (int i = 0; i < readTaskResults.size(); ++i) {
+            if (readTaskResults.get(i).ZYRecordAnswerList == null || readTaskResults.get(i).ZYRecordAnswerList.size() == 0) {
+                androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+                builder.setMessage("还有图片没有录音，无法提交");
+                builder.setPositiveButton("确定", null);
+                androidx.appcompat.app.AlertDialog dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(false); // 防止用户点击对话框外部关闭对话框
+                dialog.show();
+                return;
+            }
+        }
+
+
         this.onLoading("提交中...");
         String mRequestUrl = null;
         try {
@@ -242,13 +276,13 @@ public class ReadAloudSubmitActivity extends AppCompatActivity implements View.O
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);
                 Boolean success = json.getBoolean("success");
-                if(success){
+                if (success) {
                     Toast.makeText(this, json.getString("message"), Toast.LENGTH_SHORT).show();
                     Intent toHome = new Intent(ReadAloudSubmitActivity.this, MainPagerActivity.class);
                     toHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(toHome);
                     offLoading();
-                }else{
+                } else {
                     Toast.makeText(this, json.getString("message"), Toast.LENGTH_SHORT).show();
                     offLoading();
                 }

@@ -89,6 +89,7 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
     private int count = 0;
     private TextView tv_current;
     private TextView tv_all;
+    private TextView tv_title;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -99,6 +100,8 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
         //获取Intent参数
         learnPlanId = getIntent().getStringExtra("learnPlanId");
         username = getIntent().getStringExtra("username");
+        isNew = getIntent().getBooleanExtra("isNew", true);
+        title = getIntent().getStringExtra("title");
 
         // findViewById
         tv_current = findViewById(R.id.tv_current);
@@ -106,7 +109,8 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
         rl_loading = findViewById(R.id.rl_loading);
         rl_submitting = findViewById(R.id.rl_submitting);
         tv_submitting = findViewById(R.id.tv_submitting);
-
+        tv_title = findViewById(R.id.tv_title);
+        tv_title.setText(title);
         // ViewPager适配器设置
         vp_homework = findViewById(R.id.vp_homework);
         vp_homework.setOffscreenPageLimit(0); // 禁止预加载
@@ -183,7 +187,6 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
     public void onClick(View view) {
         switch (view.getId()) {
 
-
         }
     }
 
@@ -238,6 +241,7 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
                     readTaskList = (List<ReadTaskEntity>) message.obj;
                     for (ReadTaskEntity task : readTaskList) {
                         task.recordId = learnPlanId;
+                        task.isNew = isNew;
                     }
                     adapter.update(readTaskList);
                     pageCount = readTaskList.size();
@@ -259,9 +263,9 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
                 Gson gson = new Gson();
                 // 使用Gson框架转换Json字符串为列表
                 List<ReadTaskEntity> itemList = gson.fromJson(itemString, new TypeToken<List<ReadTaskEntity>>() {}.getType());
-                if(itemList == null || itemList.size() == 0){
+                if(itemList == null || itemList.size() == 0) {
                     rl_loading.setVisibility(View.GONE);
-                    Toast.makeText(this, "图片数据出错!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "图片数据出错", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 Message msg = new Message();
@@ -284,6 +288,7 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
         Intent intent = new Intent(this, ReadAloudSubmitActivity.class);
         intent.putExtra("recordId", learnPlanId);
         intent.putExtra("pos", currentItem);
+        intent.putExtra("isNew", isNew);
         List<String> imageList = new ArrayList<>();
         for(ReadTaskEntity task : readTaskList){
             imageList.add(task.imageId);

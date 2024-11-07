@@ -232,7 +232,13 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                         intent = new Intent(getActivity(), ReadAloudLookActivity.class);
                         intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
                         intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
+                        boolean isNew = true;
+                        if(!adapter.itemList.get(pos).getStatus().equals("1") && !adapter.itemList.get(pos).getStatus().equals("5")){
+                            isNew = false;
+                        }
+                        intent.putExtra("isNew", isNew);
                         startActivity(intent);
+
                         break;
 
 

@@ -2,12 +2,10 @@ package com.example.yidiantong.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Message;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,20 +16,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.toolbox.StringRequest;
-import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
-import com.example.yidiantong.bean.ReadTaskAudioEntity;
 import com.example.yidiantong.bean.ZYRecordAnswerEntity;
-import com.example.yidiantong.util.Constant;
-import com.example.yidiantong.util.JsonUtils;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.example.yidiantong.util.TimeUtil;
+import com.google.android.exoplayer2.C;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class TReadAloudResultRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -47,11 +36,17 @@ public class TReadAloudResultRecyclerAdapter extends RecyclerView.Adapter<Recycl
     // item类型，数据
     public List<ZYRecordAnswerEntity> itemList;
 
+    private boolean isNew;
+    private View v;
+
 
     public TReadAloudResultRecyclerAdapter(Context context, List<ZYRecordAnswerEntity> itemList) {
         mContext = context;
         this.layoutInflater = LayoutInflater.from(context);
         this.itemList = itemList;
+    }
+    public void setIsNew(boolean isNew){
+        this.isNew = isNew;
     }
 
     public void setmItemClickListener(MyItemClickListener listener) {
@@ -94,7 +89,10 @@ public class TReadAloudResultRecyclerAdapter extends RecyclerView.Adapter<Recycl
         private final LinearLayout ll_delete; // 删除
         private final LinearLayout ll_hide; // 删除
         private final LinearLayout ll_play; // 播放
-
+        private final ImageView iv_redo;
+        private final TextView tv_redo;
+        private final ImageView iv_delete;
+        private final TextView tv_delete;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -109,6 +107,10 @@ public class TReadAloudResultRecyclerAdapter extends RecyclerView.Adapter<Recycl
             ll_delete = itemView.findViewById(R.id.ll_delete);
             ll_hide = itemView.findViewById(R.id.ll_hide);
             ll_play = itemView.findViewById(R.id.ll_play);
+            iv_redo = itemView.findViewById(R.id.iv_redo);
+            tv_redo = itemView.findViewById(R.id.tv_redo);
+            iv_delete = itemView.findViewById(R.id.iv_delete);
+            tv_delete = itemView.findViewById(R.id.tv_delete);
         }
 
         // 数据更新放在这里(频繁调用，不能放一次性操作，例如绑定点击事件)
@@ -116,51 +118,50 @@ public class TReadAloudResultRecyclerAdapter extends RecyclerView.Adapter<Recycl
             ZYRecordAnswerEntity item = itemList.get(pos);
             tv_No.setText("(" + (pos + 1) + ")");
             // 数据更新
-            tv_time.setText(item.time + "″"); // TODO 参数不全
-           if (item.status.equals("2")) {
+            tv_time.setText(TimeUtil.getRecordTime(Integer.parseInt(item.time)));
+            if (item.status.equals("2")) {
                 // 语音识别成功，找到出处
                 tv_scores.setText(item.score + " 分");
-               tv_standard_answer.setText(item.text);
-               ll_hide.setVisibility(View.VISIBLE);
-                SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-                for (int i = 0; i < item.list.size(); i++) {
-                    ZYRecordAnswerEntity.TextStatus ts = item.list.get(i);
-                    String text = ts.text;
-                    int status = Integer.parseInt(ts.status);
 
-                    // 创建一个新的SpannableString，并设置颜色
-                    SpannableString currentText = new SpannableString(text + " ");
-                    int color = status == 0 ? Color.RED : Color.parseColor("#2cbb73");
-                    currentText.setSpan(new ForegroundColorSpan(color), 0, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                // 原文List
+                tv_standard_answer.setText(createSpannableStringBuilder(item.yuanwenlist, false));
 
-                    // 将当前的SpannableString追加到总的字符串中
-                    if (spannableStringBuilder.length() > 0) {
-                        spannableStringBuilder.append(" ");
-                    }
-                    spannableStringBuilder.append(currentText);
-                }
+                ll_hide.setVisibility(View.VISIBLE);
 
-                // 设置给TextView
-                tv_stu_answer.setText(spannableStringBuilder);
-           } else if (item.status.equals("3")) {
+                // 语音List
+                tv_stu_answer.setText(createSpannableStringBuilder(item.yuyinlist, true));
+            } else if (item.status.equals("3")) {
                 // 未找到出处
                 tv_scores.setText(item.score + " 分");
                 ll_hide.setVisibility(View.VISIBLE);
-                tv_stu_answer.setText(item.content);
+                tv_stu_answer.setText(createSpannableStringBuilder(item.yuyinlist, false));
+
                 // 创建一个SpannableString对象
-                SpannableString spannableString = new SpannableString("未查询到原文");
+                SpannableString spannableString = new SpannableString("原文中没有找到您朗读的内容");
 
                 // 设置文本的颜色为红色
                 spannableString.setSpan(new ForegroundColorSpan(Color.RED), 0, spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                 // 将SpannableString设置给TextView
                 tv_standard_answer.setText(spannableString);
+            } else if (item.status.equals("4")) {
+                // 语音识别失败
+                tv_scores.setText(item.score);
+                ll_hide.setVisibility(View.GONE);
+                // 创建一个SpannableString对象
+                SpannableString spannableString = new SpannableString("语音没有识别出内容");
+
+                // 设置文本的颜色为红色
+                spannableString.setSpan(new ForegroundColorSpan(Color.RED), 0, spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                // 将SpannableString设置给TextView
+                tv_stu_answer.setText(spannableString);
             } else {
                 // 语音识别失败
                 tv_scores.setText(item.score);
                 ll_hide.setVisibility(View.GONE);
                 // 创建一个SpannableString对象
-                SpannableString spannableString = new SpannableString("语音转义成文本异常。");
+                SpannableString spannableString = new SpannableString("语音正在转写");
 
                 // 设置文本的颜色为红色
                 spannableString.setSpan(new ForegroundColorSpan(Color.RED), 0, spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -175,20 +176,57 @@ public class TReadAloudResultRecyclerAdapter extends RecyclerView.Adapter<Recycl
                     mItemClickListener.playVedio(pos, iv_icon);
                 }
             });
-            ll_redo.setOnClickListener(new View.OnClickListener(){
+            ll_redo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     mItemClickListener.redoVedio(pos);
                 }
             });
-            ll_delete.setOnClickListener(new View.OnClickListener(){
+            ll_delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     mItemClickListener.deleteVedio(pos);
                 }
             });
+            if(!isNew){
+                ll_redo.setEnabled(false);
+                ll_delete.setEnabled(false);
+                iv_delete.setImageResource(R.drawable.delete_recording_gray);
+                iv_redo.setImageResource(R.drawable.redo_recording_gray);
+                tv_delete.setTextColor(Color.parseColor("#9c9c9c"));
+                tv_redo.setTextColor(Color.parseColor("#9c9c9c"));
+            }
 
         }
+    }
+
+    // 通用方法，生成 SpannableStringBuilder
+    private SpannableStringBuilder createSpannableStringBuilder(List<ZYRecordAnswerEntity.TextStatus> textStatusList, boolean hasStatus) {
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+        for (ZYRecordAnswerEntity.TextStatus ts : textStatusList) {
+            String text = ts.text.trim();  // 去掉 text 两端的多余空格
+            int color;
+            if(hasStatus){
+                int status = Integer.parseInt(ts.status);
+                // 如果 status 为空或者 null，使用默认颜色 "#2cbb73"
+                color = status == 0 ? Color.RED : Color.parseColor("#2cbb73");
+            }else{
+                color = Color.BLACK;
+            }
+
+            // 创建一个新的 SpannableString，并设置颜色
+            SpannableString currentText = new SpannableString(text);
+            currentText.setSpan(new ForegroundColorSpan(color), 0, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            // 如果不是第一个元素，才追加一个空格
+            if (spannableStringBuilder.length() > 0) {
+                spannableStringBuilder.append(" ");
+            }
+
+            // 将当前的 SpannableString 追加到总的字符串中
+            spannableStringBuilder.append(currentText);
+        }
+        return spannableStringBuilder;
     }
 
     // 点击事件接口

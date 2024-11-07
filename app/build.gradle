@@ -10,10 +10,18 @@ android {
         applicationId "com.example.yidiantong"
         minSdk 23
         targetSdk 32
-        versionCode 13
-        versionName "1.1.3"
+        versionCode 20
+        versionName "1.2.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
     }
+    sourceSets {
+        main {
+            // 确保 Gradle 从 src/main/jniLibs 目录加载本地库
+            jniLibs.srcDirs = ['src/main/jniLibs']
+        }
+    }
+
     android {
         packagingOptions {
             exclude 'META-INF/DEPENDENCIES'
@@ -112,6 +120,9 @@ dependencies {
     // 列表 项 侧滑块组件
     implementation "com.daimajia.swipelayout:library:1.2.0@aar"
     implementation 'com.blankj:utilcodex:1.30.5'
+
+    // 音频解码
+
 
     // 画板module
     //implementation project(':imageeditlibrary')

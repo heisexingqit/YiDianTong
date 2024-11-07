@@ -1,0 +1,5 @@
+APP_ABI := all
+APP_MODULES := mp3lame
+APP_CFLAGS += -DSTDC_HEADERS
+#APP_ABI:=x86_64
+APP_PLATFORM := android-21

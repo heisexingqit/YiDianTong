@@ -25,7 +25,7 @@ public class ReadAloudSubmitPagerAdapter extends FragmentStatePagerAdapter {
         super(fm);
     }
 
-    public void update(List<ReadTaskResultEntity> readTaskResultList){
+    public void update(List<ReadTaskResultEntity> readTaskResultList) {
         this.itemList = readTaskResultList;
         this.notifyDataSetChanged();
     }
@@ -42,7 +42,8 @@ public class ReadAloudSubmitPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     @Override
-    public int getItemPosition(Object object) {
+    public int getItemPosition(@NonNull Object object) {
         return POSITION_NONE; // 这样可以保证notifyDataSetChanged时，所有Fragment都会被重新创建
     }
 }
+

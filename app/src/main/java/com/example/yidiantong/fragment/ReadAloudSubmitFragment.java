@@ -1,7 +1,5 @@
 package com.example.yidiantong.fragment;
 
-import static com.blankj.utilcode.util.ViewUtils.runOnUiThread;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,20 +25,14 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.TReadAloudResultRecyclerAdapter;
-import com.example.yidiantong.bean.ReadTaskAudioEntity;
 import com.example.yidiantong.bean.ReadTaskResultEntity;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.HomeworkInterface2;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.PagingInterface;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class ReadAloudSubmitFragment extends Fragment implements View.OnClickListener {
@@ -97,7 +89,9 @@ public class ReadAloudSubmitFragment extends Fragment implements View.OnClickLis
             total = getArguments().getInt("total");
             pagePos = getArguments().getInt("pagePos");
         }
+        Log.e("wen1025",  "onCreate：" + pagePos);
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -106,9 +100,12 @@ public class ReadAloudSubmitFragment extends Fragment implements View.OnClickLis
         View view = inflater.inflate(R.layout.fragment_read_aloud_submit, container, false);
 
         iv_empty = view.findViewById(R.id.iv_empty);
-        if(readTaskResult.ZYRecordAnswerList != null && readTaskResult.ZYRecordAnswerList.size() > 0){
+        if (readTaskResult.ZYRecordAnswerList != null && readTaskResult.ZYRecordAnswerList.size() > 0) {
             iv_empty.setVisibility(View.GONE);
         }
+
+        Log.e("wen1025", "onCreateView：" + pagePos);
+
         //翻页组件
         ImageView iv_pager_last = view.findViewById(R.id.iv_page_last);
         ImageView iv_pager_next = view.findViewById(R.id.iv_page_next);
@@ -125,6 +122,7 @@ public class ReadAloudSubmitFragment extends Fragment implements View.OnClickLis
         }
         // 创建一个 List<String>
         adapter = new TReadAloudResultRecyclerAdapter(getActivity(), readTaskResult.ZYRecordAnswerList);
+        adapter.setIsNew(readTaskResult.isNew);
         adapter.setmItemClickListener(new TReadAloudResultRecyclerAdapter.MyItemClickListener() {
             @Override
             public void deleteVedio(int pos) {
@@ -227,10 +225,12 @@ public class ReadAloudSubmitFragment extends Fragment implements View.OnClickLis
 
     private void playViewByView(int pos, ImageView iv_icon) {
         // 如果当前正在播放，则停止并释放播放器
-        stopAudioIfPlay();
-        if (last_iv_icon == iv_icon) {
+        if(last_iv_icon == iv_icon && isPlaying){
+            stopAudioIfPlay();
             return;
         }
+        stopAudioIfPlay();
+        Log.e("wen1025", "playViewByView：" + pagePos);
 
         last_iv_icon = iv_icon;
         // 创建新的 MediaPlayer 实例
@@ -246,7 +246,6 @@ public class ReadAloudSubmitFragment extends Fragment implements View.OnClickLis
                 public void onPrepared(MediaPlayer mp) {
                     mp.start();  // 当准备好时开始播放
                     homework.offLoading();
-
                     isPlaying = true;
                     iv_icon.setImageResource(R.drawable.play_recording_on);  // 更改图标为暂停
                 }
@@ -269,20 +268,28 @@ public class ReadAloudSubmitFragment extends Fragment implements View.OnClickLis
     }
 
     private void stopAudioIfPlay() {
+        Log.e("wen1025", "stopAudioIfPlay: isPlaying = " + isPlaying + ", mPlayer = " + (mPlayer != null) + " ,pos = " + pagePos);
         if (isPlaying && mPlayer != null) {
             mPlayer.stop();
             mPlayer.release();
             mPlayer = null;
             isPlaying = false;
-            last_iv_icon.setImageResource(R.drawable.play_recording_off);  // 更改播放按钮图标
+            last_iv_icon.setImageResource(R.drawable.play_recording_off);  // 更改播放按钮图
         }
     }
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
 
+        if (!isVisibleToUser) {
+            // 当 Fragment 不可见时，调用 stopAudioIfPlay() 方法
+            stopAudioIfPlay();
+        }
+    }
 
     @Override
     public void onPause() {
         super.onPause();
         stopAudioIfPlay();
     }
-
 }
