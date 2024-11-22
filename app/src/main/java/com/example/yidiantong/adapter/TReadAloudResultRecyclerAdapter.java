@@ -206,12 +206,28 @@ public class TReadAloudResultRecyclerAdapter extends RecyclerView.Adapter<Recycl
         for (ZYRecordAnswerEntity.TextStatus ts : textStatusList) {
             String text = ts.text.trim();  // 去掉 text 两端的多余空格
             int color;
-            if(hasStatus){
-                int status = Integer.parseInt(ts.status);
-                // 如果 status 为空或者 null，使用默认颜色 "#2cbb73"
-                color = status == 0 ? Color.RED : Color.parseColor("#2cbb73");
+            int status = 1;
+            if (ts.status != null && !ts.status.isEmpty()) {
+                try {
+                    status = Integer.parseInt(ts.status);
+                } catch (NumberFormatException e) {
+                    // 如果解析失败，处理异常，比如将 status 设为默认值
+                    status = 1; // 或者其他默认值
+                    System.out.println("Status parsing failed: " + e.getMessage());
+                }
+            }
+            if(status == 1){
+                if(hasStatus){
+                    color = Color.parseColor("#2cbb73");
+                }else{
+                    color = Color.BLACK;
+                }
             }else{
-                color = Color.BLACK;
+                if(hasStatus){
+                    color = Color.RED;
+                }else{
+                    color = Color.BLUE;
+                }
             }
 
             // 创建一个新的 SpannableString，并设置颜色
