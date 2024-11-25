@@ -43,6 +43,7 @@ import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.JsonUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.navigationdemo.MainActivity_stu;
 //import com.navigationdemo.MainActivity_stu;
 
 import org.json.JSONException;
@@ -141,20 +142,20 @@ public class LiveListActivity extends AppCompatActivity implements View.OnClickL
                 dialog.setMyInterface(new LiveEnterDialog.MyInterface() {
                     @Override
                     public void submit(boolean isCamera, boolean isMicro) {
-//                        Intent intent = new Intent(LiveListActivity.this, MainActivity_stu.class);
-//                        LiveItemEntity item = adapter.itemList.get(pos);
-//                        String userHead = MyApplication.picUrl;
-//                        String classAlreadtStartTime = item.getStartDate().getTime();
-//                        Log.d(TAG, "已开始时间: " + classAlreadtStartTime);
-//                        String params = MyApplication.username + "-@-" + MyApplication.cnName + "-@-" + item.getRoomId() + "-@-" + item.getTitle() + "-@-" + item.getSubject() + "-@-" + item.getRoomId() + "-@-" + item.getTitle() + "-@-" + userHead + "-@-" + item.getTeacherId() + "-@-" + item.getTeacherName() + "-@-" + isCamera + "-@-" + isMicro + "-@-" + classAlreadtStartTime;
-//                        intent.putExtra("params", params);
-//
-//                        // 关闭定时器
-//                        shouldStopTimer = true;
-//                        startActivity(intent);
-//                        Log.d("wen", "参数：" + params);
-//                        // 关闭对话框
-//                        dialog.dismiss();
+                        Intent intent = new Intent(LiveListActivity.this, MainActivity_stu.class);
+                        LiveItemEntity item = adapter.itemList.get(pos);
+                        String userHead = MyApplication.picUrl;
+                        String classAlreadtStartTime = item.getStartDate().getTime();
+                        Log.d(TAG, "已开始时间: " + classAlreadtStartTime);
+                        String params = MyApplication.username + "-@-" + MyApplication.cnName + "-@-" + item.getRoomId() + "-@-" + item.getTitle() + "-@-" + item.getSubject() + "-@-" + item.getRoomId() + "-@-" + item.getTitle() + "-@-" + userHead + "-@-" + item.getTeacherId() + "-@-" + item.getTeacherName() + "-@-" + isCamera + "-@-" + isMicro + "-@-" + classAlreadtStartTime;
+                        intent.putExtra("params", params);
+
+                        // 关闭定时器
+                        shouldStopTimer = true;
+                        startActivity(intent);
+                        Log.d("wen", "参数：" + params);
+                        // 关闭对话框
+                        dialog.dismiss();
                     }
 
                 });

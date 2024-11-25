@@ -216,8 +216,8 @@ public class MainActivity_tea extends AppCompatActivity {
     private int SDKappID = GenerateTestUserSig.SDKAPPID;  //SDKAppID
 
     //TRTC   SDKAPPID
-    private int TRTCSDKAPPID = 1400729588;
-    private String TRTCSECRETKEY = "14d956924ea3515151d4f8d9431de7580cd01fa9ec2c17cb1d0f720d866f9a08";
+    private int TRTCSDKAPPID = 1600061809;
+    private String TRTCSECRETKEY = "952cad996cadac60fb09b88b0afa102ff7a731ea006b0be8f1ba93332fbbc271";
 
     //即时通信SDKAPPID
     private int IMSDKAPPID = 1400791138;

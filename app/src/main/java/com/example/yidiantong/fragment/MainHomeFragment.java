@@ -541,8 +541,8 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
         // 获取本地app的版本名称
         String versionName = BuildConfig.VERSION_NAME;
 
-//        mRequestUrl = Constant.API + Constant.NEW_ITEM + "?currentPage=" + currentPage + "&userId=" + username + "&resourceType=" + type + "&searchStr=" + searchStr + "&source=RN";
-        mRequestUrl = Constant.API + Constant.NEW_ITEM +"?userId="+ username+"&source=RN&currentPage=" + currentPage + "&resourceType=" + type+"&unitId=1101010010001";
+        mRequestUrl = Constant.API + Constant.NEW_ITEM + "?currentPage=" + currentPage + "&userId=" + username + "&resourceType=" + type + "&searchStr=" + searchStr + "&source=RN" + "&unitId=1101010010001";
+//        mRequestUrl = Constant.API + Constant.NEW_ITEM +"?userId="+ username+"&source=RN&currentPage=" + currentPage + "&resourceType=" + type+"&unitId=1101010010001";
         Log.e("wen", "home: " + mRequestUrl);
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {

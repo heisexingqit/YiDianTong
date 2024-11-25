@@ -128,7 +128,7 @@ dependencies {
     //implementation project(':imageeditlibrary')
 
     // 直播课模块
-    //implementation project(':TRTCAPP')
+    implementation project(':TRTCAPP')
 
     // 录音工具
     //implementation 'com.lovedise:permissiongen:0.0.6'
