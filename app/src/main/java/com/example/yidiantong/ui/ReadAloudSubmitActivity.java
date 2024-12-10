@@ -93,6 +93,7 @@ public class ReadAloudSubmitActivity extends AppCompatActivity implements View.O
     private Button btn_submit;
     private List<ReadTaskResultEntity> readTaskResults;
     private ImageView iv_refresh;
+    private String type;
 
 
     public ReadAloudSubmitActivity() {
@@ -108,6 +109,13 @@ public class ReadAloudSubmitActivity extends AppCompatActivity implements View.O
         recordId = getIntent().getStringExtra("recordId");
         currentItem = getIntent().getIntExtra("pos", 0);
         isNew = getIntent().getBooleanExtra("isNew", true);
+        type = getIntent().getStringExtra("type");
+        if(type.equals("recite")){
+            TextView tv_title = findViewById(R.id.tv_title);
+            tv_title.setText("背诵结果");
+        }
+
+
 
         // findViewById
         tv_current = findViewById(R.id.tv_current);
@@ -189,6 +197,7 @@ public class ReadAloudSubmitActivity extends AppCompatActivity implements View.O
                     List<ReadTaskResultEntity> readTaskResultList = (List<ReadTaskResultEntity>) message.obj;
                     for (ReadTaskResultEntity readTaskResultEntity : readTaskResultList) {
                         readTaskResultEntity.isNew = isNew;
+                        readTaskResultEntity.getReciteId();
                     }
                     readTaskResults = readTaskResultList;
                     adapter.update(readTaskResultList);

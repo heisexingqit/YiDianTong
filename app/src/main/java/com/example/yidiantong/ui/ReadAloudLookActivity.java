@@ -26,17 +26,14 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.example.yidiantong.MyApplication;
 import com.example.yidiantong.R;
 import com.example.yidiantong.adapter.MyArrayAdapter;
 import com.example.yidiantong.adapter.ReadAloudLookPagerAdapter;
 import com.example.yidiantong.bean.ReadTaskEntity;
-import com.example.yidiantong.fragment.ReadAloudLookFragment;
 import com.example.yidiantong.util.Constant;
 import com.example.yidiantong.util.FixedSpeedScroller;
-import com.example.yidiantong.util.HomeworkInterface;
 import com.example.yidiantong.util.HomeworkInterface2;
 import com.example.yidiantong.util.JsonUtils;
 import com.example.yidiantong.util.PagingInterface;
@@ -46,7 +43,6 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +64,7 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
     private String username;
     private String[] stuAnswer;
     private String title;
+    private String type;
 
     // 顶部组件
     private String[] question_types_array;
@@ -91,6 +88,9 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
     private TextView tv_all;
     private TextView tv_title;
 
+    private Boolean isFirst = true;
+    private int watchTimes;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +102,7 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
         username = getIntent().getStringExtra("username");
         isNew = getIntent().getBooleanExtra("isNew", true);
         title = getIntent().getStringExtra("title");
+        type = getIntent().getStringExtra("type");
 
         // findViewById
         tv_current = findViewById(R.id.tv_current);
@@ -115,7 +116,7 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
         vp_homework = findViewById(R.id.vp_homework);
         vp_homework.setOffscreenPageLimit(0); // 禁止预加载
 
-        adapter = new ReadAloudLookPagerAdapter(getSupportFragmentManager());
+        adapter = new ReadAloudLookPagerAdapter(getSupportFragmentManager(), type);
         vp_homework.setAdapter(adapter);
         // ViewPager滑动变速
         try {
@@ -236,25 +237,111 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
         @Override
         public void handleMessage(Message message) {
             super.handleMessage(message);
-            switch (message.what){
+            switch (message.what) {
                 case 100:
+                    Boolean notNew = false;
                     readTaskList = (List<ReadTaskEntity>) message.obj;
-                    for (ReadTaskEntity task : readTaskList) {
-                        task.recordId = learnPlanId;
-                        task.isNew = isNew;
+                    if (type.equals("recite") && isFirst && isNew) {
+                        isFirst = false;
+                        // 查看列表中是否有音频
+                        for (ReadTaskEntity task : readTaskList) {
+                            if (task.ZYRecordAnswerList.size() > 0) {
+                                notNew = true;
+                                break;
+                            }
+                            if (task.showNum != task.initNum) {
+                                notNew = true;
+                                break;
+                            }
+                        }
+
                     }
-                    adapter.update(readTaskList);
-                    pageCount = readTaskList.size();
-                    tv_all.setText(String.valueOf(pageCount));
-                    rl_loading.setVisibility(View.GONE);
+                    if (notNew) {
+                        // 构建一个AlertDialog
+                        AlertDialog.Builder builder = new AlertDialog.Builder(ReadAloudLookActivity.this, AlertDialog.THEME_HOLO_LIGHT);
+                        // 设置自定义title
+//                            TextView tv = new TextView(ReadAloudLookActivity.this);
+//                            tv.setText("发现未播放的音频，是否播放？");
+//                            tv.setTextSize(17);
+//                            tv.setPadding(30, 40, 30, 40);
+//                            tv.setTextColor(Color.parseColor("#000000"));
+//                            builder.setCustomTitle(tv);
+                        // 设置自定义message，用tv
+//                            TextView tv = new TextView(ReadAloudLookActivity.this);
+//                            tv.setText("发现未播放的音频，是否播放？");
+//                            tv.setTextSize(17);
+//                            tv.setPadding(30, 40, 30, 40);
+//                            tv.setTextColor(Color.parseColor("#000000"));
+//                            builder.setView(tv);
+
+                        builder.setTitle("请选择:")
+                                .setMessage("* 重新背诵: 之前的录音数据将被清空。\n* 继续背诵: 继续本次背诵任务。")
+                                .setPositiveButton("重新背诵", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        clearAllLog();
+                                        dialog.cancel();
+                                    }
+                                })
+                                .setNegativeButton("继续背诵", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int i) {
+                                        loadItemsHandlerData();
+                                        dialog.cancel();
+                                    }
+                                });
+
+                        // 创建对话框并显示
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    } else {
+                        loadItemsHandlerData();
+                    }
                     break;
+
             }
         }
     };
 
+    private void loadItemsHandlerData() {
+        for (ReadTaskEntity task : readTaskList) {
+            task.recordId = learnPlanId;
+            task.isNew = isNew;
+        }
+        adapter.update(readTaskList);
+        pageCount = readTaskList.size();
+        tv_all.setText(String.valueOf(pageCount));
+        rl_loading.setVisibility(View.GONE);
+    }
+
+    private void clearAllLog() {
+        rl_loading.setVisibility(View.VISIBLE);
+        // 跟读作业列表
+        String mRequestUrl = Constant.API + Constant.CLEAR_RECITE_LOG + "?recordId=" + learnPlanId + "&stuId=" + MyApplication.username;
+
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+            try {
+                JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                watchTimes = json.getInt("data");
+//                Message msg = Message.obtain();
+//                msg.what = 101;
+                loadItems_Net();
+//                handler.sendMessage(msg);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                rl_loading.setVisibility(View.GONE);
+            }
+        }, error -> {
+            Log.d("wen", "Volley_Error: " + error.toString());
+            rl_loading.setVisibility(View.GONE);
+        });
+        MyApplication.addRequest(request, TAG);
+
+    }
+
     private void loadItems_Net() {
         // 跟读作业列表
-        String mRequestUrl = Constant.API + Constant.GET_READ_TASK_INFO + "?recordId=" + learnPlanId;
+        String mRequestUrl = Constant.API + Constant.GET_READ_TASK_INFO + "?recordId=" + learnPlanId + "&stuId=" + MyApplication.username;
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
@@ -262,8 +349,9 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
                 String itemString = json.getString("data");
                 Gson gson = new Gson();
                 // 使用Gson框架转换Json字符串为列表
-                List<ReadTaskEntity> itemList = gson.fromJson(itemString, new TypeToken<List<ReadTaskEntity>>() {}.getType());
-                if(itemList == null || itemList.size() == 0) {
+                List<ReadTaskEntity> itemList = gson.fromJson(itemString, new TypeToken<List<ReadTaskEntity>>() {
+                }.getType());
+                if (itemList == null || itemList.size() == 0) {
                     rl_loading.setVisibility(View.GONE);
                     Toast.makeText(this, "图片数据出错", Toast.LENGTH_SHORT).show();
                     return;
@@ -289,8 +377,9 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
         intent.putExtra("recordId", learnPlanId);
         intent.putExtra("pos", currentItem);
         intent.putExtra("isNew", isNew);
+        intent.putExtra("type", type);
         List<String> imageList = new ArrayList<>();
-        for(ReadTaskEntity task : readTaskList){
+        for (ReadTaskEntity task : readTaskList) {
             imageList.add(task.imageId);
         }
         mResultLauncher.launch(intent);
@@ -311,5 +400,4 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
     public void refreshData() {
 
     }
-
 }
