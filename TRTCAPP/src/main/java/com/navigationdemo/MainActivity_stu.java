@@ -129,12 +129,12 @@ public class MainActivity_stu extends AppCompatActivity implements View.OnClickL
     private String TRTCSECRETKEY = "952cad996cadac60fb09b88b0afa102ff7a731ea006b0be8f1ba93332fbbc271";
 
     //即时通信SDKAPPID
-    private int IMSDKAPPID = 1400791138;
-    private String IMSECRETKEY = "ff24b7cf67098baab5ee002c904ffd1d985d1f34ce858086d9c9ab9c515a53df";
+    private int IMSDKAPPID = 1600061809;
+    private String IMSECRETKEY = "952cad996cadac60fb09b88b0afa102ff7a731ea006b0be8f1ba93332fbbc271";
 
     //白板SDKAPPID
-    private int BOARDSDKAPPID = 1400791138;
-    private String BOARDSECRETKEY = "ff24b7cf67098baab5ee002c904ffd1d985d1f34ce858086d9c9ab9c515a53df";
+    private int BOARDSDKAPPID = 1600061809;
+    private String BOARDSECRETKEY = "952cad996cadac60fb09b88b0afa102ff7a731ea006b0be8f1ba93332fbbc271";
 
     private static Timer timer;
 
@@ -197,10 +197,10 @@ public class MainActivity_stu extends AppCompatActivity implements View.OnClickL
     public static int mUserCount = 0;
 
     private String MRegion = "ap-guangzhou";                                          //存储桶配置的大区 	ap-guangzhou
-    private String Mbucket = "zjkj-1305170119";                                        //存储桶名称   由bucketname-appid 组成，appid必须填入
-    private String MsecretId = "AKIDwjMo371g8MNCpMzZxAHDTagdOxJQIzVr";                 //存储桶   永久密钥 secretId
-    private String MsecretKey = "Cev068GOOBqKeolMn095oVFoz5A7xnT3";                    //存储桶    永久密钥 secretKey
-    private int bucketSDKappID = 1400791138;  //这里应该是BOARDSDKAPPID
+    private String Mbucket = "zjkj-cos-1328824399";                                        //存储桶名称   由bucketname-appid 组成，appid必须填入
+    private String MsecretId = "AKIDKH6j9KI3c4JPY7Z0LWWhkfN1eDewGRPD";                 //存储桶   永久密钥 secretId
+    private String MsecretKey = "odUK3ZyEMXZQ3RaXJtGyfCXeYJrsjT2c";                    //存储桶    永久密钥 secretKey
+    private int bucketSDKappID = 1600061809;  //这里应该是BOARDSDKAPPID
 
 
     private String UserSig = "";                                                        //腾讯服务签名
