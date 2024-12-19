@@ -134,6 +134,8 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
 
     private boolean recording = false;
 
+    private int onlyAudioNum = 0;
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -234,12 +236,11 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
         }
 
         // 背诵部分逻辑
-
+        tv_read_start = view.findViewById(R.id.tv_read_start);
         if ("recite".equals(type)) {
             ll_cover_open = view.findViewById(R.id.ll_cover_open);
             rl_cover = view.findViewById(R.id.rl_cover);
             tv_watch_times = view.findViewById(R.id.tv_watch_times);
-            tv_read_start = view.findViewById(R.id.tv_read_start);
             tv_read_start.setText("开始背诵");
             tv_watch_times.setText(String.valueOf(readTask.showNum));
             ll_cover_open.setOnClickListener(this);
@@ -486,6 +487,12 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
 
     // 查看录制结果面板
     private void showRecording() {
+        if (onlyAudioNum == 0) {
+            switchPanel(1);
+            Toast.makeText(getActivity(), "你还没有录音。", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         fl_video.removeAllViews();
         switchPanel(3);
         final ViewTreeObserver observer = fl_video.getViewTreeObserver();
@@ -512,9 +519,6 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
             for (int i = 0; i < audioList.size(); i++) {
                 addOneVedioBlock(i, audioList.get(i).time);
             }
-        }
-        if (audioList.size() == 0) {
-            switchPanel(1);
         }
     }
 
@@ -608,10 +612,13 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
             switch (message.what) {
                 case 100:
                     audioList = (List<ReadTaskAudioEntity>) message.obj;
-
+                    onlyAudioNum = 0;
                     for (int i = 0; i < audioList.size(); i++) {
                         ReadTaskAudioEntity audio = audioList.get(i);
                         audio.time = TimeUtil.getRecordTime(Integer.parseInt(audio.time));
+                        if(audio.type.equals("1")){
+                            onlyAudioNum++;
+                        }
                     }
                     refreshNum();
                     refreshRecordPanel();
@@ -633,9 +640,13 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
                             uploadWatchTimes("update");
                             watchStartTime = System.currentTimeMillis();
                         }
+                    }else{
+                        if(audioList.size() == 0){
+                            tv_read_start.setText("开始朗读");
+                        }else{
+                            tv_read_start.setText("继续朗读");
+                        }
                     }
-
-
                     break;
 
             }
@@ -643,13 +654,18 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
     };
 
     private void refreshNum() {
-        tv_recording_num.setText(String.valueOf(audioList.size()));
-        tv_recording_num2.setText("(" + audioList.size() + ")");
+        if(onlyAudioNum == 0){
+            tv_recording_num.setVisibility(View.GONE);
+        }else{
+            tv_recording_num.setVisibility(View.VISIBLE);
+            tv_recording_num.setText(String.valueOf(onlyAudioNum));
+            tv_recording_num2.setText("(" + onlyAudioNum + ")");
+        }
     }
 
     private void loadItems_Net() {
         // 图片录音列表
-        String mRequestUrl = Constant.API + Constant.GET_AUDIO_LIST + "?recordId=" + readTask.recordId + "&imageId=" + readTask.imageId + "&stuId=" + MyApplication.username;
+        String mRequestUrl = Constant.API + Constant.GET_AUDIO_LIST + "?recordId=" + readTask.recordId + "&imageId=" + readTask.imageId + "&stuId=" + MyApplication.username + "&type=" + ("recite".equals(type) ? 2 : 1);
 
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {

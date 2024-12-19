@@ -112,7 +112,7 @@ public class ReadAloudSubmitActivity extends AppCompatActivity implements View.O
         type = getIntent().getStringExtra("type");
         if(type.equals("recite")){
             TextView tv_title = findViewById(R.id.tv_title);
-            tv_title.setText("背诵结果");
+            tv_title.setText("背诵过程");
         }
 
 
