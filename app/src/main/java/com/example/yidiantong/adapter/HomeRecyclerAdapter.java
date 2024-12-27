@@ -176,6 +176,7 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     icon_id = R.drawable.interactive_icon;
                     break;
                 case "朗读":
+                case "背诵":
                     icon_id = R.drawable.read_icon;
                     break;
                 default:
@@ -183,12 +184,12 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     throw new IllegalStateException("Unexpected value: " + item.getType());
             }
             iv_icon.setImageResource(icon_id);
-            if(item.getType().equals("直播课消息")){
+            if (item.getType().equals("直播课消息")) {
                 ll_width.getLayoutParams().width = ViewGroup.LayoutParams.WRAP_CONTENT;
-                if(item.getCreaterName().equals("已结束")) {
+                if (item.getCreaterName().equals("已结束")) {
                     tv_is_live.setText("已结束");
                     tv_is_live.setBackgroundResource(R.color.live_btn_gray);
-                }else if(item.getCreaterName().equals("未开始")){
+                } else if (item.getCreaterName().equals("未开始")) {
                     tv_is_live.setText("未开始");
                     tv_is_live.setBackgroundResource(R.color.live_btn_purple);
                 }
@@ -196,9 +197,9 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             tv_type.setText(item.getType());
             tv_title.setText(item.getBottomTitle());
 
-            if(!item.getType().equals("课堂回放")){
+            if (!item.getType().equals("课堂回放")) {
                 tv_title.setVisibility(View.VISIBLE);
-            }else{
+            } else {
                 tv_title.setVisibility(View.INVISIBLE);
             }
 
@@ -215,29 +216,30 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             //设置第二行
             String second_line = item.getCourseName() + item.getTimeStop();
-            if(item.getType().equals("课堂回放")){
+            if (item.getType().equals("课堂回放")) {
                 tv_second_line.setText(item.getCourseName());
-            }else{
+            } else {
                 tv_second_line.setText(second_line);
             }
             //学习内容状态
             if (item.getStatus().length() == 0) {
-                if(!item.getType().equals("课堂回放") && !item.getType().equals("朗读")){
+                if (!item.getType().equals("课堂回放") && !item.getType().equals("朗读") && !item.getType().equals("背诵")) {
                     iv_top_icon1.setVisibility(View.GONE);
                     iv_top_icon2.setVisibility(View.GONE);
                     // 直播类型
                     tv_is_live.setVisibility(View.VISIBLE);
                     tv_teacher.setVisibility(View.GONE);
-                }else{
+                } else {
                     iv_top_icon1.setVisibility(View.INVISIBLE);
                     iv_top_icon2.setVisibility(View.GONE);
                     tv_is_live.setVisibility(View.GONE);
                 }
-                if(item.getType().equals("朗读")){
+                if (item.getType().equals("朗读") || item.getType().equals("背诵")) {
                     tv_teacher.setVisibility(View.VISIBLE);
                     tv_teacher.setText(item.getCreaterName());
                 }
-            }else{
+
+            } else {
                 // 非直播类型
                 tv_is_live.setVisibility(View.GONE);
                 tv_teacher.setVisibility(View.VISIBLE);

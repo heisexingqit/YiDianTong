@@ -19,4 +19,14 @@ public class ReadTaskResultEntity implements Serializable {
                 ", isNew=" + isNew +
                 '}';
     }
+
+    public void getReciteId(){
+        int id = 1;
+        for (ZYRecordAnswerEntity entity: ZYRecordAnswerList) {
+            if(entity.type.equals("2")){
+                entity.reciteId = id+"";
+                id++;
+            }
+        }
+    }
 }

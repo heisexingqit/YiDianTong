@@ -7,7 +7,9 @@ public class ReadTaskEntity implements Serializable {
     public String recordId;
     public String imageId;
     public String imageUrl;
-    public List<String> ZYRecordAnswerList;
+    public int showNum;
+    public int initNum;
+    public List<ZYRecordAnswerEntity> ZYRecordAnswerList;
     public String imageOrder;
     public boolean isNew;
 }

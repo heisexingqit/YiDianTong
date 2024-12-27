@@ -4,8 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.AudioFormat;
-import android.media.AudioRecord;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -14,7 +13,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -62,9 +60,9 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -99,6 +97,10 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
     private MediaPlayer mPlayer;
     private MediaRecorder mRecorder;
     private int fl_video_width;
+    private TextView tv_read_start;
+    private RelativeLayout rl_cover;
+    private TextView tv_watch_times;
+    private LinearLayout ll_cover_open;
 
     public ReadAloudLookFragment() {
     }
@@ -125,6 +127,13 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
     private ImageView last_iv_icon;
     private AudioWaveView audioWaveView;
 
+    // 查看图片
+    private boolean isCover = false;
+
+    private long watchStartTime;
+
+    private boolean recording = false;
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -132,12 +141,15 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
         homework = (HomeworkInterface2) context;
     }
 
-    public static ReadAloudLookFragment newInstance(ReadTaskEntity readTask, int pos, int total) {
+    private String type;
+
+    public static ReadAloudLookFragment newInstance(ReadTaskEntity readTask, int pos, int total, String type) {
         ReadAloudLookFragment fragment = new ReadAloudLookFragment();
         Bundle args = new Bundle();
         args.putSerializable("readTask", readTask);
         args.putInt("pos", pos);
         args.putInt("total", total);
+        args.putString("type", type);
         fragment.setArguments(args);
         return fragment;
     }
@@ -149,6 +161,7 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
             readTask = (ReadTaskEntity) getArguments().getSerializable("readTask");
             pos = getArguments().getInt("pos");
             total = getArguments().getInt("total");
+            type = getArguments().getString("type");
         }
     }
 
@@ -214,10 +227,22 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
         ll_my_recording.setOnClickListener(this);
 
         // 如果已经提交，那么进行屏蔽
-        if(!readTask.isNew){
+        if (!readTask.isNew) {
             ImageView iv_start_read = view.findViewById(R.id.iv_start_read);
             iv_start_read.setImageResource(R.drawable.microphone_gray);
             ll_start_read.setEnabled(false);
+        }
+
+        // 背诵部分逻辑
+
+        if ("recite".equals(type)) {
+            ll_cover_open = view.findViewById(R.id.ll_cover_open);
+            rl_cover = view.findViewById(R.id.rl_cover);
+            tv_watch_times = view.findViewById(R.id.tv_watch_times);
+            tv_read_start = view.findViewById(R.id.tv_read_start);
+            tv_read_start.setText("开始背诵");
+            tv_watch_times.setText(String.valueOf(readTask.showNum));
+            ll_cover_open.setOnClickListener(this);
         }
 
         return view;
@@ -252,7 +277,10 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
                 break;
             // 主页跳转
             case R.id.ll_start_read:
-                startRecording();
+                if (type.equals("recite") && isCover == false) {
+                    reciteCloseCover();
+                }
+                permissionMico();
                 break;
             case R.id.ll_my_recording:
                 showRecording();
@@ -263,7 +291,11 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
             case R.id.ll_look_result:
             case R.id.iv_read_result:
                 if (audioList.size() == 0) {
-                    Toast.makeText(getActivity(), "没有朗读记录", Toast.LENGTH_SHORT).show();
+                    if(type.equals("recite")){
+                        Toast.makeText(getActivity(), "没有背诵记录", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(getActivity(), "没有朗读记录", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     jumpToResult();
                 }
@@ -323,10 +355,86 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
                     iv_icon.setImageResource(R.drawable.play_recording_off);
                 }
                 break;
+            case R.id.ll_cover_open:
+                if (isCover) {
+                    // 背诵查看图片
+                    reciteOpenCover();
+                } else {
+                    // 查看完遮蔽照片
+                    reciteCloseCover();
+                }
+                break;
+
         }
+    }
+    private boolean needOpenCoverAfterUpload = false;
+    public void reciteOpenCover() {
+        if (readTask.showNum == 0) {
+            Toast.makeText(getActivity(), "剩余查看次数为0!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (recording == true) {
+            needOpenCoverAfterUpload = true;
+            stopRecoding();
+            uploadAudioFile();
+        }else{
+            rl_cover.setVisibility(View.GONE);
+            isCover = false;
+            watchStartTime = System.currentTimeMillis();
+            uploadWatchTimes("update");
+        }
+
+        readTask.showNum--;
+        tv_watch_times.setText(String.valueOf(readTask.showNum));
+    }
+
+    public void reciteCloseCover() {
+        rl_cover.setVisibility(View.VISIBLE);
+        if(audioList.size() > 0){
+            uploadWatchTimes("add");
+        }
+        isCover = true;
+    }
+
+    public void uploadWatchTimes(String handleType) {
+        String mRequestUrl = "";
+        if (handleType.equals("update")) {
+            // 更新剩余次数
+            mRequestUrl = Constant.API + Constant.UPDATE_WATCH_TIMES + "?recordId=" + readTask.recordId + "&imageId=" + readTask.imageId + "&stuId=" + MyApplication.username + "&num=" + readTask.showNum;
+        } else {
+//          添加新的记录
+            String cnName = "";
+            try {
+                cnName = URLEncoder.encode(MyApplication.cnName, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            // 获得当前时间戳
+            long endTime = System.currentTimeMillis();
+
+            mRequestUrl = Constant.API + Constant.ADD_WATCH_RECORD + "?recordId=" + readTask.recordId + "&imageId=" + readTask.imageId + "&stuId=" + MyApplication.username + "&stuName=" + cnName
+                    + "&startTime=" + watchStartTime + "&endTime=" + endTime;
+        }
+
+        StringRequest request = new StringRequest(mRequestUrl, response -> {
+                try {
+                    JSONObject json = JsonUtils.getJsonObjectFromString(response);
+                    String itemString = json.getString("data");
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+//                rl_loading.setVisibility(View.GONE);
+                }
+        }, error -> {
+            Log.d("wen", "Volley_Error: " + error.toString());
+//            rl_loading.setVisibility(View.GONE);
+        });
+        MyApplication.addRequest(request, TAG);
     }
 
     private void stopRecoding() {
+
         ll_playing.setVisibility(View.GONE);
         rl_stop.setVisibility(View.VISIBLE);
         tv_time.setText(TimeUtil.getRecordTime(audioTime));
@@ -343,11 +451,12 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
             mRecorder = null;
         }
         audioWaveView.stopRecording();
-
     }
 
     // 开始录制的页面UI相关，包括录音组件相关
     private void startRecording() {
+        recording = true;
+
         // 显示正在录制
         switchPanel(2);
         ll_playing.setVisibility(View.VISIBLE);
@@ -367,12 +476,12 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
                     @Override
                     public void run() {
                         // 更新UI
-                        tv_duration.setText("(" + TimeUtil.getRecordTimeCharacter(audioTime) +")");
+                        tv_duration.setText("(" + TimeUtil.getRecordTimeCharacter(audioTime) + ")");
                     }
                 });
             }
         }, 0, 1000);  // 延迟0秒，每1000毫秒（1秒）执行一次
-        permissionMico();
+        audioWaveView.startRecording(audioPath);
     }
 
     // 查看录制结果面板
@@ -404,17 +513,15 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
                 addOneVedioBlock(i, audioList.get(i).time);
             }
         }
-        if(audioList.size() == 0){
+        if (audioList.size() == 0) {
             switchPanel(1);
         }
     }
-
 
     private void jumpToResult() {
         stopAudioIfPlay();
         homework.jumpToSubmit();
     }
-
 
     private void addOneVedioBlock(int pos, String time) {
 
@@ -425,68 +532,59 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
         TextView tv_time = view.findViewById(R.id.tv_time);
         ImageView iv_icon = view.findViewById(R.id.iv_icon);
         ImageView iv_delete = view.findViewById(R.id.iv_delete);
+        ConstraintLayout cl_block = view.findViewById(R.id.cl_block);
 
         tv_time.setText(time);
 
-        View.OnClickListener playVideoListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                playAudioByView(pos, iv_icon);
-            }
-        };
-        // 点击事件，播放
-        tv_time.setOnClickListener(playVideoListener);
-        iv_icon.setOnClickListener(playVideoListener);
+        if (audioList.get(pos).type.equals("1")) {
+            View.OnClickListener playVideoListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    playAudioByView(pos, iv_icon);
+                }
+            };
+            // 点击事件，播放
+            tv_time.setOnClickListener(playVideoListener);
+            iv_icon.setOnClickListener(playVideoListener);
 
-        // 点击事件，删除
-        iv_delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("提示")
-                        .setMessage("是否删除录音？")
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                deleteAudio(pos);
-                            }
-                        })
-                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .show();
+            // 点击事件，删除
+            iv_delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("提示")
+                            .setMessage("是否删除录音？")
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    deleteAudio(pos);
+                                }
+                            })
+                            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
 
+                }
+            });
+            if (!readTask.isNew) {
+                iv_delete.setImageResource(R.drawable.delete_recording_small_gray);
+                iv_delete.setEnabled(false);
             }
-        });
-        if(!readTask.isNew){
-            iv_delete.setImageResource(R.drawable.delete_recording_small_gray);
-            iv_delete.setEnabled(false);
+        } else {
+            // 查看记录
+            iv_icon.setImageResource(R.drawable.recite_eye_icon);
+            iv_delete.setVisibility(View.INVISIBLE);
+            cl_block.setBackgroundColor(Color.parseColor("#dcdcdc"));
         }
 
-
-        ConstraintLayout rl_block = view.findViewById(R.id.rl_block);
-        ViewGroup.LayoutParams params = rl_block.getLayoutParams();
+        ViewGroup.LayoutParams params = cl_block.getLayoutParams();
         params.width = fl_video_width / 3 - PxUtils.dip2px(view.getContext(), 15);
-        rl_block.setLayoutParams(params);
+        cl_block.setLayoutParams(params);
         fl_video.addView(view);
-    }
-
-    private void startMico() {
-//        mRecorder = new MediaRecorder();
-//        mRecorder.setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION);  // 使用优化的音源
-//        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);  // 使用高质量输出格式
-//        mRecorder.setOutputFile(audioPath);  // 设置输出路径
-//        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);  // 使用更高质量的AAC编码
-//        try {
-//            mRecorder.prepare();
-//            mRecorder.start();
-            audioWaveView.startRecording(audioPath);
-//        } catch (IOException e) {
-//            Log.e(TAG, "prepare() failed ---" + e.getMessage());
-//        }
     }
 
     private static byte[] getBytes(InputStream inputStream) throws IOException {
@@ -510,13 +608,34 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
             switch (message.what) {
                 case 100:
                     audioList = (List<ReadTaskAudioEntity>) message.obj;
-                    for (int i = 0; i < audioList.size(); i++){
+
+                    for (int i = 0; i < audioList.size(); i++) {
                         ReadTaskAudioEntity audio = audioList.get(i);
                         audio.time = TimeUtil.getRecordTime(Integer.parseInt(audio.time));
                     }
                     refreshNum();
                     refreshRecordPanel();
                     homework.offLoading();
+                    if(type.equals("recite")){
+                        if(audioList.size() == 0){
+                            isCover = false;
+                            rl_cover.setVisibility(View.GONE);
+                            tv_read_start.setText("开始背诵");
+                        }else{
+                            isCover = true;
+                            rl_cover.setVisibility(View.VISIBLE);
+                            tv_read_start.setText("继续背诵");
+                        }
+                        if(needOpenCoverAfterUpload){
+                            needOpenCoverAfterUpload = false;
+                            isCover = false;
+                            rl_cover.setVisibility(View.GONE);
+                            uploadWatchTimes("update");
+                            watchStartTime = System.currentTimeMillis();
+                        }
+                    }
+
+
                     break;
 
             }
@@ -560,6 +679,7 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
 
     private void uploadAudioFile() {
         stopAudioIfPlay();
+        recording = false;
         homework.onLoading("录音上传中...");
         Uri fileUri = Uri.fromFile(new File(audioPath));
         String mRequestUrl = Constant.API + Constant.UPLOAD_AUDIO;
@@ -737,6 +857,14 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
         switchPanel(1); // 重置UI
     }
 
+    @Override
+    public void onDestroyView() {
+        if(type.equals("recite") && isCover == false){
+            reciteCloseCover();
+        }
+        super.onDestroyView();
+    }
+
     private void permissionMico() {
         // 权限请求
         AndPermission.with(this)
@@ -746,7 +874,7 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
                     // 获得权限后
                     @Override
                     public void onAction(List<String> data) {
-                        startMico();
+                        startRecording();
                     }
                 }).onDenied(new Action<List<String>>() {
                     @Override

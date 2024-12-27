@@ -229,6 +229,7 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                         checkYearTerm();
                         break;
                     case "朗读":
+                    case "背诵":
                         intent = new Intent(getActivity(), ReadAloudLookActivity.class);
                         intent.putExtra("learnPlanId", adapter.itemList.get(pos).getLearnId());
                         intent.putExtra("title", adapter.itemList.get(pos).getBottomTitle());
@@ -237,10 +238,13 @@ public class MainHomeFragment extends Fragment implements View.OnClickListener {
                             isNew = false;
                         }
                         intent.putExtra("isNew", isNew);
+                        if(adapter.itemList.get(pos).getType().equals("朗读")){
+                            intent.putExtra("type", "read");
+                        }else{
+                            intent.putExtra("type", "recite");
+                        }
                         startActivity(intent);
-
                         break;
-
 
                 }
             });

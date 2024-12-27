@@ -37,7 +37,6 @@ public class TReadAloudResultRecyclerAdapter extends RecyclerView.Adapter<Recycl
     public List<ZYRecordAnswerEntity> itemList;
 
     private boolean isNew;
-    private View v;
 
 
     public TReadAloudResultRecyclerAdapter(Context context, List<ZYRecordAnswerEntity> itemList) {
@@ -93,6 +92,7 @@ public class TReadAloudResultRecyclerAdapter extends RecyclerView.Adapter<Recycl
         private final TextView tv_redo;
         private final ImageView iv_delete;
         private final TextView tv_delete;
+        private final LinearLayout ll_main_block;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -111,6 +111,7 @@ public class TReadAloudResultRecyclerAdapter extends RecyclerView.Adapter<Recycl
             tv_redo = itemView.findViewById(R.id.tv_redo);
             iv_delete = itemView.findViewById(R.id.iv_delete);
             tv_delete = itemView.findViewById(R.id.tv_delete);
+            ll_main_block = itemView.findViewById(R.id.ll_main_block);
         }
 
         // 数据更新放在这里(频繁调用，不能放一次性操作，例如绑定点击事件)
@@ -119,84 +120,98 @@ public class TReadAloudResultRecyclerAdapter extends RecyclerView.Adapter<Recycl
             tv_No.setText("(" + (pos + 1) + ")");
             // 数据更新
             tv_time.setText(TimeUtil.getRecordTime(Integer.parseInt(item.time)));
-            if (item.status.equals("2")) {
-                // 语音识别成功，找到出处
-                tv_scores.setText(item.score + " 分");
 
-                // 原文List
-                tv_standard_answer.setText(createSpannableStringBuilder(item.yuanwenlist, false));
+            if(item.type.equals("2")){
+                ll_delete.setVisibility(View.INVISIBLE);
+                ll_redo.setVisibility(View.INVISIBLE);
+                iv_icon.setImageResource(R.drawable.recite_eye_icon);
+                ll_main_block.setVisibility(View.GONE);
+                tv_scores.setTextColor(Color.parseColor("#faaf01"));
+                tv_scores.setText("第" + item.reciteId + "次看原文");
+            }else{
+                iv_icon.setImageResource(R.drawable.play_recording_off);
+                ll_main_block.setVisibility(View.VISIBLE);
+                tv_scores.setTextColor(Color.RED);
 
-                ll_hide.setVisibility(View.VISIBLE);
 
-                // 语音List
-                tv_stu_answer.setText(createSpannableStringBuilder(item.yuyinlist, true));
-            } else if (item.status.equals("3")) {
-                // 未找到出处
-                tv_scores.setText(item.score + " 分");
-                ll_hide.setVisibility(View.VISIBLE);
-                tv_stu_answer.setText(createSpannableStringBuilder(item.yuyinlist, false));
+                if (item.status.equals("2")) {
+                    // 语音识别成功，找到出处
+                    tv_scores.setText(item.score + " 分");
+                    // 原文List
+                    tv_standard_answer.setText(createSpannableStringBuilder(item.yuanwenlist, false));
 
-                // 创建一个SpannableString对象
-                SpannableString spannableString = new SpannableString("原文中没有找到您朗读的内容");
+                    ll_hide.setVisibility(View.VISIBLE);
 
-                // 设置文本的颜色为红色
-                spannableString.setSpan(new ForegroundColorSpan(Color.RED), 0, spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    // 语音List
+                    tv_stu_answer.setText(createSpannableStringBuilder(item.yuyinlist, true));
+                } else if (item.status.equals("3")) {
+                    // 未找到出处
+                    tv_scores.setText(item.score + " 分");
+                    ll_hide.setVisibility(View.VISIBLE);
+                    tv_stu_answer.setText(createSpannableStringBuilder(item.yuyinlist, false));
 
-                // 将SpannableString设置给TextView
-                tv_standard_answer.setText(spannableString);
-            } else if (item.status.equals("4")) {
-                // 语音识别失败
-                tv_scores.setText(item.score);
-                ll_hide.setVisibility(View.GONE);
-                // 创建一个SpannableString对象
-                SpannableString spannableString = new SpannableString("语音没有识别出内容");
+                    // 创建一个SpannableString对象
+                    SpannableString spannableString = new SpannableString("原文中没有找到您朗读的内容");
 
-                // 设置文本的颜色为红色
-                spannableString.setSpan(new ForegroundColorSpan(Color.RED), 0, spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    // 设置文本的颜色为红色
+                    spannableString.setSpan(new ForegroundColorSpan(Color.RED), 0, spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-                // 将SpannableString设置给TextView
-                tv_stu_answer.setText(spannableString);
-            } else {
-                // 语音识别失败
-                tv_scores.setText(item.score);
-                ll_hide.setVisibility(View.GONE);
-                // 创建一个SpannableString对象
-                SpannableString spannableString = new SpannableString("语音正在转写");
+                    // 将SpannableString设置给TextView
+                    tv_standard_answer.setText(spannableString);
+                } else if (item.status.equals("4")) {
+                    // 语音识别失败
+                    tv_scores.setText(item.score);
+                    ll_hide.setVisibility(View.GONE);
+                    // 创建一个SpannableString对象
+                    SpannableString spannableString = new SpannableString("语音没有识别出内容");
 
-                // 设置文本的颜色为红色
-                spannableString.setSpan(new ForegroundColorSpan(Color.RED), 0, spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    // 设置文本的颜色为红色
+                    spannableString.setSpan(new ForegroundColorSpan(Color.RED), 0, spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-                // 将SpannableString设置给TextView
-                tv_stu_answer.setText(spannableString);
+                    // 将SpannableString设置给TextView
+                    tv_stu_answer.setText(spannableString);
+                } else {
+                    // 语音识别失败
+                    tv_scores.setText(item.score);
+                    ll_hide.setVisibility(View.GONE);
+                    // 创建一个SpannableString对象
+                    SpannableString spannableString = new SpannableString("语音正在转写");
+
+                    // 设置文本的颜色为红色
+                    spannableString.setSpan(new ForegroundColorSpan(Color.RED), 0, spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                    // 将SpannableString设置给TextView
+                    tv_stu_answer.setText(spannableString);
+                }
+
+                ll_play.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mItemClickListener.playVedio(pos, iv_icon);
+                    }
+                });
+                ll_redo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mItemClickListener.redoVedio(pos);
+                    }
+                });
+                ll_delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mItemClickListener.deleteVedio(pos);
+                    }
+                });
+                if(!isNew){
+                    ll_redo.setEnabled(false);
+                    ll_delete.setEnabled(false);
+                    iv_delete.setImageResource(R.drawable.delete_recording_gray);
+                    iv_redo.setImageResource(R.drawable.redo_recording_gray);
+                    tv_delete.setTextColor(Color.parseColor("#9c9c9c"));
+                    tv_redo.setTextColor(Color.parseColor("#9c9c9c"));
+                }
+
             }
-
-            ll_play.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mItemClickListener.playVedio(pos, iv_icon);
-                }
-            });
-            ll_redo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mItemClickListener.redoVedio(pos);
-                }
-            });
-            ll_delete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mItemClickListener.deleteVedio(pos);
-                }
-            });
-            if(!isNew){
-                ll_redo.setEnabled(false);
-                ll_delete.setEnabled(false);
-                iv_delete.setImageResource(R.drawable.delete_recording_gray);
-                iv_redo.setImageResource(R.drawable.redo_recording_gray);
-                tv_delete.setTextColor(Color.parseColor("#9c9c9c"));
-                tv_redo.setTextColor(Color.parseColor("#9c9c9c"));
-            }
-
         }
     }
 

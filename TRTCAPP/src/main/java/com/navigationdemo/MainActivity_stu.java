@@ -252,6 +252,12 @@ public class MainActivity_stu extends AppCompatActivity implements View.OnClickL
         return this.mBoard;
     }                //获取到白班实例
 
+    // 提交答案标志
+    private Boolean tfsubmitflag = true;
+    private Boolean singlesubmitflag = true;
+    private Boolean multisubmitflag = true;
+    private Boolean subjectivesubmitflag = true;
+
     private Boolean BoardStatus = false;                                          //记录白板初始化 状态
     private Boolean addBoardtoFragmentstatus = false;                             //记录白板是否添加到了父容器中
     private FrameLayout.LayoutParams addBoardlayoutParams;                      //添加白板的时候用到的参数
@@ -1237,7 +1243,8 @@ public class MainActivity_stu extends AppCompatActivity implements View.OnClickL
 
                 mTRTCCloud.startRemoteView(teacherId + "_camera", TRTCCloudDef.TRTC_VIDEO_STREAM_TYPE_BIG, activity.mTXCVVTeacherPreviewView);
                 Toast.makeText(activity, "老师进入教室", Toast.LENGTH_SHORT).show();
-                teacherTRTCBackground.setVisibility(View.INVISIBLE);
+                // TODO 学生进入课堂教师背景消失问题
+                //teacherTRTCBackground.setVisibility(View.INVISIBLE);
             } else {
                 if (AnswerActivityTea.findMemberInKetangList(userId) != null)
                     activity.videoListFragment.addCameraView(userId, AnswerActivityTea.findMemberInKetangList(userId).getName(), activity.mTRTCCloud);
@@ -3463,8 +3470,17 @@ public class MainActivity_stu extends AppCompatActivity implements View.OnClickL
             if (id == R.id.tfsubmit) {
                 String checkedValues = SelectUtil.getOne(radios_tf);
                 System.out.println("判断选中了：" + checkedValues);
-                HttpActivityStu.saveAnswer(checkedValues, userId, userCn, this);
+                if (checkedValues == null || checkedValues.equals("")) {
+                    Toast.makeText(this, "请先作答", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(this, "提交成功", Toast.LENGTH_SHORT).show();
 
+                if (tfsubmitflag) {
+                    tfsubmitflag = false;
+                    HttpActivityStu.saveAnswer(checkedValues, userId, userCn, this);
+                    tfsubmitflag = true;
+                }
 //                if(AnswerActivity.questionAction.equals("startAnswerSuiji")
 //                        ||AnswerActivity.questionAction.equals("startAnswerQiangDa")){
 //                    current_answer = null;
@@ -3493,7 +3509,16 @@ public class MainActivity_stu extends AppCompatActivity implements View.OnClickL
             if (id == R.id.singlesubmit) {
                 String checkedValues = SelectUtil.getOne(radios_single);
                 System.out.println("单选选中了：" + checkedValues + "id:" + HttpActivityStu.questionId);
-                HttpActivityStu.saveAnswer(checkedValues, userId, userCn, this);
+                if (checkedValues == null || checkedValues.equals("")) {
+                    Toast.makeText(this, "请先作答", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(this, "提交成功", Toast.LENGTH_SHORT).show();
+                if (singlesubmitflag) {
+                    singlesubmitflag = false;
+                    HttpActivityStu.saveAnswer(checkedValues, userId, userCn, this);
+                    singlesubmitflag = true;
+                }
 
 //                if(AnswerActivity.questionAction.equals("startAnswerSuiji")
 //                        ||AnswerActivity.questionAction.equals("startAnswerQiangDa")){
@@ -3521,7 +3546,16 @@ public class MainActivity_stu extends AppCompatActivity implements View.OnClickL
             if (id == R.id.multisubmit) {
                 String checkedValues = SelectUtil.getMany(radios_multi);
                 System.out.println("多选选中�?:" + checkedValues);
-                HttpActivityStu.saveAnswer(checkedValues, userId, userCn, this);
+                if (checkedValues == null || checkedValues.equals("")) {
+                    Toast.makeText(this, "请先作答", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(this, "提交成功", Toast.LENGTH_SHORT).show();
+                if (multisubmitflag) {
+                    multisubmitflag = false;
+                    HttpActivityStu.saveAnswer(checkedValues, userId, userCn, this);
+                    multisubmitflag = true;
+                }
 
 //                if(AnswerActivity.questionAction.equals("startAnswerSuiji")
 //                        ||AnswerActivity.questionAction.equals("startAnswerQiangDa")){
@@ -3567,7 +3601,6 @@ public class MainActivity_stu extends AppCompatActivity implements View.OnClickL
                     Log.d("wen", "主观题提交: " + base64_index);
                     editoneValue = editoneValue.replace("'" + i + "'", "<img src=\"" + base64id_url.get(i) + "\">");
                 }
-                HttpActivityStu.saveAnswer(editoneValue, userId, userCn, this);
 
 //                if(AnswerActivity.questionAction.equals("startAnswerSuiji")
 //                        ||AnswerActivity.questionAction.equals("startAnswerQiangDa")){
@@ -3582,9 +3615,14 @@ public class MainActivity_stu extends AppCompatActivity implements View.OnClickL
 //                }
 
                 subjective_answer.setText("");
-                subjective_echo.setText("");
+                //subjective_echo.setText("");
                 //subjective_scroll.setVisibility(GONE);
-
+                Toast.makeText(this, "提交成功", Toast.LENGTH_SHORT).show();
+                if (subjectivesubmitflag) {
+                    subjectivesubmitflag = false;
+                    HttpActivityStu.saveAnswer(editoneValue, userId, userCn, this);
+                    subjectivesubmitflag = true;
+                }
                 base64_index = 0;
                 base64id_url = new HashMap<>();
             }
@@ -3875,8 +3913,26 @@ public class MainActivity_stu extends AppCompatActivity implements View.OnClickL
             } else {
                 last_actiontime_answer = AnswerActivityStu.questionTime;
             }
+//            Toast.makeText(this, AnswerActivityStu.questionAction, Toast.LENGTH_SHORT).show();
             switch (AnswerActivityStu.questionAction) {
                 case "startAnswer":
+                    if(AnswerActivityStu.questionBaseTypeId.equals("101")){
+                        setAnswerAreaInvisible();
+                        setOptionClick();
+                    }
+                    else if(AnswerActivityStu.questionBaseTypeId.equals("103")){
+                        setAnswerAreaInvisible();
+                        setOptionClick();
+                    }
+                    else if(AnswerActivityStu.questionBaseTypeId.equals("102")){
+                        setAnswerAreaInvisible();
+                        setOptionClick();
+                    }
+                    else if(AnswerActivityStu.questionBaseTypeId.equals("104")){
+                        setAnswerAreaInvisible();
+                        setOptionClick();
+                        subjective_echo.setText("");
+                    }
                     Log.e(TAG, "准备更新UI" + AnswerActivityStu.questionAction);
                 case "startAnswerSuiji":
                 case "startAnswerQiangDa":
@@ -3946,10 +4002,33 @@ public class MainActivity_stu extends AppCompatActivity implements View.OnClickL
                     BottomButtonActivity.qiangDa(this);
                     System.out.println("answer over c");
                     break;
+                // TODO 按钮修改
+                // 结束作答
                 case "stopAnswer":
+                    setOptionUnClick();
+//                    // 答题区域不可点击
+//                    if(AnswerActivityStu.questionBaseTypeId.equals("101")){
+//                        // 答题区域不可点击
+//                        setOptionUnClick();
+//                    }
+//                    else if(AnswerActivityStu.questionBaseTypeId.equals("103")){
+//                        // 答题区域不可点击
+//                        setOptionUnClick();
+//                    }
+//                    else if(AnswerActivityStu.questionBaseTypeId.equals("102")){
+//                        // 答题区域不可点击
+//                        setOptionUnClick();
+//                    }
+//                    else if(AnswerActivityStu.questionBaseTypeId.equals("104")){
+//                        MainActivity_stu.group_subjectiveanswer.setVisibility(View.INVISIBLE);
+//                    }
+                    break;
+                // 关闭答题
+                case "closeAnswer":
                 case "stopAnswerSuiji":
                 case "stopAnswerQiangDa":
                 case "close":
+                    setOptionClick();
                     current_answer = null;
 
                     MainActivity_stu.group_tfanswer.setVisibility(View.INVISIBLE);
@@ -3962,11 +4041,11 @@ public class MainActivity_stu extends AppCompatActivity implements View.OnClickL
                     subjective_scroll.setVisibility(View.INVISIBLE);
 
                     mQiangda.setSelected(false);
-                    BottomButtonActivity.qiangDa(this);
+//                    BottomButtonActivity.qiangDa(this);
                     initQuestionData();
                     break;
                 default:
-                    BottomButtonActivity.qiangDa(this);
+//                    BottomButtonActivity.qiangDa(this);
                     break;
             }
         }
@@ -4118,5 +4197,87 @@ public class MainActivity_stu extends AppCompatActivity implements View.OnClickL
     }
 
 
+    //将答题的选项全部置为不可点击
+    public void setOptionUnClick() {
+        tfyes.setEnabled(false);
+        tfno.setEnabled(false);
+        sa.setEnabled(false);
+        sb.setEnabled(false);
+        sc.setEnabled(false);
+        sd.setEnabled(false);
+        se.setEnabled(false);
+        sf.setEnabled(false);
+        sg.setEnabled(false);
+        sh.setEnabled(false);
+        ma.setEnabled(false);
+        mb.setEnabled(false);
+        mc.setEnabled(false);
+        md.setEnabled(false);
+        me.setEnabled(false);
+        mf.setEnabled(false);
+        mg.setEnabled(false);
+        mh.setEnabled(false);
+        tf_submit.setClickable(false);
+        tf_submit.setBackground(getResources().getDrawable(R.drawable.bg_select_default_off));
+        single_submit.setClickable(false);
+        single_submit.setBackground(getResources().getDrawable(R.drawable.bg_select_default_off));
+        multi_submit.setClickable(false);
+        multi_submit.setBackground(getResources().getDrawable(R.drawable.bg_select_default_off));
+        //主观题
+        xiangce.setEnabled(false);
+        paizhao.setEnabled(false);
+        subjective_answer.setEnabled(false);
+        subjective_save.setClickable(false);
+        qingkong.setClickable(false);
+        qingkong.setBackground(getResources().getDrawable(R.drawable.bg_select_default_off));
+        subjective_submit.setClickable(false);
+        subjective_submit.setBackground(getResources().getDrawable(R.drawable.bg_select_default_off));
+    }
+
+    //将答题的选项全部置为可点击
+    public void setOptionClick() {
+        tfyes.setEnabled(true);
+        tfno.setEnabled(true);
+        sa.setEnabled(true);
+        sb.setEnabled(true);
+        sc.setEnabled(true);
+        sd.setEnabled(true);
+        se.setEnabled(true);
+        sf.setEnabled(true);
+        sg.setEnabled(true);
+        sh.setEnabled(true);
+        ma.setEnabled(true);
+        mb.setEnabled(true);
+        mc.setEnabled(true);
+        md.setEnabled(true);
+        me.setEnabled(true);
+        mf.setEnabled(true);
+        mg.setEnabled(true);
+        mh.setEnabled(true);
+        tf_submit.setClickable(true);
+        tf_submit.setBackground(getResources().getDrawable(R.drawable.bg_select_default));
+        single_submit.setClickable(true);
+        single_submit.setBackground(getResources().getDrawable(R.drawable.bg_select_default));
+        multi_submit.setClickable(true);
+        multi_submit.setBackground(getResources().getDrawable(R.drawable.bg_select_default));
+        subjective_scroll.setVisibility(View.INVISIBLE);
+        //主观题
+        xiangce.setEnabled(true);
+        paizhao.setEnabled(true);
+        subjective_answer.setEnabled(true);
+        subjective_save.setClickable(true);
+        qingkong.setClickable(true);
+        qingkong.setBackground(getResources().getDrawable(R.drawable.bg_select_default));
+        subjective_submit.setClickable(true);
+        subjective_submit.setBackground(getResources().getDrawable(R.drawable.bg_select_default));
+    }
+
+    // 答题区域不可见
+    public void setAnswerAreaInvisible() {
+        MainActivity_stu.group_tfanswer.setVisibility(View.INVISIBLE);
+        MainActivity_stu.group_singleanswer.setVisibility(View.INVISIBLE);
+        MainActivity_stu.group_multianswer.setVisibility(View.INVISIBLE);
+        MainActivity_stu.group_subjectiveanswer.setVisibility(View.INVISIBLE);
+    }
 }
 

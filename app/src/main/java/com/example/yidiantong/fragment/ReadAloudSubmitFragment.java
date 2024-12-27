@@ -163,7 +163,6 @@ public class ReadAloudSubmitFragment extends Fragment implements View.OnClickLis
                             }
                         })
                         .show();
-
             }
 
             @Override

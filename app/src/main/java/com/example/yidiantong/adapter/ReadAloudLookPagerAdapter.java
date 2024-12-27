@@ -17,12 +17,13 @@ public class ReadAloudLookPagerAdapter extends FragmentStatePagerAdapter {
     private static final String TAG = "ReadAloudLookPagerAdapter";
 
     private List<ReadTaskEntity> itemList = new ArrayList<>(); //题面列表
-
+    private String type;
     //传递信息
     private String learnPlanId, username;
 
-    public ReadAloudLookPagerAdapter(@NonNull FragmentManager fm) {
+    public ReadAloudLookPagerAdapter(@NonNull FragmentManager fm, String type) {
         super(fm);
+        this.type = type;
     }
 
     public void update(List<ReadTaskEntity> itemList){
@@ -33,7 +34,7 @@ public class ReadAloudLookPagerAdapter extends FragmentStatePagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        return ReadAloudLookFragment.newInstance(itemList.get(position), position, itemList.size());
+        return ReadAloudLookFragment.newInstance(itemList.get(position), position, itemList.size(), type);
     }
 
     @Override

@@ -1009,7 +1009,16 @@
 
             <Button
                 android:id="@+id/tfsubmit"
-                style="@style/submit_style"
+                android:layout_width="60dip"
+                android:layout_height="30dip"
+                android:layout_marginLeft="4dip"
+                android:layout_marginRight="4dip"
+                android:paddingTop="4dip"
+                android:paddingBottom="4dip"
+                android:background="@drawable/bg_select_default"
+                android:gravity="center"
+                android:textSize="13sp"
+                android:textColor="@color/colorPrimary"
                 android:tag="0"
                 android:text="提交" />
 
@@ -1088,7 +1097,16 @@
 
             <Button
                 android:id="@+id/singlesubmit"
-                style="@style/submit_style"
+                android:layout_width="60dip"
+                android:layout_height="30dip"
+                android:layout_marginLeft="4dip"
+                android:layout_marginRight="4dip"
+                android:paddingTop="4dip"
+                android:paddingBottom="4dip"
+                android:background="@drawable/bg_select_default"
+                android:gravity="center"
+                android:textSize="13sp"
+                android:textColor="@color/colorPrimary"
                 android:tag="0"
                 android:text="提交" />
 
@@ -1167,7 +1185,16 @@
 
             <Button
                 android:id="@+id/multisubmit"
-                style="@style/submit_style"
+                android:layout_width="60dip"
+                android:layout_height="30dip"
+                android:layout_marginLeft="4dip"
+                android:layout_marginRight="4dip"
+                android:paddingTop="4dip"
+                android:paddingBottom="4dip"
+                android:background="@drawable/bg_select_default"
+                android:gravity="center"
+                android:textSize="13sp"
+                android:textColor="@color/colorPrimary"
                 android:tag="0"
                 android:text="提交" />
 
@@ -1240,26 +1267,33 @@
 
         <Button
             android:id="@+id/qingkong"
-            style="@style/submit_style"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginRight="10dp"
             android:tag="0"
             android:text="清空"
+            android:textSize="13sp"
+            android:gravity="center"
+            android:textColor="@color/colorPrimary"
+            android:background="@drawable/bg_select_default"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/subjectivesubmit"
             app:layout_constraintHeight_percent="0.6"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.08" />
 
+        <!--    style="@style/submit_style"    -->
         <Button
             android:id="@+id/subjectivesubmit"
-            style="@style/submit_style"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginRight="10dp"
             android:tag="0"
             android:text="提交"
+            android:textSize="13sp"
+            android:gravity="center"
+            android:textColor="@color/colorPrimary"
+            android:background="@drawable/bg_select_default"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.6"

@@ -375,4 +375,13 @@ public class Constant {
     // 提交朗读结果
     public static final String SUBMIT_READ_TASK_RESULT = "/AppServer/ajax/studentApp_zyRecordSaveTask.do";
 
+    // 重新背诵
+    public static final String CLEAR_RECITE_LOG = "/AppServer/ajax/studentApp_zyRecordDeleteBeiSong.do";
+
+    // 背诵剩余查看次数更新
+    public static final String UPDATE_WATCH_TIMES = "/AppServer/ajax/studentApp_zyRecordSaveBeiSongNum.do";
+
+    // 背诵提交查看记录
+    public static final String ADD_WATCH_RECORD = "/AppServer/ajax/studentApp_zyRecordSaveBeiSong.do";
+
 }

@@ -10,14 +10,77 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/iv_main"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:src="@drawable/logo" />
-        <!-- 左边的空白空间 -->
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/iv_main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/logo" />
+
+
+            <!-- 遮盖面板 -->
+            <RelativeLayout
+                android:id="@+id/rl_cover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/recite_cover_bg"
+                android:visibility="visible">
+
+                <LinearLayout
+                    android:paddingTop="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="10dp"
+                    android:paddingBottom="10dp"
+                    android:id="@+id/ll_cover_open"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="点击查看原文"
+                        android:textColor="@color/black"
+                        android:textSize="20sp" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="(还有 "
+                            android:textColor="@color/black"
+                            android:textSize="17sp" />
+
+                        <TextView
+                            android:id="@+id/tv_watch_times"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1"
+                            android:textColor="@color/red"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" 次浏览机会)"
+                            android:textColor="@color/black"
+                            android:textSize="17sp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+        </RelativeLayout>
 
         <!-- 按钮面板 -->
         <LinearLayout
@@ -75,6 +138,7 @@
                     android:src="@drawable/microphone" />
 
                 <TextView
+                    android:id="@+id/tv_read_start"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -161,7 +225,7 @@
                 android:layout_centerInParent="true"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <com.example.yidiantong.View.AudioWaveView
                     android:id="@+id/audioWaveView"
