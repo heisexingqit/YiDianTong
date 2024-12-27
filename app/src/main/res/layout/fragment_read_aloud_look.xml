@@ -28,7 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/recite_cover_bg"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <LinearLayout
                     android:paddingTop="10dp"
@@ -174,6 +174,7 @@
 
                     <!-- TextView 漂浮在 ImageView 右上角 -->
                     <TextView
+                        android:visibility="gone"
                         android:id="@+id/tv_recording_num"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

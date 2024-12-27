@@ -11,8 +11,12 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
+import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -231,6 +235,9 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
         }
     }
 
+    /**
+     * dda da
+     */
     private Handler handler = new Handler(Looper.getMainLooper()) {
 
         @SuppressLint("NotifyDataSetChanged")
@@ -241,7 +248,7 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
                 case 100:
                     Boolean notNew = false;
                     readTaskList = (List<ReadTaskEntity>) message.obj;
-                    if (type.equals("recite") && isFirst && isNew) {
+                    if (isFirst && isNew && "recite".equals(type)) {
                         isFirst = false;
                         // 查看列表中是否有音频
                         for (ReadTaskEntity task : readTaskList) {
@@ -256,44 +263,53 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
                         }
 
                     }
-                    if (notNew) {
-                        // 构建一个AlertDialog
-                        AlertDialog.Builder builder = new AlertDialog.Builder(ReadAloudLookActivity.this, AlertDialog.THEME_HOLO_LIGHT);
-                        // 设置自定义title
-//                            TextView tv = new TextView(ReadAloudLookActivity.this);
-//                            tv.setText("发现未播放的音频，是否播放？");
-//                            tv.setTextSize(17);
-//                            tv.setPadding(30, 40, 30, 40);
-//                            tv.setTextColor(Color.parseColor("#000000"));
-//                            builder.setCustomTitle(tv);
-                        // 设置自定义message，用tv
-//                            TextView tv = new TextView(ReadAloudLookActivity.this);
-//                            tv.setText("发现未播放的音频，是否播放？");
-//                            tv.setTextSize(17);
-//                            tv.setPadding(30, 40, 30, 40);
-//                            tv.setTextColor(Color.parseColor("#000000"));
-//                            builder.setView(tv);
+                    if (notNew && "recite".equals(type)) {
 
-                        builder.setTitle("请选择:")
-                                .setMessage("* 重新背诵: 之前的录音数据将被清空。\n* 继续背诵: 继续本次背诵任务。")
-                                .setPositiveButton("重新背诵", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        clearAllLog();
-                                        dialog.cancel();
-                                    }
-                                })
-                                .setNegativeButton("继续背诵", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int i) {
-                                        loadItemsHandlerData();
-                                        dialog.cancel();
-                                    }
-                                });
+                        // 创建 AlertDialog.Builder
+                        AlertDialog.Builder builder = new AlertDialog.Builder(ReadAloudLookActivity.this);
 
-                        // 创建对话框并显示
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
+                        // 加载自定义布局
+                        LayoutInflater inflater = LayoutInflater.from(ReadAloudLookActivity.this);
+                        int layoutId = R.layout.dialog_custom_read;
+                        if("recite".equals(type)){
+                            layoutId = R.layout.dialog_custom_recite;
+                        }
+                        View customView = inflater.inflate(layoutId, null);
+
+                        // 设置 AlertDialog 不能通过外部点击关闭
+                        builder.setCancelable(false); // 禁止点击外部关闭
+                        // 将自定义布局设置到 AlertDialog
+                        builder.setView(customView);
+
+                        // 创建 AlertDialog 并声明为 final，以便内部类访问
+                        AlertDialog alertDialog = builder.create();
+
+                        // 获取自定义布局中的控件
+                        Button btnRestart = customView.findViewById(R.id.btn_restart); // 重新背诵按钮
+                        Button btnContinue = customView.findViewById(R.id.btn_continue); // 继续背诵按钮
+
+                        // 设置按钮点击事件
+                        btnRestart.setOnClickListener(v -> {
+                            // 处理重新背诵逻辑
+                            clearAllLog();
+                            alertDialog.dismiss(); // 关闭对话框
+                        });
+
+                        btnContinue.setOnClickListener(v -> {
+                            // 处理继续背诵逻辑
+                            loadItemsHandlerData();
+                            alertDialog.dismiss(); // 关闭对话框
+                        });
+                        // 显示 AlertDialog
+                        alertDialog.show();
+
+                        Window window = alertDialog.getWindow();
+                        if (window != null) {
+                            window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT,
+                                    WindowManager.LayoutParams.WRAP_CONTENT); // 高度自适应
+                        }
+
+
                     } else {
                         loadItemsHandlerData();
                     }
@@ -316,9 +332,9 @@ public class ReadAloudLookActivity extends AppCompatActivity implements View.OnC
 
     private void clearAllLog() {
         rl_loading.setVisibility(View.VISIBLE);
-        // 跟读作业列表
-        String mRequestUrl = Constant.API + Constant.CLEAR_RECITE_LOG + "?recordId=" + learnPlanId + "&stuId=" + MyApplication.username;
 
+        String mRequestUrl = "";
+        mRequestUrl = Constant.API + Constant.CLEAR_RECITE_LOG + "?recordId=" + learnPlanId + "&stuId=" + MyApplication.username;
         StringRequest request = new StringRequest(mRequestUrl, response -> {
             try {
                 JSONObject json = JsonUtils.getJsonObjectFromString(response);

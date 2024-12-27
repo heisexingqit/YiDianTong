@@ -169,6 +169,8 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     icon_id = R.drawable.announcement_icon;
                     break;
                 case "微课":
+                    icon_id = R.drawable.weike_icon;
+                    break;
                 case "直播课消息":
                     icon_id = R.drawable.live_icon;
                     break;
@@ -254,13 +256,13 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         iv_top_icon1.setImageResource(R.drawable.new_icon);
                         break;
                     case 2:
-                        //已批改
+                        //未批改
                         iv_top_icon1.setVisibility(View.GONE);
                         iv_top_icon2.setVisibility(View.VISIBLE);
                         iv_top_icon2.setImageResource(R.drawable.red_pencil);
                         break;
                     case 3:
-                        //未批改
+                        //已批改
                         iv_top_icon1.setVisibility(View.GONE);
                         iv_top_icon2.setVisibility(View.VISIBLE);
                         iv_top_icon2.setImageResource(R.drawable.green_pencil);
