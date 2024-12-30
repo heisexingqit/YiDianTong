@@ -61,7 +61,7 @@
             android:paddingRight="3dp"
             android:layout_height="20dp"
             android:background="@color/backgroung_chat_input"
-            android:gravity="top"
+            android:gravity="center_vertical"
             android:id="@+id/inputtext"/>
             <Button
                 android:layout_width="40dp"
