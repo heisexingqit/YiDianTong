@@ -178,8 +178,10 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     icon_id = R.drawable.interactive_icon;
                     break;
                 case "朗读":
-                case "背诵":
                     icon_id = R.drawable.read_icon;
+                    break;
+                case "背诵":
+                    icon_id = R.drawable.recite_icon;
                     break;
                 default:
                     Log.d("wen", "update: " + item.getType());
