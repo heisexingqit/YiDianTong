@@ -24,11 +24,16 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import java.util.List;
 
 public class ChatMsgAdapter extends ArrayAdapter {
+    private List<Chat_Msg> mData;
+    private Context mContext;
     private int resourceId;
 
-    public ChatMsgAdapter(@NonNull Context context, int resource, @NonNull List objects) {
+    public ChatMsgAdapter(@NonNull Context context, int resource, @NonNull List objects, OnClearDataListener listener) {
         super(context, resource, objects);
+        this.mContext = context;
         this.resourceId = resource;
+        this.mData = objects;
+        mListener = listener;
     }
 
     @Override
@@ -36,8 +41,20 @@ public class ChatMsgAdapter extends ArrayAdapter {
         super.notifyDataSetChanged();
     }
 
+    // 定义回调接口
+    public interface OnClearDataListener {
+        void onClearData();  // 清除数据的方法
+    }
+
+    private OnClearDataListener mListener;  // 声明接口对象
+
+
     public View getView(int position, View convertView, ViewGroup parent) {
-        Chat_Msg mMsg = (Chat_Msg) getItem(position);
+        if (mData == null || mData.isEmpty()) {
+            // 如果数据为空，返回一个占位视图（可以是一个空的布局）
+            return new View(mContext);
+        }
+        Chat_Msg mMsg = mData.get(position);
         getItem(position);
         View mView;
         ViewHolder mViewHolder;
@@ -62,12 +79,20 @@ public class ChatMsgAdapter extends ArrayAdapter {
         //设置格式
         if (mMsg.getType() == 2)      //  接受  听课端的
         {
-            mViewHolder.Layout.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
-            mViewHolder.Layout1.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
-//            mViewHolder.msg_head.setBackgroundResource(R.mipmap.teachathead);
-            ImageLoader.getInstance().displayImage(mMsg.getUrl(), mViewHolder.msg_head);
-
-        } else if (mMsg.getType() == 1)  //  发送的消息  主讲人
+            if (mMsg.getContent().equals("clearAllMsgFromTeacher")){
+                // 清屏
+                if (mListener != null) {
+                    mListener.onClearData();  // 调用回调方法，通知 ChatRoomFragmentStu 清除数据
+                    return new View(mContext);
+                }
+            }else {
+                mViewHolder.Layout.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+                mViewHolder.Layout1.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+                // mViewHolder.msg_head.setBackgroundResource(R.mipmap.teachathead);
+                ImageLoader.getInstance().displayImage(mMsg.getUrl(), mViewHolder.msg_head);
+            }
+        }
+        else if (mMsg.getType() == 1)  //  发送的消息  主讲人
         {
             mViewHolder.Layout.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
             mViewHolder.Layout1.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
