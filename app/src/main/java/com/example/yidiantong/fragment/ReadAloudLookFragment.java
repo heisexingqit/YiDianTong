@@ -882,10 +882,11 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onDestroyView() {
-        if(type.equals("recite") && isCover == false){
+        super.onDestroyView();
+
+        if(type.equals("recite") && isCover == false && readTask.isNew){
             reciteCloseCover();
         }
-        super.onDestroyView();
     }
 
     private void permissionMico() {

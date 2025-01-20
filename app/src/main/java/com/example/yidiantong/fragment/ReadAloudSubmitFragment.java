@@ -48,11 +48,6 @@ public class ReadAloudSubmitFragment extends Fragment implements View.OnClickLis
     private PagingInterface pageing;
     private HomeworkInterface2 homework;
 
-    private LinearLayout ll_look_result;
-    private LinearLayout ll_start_read;
-    private LinearLayout ll_my_videos;
-    private String recordId;
-    private String imageId;
     private MediaPlayer mPlayer;
     private LinearLayout ll_pageing;
     //是否正在播放
