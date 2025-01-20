@@ -538,7 +538,7 @@ public class HttpActivityStu extends AnswerActivityStu {
                 success = jsonObject.getString("success");
 
                 message = jsonObject.getString("message");
-                Log.d("wenbug2", "【学生端】=》互动课堂【返回数据】:" + questionAction_Time);
+//                Log.d("wenbug2", "【学生端】=》互动课堂【返回数据】:" + questionAction_Time);
 
             }catch (JSONException e) {
                 e.printStackTrace();

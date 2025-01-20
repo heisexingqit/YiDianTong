@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 
-public class ChatRoomFragmentStu extends Fragment {
+public class ChatRoomFragmentStu extends Fragment implements ChatMsgAdapter.OnClearDataListener {
     private List<Chat_Msg> data = new ArrayList<Chat_Msg>();
     private ChatMsgAdapter chatMsgAdapter;
     private EditText edtext;
@@ -86,7 +86,7 @@ public class ChatRoomFragmentStu extends Fragment {
         View view = inflater.inflate(R.layout.chat_room, container, false);
         chatlv = view.findViewById(R.id.chatlv);
 
-        chatMsgAdapter = new ChatMsgAdapter(view.getContext(), R.layout.item_response_stu, data);
+        chatMsgAdapter = new ChatMsgAdapter(view.getContext(), R.layout.item_response_stu, data, this);
 
         chatlv.setAdapter(chatMsgAdapter);
 
@@ -129,5 +129,13 @@ public class ChatRoomFragmentStu extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onClearData() {
+        // 清空数据
+        data.clear();
+        // 通知适配器更新
+        chatMsgAdapter.notifyDataSetChanged();
     }
 }

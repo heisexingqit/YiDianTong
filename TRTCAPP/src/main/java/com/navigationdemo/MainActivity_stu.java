@@ -3913,7 +3913,7 @@ public class MainActivity_stu extends AppCompatActivity implements View.OnClickL
             } else {
                 last_actiontime_answer = AnswerActivityStu.questionTime;
             }
-//            Toast.makeText(this, AnswerActivityStu.questionAction, Toast.LENGTH_SHORT).show();
+            System.out.println("------------questionAction--------------------:" + AnswerActivityStu.questionAction);
             switch (AnswerActivityStu.questionAction) {
                 case "startAnswer":
                     if(AnswerActivityStu.questionBaseTypeId.equals("101")){
@@ -3936,8 +3936,10 @@ public class MainActivity_stu extends AppCompatActivity implements View.OnClickL
                     Log.e(TAG, "准备更新UI" + AnswerActivityStu.questionAction);
                 case "startAnswerSuiji":
                 case "startAnswerQiangDa":
-                    mQiangda.setSelected(false);
-                    BottomButtonActivity.qiangDa(this);
+                    if (AnswerActivityStu.questionAction.equals("startAnswerQiangDa")) {
+                        mQiangda.setSelected(false);
+                        BottomButtonActivity.qiangDa(this);
+                    }
 
                     Log.e(TAG, "getteacher: " + "answer over a");
 
@@ -4022,6 +4024,7 @@ public class MainActivity_stu extends AppCompatActivity implements View.OnClickL
 //                    else if(AnswerActivityStu.questionBaseTypeId.equals("104")){
 //                        MainActivity_stu.group_subjectiveanswer.setVisibility(View.INVISIBLE);
 //                    }
+                    initQuestionData();
                     break;
                 // 关闭答题
                 case "closeAnswer":

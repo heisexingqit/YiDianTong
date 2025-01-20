@@ -855,7 +855,7 @@
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_bar_table_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="24sp"
                 android:background="@color/background_chatroom"
                 app:layout_constraintTop_toBottomOf="@id/student_camera_big_block"
                 app:tabIndicatorColor="@color/blue_white"
