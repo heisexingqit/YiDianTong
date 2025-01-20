@@ -228,12 +228,7 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
         ll_start_read.setOnClickListener(this);
         ll_my_recording.setOnClickListener(this);
 
-        // 如果已经提交，那么进行屏蔽
-        if (!readTask.isNew) {
-            ImageView iv_start_read = view.findViewById(R.id.iv_start_read);
-            iv_start_read.setImageResource(R.drawable.microphone_gray);
-            ll_start_read.setEnabled(false);
-        }
+
 
         // 背诵部分逻辑
         tv_read_start = view.findViewById(R.id.tv_read_start);
@@ -244,6 +239,14 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
             tv_read_start.setText("开始背诵");
             tv_watch_times.setText(String.valueOf(readTask.showNum));
             ll_cover_open.setOnClickListener(this);
+        }
+
+        // 如果已经提交，那么进行屏蔽
+        if (!readTask.isNew) {
+            ImageView iv_start_read = view.findViewById(R.id.iv_start_read);
+            iv_start_read.setImageResource(R.drawable.microphone_gray);
+            ll_start_read.setEnabled(false);
+            ll_cover_open.setEnabled(false);
         }
 
         return view;
@@ -358,10 +361,10 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
                 break;
             case R.id.ll_cover_open:
                 if (isCover) {
-                    // 背诵查看图片
+                    // 背诵打开遮蔽
                     reciteOpenCover();
                 } else {
-                    // 查看完遮蔽照片
+                    // 背诵关闭遮蔽
                     reciteCloseCover();
                 }
                 break;
@@ -629,9 +632,13 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
                             rl_cover.setVisibility(View.GONE);
                             tv_read_start.setText("开始背诵");
                         }else{
-                            isCover = true;
-                            rl_cover.setVisibility(View.VISIBLE);
                             tv_read_start.setText("继续背诵");
+                            // 处理提交后逻辑
+                            if(readTask.isNew){
+                                isCover = true;
+                                rl_cover.setVisibility(View.VISIBLE);
+
+                            }
                         }
                         if(needOpenCoverAfterUpload){
                             needOpenCoverAfterUpload = false;
