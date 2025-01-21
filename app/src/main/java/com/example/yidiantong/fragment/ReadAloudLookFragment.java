@@ -233,6 +233,7 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
         // 背诵部分逻辑
         tv_read_start = view.findViewById(R.id.tv_read_start);
         if ("recite".equals(type)) {
+            // 背诵部分初始化
             ll_cover_open = view.findViewById(R.id.ll_cover_open);
             rl_cover = view.findViewById(R.id.rl_cover);
             tv_watch_times = view.findViewById(R.id.tv_watch_times);
@@ -246,7 +247,9 @@ public class ReadAloudLookFragment extends Fragment implements View.OnClickListe
             ImageView iv_start_read = view.findViewById(R.id.iv_start_read);
             iv_start_read.setImageResource(R.drawable.microphone_gray);
             ll_start_read.setEnabled(false);
-            ll_cover_open.setEnabled(false);
+            if("recite".equals(type)){
+                ll_cover_open.setEnabled(false);
+            }
         }
 
         return view;
