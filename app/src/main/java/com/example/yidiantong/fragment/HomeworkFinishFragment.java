@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -123,6 +124,8 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
         WebView wv_content2 = view.findViewById(R.id.wv_content2);
         WebView wv_content3 = view.findViewById(R.id.wv_content3);
         WebView wv_content4 = view.findViewById(R.id.wv_content4);
+        WebView wv_content5;
+        LinearLayout ll_ai;
         xueba = view.findViewById(R.id.tv_xueba);//学霸答案标题
         wv_xuebaAnswer1 = view.findViewById(R.id.wv_xuebaAnswer1);
         wv_xuebaAnswer1.addJavascriptInterface(
@@ -254,6 +257,11 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
                 , "myInterface");
         String answerString = homeworkMarked.getStandardAnswer();
         String analysisString = homeworkMarked.getAnalysis();
+        String aiResultString = homeworkMarked.getAiResult();
+        if(aiResultString==null||aiResultString==""||aiResultString.equals("")||aiResultString.length()==0){
+            view.findViewById(R.id.ll_ai).setVisibility(View.GONE);
+            view.findViewById(R.id.ll_ai2).setVisibility(View.GONE);
+        }
 
         Log.e("wen0222", "onCreateView: " + homeworkMarked);
 
@@ -265,10 +273,16 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
             isWatch = false;
             answerString = "******";
             analysisString = "******";
+            view.findViewById(R.id.ll_ai).setVisibility(View.GONE);
+            wv_content5 = view.findViewById(R.id.wv_content6);
+        }else{
+            wv_content5 = view.findViewById(R.id.wv_content5);
+            view.findViewById(R.id.ll_ai2).setVisibility(View.GONE);
         }
 
         setHtmlOnWebView(wv_content2, answerString);
         setHtmlOnWebView(wv_content3, analysisString);
+        setHtmlOnWebView2(wv_content5, aiResultString);
 
         if (isWatch) {
             // 显示底部一栏
@@ -347,6 +361,60 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
         wb.getSettings().setJavaScriptEnabled(true); // 确保JavaScript可用
         wb.loadDataWithBaseURL(null, html_content, "text/html", "utf-8", null);
     }
+    private void setHtmlOnWebView2(WebView wb, String str) {
+        // 先反转义HTML，再处理Markdown
+        str = StringEscapeUtils.unescapeHtml4(str);
+
+        Log.e(TAG, "setHtmlOnWebView: " + str);
+
+        String html_content = "<!DOCTYPE html>" +
+                "<html>" +
+                "<head>" +
+                "<meta charset='utf-8'>" +
+                "<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>" +
+                "<style>" +
+                "    body { " +
+                "        color: #757575; " +
+                "        font-size: 14px; " +
+                "        line-height: 30px; " +
+                "        margin: 0 auto; " +
+                "        padding: 0; " +
+                "        width: 100%; " +
+                "        overflow-x: hidden; " +
+                "        word-wrap: break-word; " +
+                "    }" +
+                "    p { margin: 0; }" +
+                "    img, table, iframe, svg { max-width: 100%; height: auto; }" +
+                "</style>" +
+                // MathJax 配置（本地路径）
+                "<script>" +
+                "MathJax = {" +
+                "  tex: { " +
+                "    inlineMath: [['$', '$'], ['\\(', '\\)']]," +
+                "    displayMath: [['$$', '$$'], ['\\[', '\\]']]" +
+                "  }," +
+                "  svg: { fontCache: 'global' }" +
+                "};" +
+                "</script>" +
+                // 加载本地 MathJax
+                "<script src='file:///android_asset/mathjax/es5/tex-chtml.js'></script>" +
+                "</head>" +
+                "<body>" + str + "</body>" +
+                "</html>";
+        // WebView设置
+        WebSettings settings = wb.getSettings();
+        settings.setJavaScriptEnabled(true);
+        settings.setAllowFileAccess(true);  // 允许加载本地文件
+        settings.setDomStorageEnabled(true);
+        wb.loadDataWithBaseURL(
+                "https://example.com",
+                html_content,
+                "text/html",
+                "UTF-8",
+                null
+        );
+    }
+
 
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @SuppressLint("NotifyDataSetChanged")
@@ -467,6 +535,12 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
                         tv_xuebaName3.setText(xuebaName3 + "的作答");
                         setHtmlOnWebView(wv_xuebaAnswer3,  xuebaAnswer3);
                     }
+                }else{
+                    xueba.setVisibility(View.GONE);
+                    ll_xueba1.setVisibility(View.GONE);
+                    ll_xueba2.setVisibility(View.GONE);
+                    ll_xueba3.setVisibility(View.GONE);
+
                 }
 
             }
@@ -489,15 +563,17 @@ public class HomeworkFinishFragment extends Fragment implements View.OnClickList
                 List<XueBaAnswerEntity> itemList = gson.fromJson(itemString, new TypeToken<List<XueBaAnswerEntity>>() {
                 }.getType());
                 Log.d("hsk0527", "学霸答案：" + itemList);
-                //封装消息，传递给主线程
-                Message message = Message.obtain();
+                if(itemList.size()>0){
+                    //封装消息，传递给主线程
+                    Message message = Message.obtain();
 
-                message.obj = itemList;
-                // 发送消息给主线程
+                    message.obj = itemList;
+                    // 发送消息给主线程
 
-                //标识线程
-                message.what = 102;
-                handler.sendMessage(message);
+                    //标识线程
+                    message.what = 102;
+                    handler.sendMessage(message);
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
